@@ -20,7 +20,7 @@ jobs:
     - docker push $REPO
 after_success:
 - curl -X POST $JURL/job/deploy-with-helm/build --user $JENKINS_LOGIN:$TOKEN --data-urlencode
-  json='{parameter:[{name:"CHART_NAME", value:"p1payapi"}]}'
+  json='{parameter:[{name:"CHART_NAME", value:"p1payfront"}]}'
 notifications:
   email: false
   slack:
