@@ -1,0 +1,36 @@
+{
+  "name": "ponepay.frontend",
+  "version": "1.0.0",
+  "description": "PONE payment solution customer control panel",
+  "author": "Dmitriy Sinichkin <dmitriy.sinichkin@gmail.com>",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
+    "precommit": "npm run lint"
+  },
+  "dependencies": {
+    "@coreui/coreui": "^2.0.20",
+    "@nuxtjs/toast": "^3.0.1",
+    "axios": "^0.18.0",
+    "cookieparser": "^0.1.0",
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.3.1",
+    "js-cookie": "^2.2.0",
+    "nuxt": "^2.2.0",
+    "vue-multiselect": "^2.1.3",
+    "vue-select": "^2.5.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.1",
+    "eslint": "^4.15.0",
+    "eslint-friendly-formatter": "^3.0.0",
+    "eslint-loader": "^1.7.1",
+    "eslint-plugin-vue": "^4.0.0",
+    "node-sass": "^4.9.4",
+    "sass-loader": "^7.1.0"
+  }
+}

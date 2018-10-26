@@ -1,0 +1,51 @@
+a.nav-link {
+  i {
+    &.nav-icon {
+      margin-right: 0.35em;
+    }
+  }
+  &.active {
+    i {
+      &.nav-icon {
+        color: #20a8d8;
+      }
+    }
+  }
+}
+
+ol.breadcrumb {
+  height: 3.55em;
+}
+
+.v-select {
+  &.form {
+    .dropdown-toggle {
+      border: 1px solid #e4e7ea;
+      height: calc(2.0625rem + 2px);
+
+      &::after {
+        display: none !important;
+      }
+
+      input[type=search],
+      input[type=search]:focus {
+        margin: 0;
+      }
+    }
+  }
+}
+
+.form-group {
+  &.btn {
+    margin-top: 15px;
+    padding-right: 0;
+  }
+
+  button {
+    width: 11em;
+  }
+}
+
+.action-section {
+  margin-bottom: 3em;
+}
