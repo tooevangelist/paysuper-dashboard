@@ -13,7 +13,7 @@ export default {
             let url = `${process.env.apiServerUrl}/country`;
 
             if (search.length > 0) {
-                url += `?name=${search}`
+                url += `?name=${search}`;
             }
 
             axios.get(url)

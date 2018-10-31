@@ -104,15 +104,13 @@
         mounted: function () {
             this.data = Object.assign({}, this['$store'].state.merchant.merchant);
 
-            this.country = {
-                label: this.data['country']['name']['en'],
-                value: this.data['country']['code_int']
-            };
-            this.currency = {
-                label: this.data['currency']['name']['en'],
-                value: this.data['currency']['code_int']
-            };
+            if (this.data['country'] != null) {
+                this.country = { label: this.data['country']['name']['en'], value: this.data['country']['code_int'] };
+            }
 
+            if (this.data['currency'] != null) {
+                this.currency = { label: this.data['currency']['name']['en'], value: this.data['currency']['code_int'] };
+            }
 
             for (let i = 0; i < this.accountingPeriods.length; i++) {
                 if (this.data['accounting_period'] !== this.accountingPeriods[i]['value']) {

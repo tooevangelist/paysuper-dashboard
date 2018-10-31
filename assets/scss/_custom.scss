@@ -33,6 +33,12 @@ ol.breadcrumb {
       }
     }
   }
+
+  .dropdown-toggle {
+    .clear {
+      text-align: right;
+    }
+  }
 }
 
 .form-group {
@@ -48,4 +54,28 @@ ol.breadcrumb {
 
 .action-section {
   margin-bottom: 3em;
+}
+
+.field-group {
+  padding: 15px;
+  border: 1px solid #c8ced3;
+  border-radius: 7px;
+  margin-top: 25px;
+
+  .form-group:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+.no-left-right-padding {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.no-right-padding {
+  padding-right: 0;
+}
+
+.no-left-padding {
+  padding-left: 0;
 }

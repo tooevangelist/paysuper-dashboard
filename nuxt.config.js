@@ -1,15 +1,17 @@
+const webpack = require('webpack');
+
 module.exports = {
     /*
     ** Headers of the page
     */
     env: {
-        authServerUrl: 'http://auth.protocol.one.local:81/api/v1',
+        authServerUrl: process.env.P1AUTH_URL,
         socialNetworks: {
             facebook: { icon: 'fa-facebook' },
             vkontakte: { icon: 'fa-vk' },
             odnoklassniki: { icon: 'fa-odnoklassniki' }
         },
-        apiServerUrl: 'http://127.0.0.1:3001/api/v1'
+        apiServerUrl: process.env.P1PAYAPI_URL
     },
     head: {
         title: 'PonePay',
@@ -49,7 +51,10 @@ module.exports = {
         },
         build: {
             vendor: ['axios', 'jquery']
-        }
+        },
+        plugins: [
+            new webpack.ProvidePlugin({ $: 'jquery' })
+        ]
     },
     modules: ['@nuxtjs/toast'],
     plugins: [

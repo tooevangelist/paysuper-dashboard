@@ -29,6 +29,8 @@ export const actions = {
             .then(function (response) {
                 commit('setMerchant', response.data);
                 return response;
+            }).catch(function () {
+                
             });
     },
     update ({ commit, rootState }, data) {
