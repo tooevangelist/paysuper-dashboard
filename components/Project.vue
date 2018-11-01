@@ -1,8 +1,20 @@
 <template>
     <div class="card">
-        <div class="card-header text-left">
-            <button type="button" class="btn btn-outline-success btn" @click="save">
+        <div class="card-header">
+            <button type="button" class="btn btn-outline-success btn pull-left" @click="save">
                 <i class="fa fa-save"></i> Save
+            </button>
+
+            <button type="button" class="btn btn pull-right"
+                    @click="data['is_active'] = !data['is_active']"
+                    v-bind:class="{
+                        'btn-outline-danger': data['is_active'],
+                        'btn-outline-success': !data['is_active']
+                    }">
+                <i class="fa" v-bind:class="{
+                    'fa-eye-slash': data['is_active'],
+                    'fa-eye': !data['is_active']
+                }"></i> {{ data['is_active'] ? 'Deactivate' : 'Activate' }}
             </button>
         </div>
         <div class="card-body">
@@ -179,7 +191,7 @@
                                      v-if="data['fixed_package'][fixedPackageRegion].length > 0"
                                      v-for="(item, index) in data['fixed_package'][fixedPackageRegion]"
                                      v-bind:key="index">
-                                    <div class="form-group text-right">
+                                    <div class="form-group text-right" v-if="data['isNew']">
                                         <a href="#" @click.prevent="removeFixedPackage(index)">
                                             <span class="fa fa-close"></span>
                                         </a>
@@ -217,9 +229,17 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group text-right" v-if="data['isNew'] === false">
-                                        <button type="button" class="btn btn-outline-danger btn-sm">
-                                            <i class="fa fa-eye-slash"></i> Deactivate
+                                    <div class="form-group text-right" v-if="!data['isNew']">
+                                        <button type="button" class="btn btn-sm"
+                                                @click="item['is_active'] = !item['is_active']"
+                                                v-bind:class="{
+                                                    'btn-outline-danger': item['is_active'],
+                                                    'btn-outline-success': !item['is_active']
+                                                }">
+                                            <i class="fa" v-bind:class="{
+                                                    'fa-eye-slash': item['is_active'],
+                                                    'fa-eye': !item['is_active']
+                                                }"></i> {{ item['is_active'] ? 'Deactivate' : 'Activate' }}
                                         </button>
                                     </div>
                                 </div>
@@ -431,13 +451,18 @@
                         headers: {Authorization: `Bearer ${this['$store'].state.user.accessToken}`}
                     });
                 } else {
-                    promise = axios.put(`${process.env.apiServerUrl}/s/project`, this.data, {
+                    promise = axios.put(`${process.env.apiServerUrl}/s/project/${this.data['id']}`, this.data, {
                         headers: {Authorization: `Bearer ${this['$store'].state.user.accessToken}`}
                     });
                 }
 
                 promise.then(function () {
-                    self.success('Project created successfully');
+                    if (isNew === true) {
+                        self.success('Project created successfully');
+                    } else {
+                        self.success('Project updated successfully');
+                    }
+
                     self.$router.push('/project');
                 }).catch(function (e) {
                     self.error(self.getError(e));
@@ -445,10 +470,79 @@
             }
         },
         mounted: function () {
-            if (this.project.hasOwnProperty('Name') && this.project.hasOwnProperty('CallbackProtocol')
-                && this.project.hasOwnProperty('SecretKey') && this.project.hasOwnProperty('URLProcessPayment')) {
-                this.data = this.project;
+            if (!this.project.hasOwnProperty('name') || !this.project.hasOwnProperty('callback_protocol')
+                || !this.project.hasOwnProperty('secret_key') || !this.project.hasOwnProperty('url_process_payment')) {
+                return;
             }
+
+            let data = this.project;
+
+            if (data.hasOwnProperty('callback_currency') && data['callback_currency'] != null
+                && typeof data['callback_currency'] === 'object') {
+                data['callback_currency'] = {
+                    label: data['callback_currency']['name']['en'],
+                    value: data['callback_currency']['code_int']
+                };
+
+                this.callbackCurrency = data['callback_currency'];
+            }
+
+            if (data.hasOwnProperty('limits_currency') && data['limits_currency'] != null
+                && typeof data['limits_currency'] === 'object') {
+                data['limits_currency'] = {
+                    label: data['limits_currency']['name']['en'],
+                    value: data['limits_currency']['code_int']
+                };
+
+                this.limitsCurrency = data['limits_currency'];
+            }
+
+            if (data.hasOwnProperty('create_invoice_allowed_urls') && data['create_invoice_allowed_urls'] != null
+                && Array.isArray(data['create_invoice_allowed_urls'])) {
+
+                if (data['create_invoice_allowed_urls'].length > 0) {
+                    data['create_invoice_allowed_urls'] = data['create_invoice_allowed_urls'].join(', ');
+                    this.createInvoiceAllowedUrls = data['create_invoice_allowed_urls'];
+                }
+
+            }
+
+            if (data.hasOwnProperty('notify_emails') && data['notify_emails'] != null
+                && Array.isArray(data['notify_emails'])) {
+
+                if (data['notify_emails'].length > 0) {
+                    data['notify_emails'] = data['notify_emails'].join(', ');
+                    this.notifyEmails = data['notify_emails'];
+                }
+            }
+
+            if (data.hasOwnProperty('fixed_package') && data['fixed_package'] != null
+                && typeof data['fixed_package'] === 'object') {
+                for (let key in data['fixed_package']) {
+                    if (!data['fixed_package'].hasOwnProperty(key)) {
+                        continue;
+                    }
+
+                    if (data['fixed_package'][key].length <= 0) {
+                        continue;
+                    }
+
+                    for (let i = 0; i < data['fixed_package'][key].length; i++) {
+                        if (data['fixed_package'][key][i]['currency_int'] == null
+                            || data['fixed_package'][key][i]['currency_int'] <= 0) {
+                            data['fixed_package'][key][i]['currency_int'] = null;
+                            continue;
+                        }
+
+                        data['fixed_package'][key][i]['currency_int'] = {
+                            label: data['fixed_package'][key][i]['currency']['name']['en'],
+                            value: data['fixed_package'][key][i]['currency']['code_int']
+                        };
+                    }
+                }
+            }
+
+            this.data = data;
         }
     }
 </script>

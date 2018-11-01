@@ -79,3 +79,17 @@ ol.breadcrumb {
 .no-left-padding {
   padding-left: 0;
 }
+
+.ccol-4 {
+  max-width: 32%;
+}
+
+.list {
+  .item {
+    margin-top: 5px;
+
+    &.button {
+      margin-top: 20px;
+    }
+  }
+}

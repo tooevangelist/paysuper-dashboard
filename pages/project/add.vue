@@ -13,23 +13,9 @@
 
     export default {
         middleware: 'IsNotAuthenticated',
-        components: { Project },
+        components: {Project},
         data: function () {
-            return {
-                data: {
-                    SendNotifyEmail: false,
-                    OnlyFixedAmounts: false,
-                    IsAllowDynamicNotifyUrls: false,
-                    IsAllowDynamicRedirectUrls: false
-                },
-                fixedPackageRegion: 'en'
-            }
-        },
-        methods: {
-
-        },
-        mounted: function () {
-
+            return {}
         }
     }
 </script>

@@ -12,11 +12,25 @@
                         </div>
 
                         <div class="col-md-12" v-if="projects.length <= 0">
-                            <div class="alert alert-info" role="alert">You can't created projects</div>
+                            Projects list is empty
                         </div>
 
-                        <div class="col-md-12" v-if="projects.length > 0">
-
+                        <div class="row" v-if="projects.length > 0">
+                            <div class="col-4 ccol-4 field-group mr-1 list" v-for="(item, index) in projects"
+                                 v-bind:key="index">
+                                <div class="col-12 text-center item">
+                                    <strong>Name: </strong> {{ item['name'] }}
+                                </div>
+                                <div class="col-12 text-center item">
+                                    <strong>Is active: </strong> {{ item['is_active'] === true ? 'Yes' : 'No' }}
+                                </div>
+                                <div class="col-12 text-center item button">
+                                    <nuxt-link type="button" class="btn btn-outline-success btn-sm" v-bind:to="'/project/' + item['id']"
+                                               active-class="" tag="button">
+                                        <i class="fa fa-pencil"></i> Edit project
+                                    </nuxt-link>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -35,11 +49,15 @@
                 projects: []
             }
         },
-        methods: {
-
-        },
+        methods: {},
         mounted: function () {
+            const self = this;
 
+            axios.get(`${process.env.apiServerUrl}/s/project`, {
+                headers: {Authorization: `Bearer ${this['$store'].state.user.accessToken}`}
+            }).then(function (response) {
+                self.projects = response.data;
+            }).catch(function () {});
         }
     }
 </script>
