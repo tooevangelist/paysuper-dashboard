@@ -18,7 +18,7 @@
             }
         },
         mounted: async function () {
-            let { data } = await axios.get(`${process.env.authServerUrl}/oauth/sources`);
+            let { data } = await axios.get(`${process.env.authServerUrl}/oauth/sources/`);
 
             for (let i = 0; i < data.length; i++) {
                 if (true !== process.env.socialNetworks.hasOwnProperty(data[i].name)) {
