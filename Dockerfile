@@ -11,6 +11,8 @@ RUN npm rebuild --force
 RUN npm install
 
 ENV NODE_ENV=production
+ENV P1AUTH_URL=https://auth.tst.protocol.one/api/v1
+ENV P1PAYAPI_URL=https://p1payapi.tst.protocol.one/api/v1
 
 COPY . /application
 RUN npm run build
