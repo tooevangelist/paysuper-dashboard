@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 export default {
-    create: function (token) {
-        return axios.post(`${process.env.apiServerUrl}/s/merchant`, {}, {
+    create: function (data, token) {
+        return axios.post(`${process.env.apiServerUrl}/s/merchant`, data, {
             headers: { Authorization: `Bearer ${token}` }
         });
     },

@@ -18,7 +18,7 @@ export const mutations = {
 
 export const actions = {
     create ({commit, rootState }) {
-        return api.create(rootState.user.accessToken)
+        return api.create({ email: rootState.user.email }, rootState.user.accessToken)
             .then(function (response) {
                 commit('setMerchant', response.data);
                 return response;
