@@ -172,13 +172,13 @@
                         <div class="card-body">
                             <ul class="nav nav-tabs">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#" @click.prevent="fixedPackageRegion = 'USA'"
-                                       v-bind:class="{ 'active': fixedPackageRegion === 'USA' }">For USA</a>
+                                    <a class="nav-link" href="#" @click.prevent="fixedPackageRegion = 'US'"
+                                       v-bind:class="{ 'active': fixedPackageRegion === 'US' }">For USA</a>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#" @click.prevent="fixedPackageRegion = 'RUS'"
-                                       v-bind:class="{ 'active': fixedPackageRegion === 'RUS' }">For Russia</a>
+                                    <a class="nav-link" href="#" @click.prevent="fixedPackageRegion = 'RU'"
+                                       v-bind:class="{ 'active': fixedPackageRegion === 'RU' }">For Russia</a>
                                 </li>
                             </ul>
 
@@ -284,14 +284,14 @@
                     url_redirect_fail: null,
                     url_redirect_success: null,
                     is_active: true,
-                    fixed_package: {USA: [], RUS: []},
+                    fixed_package: {US: [], RU: []},
                     send_notify_email: false,
                     only_fixed_amounts: false,
                     is_allow_dynamic_notify_urls: false,
                     is_allow_dynamic_redirect_urls: false,
                     isNew: true
                 },
-                fixedPackageRegion: 'USA',
+                fixedPackageRegion: 'US',
                 callbackCurrency: null,
                 limitsCurrency: null,
                 createInvoiceAllowedUrls: '',
