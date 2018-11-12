@@ -11,7 +11,8 @@ module.exports = {
             vkontakte: { icon: 'fa-vk' },
             odnoklassniki: { icon: 'fa-odnoklassniki' }
         },
-        apiServerUrl: process.env.P1PAYAPI_URL
+        apiServerUrl: process.env.P1PAYAPI_URL,
+        apiProjectIdentifier: process.env.P1PAYAPI_PROJECT_IDENTIFIER
     },
     head: {
         title: 'PonePay',
