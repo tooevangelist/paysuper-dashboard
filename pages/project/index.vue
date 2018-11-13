@@ -53,7 +53,7 @@
         mounted: function () {
             const self = this;
 
-            axios.get(`${process.env.apiServerUrl}/s/project`, {
+            axios.get(`${process.env.apiServerUrl}/api/v1/s/project`, {
                 headers: {Authorization: `Bearer ${this['$store'].state.user.accessToken}`}
             }).then(function (response) {
                 self.projects = response.data;

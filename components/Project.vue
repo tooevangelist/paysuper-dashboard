@@ -447,11 +447,11 @@
                 }
 
                 if (isNew === true) {
-                    promise = axios.post(`${process.env.apiServerUrl}/s/project`, this.data, {
+                    promise = axios.post(`${process.env.apiServerUrl}/api/v1/s/project`, this.data, {
                         headers: {Authorization: `Bearer ${this['$store'].state.user.accessToken}`}
                     });
                 } else {
-                    promise = axios.put(`${process.env.apiServerUrl}/s/project/${this.data['id']}`, this.data, {
+                    promise = axios.put(`${process.env.apiServerUrl}/api/v1/s/project/${this.data['id']}`, this.data, {
                         headers: {Authorization: `Bearer ${this['$store'].state.user.accessToken}`}
                     });
                 }

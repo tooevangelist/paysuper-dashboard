@@ -10,7 +10,7 @@ export default {
         onCurrencySearch: function (search) {
             const self = this;
 
-            let url = `${process.env.apiServerUrl}/currency`;
+            let url = `${process.env.apiServerUrl}/api/v1/currency`;
 
             if (search.length > 0) {
                 url += `?name=${search}`

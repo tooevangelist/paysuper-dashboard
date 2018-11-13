@@ -193,7 +193,7 @@
                     region: 'US'
                 };
 
-                axios.post(`${process.env.apiServerUrl}/order`, data)
+                axios.post(`${process.env.apiServerUrl}/api/v1/order`, data)
                     .then(function (response) {
                         if (!response.hasOwnProperty('data') || !response.data.hasOwnProperty('order_url')) {
                             self.error('Unknown error. Try request later.');

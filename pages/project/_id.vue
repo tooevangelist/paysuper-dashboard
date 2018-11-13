@@ -18,7 +18,7 @@
         components: { Project },
         mixins: [Notifications],
         asyncData: function(context) {
-            return axios.get(`${process.env.apiServerUrl}/s/project/${context.route['params']['id']}`, {
+            return axios.get(`${process.env.apiServerUrl}/api/v1/s/project/${context.route['params']['id']}`, {
                 headers: {Authorization: `Bearer ${context.store.state.user.accessToken}`}
             }).then(function (response) {
                 return {
