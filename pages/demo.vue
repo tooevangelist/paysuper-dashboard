@@ -150,7 +150,7 @@
                         </div>
                     </template>
                     <template slot="body">
-                        <iframe v-bind:src="orderUrl" frameborder="0" width="360px" height="440px"></iframe>
+                        <iframe v-bind:src="orderUrl" frameborder="0" width="560px" height="585px"></iframe>
                     </template>
                     <template slot="footer">
                         <div></div>
@@ -188,7 +188,7 @@
                     amount: amount,
                     currency: currency,
                     account: 'dmitriy.sinichkin@protocol.one',
-                    payment_method: 'bank_card',
+                    //payment_method: 'bank_card',
                     payer_ip: '46.32.78.127',
                     region: 'US'
                 };
