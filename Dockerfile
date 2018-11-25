@@ -4,7 +4,7 @@ RUN mkdir -p /application
 COPY . /application
 WORKDIR /application
 
-RUN apk update && apk upgrade && apk add git
+RUN apk update && apk add git
 
 RUN npm rebuild --force
 RUN npm install
