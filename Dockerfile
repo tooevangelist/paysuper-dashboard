@@ -1,14 +1,14 @@
 FROM node:10.12-alpine
 
-RUN mkdir -p /application
-COPY . /application
-WORKDIR /application
-
 RUN apk update && apk add git
+
+WORKDIR /application
 
 COPY package.json /application
 RUN npm rebuild --force
 RUN npm install
+
+COPY . /application
 
 ENV NODE_ENV=production
 ENV P1AUTH_URL=https://auth.tst.protocol.one/api/v1
