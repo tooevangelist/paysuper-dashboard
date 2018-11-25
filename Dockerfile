@@ -5,8 +5,7 @@ RUN apk update && apk add git
 WORKDIR /application
 
 COPY package.json /application
-RUN npm rebuild --force
-RUN npm install
+RUN npm rebuild --force && npm install
 
 COPY . /application
 
