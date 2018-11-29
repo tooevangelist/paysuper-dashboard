@@ -88,7 +88,7 @@
             padding: 5px 0 0 0;
             border: 1px solid #888;
             width: 590px;
-            height: 630px;
+            height: 603px;
             box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
             -webkit-animation-name: animatetop;
             -webkit-animation-duration: 0.4s;

@@ -150,7 +150,7 @@
                         </div>
                     </template>
                     <template slot="body">
-                        <iframe v-bind:src="orderUrl" frameborder="0" width="560px" height="585px"></iframe>
+                        <iframe v-bind:src="orderUrl" frameborder="0" width="560px" height="563px"></iframe>
                     </template>
                     <template slot="footer">
                         <div></div>
