@@ -200,7 +200,19 @@
                                     <div class="form-group">
                                         <label>Name</label>
                                         <input class="form-control" type="text"
-                                               placeholder="Enter fixed package name" v-model="item['name']"/>
+                                               placeholder="Enter fixed package name" v-model="item['name']"
+                                               @blur="getPackageSlug(index)"/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Identifier</label>
+                                        <input class="form-control" type="text"
+                                               placeholder="Enter unique package identifier" v-model="item['id']"/>
+                                        <small class="form-text text-muted">
+                                            You can enter custom package identifier. Identifier must contain only
+                                            symbols from
+                                            latin alphabet, numbers and underscore symbol (Aa0-Zz9_)
+                                        </small>
                                     </div>
 
                                     <div class="form-group">
@@ -302,6 +314,7 @@
         methods: {
             addFixedPackage: function () {
                 this.data['fixed_package'][this.fixedPackageRegion].unshift({
+                    id: '',
                     name: '',
                     currency_int: null,
                     price: null,
@@ -467,6 +480,22 @@
                 }).catch(function (e) {
                     self.error(self.getError(e));
                 });
+            },
+            getPackageSlug: function (index) {
+                if (this.data.fixed_package[this.fixedPackageRegion][index]['name'].length <= 0) {
+                    return;
+                }
+
+                const url = `${process.env.apiServerUrl}/slug?text=${this.data.fixed_package[this.fixedPackageRegion][index]['name']}`;
+                const self = this;
+
+                axios.get(url).then(function (response) {
+                    if (!response.hasOwnProperty('data') || !response.data.hasOwnProperty('slug')) {
+                        return;
+                    }
+
+                    self.data.fixed_package[self.fixedPackageRegion][index]['id'] = response.data['slug'];
+                }).catch(function (e) {});
             }
         },
         mounted: function () {
