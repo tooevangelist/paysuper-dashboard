@@ -10,7 +10,7 @@
 
 <script>
     import OrderSearchPanel from '../../components/OrderSearchPanel';
-    import OrderItemList from '../../components/OrderitemList';
+    import OrderItemList from '../../components/OrderItemList';
 
     export default {
         middleware: 'IsNotAuthenticated',
