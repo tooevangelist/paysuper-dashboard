@@ -57,10 +57,14 @@ module.exports = {
             new webpack.ProvidePlugin({ $: 'jquery' })
         ]
     },
-    modules: ['@nuxtjs/toast'],
-    plugins: [
-        { src: '~/plugins/vue-select', ssr: false }
+    modules: [
+        '@nuxtjs/toast',
+        '@nuxtjs/moment'
     ],
-    vendor: ['vue-select']
+    plugins: [
+        { src: '~/plugins/vue-select', ssr: false },
+        { src: '~/plugins/vue-datepicker', ssr: false }
+    ],
+    vendor: ['vue-select', 'vue2-datepicker']
 };
 
