@@ -27,7 +27,8 @@ module.exports = {
     },
     css: [
         { src: 'font-awesome/scss/font-awesome.scss', lang: 'scss' },
-        { src: '@/assets/scss/style.scss', lang: 'scss' }
+        { src: '@/assets/scss/style.scss', lang: 'scss' },
+        { src: 'vue-multiselect/dist/vue-multiselect.min.css', lang: 'css' }
     ],
     /*
     ** Customize the progress bar color
@@ -63,8 +64,9 @@ module.exports = {
     ],
     plugins: [
         { src: '~/plugins/vue-select', ssr: false },
-        { src: '~/plugins/vue-datepicker', ssr: false }
+        { src: '~/plugins/vue-datepicker', ssr: false },
+        { src: '~/plugins/vue-multiselect', ssr: false }
     ],
-    vendor: ['vue-select', 'vue2-datepicker']
+    vendor: ['vue-select', 'vue2-datepicker', 'vue-multiselect']
 };
 

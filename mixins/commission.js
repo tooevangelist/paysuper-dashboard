@@ -29,12 +29,12 @@ export default {
                 val -= item['vat_amount'];
             }
 
-            if (item.hasOwnProperty('psp_fee')
+            if (item.hasOwnProperty('psp_fee') && item['psp_fee'] != null
                 && item['psp_fee'].hasOwnProperty('amount_payment_method_currency')) {
                 val -= item['psp_fee']['amount_payment_method_currency'];
             }
 
-            if (item.hasOwnProperty('ps_fee_amount')
+            if (item.hasOwnProperty('ps_fee_amount') && item['ps_fee_amount'] != null
                 && item['ps_fee_amount'].hasOwnProperty('amount_payment_method_currency')) {
                 val -= item['ps_fee_amount']['amount_payment_method_currency'];
             }

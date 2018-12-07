@@ -2,7 +2,7 @@
     <div style="width: 100%;">
         <order-search-panel @onOrdersLoaded="onOrdersLoaded"></order-search-panel>
 
-        <div class="col-md-12">
+        <div class="col-12">
             <order-item-list :count="count" :items="items"></order-item-list>
         </div>
     </div>

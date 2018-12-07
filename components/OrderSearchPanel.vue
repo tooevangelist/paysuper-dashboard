@@ -11,36 +11,76 @@
                 <div class="col">
                     <div class="form-group">
                         <label>ID</label>
-                        <input class="form-control" type="text" placeholder="Enter project name"/>
+                        <input class="form-control" type="text" placeholder="Enter ID" v-model="values.id"/>
                     </div>
 
                     <div class="form-group">
                         <label>Project</label>
-                        <input class="form-control" type="text" placeholder="Enter project name"/>
+                        <v-multiselect
+                                v-model="values.project"
+                                :options="projects"
+                                :multiple="true"
+                                :close-on-select="false"
+                                :clear-on-select="false"
+                                :preserve-search="true"
+                                track-by="value"
+                                label="label"
+                                placeholder="Select projects">
+                        </v-multiselect>
                     </div>
 
                     <div class="form-group">
                         <label>Payment method</label>
-                        <input class="form-control" type="text" placeholder="Enter project name"/>
+                        <v-multiselect
+                                v-model="values.paymentMethod"
+                                :options="paymentMethods"
+                                :multiple="true"
+                                :close-on-select="false"
+                                :clear-on-select="false"
+                                :preserve-search="true"
+                                track-by="value"
+                                label="label"
+                                placeholder="Select payment method">
+                        </v-multiselect>
                     </div>
                 </div>
 
                 <div class="col">
                     <div class="form-group">
                         <label>Account</label>
-                        <input class="form-control" type="text" placeholder="Enter project name"/>
+                        <input class="form-control" type="text" placeholder="Enter user account" v-model="values.account"/>
                     </div>
 
                     <div class="form-group">
                         <label>Country</label>
-                        <v-select class="form" id="country" v-bind:options="countries" v-bind:placeholder="'Choose country'"
-                                  @search="onCountrySearch" v-bind:onChange="onChangeCountry"
-                                  v-model="values.country"></v-select>
+                        <v-multiselect
+                                v-model="values.country"
+                                :options="countries"
+                                :multiple="true"
+                                :close-on-select="false"
+                                :clear-on-select="false"
+                                :preserve-search="true"
+                                track-by="value"
+                                label="label"
+                                :internal-search="false"
+                                :searchable="true"
+                                :loading="isLoading"
+                                @search-change="onCountrySearch"
+                                placeholder="Select country">
+                        </v-multiselect>
                     </div>
 
                     <div class="form-group">
                         <label>Status</label>
-                        <input class="form-control" type="text" placeholder="Enter project name"/>
+                        <v-multiselect
+                                v-model="values.status"
+                                :options="statuses"
+                                :multiple="true"
+                                :close-on-select="false"
+                                :clear-on-select="false"
+                                :preserve-search="true"
+                                placeholder="Select status">
+                        </v-multiselect>
                     </div>
                 </div>
 
@@ -68,25 +108,57 @@
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <button type="button" class="btn btn-outline-success pull-right" @click="search">
+                        <i class="fa fa-search"></i> Search
+                    </button>
+                </div>
+            </div>
         </div>
+
+        <div class="col-12" style="height: 20px; background: #e4e5e6;" v-if="isShowed"></div>
     </div>
 </template>
 
 <script>
-    import Country from '../mixins/country';
     import axios from 'axios';
 
     export default {
-        mixins: [Country],
         data: function () {
             return {
                 isShowed: false,
                 values: {
+                    id: null,
+                    account: null,
                     createDate: '',
                     paidDate: '',
-                    country: null
+                    country: null,
+                    project: null,
+                    paymentMethod: null,
+                    status: null,
+
                 },
                 filters: {},
+                projects: [],
+                paymentMethods: [],
+                statuses: ['New', 'In payment', 'Error', 'Paid', 'In progress', 'Completed', 'Pending', 'Refund', 'Chargeback', 'Declined', 'Canceled'],
+                oStatuses: {
+                    'New': [0],
+                    'In payment': [1],
+                    'Error': [2, 3],
+                    'Paid': [4],
+                    'In progress': [5],
+                    'Completed': [6],
+                    'Pending': [7],
+                    'Refund': [8, 9],
+                    'Chargeback': [10],
+                    'Declined': [11],
+                    'Canceled': [12]
+                },
+                countries: [],
+                isLoading: false,
                 shortcuts: [
                     {
                         text: 'Today',
@@ -127,10 +199,129 @@
             }
         },
         methods: {
-            onChangeCountry: function (val) {
+            getProjects: function () {
+                const self = this;
 
+                let url = `${process.env.apiServerUrl}/api/v1/s/project/filters`;
+
+                axios.get(url, {headers: { Authorization: `Bearer ${this['$store'].state.user.accessToken}` }})
+                    .then(function (response) {
+                        if (!response.hasOwnProperty('data')) {
+                            return;
+                        }
+
+                        for (let key in response.data) {
+                            if (!response.data.hasOwnProperty(key)) {
+                                continue;
+                            }
+
+                            self.projects.push({value: key, label: response.data[key] });
+                        }
+                    }).catch(function (e) {
+
+                    });
             },
-            getOrders: function () {
+            getPaymentMethods: function () {
+                const self = this;
+
+                let url = `${process.env.apiServerUrl}/api/v1/s/payment_method/merchant`;
+
+                axios.get(url, {headers: { Authorization: `Bearer ${this['$store'].state.user.accessToken}` }})
+                    .then(function (response) {
+                        if (!response.hasOwnProperty('data')) {
+                            return;
+                        }
+
+                        for (let key in response.data) {
+                            if (!response.data.hasOwnProperty(key)) {
+                                continue;
+                            }
+
+                            self.paymentMethods.push({value: key, label: response.data[key] });
+                        }
+                    }).catch(function (e) {
+
+                    });
+            },
+            onCountrySearch: function (search) {
+                const self = this;
+
+                let url = `${process.env.apiServerUrl}/api/v1/country`;
+
+                if (search.length > 0) {
+                    url += `?name=${search}`;
+                }
+
+                axios.get(url)
+                    .then(function (response) {
+                        if (response.data.length <= 0) {
+                            return;
+                        }
+
+                        self.countries = [];
+
+                        for (let i = 0; i < response.data.length; i++) {
+                            let item = response.data[i];
+
+                            self.countries.push({label: item['name']['en'], value: item['code_a2']});
+                        }
+                    }).catch(function () {});
+            },
+            search: function () {
+                if (this.values.id != null && this.values.id.length > 0) {
+                    this.filters['id'] = this.values.id;
+                }
+
+                if (this.values.account != null && this.values.account.length > 0) {
+                    this.filters['account'] = this.values.account;
+                }
+
+                if (this.values.account != null && this.values.account.length > 0) {
+                    this.filters['account'] = this.values.account;
+                }
+
+                if (this.values.createDate != null && Array.isArray(this.values.createDate)) {
+                    this.filters['project_date_from'] = this.values.createDate[0].getTime()/1000;
+                    this.filters['project_date_to'] = this.values.createDate[1].getTime()/1000;
+                }
+
+                if (this.values.paidDate != null && Array.isArray(this.values.paidDate)) {
+                    this.filters['pm_date_from'] = this.values.paidDate[0].getTime()/1000;
+                    this.filters['pm_date_to'] = this.values.paidDate[1].getTime()/1000;
+                }
+
+                if (this.values.country != null && Array.isArray(this.values.country)) {
+                    this.filters['country'] = [];
+
+                    for (let i = 0; i < this.values.country.length; i++) {
+                        this.filters['country'].push(this.values.country[i].value);
+                    }
+                }
+
+                if (this.values.project != null && Array.isArray(this.values.project)) {
+                    this.filters['project'] = [];
+
+                    for (let i = 0; i < this.values.project.length; i++) {
+                        this.filters['project'].push(this.values.project[i].value);
+                    }
+                }
+
+                if (this.values.paymentMethod != null && Array.isArray(this.values.paymentMethod)) {
+                    this.filters['payment_method'] = [];
+
+                    for (let i = 0; i < this.values.paymentMethod.length; i++) {
+                        this.filters['payment_method'].push(this.values.paymentMethod[i].value);
+                    }
+                }
+
+                if (this.values.status != null && Array.isArray(this.values.status)) {
+                    this.filters['status'] = [];
+
+                    for (let i = 0; i < this.values.status.length; i++) {
+                        this.filters['status'] = [...this.filters['status'], ...this.values.status[1]];
+                    }
+                }
+
                 const self = this;
 
                 let url = `${process.env.apiServerUrl}/api/v1/s/order`;
@@ -147,13 +338,17 @@
                         }
 
                         self.$emit('onOrdersLoaded', response.data.count, response.data.items);
-                    }).catch(function (e) {
-
+                    }).catch(function () {
+                        self.$emit('onOrdersLoaded', 0, 0);
                     });
             }
         },
         created: function () {
-            this.getOrders();
+            this.getProjects();
+            this.getPaymentMethods();
+            this.onCountrySearch('');
+
+            this.search();
         }
     }
 </script>
