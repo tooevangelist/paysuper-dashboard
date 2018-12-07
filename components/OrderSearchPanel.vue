@@ -318,7 +318,7 @@
                     this.filters['status'] = [];
 
                     for (let i = 0; i < this.values.status.length; i++) {
-                        this.filters['status'] = [...this.filters['status'], ...this.values.status[1]];
+                        this.filters['status'] = [...this.filters['status'], ...this.oStatuses[this.values.status[i]]];
                     }
                 }
 
@@ -339,7 +339,7 @@
 
                         self.$emit('onOrdersLoaded', response.data.count, response.data.items);
                     }).catch(function () {
-                        self.$emit('onOrdersLoaded', 0, 0);
+                        self.$emit('onOrdersLoaded', 0, []);
                     });
             }
         },
