@@ -17,6 +17,16 @@
                         <i class="nav-icon fa fa-cog"></i> Projects
                     </nuxt-link>
                 </li>
+                <li class="nav-item" v-if="getMerchant && getMerchant.status >= 1">
+                    <nuxt-link class="nav-link" to="/order" active-class="active">
+                        <i class="nav-icon fa fa-cog"></i> Orders
+                    </nuxt-link>
+                </li>
+                <li class="nav-item" v-if="getMerchant && getMerchant.status >= 1">
+                    <nuxt-link class="nav-link" to="/revenue" active-class="active">
+                        <i class="nav-icon fa fa-cog"></i> Revenue
+                    </nuxt-link>
+                </li>
             </ul>
         </nav>
     </div>
