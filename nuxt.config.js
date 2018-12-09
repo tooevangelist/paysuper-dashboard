@@ -55,12 +55,17 @@ module.exports = {
             vendor: ['axios', 'jquery']
         },
         plugins: [
-            new webpack.ProvidePlugin({ $: 'jquery' })
+            new webpack.ProvidePlugin({
+                jQuery: 'jquery',
+                $: 'jquery',
+                'window.jQuery': 'jquery'
+            })
         ]
     },
     modules: [
         '@nuxtjs/toast',
-        '@nuxtjs/moment'
+        '@nuxtjs/moment',
+        ['bootstrap-vue/nuxt', { css: false }]
     ],
     plugins: [
         { src: '~/plugins/vue-select', ssr: false },

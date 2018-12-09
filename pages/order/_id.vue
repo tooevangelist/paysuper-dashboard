@@ -36,7 +36,7 @@
                     <span class="characteristic-name-value">Amount</span>
                 </dt>
                 <dd class="characteristic-value">
-                    <span class="characteristic-value-value">{{ amount }}</span>
+                    <span class="characteristic-value-value">{{ getAmount(order) }}</span>
                 </dd>
                 <dt class="characteristic-name">
                     <span class="characteristic-name-value">Account</span>
@@ -94,7 +94,7 @@
                     <span class="characteristic-name-value">Payment amount</span>
                 </dt>
                 <dd class="characteristic-value">
-                    <span class="characteristic-value-value">{{ amount }}</span>
+                    <span class="characteristic-value-value">{{ getAmount(order) }}</span>
                 </dd>
                 <dt class="characteristic-name">
                     <span class="characteristic-name-value">P1 Fee</span>
@@ -244,17 +244,6 @@
                 }
 
                 return this.$moment.unix(this.order['confirmed_at']).format('YYYY-MM-DD hh:mm:ss');
-            },
-            amount: function () {
-                let key = 'project_amount_income';
-
-                if (this.order.hasOwnProperty('project_amount_outcome')
-                    && this.order['project_amount_outcome'].hasOwnProperty('amount')
-                    && this.order['project_amount_outcome'] !== null) {
-                    key = 'project_amount_outcome';
-                }
-
-                return this.order[key]['amount'] + ' ' + this.order[key]['currency']['code_a3'];
             },
             product: function () {
                 let val = '&mdash;';

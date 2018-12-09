@@ -40,6 +40,16 @@ export default {
             }
 
             return val + ' ' + item['payment_method_amount_income']['currency']['code_a3'];
+        },
+        getAmount: function (item) {
+            let key = 'project_amount_income';
+
+            if (item.hasOwnProperty('project_amount_outcome')&& item['project_amount_outcome'].hasOwnProperty('amount')
+                && item['project_amount_outcome'] !== null) {
+                key = 'project_amount_outcome';
+            }
+
+            return item[key]['amount'] + ' ' + item[key]['currency']['code_a3'];
         }
     }
 };

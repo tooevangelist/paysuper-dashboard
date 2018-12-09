@@ -128,6 +128,8 @@
     export default {
         data: function () {
             return {
+                dLimit: this.limit,
+                dOffset: this.offset,
                 isShowed: false,
                 values: {
                     id: null,
@@ -140,7 +142,6 @@
                     status: null,
 
                 },
-                filters: {},
                 projects: [],
                 paymentMethods: [],
                 statuses: ['New', 'In payment', 'Error', 'Paid', 'In progress', 'Completed', 'Pending', 'Refund', 'Chargeback', 'Declined', 'Canceled'],
@@ -268,87 +269,69 @@
                     }).catch(function () {});
             },
             search: function () {
+                let filters = {};
+
                 if (this.values.id != null && this.values.id.length > 0) {
-                    this.filters['id'] = this.values.id;
+                    filters['id'] = this.values.id;
                 }
 
                 if (this.values.account != null && this.values.account.length > 0) {
-                    this.filters['account'] = this.values.account;
+                    filters['account'] = this.values.account;
                 }
 
                 if (this.values.account != null && this.values.account.length > 0) {
-                    this.filters['account'] = this.values.account;
+                    filters['account'] = this.values.account;
                 }
 
                 if (this.values.createDate != null && Array.isArray(this.values.createDate)) {
-                    this.filters['project_date_from'] = this.values.createDate[0].getTime()/1000;
-                    this.filters['project_date_to'] = this.values.createDate[1].getTime()/1000;
+                    filters['project_date_from'] = this.values.createDate[0].getTime()/1000;
+                    filters['project_date_to'] = this.values.createDate[1].getTime()/1000;
                 }
 
                 if (this.values.paidDate != null && Array.isArray(this.values.paidDate)) {
-                    this.filters['pm_date_from'] = this.values.paidDate[0].getTime()/1000;
-                    this.filters['pm_date_to'] = this.values.paidDate[1].getTime()/1000;
+                    filters['pm_date_from'] = this.values.paidDate[0].getTime()/1000;
+                    filters['pm_date_to'] = this.values.paidDate[1].getTime()/1000;
                 }
 
                 if (this.values.country != null && Array.isArray(this.values.country)) {
-                    this.filters['country'] = [];
+                    filters['country'] = [];
 
                     for (let i = 0; i < this.values.country.length; i++) {
-                        this.filters['country'].push(this.values.country[i].value);
+                        filters['country'].push(this.values.country[i].value);
                     }
                 }
 
                 if (this.values.project != null && Array.isArray(this.values.project)) {
-                    this.filters['project'] = [];
+                    filters['project'] = [];
 
                     for (let i = 0; i < this.values.project.length; i++) {
-                        this.filters['project'].push(this.values.project[i].value);
+                        filters['project'].push(this.values.project[i].value);
                     }
                 }
 
                 if (this.values.paymentMethod != null && Array.isArray(this.values.paymentMethod)) {
-                    this.filters['payment_method'] = [];
+                    filters['payment_method'] = [];
 
                     for (let i = 0; i < this.values.paymentMethod.length; i++) {
-                        this.filters['payment_method'].push(this.values.paymentMethod[i].value);
+                        filters['payment_method'].push(this.values.paymentMethod[i].value);
                     }
                 }
 
                 if (this.values.status != null && Array.isArray(this.values.status)) {
-                    this.filters['status'] = [];
+                    filters['status'] = [];
 
                     for (let i = 0; i < this.values.status.length; i++) {
-                        this.filters['status'] = [...this.filters['status'], ...this.oStatuses[this.values.status[i]]];
+                        filters['status'] = [...this.filters['status'], ...this.oStatuses[this.values.status[i]]];
                     }
                 }
 
-                const self = this;
-
-                let url = `${process.env.apiServerUrl}/api/v1/s/order`;
-
-                if (Object.keys(this.filters).length > 0) {
-                    url += '?' + $.param(this.filters);
-                }
-
-                axios.get(url, {headers: { Authorization: `Bearer ${this['$store'].state.user.accessToken}` }})
-                    .then(function (response) {
-                        if (!response.hasOwnProperty('data') || !response.data.hasOwnProperty('count')
-                            || !response.data.hasOwnProperty('items')) {
-                            return;
-                        }
-
-                        self.$emit('onOrdersLoaded', response.data.count, response.data.items);
-                    }).catch(function () {
-                        self.$emit('onOrdersLoaded', 0, []);
-                    });
+                this.$emit('onSearch', filters);
             }
         },
-        created: function () {
+        mounted: function () {
             this.getProjects();
             this.getPaymentMethods();
             this.onCountrySearch('');
-
-            this.search();
         }
     }
 </script>
