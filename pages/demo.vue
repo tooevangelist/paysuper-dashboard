@@ -189,21 +189,21 @@
                     currency: currency,
                     account: 'dmitriy.sinichkin@protocol.one',
                     //payment_method: 'bank_card',
-                    payer_ip: '46.32.78.127',
+                    //payer_ip: '46.32.78.127',
                     region: 'US'
                 };
 
                 axios.post(`${process.env.apiServerUrl}/api/v1/order`, data)
                     .then(function (response) {
-                        if (!response.hasOwnProperty('data') || !response.data.hasOwnProperty('order_url')) {
+                        if (!response.hasOwnProperty('data') || !response.data.hasOwnProperty('inline_form_redirect_url')) {
                             self.error('Unknown error. Try request later.');
                         }
 
-                        self.orderUrl = response.data['order_url'];
+                        self.orderUrl = response.data['inline_form_redirect_url'];
                         self.isShow = true;
                     }).catch(function (e) {
-                    self.error(self.getError(e));
-                });
+                        self.error(self.getError(e));
+                    });
             },
             close: function () {
                 this.isShow = false;
