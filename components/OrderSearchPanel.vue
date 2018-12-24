@@ -332,6 +332,20 @@
             this.getProjects();
             this.getPaymentMethods();
             this.onCountrySearch('');
+
+            const query = this['$route']['query'];
+
+            if (Object.keys(query).length > 0 && query.hasOwnProperty('pm_date_from')
+                && query.hasOwnProperty('pm_date_to')) {
+                let filters = {
+                    'pm_date_from': query['pm_date_from'],
+                    'pm_date_to': query['pm_date_to']
+                };
+
+                this.$emit('onSearch', filters);
+            }
+
+
         }
     }
 </script>

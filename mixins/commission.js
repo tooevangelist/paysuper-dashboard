@@ -44,8 +44,8 @@ export default {
         getAmount: function (item) {
             let key = 'project_amount_income';
 
-            if (item.hasOwnProperty('project_amount_outcome')&& item['project_amount_outcome'].hasOwnProperty('amount')
-                && item['project_amount_outcome'] !== null) {
+            if (item.hasOwnProperty('project_amount_outcome') && item['project_amount_outcome'] != null
+                && item['project_amount_outcome'].hasOwnProperty('amount') && item['project_amount_outcome'] !== null) {
                 key = 'project_amount_outcome';
             }
 

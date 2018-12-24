@@ -148,7 +148,14 @@
         methods: {
             onPageChange(index) {
                 this.offset = this.limit * (index - 1);
-                this.$router.push({path: 'order', query: { limit: this.limit, offset: this.offset }});
+
+                let query = this['$route']['query'];
+
+                if (Object.keys(query).length > 0) {
+                    query = {...query, ...{ limit: this.limit, offset: this.offset }}
+                }
+
+                this.$router.push({path: 'order', query: query});
 
                 this.$emit('onPageChange', this.limit, this.offset, this.aSortBy);
             },
