@@ -142,20 +142,6 @@
                         </div>
                     </div>
                 </div>
-
-                <popup v-bind:isOpen="isShow">
-                    <template slot="header">
-                        <div style="height: 30px;">
-                            <span class="close" style="margin-right: 10px; color: #23282c" @click="close">&times;</span>
-                        </div>
-                    </template>
-                    <template slot="body">
-                        <iframe v-bind:src="orderUrl" frameborder="0" width="560px" height="563px"></iframe>
-                    </template>
-                    <template slot="footer">
-                        <div></div>
-                    </template>
-                </popup>
             </div>
 
             <footer class="pt-4 my-md-5 pt-md-5 border-top">
@@ -167,47 +153,27 @@
 
 <script>
     import axios from 'axios';
-    import Popup from '../components/Popup';
     import Notifications from '../mixins/notificaton';
 
     export default {
         layout: 'login',
-        components: {Popup},
-        mixins: [Notifications],
-        data: function () {
-            return {
-                isShow: false,
-                orderUrl: ''
-            }
+          head: {
+            script: [
+                { src: 'https://static.protocol.one/payone/sdk/v2.2.0/p1payone.js' }
+            ],
         },
+        mixins: [Notifications],
         methods: {
             buy: function (amount, currency) {
-                const self = this;
-                const data = {
-                    project: process.env.apiProjectIdentifier,
-                    amount: amount,
-                    currency: currency,
-                    account: 'dmitriy.sinichkin@protocol.one',
-                    //payment_method: 'bank_card',
-                    //payer_ip: '46.32.78.127',
-                    region: 'US'
-                };
-
-                axios.post(`${process.env.apiServerUrl}/api/v1/order`, data)
-                    .then(function (response) {
-                        if (!response.hasOwnProperty('data') || !response.data.hasOwnProperty('inline_form_redirect_url')) {
-                            self.error('Unknown error. Try request later.');
-                        }
-
-                        self.orderUrl = response.data['inline_form_redirect_url'];
-                        self.isShow = true;
-                    }).catch(function (e) {
-                        self.error(self.getError(e));
+                this.$nextTick(() => {
+                    const payoneForm = new P1PayOne({
+                        projectID: process.env.apiProjectIdentifier,
+                        region: 'US',
+                        account: 'dmitriy.sinichkin@protocol.one',
                     });
+                    payoneForm.setCurrency(currency).setAmount(amount).renderModal();
+                })
             },
-            close: function () {
-                this.isShow = false;
-            }
         },
         mounted: function () {
 
@@ -216,35 +182,41 @@
 </script>
 
 <style lang="scss">
-    .image {
-        margin: 10px;
-        padding: 5px;
-        border: 1px solid #c8ced3;
-        height: 210px;
-        width: auto;
+.image {
+    margin: 10px;
+    padding: 5px;
+    border: 1px solid #c8ced3;
+    height: 210px;
+    width: auto;
 
-        &.scooty-puff-jr {
-            background: url('../assets/images/scooty-puff-jr.jpg') no-repeat transparent center center;
-        }
-        &.scooty-puff {
-            background: url('../assets/images/scooty-puff.jpg') no-repeat transparent center center;
-            background-size: cover;
-        }
-        &.planet-express {
-            background: url('../assets/images/planet-express.jpg') no-repeat transparent center center;
-            background-size: cover;
-        }
-        &.nibbler {
-            background: url('../assets/images/nibbler.jpg') no-repeat transparent center center;
-            background-size: contain;
-        }
-        &.zoidberg {
-            background: url('../assets/images/zoidberg.jpg') no-repeat transparent center center;
-            background-size: cover;
-        }
-        &.double-yeti {
-            background: url('../assets/images/double-yeti.jpg') no-repeat transparent center center;
-            background-size: cover;
-        }
+    &.scooty-puff-jr {
+        background: url("../assets/images/scooty-puff-jr.jpg") no-repeat
+            transparent center center;
     }
+    &.scooty-puff {
+        background: url("../assets/images/scooty-puff.jpg") no-repeat
+            transparent center center;
+        background-size: cover;
+    }
+    &.planet-express {
+        background: url("../assets/images/planet-express.jpg") no-repeat
+            transparent center center;
+        background-size: cover;
+    }
+    &.nibbler {
+        background: url("../assets/images/nibbler.jpg") no-repeat transparent
+            center center;
+        background-size: contain;
+    }
+    &.zoidberg {
+        background: url("../assets/images/zoidberg.jpg") no-repeat transparent
+            center center;
+        background-size: cover;
+    }
+    &.double-yeti {
+        background: url("../assets/images/double-yeti.jpg") no-repeat
+            transparent center center;
+        background-size: cover;
+    }
+}
 </style>
