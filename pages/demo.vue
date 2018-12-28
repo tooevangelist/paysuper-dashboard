@@ -159,7 +159,7 @@
         layout: 'login',
           head: {
             script: [
-                { src: 'https://static.protocol.one/payone/sdk/v2.2.0/p1payone.js' }
+                { src: 'https://static.protocol.one/payone/sdk/dev/p1payone.js' }
             ],
         },
         mixins: [Notifications],
@@ -176,7 +176,6 @@
             },
         },
         mounted: function () {
-
         }
     }
 </script>
