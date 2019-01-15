@@ -1,6 +1,10 @@
 <template>
     <div style="display: flex; height: 100vh;">
-        <h2 style="margin: auto;">Payment is finished</h2>
+      <div style="margin: auto; text-align: center">
+        <h2>Payment is finished successfuly</h2>
+        <p><b>This page will be closed in a few seconds.</b></p>
+        <p>Check the payment details at the page where you've started the payment.</p>
+      </div>
     </div>
 </template>
 
