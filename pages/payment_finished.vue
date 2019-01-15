@@ -16,12 +16,7 @@
         },
 
         mounted() {
-            window.postMessage({
-                source: 'PAYONE_PAYMENT_FORM',
-                name: 'FINAL_SUCCESS',
-            }, '*');
-
-            window.parent.postMessage({
+            window.opener.postMessage({
                 source: 'PAYONE_PAYMENT_FORM',
                 name: 'FINAL_SUCCESS',
             }, '*');
