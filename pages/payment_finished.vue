@@ -13,6 +13,13 @@
         layout: 'login',
         head: {
             title: 'Payment is finished'
+        },
+
+        mounted() {
+            window.postMessage({
+                source: 'PAYONE_PAYMENT_FORM',
+                name: 'FINAL_SUCCESS',
+            }, '*');
         }
     }
 </script>
