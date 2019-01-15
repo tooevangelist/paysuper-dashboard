@@ -20,6 +20,13 @@
                 source: 'PAYONE_PAYMENT_FORM',
                 name: 'FINAL_SUCCESS',
             }, '*');
+
+            window.parent.postMessage({
+                source: 'PAYONE_PAYMENT_FORM',
+                name: 'FINAL_SUCCESS',
+            }, '*');
+
+            console.log(11111, 'say')
         }
     }
 </script>
