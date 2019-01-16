@@ -168,8 +168,8 @@
                 this.$nextTick(() => {
                     const payoneForm = new P1PayOne({
                         projectID: process.env.apiProjectIdentifier,
-                        region: 'US',
-                        account: 'dmitriy.sinichkin@protocol.one',
+                        region: 'US'
+                        //account: 'dmitriy.sinichkin@protocol.one',
                     });
                     payoneForm.setCurrency(currency).setAmount(amount).renderModal();
                 })
