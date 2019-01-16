@@ -183,15 +183,15 @@
                             </ul>
 
                             <div class="row">
-                                <div class="col-md-12" v-if="data['fixed_package'][fixedPackageRegion].length <= 0">
+                                <div class="col-md-12" v-if="hasFixedPackage === false">
                                     Fixed pages list is empty
                                 </div>
 
                                 <div class="col-md-12 field-group"
-                                     v-if="data['fixed_package'][fixedPackageRegion].length > 0"
+                                     v-if="hasFixedPackage === true"
                                      v-for="(item, index) in data['fixed_package'][fixedPackageRegion]"
                                      v-bind:key="index">
-                                    <div class="form-group text-right" v-if="data['isNew']">
+                                    <div class="form-group text-right" v-if="isNew">
                                         <a href="#" @click.prevent="removeFixedPackage(index)">
                                             <span class="fa fa-close"></span>
                                         </a>
@@ -241,7 +241,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group text-right" v-if="!data['isNew']">
+                                    <div class="form-group text-right" v-if="!isNew">
                                         <button type="button" class="btn btn-sm"
                                                 @click="item['is_active'] = !item['is_active']"
                                                 v-bind:class="{
@@ -300,8 +300,7 @@
                     send_notify_email: false,
                     only_fixed_amounts: false,
                     is_allow_dynamic_notify_urls: false,
-                    is_allow_dynamic_redirect_urls: false,
-                    isNew: true
+                    is_allow_dynamic_redirect_urls: false
                 },
                 fixedPackageRegion: 'US',
                 callbackCurrency: null,
@@ -439,8 +438,6 @@
                 let self = this;
                 let promise;
 
-                const isNew = this.data.hasOwnProperty('isNew') && this.data['isNew'] === true;
-
                 for (let key in this.data['fixed_package']) {
                     if (!this.data['fixed_package'].hasOwnProperty(key)) {
                         continue;
@@ -459,7 +456,7 @@
                     }
                 }
 
-                if (isNew === true) {
+                if (this.isNew === true) {
                     promise = axios.post(`${process.env.apiServerUrl}/api/v1/s/project`, this.data, {
                         headers: {Authorization: `Bearer ${this['$store'].state.user.accessToken}`}
                     });
@@ -470,7 +467,7 @@
                 }
 
                 promise.then(function () {
-                    if (isNew === true) {
+                    if (self.isNew === true) {
                         self.success('Project created successfully');
                     } else {
                         self.success('Project updated successfully');
@@ -498,9 +495,16 @@
                 }).catch(function (e) {});
             }
         },
+        computed: {
+            hasFixedPackage: function () {
+                return this.data.fixed_package[this.fixedPackageRegion].length > 0;
+            },
+            isNew: function () {
+                return !this.data.hasOwnProperty('id');
+            }
+        },
         mounted: function () {
-            if (!this.project.hasOwnProperty('name') || !this.project.hasOwnProperty('callback_protocol')
-                || !this.project.hasOwnProperty('secret_key') || !this.project.hasOwnProperty('url_process_payment')) {
+            if (Object.keys(this.project).length <= 0) {
                 return;
             }
 
@@ -571,7 +575,7 @@
                 }
             }
 
-            this.data = data;
+            this.data = {...this.data, ...data};
         }
     }
 </script>

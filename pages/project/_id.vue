@@ -24,10 +24,7 @@
                 return {
                     project: response.data
                 };
-            }).catch(function (e) {
-                self.error(self.getError(e));
-                self['$router'].push('/project');
-            });
+            }).catch(function (e) {});
         }
     }
 </script>
