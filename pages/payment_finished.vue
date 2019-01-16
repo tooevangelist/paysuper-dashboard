@@ -2,7 +2,8 @@
     <div style="display: flex; height: 100vh;">
       <div style="margin: auto; text-align: center">
         <h2>Payment is finished successfuly</h2>
-        <p><b>This page will be closed in a few seconds.</b></p>
+        <p><b>We will try to close this page in a few seconds.</b></p>
+        <p>Feel free to close it by yourself.</p>
         <p>Check the payment details at the page where you've started the payment.</p>
       </div>
     </div>
@@ -16,12 +17,12 @@
         },
 
         mounted() {
+          if (window.opener) {
             window.opener.postMessage({
-                source: 'PAYONE_PAYMENT_FORM',
+                source: 'PAYONE_PAYMENT_FINISHED_PAGE',
                 name: 'FINAL_SUCCESS',
             }, '*');
-
-            console.log(11111, 'say')
+          }
         }
     }
 </script>
