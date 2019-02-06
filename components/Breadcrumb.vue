@@ -1,5 +1,3 @@
 <template>
-    <ol class="breadcrumb">
-
-    </ol>
+  <ol class="breadcrumb"></ol>
 </template>

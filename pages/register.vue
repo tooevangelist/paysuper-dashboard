@@ -1,17 +1,17 @@
 <template>
-    <div>
-        <sign-up></sign-up>
-    </div>
+  <div>
+    <sign-up></sign-up>
+  </div>
 </template>
 
 <script>
-    import SignUp from '../components/SignUp';
+import SignUp from '../components/SignUp.vue';
 
-    export default {
-        components: {SignUp},
-        layout: 'login',
-        head: {
-            title: 'SignUp page'
-        }
-    }
+export default {
+  components: { SignUp },
+  layout: 'login',
+  head: {
+    title: 'SignUp page',
+  },
+};
 </script>

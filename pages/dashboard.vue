@@ -1,11 +1,9 @@
 <template>
-    <div>
-        It's place for dashboards
-    </div>
+  <div>It's place for dashboards</div>
 </template>
 
 <script>
-    export default {
+export default {
 
-    }
+};
 </script>

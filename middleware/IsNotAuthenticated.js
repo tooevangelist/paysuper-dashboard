@@ -1,11 +1,10 @@
 export default function ({ store, redirect }) {
-    let user = store.state.user;
-    const cDate = new Date();
+  const { user } = store.state;
+  const cDate = new Date();
 
-    if (user && user.hasOwnProperty('accessToken')
-        && user.hasOwnProperty('email') && user.expire >= cDate.getTime()) {
-        return;
-    }
+  if (user && user.accessToken && user.email && user.expire >= cDate.getTime()) {
+    return undefined;
+  }
 
-    return redirect('/login');
+  return redirect('/login');
 }

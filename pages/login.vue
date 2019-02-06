@@ -1,17 +1,17 @@
 <template>
-    <div>
-        <sign-in></sign-in>
-    </div>
+  <div>
+    <sign-in></sign-in>
+  </div>
 </template>
 
 <script>
-    import SignIn from '../components/SignIn';
+import SignIn from '../components/SignIn.vue';
 
-    export default {
-        components: {SignIn},
-        layout: 'login',
-        head: {
-            title: 'SignIn page'
-        }
-    }
+export default {
+  components: { SignIn },
+  layout: 'login',
+  head: {
+    title: 'SignIn page',
+  },
+};
 </script>
