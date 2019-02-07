@@ -21,5 +21,11 @@ module.exports = {
   rules: {
     'no-param-reassign': ['error', { ignorePropertyModificationsFor: ['state'] }],
     'no-plusplus': 'off'
+  },
+  settings: {
+    'import/resolver': {
+      // We need this for eslint to understand ~ path aliases
+      'nuxt-import': {}
+    }
   }
 }

@@ -50,8 +50,7 @@ export default {
 
       axios.get(url, { headers: { Authorization: `Bearer ${this.$store.state.user.accessToken}` } })
         .then((response) => {
-          if (!response.hasOwnProperty('data') || !response.data.hasOwnProperty('count')
-                            || !response.data.hasOwnProperty('items')) {
+          if (!response.data || !response.data.count || !response.data.items) {
             return;
           }
 
