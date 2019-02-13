@@ -55,9 +55,9 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import Notifications from '../mixins/notificaton';
+import { mapState } from 'vuex';
 import axios from 'axios';
+import Notifications from '../mixins/notificaton';
 
 export default {
   middleware: 'IsNotAuthenticated',
@@ -83,12 +83,10 @@ export default {
     },
   },
   computed: {
-    ...mapGetters({
-      merchant: 'merchant/getMerchant',
-    }),
+    ...mapState('merchant', ['merchant']),
   },
   mounted() {
-    if (this.merchant.hasOwnProperty('first_payment_at')
+    if (this.merchant.first_payment_at
                 && this.merchant.first_payment_at != null && this.merchant.accounting_period != null) {
       const cDate = this.$moment();
       const fpDate = this.$moment(this.merchant.first_payment_at);

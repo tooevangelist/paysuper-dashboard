@@ -219,7 +219,7 @@ export default {
           order: response.data,
         };
       }).catch((e) => {
-        self.error(self.getError(e));
+        self.error(self.getErrorMessage(e));
         self.$router.push('/order');
       });
   },

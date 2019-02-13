@@ -80,7 +80,7 @@ export default {
 
           self.setCookies(data);
         }).catch((e) => {
-          self.error(self.getError(e));
+          self.error(self.getErrorMessage(e));
         });
     },
   },

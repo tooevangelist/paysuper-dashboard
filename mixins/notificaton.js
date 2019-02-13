@@ -8,11 +8,18 @@ export default {
     error(message, opts = {}) {
       this.notify('error', message, opts);
     },
-    getError(e) {
+
+    showSuccessMessage(message, opts = {}) {
+      this.notify('success', message, opts);
+    },
+    showErrorMessage(message, opts = {}) {
+      this.notify('error', message, opts);
+    },
+    getErrorMessage(e) {
       let message = 'Unknown error. Try request later.';
 
       if (e.hasOwnProperty('response') && e.response.hasOwnProperty('data')
-                && typeof e.response.data === 'object') {
+        && typeof e.response.data === 'object') {
         const keys = Object.keys(e.response.data);
         message = e.response.data[keys[0]];
       }

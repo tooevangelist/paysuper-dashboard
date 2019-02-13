@@ -188,7 +188,7 @@ export default {
           self.revenue = response.data.revenue;
           self.refund = response.data.refund;
         }).catch((e) => {
-          self.error(self.getError(e));
+          self.error(self.getErrorMessage(e));
         });
     },
   },

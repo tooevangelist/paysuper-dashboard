@@ -2,68 +2,55 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-12">
-        <div class="alert alert-info" role="alert" v-if="!getMerchant || getMerchant.status < 1">
-          Thanks for your registration. Please enter main information about your company before you create
-          first technical integration.
+        <div class="alert alert-info" role="alert" v-if="!merchant || merchant.status < 1">
+          Thanks for your registration. Please enter main information
+          about your company before you create first technical integration.
         </div>
       </div>
 
-      <div class="col-md-12">
+      <div class="col-md-12" v-if="merchant">
         <div class="card">
           <div class="card-header">
             <strong>Add main information about your company</strong>
           </div>
           <div class="card-body">
             <div class="form-group">
-              <label for="company">Name</label>
-              <input
-                class="form-control"
-                id="company"
-                type="text"
+              <TextField
                 placeholder="Enter your company name"
-                v-model="data.name"
-              >
+                v-model="name"
+                label="Name"
+              />
             </div>
             <div class="form-group">
-              <label for="country">Country</label>
-              <v-select
-                class="form"
-                id="country"
-                v-bind:options="countries"
-                v-bind:placeholder="'Choose country'"
+              <Select
+                label="Country"
+                :options="countries"
+                :hasEmptyValue="true"
                 @search="onCountrySearch"
-                v-bind:onChange="onChangeCountry"
                 v-model="country"
-              ></v-select>
+              />
             </div>
             <div class="form-group">
-              <label for="accounting-currency">Accounting currency</label>
-              <v-select
-                class="form"
-                id="accounting-currency"
-                v-bind:options="currencies"
-                v-bind:placeholder="'Choose your accounting currency'"
+              <Select
+                label="Accounting currency"
+                :options="currencies"
+                :hasEmptyValue="true"
                 @search="onCurrencySearch"
-                v-bind:onChange="onChangeCurrency"
                 v-model="currency"
-              ></v-select>
+              />
             </div>
             <div class="form-group">
-              <label for="accounting-period">Accounting period</label>
-              <v-select
-                class="form"
-                id="accounting-period"
-                v-bind:options="accountingPeriods"
-                v-bind:placeholder="'Choose your accounting period'"
-                v-bind:onChange="onChangeAccountingPeriod"
+              <Select
+                label="Accounting period"
+                :options="accountingPeriods"
+                :hasEmptyValue="true"
+                @search="onCurrencySearch"
                 v-model="accountingPeriod"
-              ></v-select>
+              />
             </div>
 
             <div class="form-group btn float-right">
-              <button type="button" class="btn btn-outline-success btn-lg" @click="update">
-                <i class="fa fa-save"></i> Save
-              </button>
+              <Button @click="update">Save</Button>
             </div>
           </div>
         </div>
@@ -73,7 +60,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapState } from 'vuex';
+import { Button, Select, TextField } from '@protocol-one/ui-kit';
 import Notifications from '../mixins/notificaton';
 import Country from '../mixins/country';
 import Currency from '../mixins/currency';
@@ -81,9 +69,14 @@ import Currency from '../mixins/currency';
 export default {
   middleware: 'IsNotAuthenticated',
   mixins: [Notifications, Currency, Country],
+  components: {
+    Button,
+    Select,
+    TextField,
+  },
   data() {
     return {
-      data: {},
+      name: '',
       currency: null,
       country: null,
       accountingPeriod: null,
@@ -100,48 +93,41 @@ export default {
   },
   methods: {
     update() {
-      const self = this;
-
-      this.$store.dispatch('merchant/update', this.data)
+      this.$store.dispatch('merchant/update', {
+        ...this.data,
+        name: this.name,
+        currency: this.currency,
+        country: this.country,
+        accounting_period: this.accountingPeriod,
+      })
         .then(() => {
-          self.success('Merchant data updated successfully');
+          this.showSuccessMessage('Merchant data updated successfully');
         }).catch((e) => {
-          self.error(self.getError(e));
+          this.showErrorMessage(this.getErrorMessage(e));
         });
-    },
-    onChangeCountry(val) {
-      this.data.country = val.value;
-    },
-    onChangeCurrency(val) {
-      this.data.currency = val.value;
-    },
-    onChangeAccountingPeriod(val) {
-      this.data.accounting_period = val.value;
     },
   },
   computed: {
-    ...mapGetters({
-      getMerchant: 'merchant/getMerchant',
-    }),
+    ...mapState('merchant', ['merchant']),
   },
   mounted() {
-    this.data = Object.assign({}, this.$store.state.merchant.merchant);
+    this.name = this.merchant.name;
 
-    if (this.data.country != null) {
-      this.country = { label: this.data.country.name.en, value: this.data.country.code_int };
+    if (this.merchant.country) {
+      this.country = this.merchant.country.code_int;
     }
 
-    if (this.data.currency != null) {
-      this.currency = { label: this.data.currency.name.en, value: this.data.currency.code_int };
+    if (this.merchant.currency) {
+      this.currency = this.merchant.currency.code_int;
     }
 
-    for (let i = 0; i < this.accountingPeriods.length; i++) {
-      if (this.data.accounting_period !== this.accountingPeriods[i].value) {
-        continue;
+    this.accountingPeriods.forEach((item) => {
+      if (this.merchant.accounting_period !== item.value) {
+        return;
       }
 
-      this.accountingPeriod = this.accountingPeriods[i];
-    }
+      this.accountingPeriod = item.value;
+    });
   },
 };
 </script>

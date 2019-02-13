@@ -93,7 +93,7 @@ export default {
           self.setCookies(data);
           self.success('Registration complete successfully');
         }).catch((e) => {
-          self.error(self.getError(e));
+          self.error(self.getErrorMessage(e));
         });
     },
   },

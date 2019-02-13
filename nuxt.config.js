@@ -44,6 +44,7 @@ module.exports = {
       // /^@protocol-one\/ui-kit\/?((?!node_modules).)*$/,
       /@protocol-one\/ui-kit/,
       /lodash-es/,
+      /vuejs-datepicker/,
     ],
 
     /*

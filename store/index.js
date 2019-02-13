@@ -2,160 +2,162 @@ import cookieParser from 'cookieparser';
 import cookie from 'js-cookie';
 import api from '~/api/auth';
 
-export const state = () => ({
-  user: null,
-});
+export default {
+  state: () => ({
+    user: null,
+  }),
 
-export const getters = {
-  getUser: state => state.user || null,
-};
-
-export const mutations = {
-  setUser(store, data) {
-    store.user = data;
+  getters: {
+    getUser: state => state.user || null,
   },
-  resetUser(store) {
-    store.user = null;
+
+  mutations: {
+    setUser(store, data) {
+      store.user = data;
+    },
+    resetUser(store) {
+      store.user = null;
+    },
   },
-};
 
-export const actions = {
-  async nuxtServerInit({ commit, dispatch }, { req, res }) {
-    let accessToken = null;
+  actions: {
+    async nuxtServerInit({ commit, dispatch }, { req, res }) {
+      let accessToken = null;
 
-    if (!req.headers.cookie) {
-      return;
-    }
+      if (!req.headers.cookie) {
+        return;
+      }
 
-    const parsed = cookieParser.parse(req.headers.cookie);
+      const parsed = cookieParser.parse(req.headers.cookie);
 
-    const data = {
-      email: 'unknown',
-    };
-
-    if (parsed.hasOwnProperty('PP_EML_V')) {
-      data.email = parsed.hasOwnProperty('PP_EML_V');
-    }
-
-    if (!parsed.hasOwnProperty('PP_ACC_T')) {
-      accessToken = await dispatch('refresh', { req, res });
-    } else {
-      accessToken = {
-        value: parsed.PP_ACC_T,
-        exp: parsed.PP_ACC_E,
+      const data = {
+        email: 'unknown',
       };
-    }
 
-    if (accessToken == null) {
-      return;
-    }
+      if (parsed.hasOwnProperty('PP_EML_V')) {
+        data.email = parsed.hasOwnProperty('PP_EML_V');
+      }
 
-    data.accessToken = accessToken.value;
-    data.expire = accessToken.exp;
-
-    commit('setUser', data);
-
-    await dispatch('merchant/get');
-  },
-  login({ commit }, data) {
-    return api.login(data)
-      .then((response) => {
-        const uData = {
-          accessToken: response.data.accessToken.value,
-          expire: response.data.accessToken.exp * 1000,
-          email: data.email,
+      if (!parsed.hasOwnProperty('PP_ACC_T')) {
+        accessToken = await dispatch('refresh', { req, res });
+      } else {
+        accessToken = {
+          value: parsed.PP_ACC_T,
+          exp: parsed.PP_ACC_E,
         };
+      }
 
-        commit('setUser', uData);
-        return response;
-      });
-  },
-  register({ commit }, data) {
-    return api.register(data)
-      .then((response) => {
-        const uData = {
-          accessToken: response.data.accessToken.value,
-          expire: response.data.accessToken.exp * 1000,
-          email: data.email,
-        };
+      if (accessToken == null) {
+        return;
+      }
 
-        commit('setUser', uData);
-        return response;
-      });
-  },
-  reset({ commit }) {
-    commit('resetUser');
-    return Promise.resolve();
-  },
-  async refresh({ commit }, { req, res }) {
-    const parsed = cookieParser.parse(req.headers.cookie);
+      data.accessToken = accessToken.value;
+      data.expire = accessToken.exp;
 
-    if (!parsed.hasOwnProperty('PP_RER_T')) {
-      return null;
-    }
+      commit('setUser', data);
 
-    let response;
+      await dispatch('merchant/get');
+    },
+    login({ commit }, data) {
+      return api.login(data)
+        .then((response) => {
+          const uData = {
+            accessToken: response.data.accessToken.value,
+            expire: response.data.accessToken.exp * 1000,
+            email: data.email,
+          };
 
-    try {
-      response = await api.refresh(parsed.PP_RER_T);
-    } catch (e) {
+          commit('setUser', uData);
+          return response;
+        });
+    },
+    register({ commit }, data) {
+      return api.register(data)
+        .then((response) => {
+          const uData = {
+            accessToken: response.data.accessToken.value,
+            expire: response.data.accessToken.exp * 1000,
+            email: data.email,
+          };
+
+          commit('setUser', uData);
+          return response;
+        });
+    },
+    reset({ commit }) {
+      commit('resetUser');
+      return Promise.resolve();
+    },
+    async refresh({ commit }, { req, res }) {
+      const parsed = cookieParser.parse(req.headers.cookie);
+
+      if (!parsed.hasOwnProperty('PP_RER_T')) {
+        return null;
+      }
+
+      let response;
+
+      try {
+        response = await api.refresh(parsed.PP_RER_T);
+      } catch (e) {
+        if (process.server) {
+          const past = new Date();
+          past.setTime(past.getTime() - 1000);
+
+          res.setHeader(
+            'Set-Cookie',
+            [
+              `PP_ACC_T=;expires=${past.toUTCString()}`,
+              `PP_ACC_E=;expires=${past.toUTCString()}`,
+              `PP_RER_T=;expires=${past.toUTCString()}`,
+              `PP_EML_V=;expires=${past.toUTCString()}`,
+            ],
+          );
+        } else {
+          cookie.remove('PP_ACC_T');
+          cookie.remove('PP_ACC_E');
+          cookie.remove('PP_RER_T');
+          cookie.remove('PP_EML_V');
+        }
+
+        return null;
+      }
+
+      if (!response.hasOwnProperty('data') || !response.data.hasOwnProperty('accessToken')
+        || !response.data.hasOwnProperty('refreshToken')) {
+        return null;
+      }
+
+      for (const key in response.data) {
+        if (!response.data.hasOwnProperty(key)) {
+          continue;
+        }
+
+        response.data[key].exp = response.data[key].exp * 1000;
+      }
+
+      const expireAccessToken = new Date();
+      const expireRefreshToken = new Date();
+
+      expireAccessToken.setTime(response.data.accessToken.exp);
+      expireRefreshToken.setTime(response.data.refreshToken.exp);
+
       if (process.server) {
-        const past = new Date();
-        past.setTime(past.getTime() - 1000);
-
         res.setHeader(
           'Set-Cookie',
           [
-            `PP_ACC_T=;expires=${past.toUTCString()}`,
-            `PP_ACC_E=;expires=${past.toUTCString()}`,
-            `PP_RER_T=;expires=${past.toUTCString()}`,
-            `PP_EML_V=;expires=${past.toUTCString()}`,
+            `PP_ACC_T=${response.data.accessToken.value};expires=${expireAccessToken.toUTCString()}`,
+            `PP_ACC_E=${response.data.accessToken.exp};expires=${expireAccessToken.toUTCString()}`,
+            `PP_RER_T=${response.data.refreshToken.value};expires=${expireRefreshToken.toUTCString()}`,
           ],
         );
       } else {
-        cookie.remove('PP_ACC_T');
-        cookie.remove('PP_ACC_E');
-        cookie.remove('PP_RER_T');
-        cookie.remove('PP_EML_V');
+        cookie.set('PP_ACC_T', response.data.accessToken.value, { expires: expireAccessToken });
+        cookie.set('PP_ACC_E', data.data.accessToken.exp, { expires: expireAccessToken });
+        cookie.set('PP_RER_T', response.data.refreshToken.value, { expires: expireRefreshToken });
       }
 
-      return null;
-    }
-
-    if (!response.hasOwnProperty('data') || !response.data.hasOwnProperty('accessToken')
-            || !response.data.hasOwnProperty('refreshToken')) {
-      return null;
-    }
-
-    for (const key in response.data) {
-      if (!response.data.hasOwnProperty(key)) {
-        continue;
-      }
-
-      response.data[key].exp = response.data[key].exp * 1000;
-    }
-
-    const expireAccessToken = new Date();
-    const expireRefreshToken = new Date();
-
-    expireAccessToken.setTime(response.data.accessToken.exp);
-    expireRefreshToken.setTime(response.data.refreshToken.exp);
-
-    if (process.server) {
-      res.setHeader(
-        'Set-Cookie',
-        [
-          `PP_ACC_T=${response.data.accessToken.value};expires=${expireAccessToken.toUTCString()}`,
-          `PP_ACC_E=${response.data.accessToken.exp};expires=${expireAccessToken.toUTCString()}`,
-          `PP_RER_T=${response.data.refreshToken.value};expires=${expireRefreshToken.toUTCString()}`,
-        ],
-      );
-    } else {
-      cookie.set('PP_ACC_T', response.data.accessToken.value, { expires: expireAccessToken });
-      cookie.set('PP_ACC_E', data.data.accessToken.exp, { expires: expireAccessToken });
-      cookie.set('PP_RER_T', response.data.refreshToken.value, { expires: expireRefreshToken });
-    }
-
-    return response.data.accessToken;
+      return response.data.accessToken;
+    },
   },
 };

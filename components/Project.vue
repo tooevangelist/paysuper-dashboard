@@ -1,28 +1,14 @@
 <template>
   <div class="card">
     <div class="card-header">
-      <button type="button" class="btn btn-outline-success btn pull-left" @click="save">
-        <i class="fa fa-save"></i> Save
-      </button>
-
-      <button
-        type="button"
-        class="btn btn pull-right"
-        @click="data['is_active'] = !data['is_active']"
-        :class="{
-          'btn-outline-danger': data['is_active'],
-          'btn-outline-success': !data['is_active']
-        }"
+      <Button @click="save">Save</Button>
+      <Button
+        class="pull-right"
+        :color="data.is_active ? 'orange' : 'green'"
+        @click="save"
       >
-        <i
-          class="fa"
-          :class="{
-            'fa-eye-slash': data['is_active'],
-            'fa-eye': !data['is_active']
-          }"
-        ></i>
-        {{ data['is_active'] ? 'Deactivate' : 'Activate' }}
-      </button>
+        {{ data.is_active ? 'Deactivate' : 'Activate' }}
+      </Button>
     </div>
     <div class="card-body">
       <div class="form-group">
@@ -394,12 +380,16 @@
 
 <script>
 import axios from 'axios';
-import Notifications from '../mixins/notificaton';
-import Currency from '../mixins/currency';
-import Validate from '../mixins/validate';
+import { Button } from '@protocol-one/ui-kit';
+import Notifications from '~/mixins/notificaton';
+import Currency from '~/mixins/currency';
+import Validate from '~/mixins/validate';
 
 export default {
   mixins: [Notifications, Currency, Validate],
+  components: {
+    Button,
+  },
   props: {
     project: {
       type: Object,
@@ -604,7 +594,7 @@ export default {
 
         self.$router.push('/project');
       }).catch((e) => {
-        self.error(self.getError(e));
+        self.error(self.getErrorMessage(e));
       });
     },
     getPackageSlug(index) {
