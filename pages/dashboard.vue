@@ -1,9 +1,16 @@
 <template>
-  <div>It's place for dashboards</div>
+  <Page>
+    <span slot="header-title">Dashboard</span>
+    It's place for dashboards
+  </Page>
 </template>
 
 <script>
-export default {
+import Page from '@/components/Page.vue';
 
+export default {
+  components: {
+    Page,
+  },
 };
 </script>

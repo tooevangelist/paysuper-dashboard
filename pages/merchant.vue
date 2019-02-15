@@ -1,67 +1,71 @@
 <template>
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="alert alert-info" role="alert" v-if="!merchant || merchant.status < 1">
-          Thanks for your registration. Please enter main information
-          about your company before you create first technical integration.
-        </div>
-      </div>
-
-      <div class="col-md-12" v-if="merchant">
-        <div class="card">
-          <div class="card-header">
-            <strong>Add main information about your company</strong>
+  <Page>
+    <span slot="header-title">Merchant</span>
+    <div class="container-fluid" style="margin-top: 30px;">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="alert alert-info" role="alert" v-if="!merchant || merchant.status < 1">
+            Thanks for your registration. Please enter main information
+            about your company before you create first technical integration.
           </div>
-          <div class="card-body">
-            <div class="form-group">
-              <TextField
-                placeholder="Enter your company name"
-                v-model="name"
-                label="Name"
-              />
-            </div>
-            <div class="form-group">
-              <Select
-                label="Country"
-                :options="countries"
-                :hasEmptyValue="true"
-                @search="onCountrySearch"
-                v-model="country"
-              />
-            </div>
-            <div class="form-group">
-              <Select
-                label="Accounting currency"
-                :options="currencies"
-                :hasEmptyValue="true"
-                @search="onCurrencySearch"
-                v-model="currency"
-              />
-            </div>
-            <div class="form-group">
-              <Select
-                label="Accounting period"
-                :options="accountingPeriods"
-                :hasEmptyValue="true"
-                @search="onCurrencySearch"
-                v-model="accountingPeriod"
-              />
-            </div>
+        </div>
 
-            <div class="form-group btn float-right">
-              <Button @click="update">Save</Button>
+        <div class="col-md-12" v-if="merchant">
+          <div class="card">
+            <div class="card-header">
+              <strong>Add main information about your company</strong>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <TextField
+                  placeholder="Enter your company name"
+                  v-model="name"
+                  label="Name"
+                />
+              </div>
+              <div class="form-group">
+                <Select
+                  label="Country"
+                  :options="countries"
+                  :hasEmptyValue="true"
+                  @search="onCountrySearch"
+                  v-model="country"
+                />
+              </div>
+              <div class="form-group">
+                <Select
+                  label="Accounting currency"
+                  :options="currencies"
+                  :hasEmptyValue="true"
+                  @search="onCurrencySearch"
+                  v-model="currency"
+                />
+              </div>
+              <div class="form-group">
+                <Select
+                  label="Accounting period"
+                  :options="accountingPeriods"
+                  :hasEmptyValue="true"
+                  @search="onCurrencySearch"
+                  v-model="accountingPeriod"
+                />
+              </div>
+
+              <div class="form-group btn float-right">
+                <Button @click="update">Save</Button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </Page>
 </template>
 
 <script>
 import { mapState } from 'vuex';
 import { Button, Select, TextField } from '@protocol-one/ui-kit';
+import Page from '@/components/Page.vue';
 import Notifications from '../mixins/notificaton';
 import Country from '../mixins/country';
 import Currency from '../mixins/currency';
@@ -70,6 +74,7 @@ export default {
   middleware: 'IsNotAuthenticated',
   mixins: [Notifications, Currency, Country],
   components: {
+    Page,
     Button,
     Select,
     TextField,

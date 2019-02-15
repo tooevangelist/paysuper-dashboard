@@ -51,6 +51,11 @@ module.exports = {
     ** Run ESLint on save
     */
     extend(config, { isDev }) {
+      config.module.rules.push({
+        resourceQuery: /blockType=i18n/,
+        loader: '@kazupon/vue-i18n-loader',
+      });
+
       if (isDev && process.client) {
         config.module.rules.push({
           enforce: 'pre',
@@ -77,6 +82,7 @@ module.exports = {
     { src: '~/plugins/vue-select', ssr: false },
     { src: '~/plugins/vue-datepicker', ssr: false },
     { src: '~/plugins/vue-multiselect', ssr: false },
+    '~/plugins/vue-u18n.js',
   ],
   vendor: ['axios', 'jquery', 'vue-select', 'vue2-datepicker', 'vue-multiselect'],
 };

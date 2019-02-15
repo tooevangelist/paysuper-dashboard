@@ -1,21 +1,26 @@
 <template>
-  <div style="width: 100%;">
-    <order-search-panel @onSearch="onSearch"></order-search-panel>
+  <Page>
+    <span slot="header-title">Order</span>
+    <div style="width: 100%;">
+      <order-search-panel @onSearch="onSearch"></order-search-panel>
 
-    <div class="col-12">
-      <order-item-list :count="count" :items="items" @onPageChange="onPageChange"></order-item-list>
+      <div class="col-12">
+        <order-item-list :count="count" :items="items" @onPageChange="onPageChange">
+        </order-item-list>
+      </div>
     </div>
-  </div>
+  </Page>
 </template>
 
 <script>
 import axios from 'axios';
-import OrderSearchPanel from '../../components/OrderSearchPanel.vue';
-import OrderItemList from '../../components/OrderItemList.vue';
+import Page from '@/components/Page.vue';
+import OrderSearchPanel from '@/components/OrderSearchPanel.vue';
+import OrderItemList from '@/components/OrderItemList.vue';
 
 export default {
   middleware: 'IsNotAuthenticated',
-  components: { OrderSearchPanel, OrderItemList },
+  components: { OrderSearchPanel, OrderItemList, Page },
   data() {
     return {
       count: 0,

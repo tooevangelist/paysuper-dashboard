@@ -1,79 +1,83 @@
 <template>
-  <div class="page-container">
-    <div class="row">
-      <div class="col-sm-3 col-lg-3">
-        <div class="card text-white bg-success">
-          <div class="card-body">
-            <div class="text-value">Revenue</div>
-            <div>{{ revenue.total }}</div>
+  <Page>
+    <span slot="header-title">Revenue</span>
+    <div class="page-container">
+      <div class="row">
+        <div class="col-sm-3 col-lg-3">
+          <div class="card text-white bg-success">
+            <div class="card-body">
+              <div class="text-value">Revenue</div>
+              <div>{{ revenue.total }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-3 col-lg-3">
+          <div class="card text-white bg-primary">
+            <div class="card-body">
+              <div class="text-value">Average sum</div>
+              <div>{{ revenue.avg }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-3 col-lg-3">
+          <div class="card text-white bg-danger">
+            <div class="card-body">
+              <div class="text-value">Refund</div>
+              <div>{{ refund.total }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-3 col-lg-3">
+          <div class="card text-white bg-info">
+            <div class="card-body">
+              <div class="text-value">Count of payments</div>
+              <div>{{ revenue.count + refund.count }}</div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="col-sm-3 col-lg-3">
-        <div class="card text-white bg-primary">
-          <div class="card-body">
-            <div class="text-value">Average sum</div>
-            <div>{{ revenue.avg }}</div>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-3 col-lg-3">
-        <div class="card text-white bg-danger">
-          <div class="card-body">
-            <div class="text-value">Refund</div>
-            <div>{{ refund.total }}</div>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-3 col-lg-3">
-        <div class="card text-white bg-info">
-          <div class="card-body">
-            <div class="text-value">Count of payments</div>
-            <div>{{ revenue.count + refund.count }}</div>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <div class="row">
-      <div class="col-6">
-        <linechart
-          :data="data"
-          :options="{ legend: { display: false }, maintainAspectRatio: false }"
-        ></linechart>
-      </div>
-      <div class="col-6">
-        <div class="form-group">
-          <v-datepicker
-            v-model="period"
-            range
-            placeholder="Select paid dates range"
-            lang="en"
-            :shortcuts="shortcuts"
-          ></v-datepicker>
+      <div class="row">
+        <div class="col-6">
+          <linechart
+            :data="data"
+            :options="{ legend: { display: false }, maintainAspectRatio: false }"
+          ></linechart>
         </div>
-        <div class="form-group">
-          <select class="form-control" v-model="groupBy">
-            <option
-              v-for="item in groupByVariants"
-              :key="item"
-              v-bind:value="item"
-            >Detailing: by {{ item }}</option>
-          </select>
+        <div class="col-6">
+          <div class="form-group">
+            <v-datepicker
+              v-model="period"
+              range
+              placeholder="Select paid dates range"
+              lang="en"
+              :shortcuts="shortcuts"
+            ></v-datepicker>
+          </div>
+          <div class="form-group">
+            <select class="form-control" v-model="groupBy">
+              <option
+                v-for="item in groupByVariants"
+                :key="item"
+                v-bind:value="item"
+              >Detailing: by {{ item }}</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </Page>
 </template>
 
 <script>
 import axios from 'axios';
 import moment from 'moment';
-import Linechart from '../components/Linechart';
-import Notifications from '../mixins/notificaton';
+import Page from '@/components/Page.vue';
+import Linechart from '@/components/Linechart';
+import Notifications from '@/mixins/notificaton';
 
 export default {
-  components: { Linechart },
+  components: { Linechart, Page },
   mixins: [Notifications],
   data() {
     return {
