@@ -34,11 +34,11 @@ export default {
         email: 'unknown',
       };
 
-      if (parsed.hasOwnProperty('PP_EML_V')) {
-        data.email = parsed.hasOwnProperty('PP_EML_V');
+      if (parsed.PP_EML_V) {
+        data.email = parsed.PP_EML_V;
       }
 
-      if (!parsed.hasOwnProperty('PP_ACC_T')) {
+      if (!parsed.PP_ACC_T) {
         accessToken = await dispatch('refresh', { req, res });
       } else {
         accessToken = {
@@ -91,7 +91,7 @@ export default {
     async refresh({ commit }, { req, res }) {
       const parsed = cookieParser.parse(req.headers.cookie);
 
-      if (!parsed.hasOwnProperty('PP_RER_T')) {
+      if (!parsed.PP_RER_T) {
         return null;
       }
 
@@ -123,13 +123,13 @@ export default {
         return null;
       }
 
-      if (!response.hasOwnProperty('data') || !response.data.hasOwnProperty('accessToken')
-        || !response.data.hasOwnProperty('refreshToken')) {
+      if (!response.data || !response.data.accessToken
+        || !response.data.refreshToken) {
         return null;
       }
 
       for (const key in response.data) {
-        if (!response.data.hasOwnProperty(key)) {
+        if (!response.data[key]) {
           continue;
         }
 
@@ -153,7 +153,7 @@ export default {
         );
       } else {
         cookie.set('PP_ACC_T', response.data.accessToken.value, { expires: expireAccessToken });
-        cookie.set('PP_ACC_E', data.data.accessToken.exp, { expires: expireAccessToken });
+        cookie.set('PP_ACC_E', response.data.accessToken.exp, { expires: expireAccessToken });
         cookie.set('PP_RER_T', response.data.refreshToken.value, { expires: expireRefreshToken });
       }
 

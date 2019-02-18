@@ -1,12 +1,16 @@
 <template>
   <div class="main-wrapper">
-    <PageNavbar
-      title="Pay Super"
-      :navigationLinks="navigationLinks"
-      :logoLink="logoLink"
-    >
-      <IconLogo slot="logo" />
-    </PageNavbar>
+    <keep-alive>
+      <PageNavbar
+        title="Pay Super"
+        :navigationLinks="navigationLinks"
+        :logoLink="logoLink"
+        :isAuthorised="Boolean(user)"
+        :userName="user ? user.email : ''"
+      >
+        <IconLogo slot="logo" />
+      </PageNavbar>
+    </keep-alive>
     <div>
       <PageHeader>
         <slot slot="title" name="header-title"></slot>
@@ -40,6 +44,7 @@ export default {
   },
 
   computed: {
+    ...mapState(['user']),
     ...mapState('merchant', ['merchant']),
 
     navigationLinks() {
