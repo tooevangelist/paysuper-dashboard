@@ -1,68 +1,41 @@
 <template>
   <Page>
     <span slot="header-title">Projects</span>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="card">
-            <div class="card-body">
-              <div class="col-md-12 text-right action-section">
-                <nuxt-link
-                  type="button"
-                  class="btn btn-outline-success btn-lg"
-                  to="/project/add"
-                  active-class
-                  tag="button"
-                >
-                  <i class="fa fa-plus"/> Add new project
-                </nuxt-link>
-              </div>
 
-              <div v-if="projects.length <= 0" class="col-md-12">Projects list is empty</div>
+    <nuxt-link
+      slot="header-right"
+      to="/project/add"
+    >
+      <Button>Create project</Button>
+    </nuxt-link>
 
-              <div v-if="projects.length > 0" class="row">
-                <div
-                  v-for="(item, index) in projects"
-                  :key="index"
-                  class="col-4 ccol-4 field-group mr-1 list"
-                >
-                  <div class="col-12 text-center item">
-                    <strong>Name:</strong>
-                    {{ item['name'] }}
-                  </div>
-                  <div class="col-12 text-center item">
-                    <strong>Is active:</strong>
-                    {{ item['is_active'] === true ? 'Yes' : 'No' }}
-                  </div>
-                  <div class="col-12 text-center item button">
-                    <nuxt-link
-                      :to="'/project/' + item['id']"
-                      type="button"
-                      class="btn btn-outline-success btn-sm"
-                      active-class
-                      tag="button"
-                    >
-                      <i class="fa fa-pencil"/> Edit project
-                    </nuxt-link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div class="content-wrapper">
+      <div v-if="projects.length" class="cont-list">
+        <PanelItem
+          v-for="project in projects"
+          :key="project.id"
+          :id="project.id"
+          :title="project.name"
+          :status="project.is_active ? 'complete' : 'initial'"
+        />
       </div>
+      <p v-else>Projects list is empty</p>
     </div>
   </Page>
 </template>
 
 <script>
 import axios from 'axios';
+import { Button } from '@protocol-one/ui-kit';
 import Page from '@/components/Page.vue';
+import PanelItem from '@/components/PanelItem.vue';
 
 export default {
   middleware: 'IsNotAuthenticated',
   components: {
     Page,
+    Button,
+    PanelItem,
   },
   data() {
     return {
@@ -81,3 +54,19 @@ export default {
   methods: {},
 };
 </script>
+
+<style lang="scss" scoped>
+.content-wrapper {
+  padding: 16px 32px;
+}
+.cont-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  & > * {
+    margin-bottom: 30px;
+    margin-right: 30px;
+  }
+}
+</style>
