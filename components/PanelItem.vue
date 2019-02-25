@@ -15,11 +15,7 @@
         </button>
       </div>
       <span class="id" v-if="id">{{id}}</span>
-      <span class="status-icon" :class="`_${status}`">
-        <IconDocument v-if="status === 'initial'" />
-        <IconCheck v-if="status === 'complete'" />
-        <IconIncomplete v-if="status === 'incomplete'" />
-      </span>
+      <StatusIcon class="status-icon" :status="status" />
       <div class="picture"></div>
       <div class="title">
         <Header class="title-text" level="2">{{title}}</Header>
@@ -44,18 +40,14 @@
 import { includes } from 'lodash-es';
 import { Header } from '@protocol-one/ui-kit';
 import IconPencil from './IconPencil.vue';
-import IconCheck from './IconCheck.vue';
-import IconIncomplete from './IconIncomplete.vue';
-import IconDocument from './IconDocument.vue';
+import StatusIcon from './StatusIcon.vue';
 
 export default {
   name: 'PanelItem',
 
   components: {
     IconPencil,
-    IconCheck,
-    IconIncomplete,
-    IconDocument,
+    StatusIcon,
     Header,
   },
 
@@ -148,27 +140,9 @@ export default {
 }
 
 .status-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
   position: absolute;
   top: 15px;
   right: 16px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  &._initial {
-    background: rgba(201, 201, 201, 0.37);
-  }
-
-  &._complete {
-    background: rgba(85, 210, 135, 0.37);
-  }
-
-  &._incomplete {
-    background: rgba(216, 90, 43, 0.37);
-  }
 }
 
 .hover-layer {

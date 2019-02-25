@@ -14,8 +14,8 @@
 <script>
 import axios from 'axios';
 import Page from '@/components/Page.vue';
-import Notifications from '../../mixins/notificaton';
-import Project from '../../components/Project.vue';
+import Notifications from '@/mixins/notificaton';
+import Project from '@/components/Project.vue';
 
 export default {
   middleware: 'IsNotAuthenticated',

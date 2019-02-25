@@ -1,7 +1,8 @@
 <template>
   <Page>
     <span slot="header-title">Dashboard</span>
-    <FormByStep :steps="steps" v-model="currentStep">
+
+    <FormByStep :steps="steps" v-model="currentStep" v-if="false">
       <template v-if="currentStep === 'company'">
         <TextField v-model="test11" label="Test 11" />
         <TextField v-model="test12" label="Test 12" />
