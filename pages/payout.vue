@@ -1,54 +1,59 @@
 <template>
-  <div class="page-container">
-    <div class="row">
-      <div class="col">
-        <div class="form-group">
-          <label for="period">Select period</label>
-          <select id="period" class="form-control" v-model="selected" @change="show">
-            <option
-              v-for="(item, key) in periods"
-              v-bind:key="key"
-              v-bind:value="item"
-            >{{ item.label }}</option>
-          </select>
+  <div>
+    <PageHeader>
+      <span slot="title">Payout</span>
+    </PageHeader>
+    <div class="page-container">
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="period">Select period</label>
+            <select id="period" class="form-control" v-model="selected" @change="show">
+              <option
+                v-for="(item, key) in periods"
+                v-bind:key="key"
+                v-bind:value="item"
+              >{{ item.label }}</option>
+            </select>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="row" v-if="payout != null">
-      <div class="col">
-        <table class="table">
-          <tr>
-            <th>Period</th>
-            <th>Currency</th>
-            <th>Total amount</th>
-            <th>Payout amount</th>
-            <th>Commission amount</th>
-            <th>Refund amount</th>
-            <th>Chargeback amount</th>
-            <th>&nbsp;</th>
-          </tr>
-          <tr>
-            <td>{{ selected.label }}</td>
-            <td>{{ merchant.currency['code_a3'] }}</td>
-            <td>{{ payout['success_with_commissions'] }}</td>
-            <td>{{ payout['success_without_commissions'] }}</td>
-            <td>{{ payout['total_commission'] }}</td>
-            <td>{{ payout['total_refund'] }}</td>
-            <td>{{ payout['total_chargeback'] }}</td>
-            <td>
-              <nuxt-link
-                type="button"
-                class="btn btn-outline-primary btn-sm"
-                v-bind:to="{ path: '/order', query: { pm_date_from: selected.from, pm_date_to: selected.to }}"
-                active-class
-                tag="button"
-              >
-                <i class="fa fa-search"></i> Show log
-              </nuxt-link>
-            </td>
-          </tr>
-        </table>
+      <div class="row" v-if="payout != null">
+        <div class="col">
+          <table class="table">
+            <tr>
+              <th>Period</th>
+              <th>Currency</th>
+              <th>Total amount</th>
+              <th>Payout amount</th>
+              <th>Commission amount</th>
+              <th>Refund amount</th>
+              <th>Chargeback amount</th>
+              <th>&nbsp;</th>
+            </tr>
+            <tr>
+              <td>{{ selected.label }}</td>
+              <td>{{ merchant.currency['code_a3'] }}</td>
+              <td>{{ payout['success_with_commissions'] }}</td>
+              <td>{{ payout['success_without_commissions'] }}</td>
+              <td>{{ payout['total_commission'] }}</td>
+              <td>{{ payout['total_refund'] }}</td>
+              <td>{{ payout['total_chargeback'] }}</td>
+              <td>
+                <nuxt-link
+                  type="button"
+                  class="btn btn-outline-primary btn-sm"
+                  v-bind:to="{ path: '/order', query: { pm_date_from: selected.from, pm_date_to: selected.to }}"
+                  active-class
+                  tag="button"
+                >
+                  <i class="fa fa-search"></i> Show log
+                </nuxt-link>
+              </td>
+            </tr>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -56,12 +61,16 @@
 
 <script>
 import { mapState } from 'vuex';
+import { PageHeader } from '@protocol-one/ui-kit';
 import axios from 'axios';
-import Notifications from '../mixins/notificaton';
+import Notifications from '@/mixins/notificaton';
 
 export default {
   middleware: 'IsNotAuthenticated',
   mixins: [Notifications],
+  components: {
+    PageHeader,
+  },
   data() {
     return {
       periods: [],

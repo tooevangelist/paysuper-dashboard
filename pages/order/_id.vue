@@ -1,6 +1,8 @@
 <template>
-  <Page>
-    <span slot="header-title">Order #{{order.id}}</span>
+  <div>
+    <PageHeader>
+      <span slot="title">Order #{{order.id}}</span>
+    </PageHeader>
     <div class="characteristic-container">
       <nuxt-link tag="button" class="btn btn-outline-primary btn btn-back" active-class to="/order">
         <i class="fa fa-angle-double-left"></i> Back
@@ -211,19 +213,19 @@
         </dl>
       </div>
     </div>
-  </Page>
+  </div>
 </template>
 
 <script>
 import axios from 'axios';
-import Page from '@/components/Page.vue';
+import { PageHeader } from '@protocol-one/ui-kit';
 import Commission from '~/mixins/commission';
 
 export default {
   middleware: 'IsNotAuthenticated',
   mixins: [Commission],
   components: {
-    Page,
+    PageHeader,
   },
   asyncData(context) {
     const self = this;

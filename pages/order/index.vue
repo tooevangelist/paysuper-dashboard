@@ -1,6 +1,8 @@
 <template>
-  <Page>
-    <span slot="header-title">Order</span>
+  <div>
+    <PageHeader>
+      <span slot="title">Order</span>
+    </PageHeader>
     <div style="width: 100%;">
       <order-search-panel @onSearch="onSearch"></order-search-panel>
 
@@ -9,18 +11,18 @@
         </order-item-list>
       </div>
     </div>
-  </Page>
+  </div>
 </template>
 
 <script>
 import axios from 'axios';
-import Page from '@/components/Page.vue';
+import { PageHeader } from '@protocol-one/ui-kit';
 import OrderSearchPanel from '@/components/OrderSearchPanel.vue';
 import OrderItemList from '@/components/OrderItemList.vue';
 
 export default {
   middleware: 'IsNotAuthenticated',
-  components: { OrderSearchPanel, OrderItemList, Page },
+  components: { OrderSearchPanel, OrderItemList, PageHeader },
   data() {
     return {
       count: 0,

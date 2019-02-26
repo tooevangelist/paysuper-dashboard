@@ -1,6 +1,8 @@
 <template>
-  <Page>
-    <span slot="header-title">Revenue</span>
+  <div>
+    <PageHeader>
+      <span slot="title">Revenue</span>
+    </PageHeader>
     <div class="page-container">
       <div class="row">
         <div class="col-sm-3 col-lg-3">
@@ -66,18 +68,18 @@
         </div>
       </div>
     </div>
-  </Page>
+  </div>
 </template>
 
 <script>
 import axios from 'axios';
 import moment from 'moment';
-import Page from '@/components/Page.vue';
+import { PageHeader } from '@protocol-one/ui-kit';
 import Linechart from '@/components/Linechart';
 import Notifications from '@/mixins/notificaton';
 
 export default {
-  components: { Linechart, Page },
+  components: { Linechart, PageHeader },
   mixins: [Notifications],
   data() {
     return {

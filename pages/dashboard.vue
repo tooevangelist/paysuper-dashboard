@@ -1,6 +1,8 @@
 <template>
-  <Page>
-    <span slot="header-title">Dashboard</span>
+  <div>
+    <PageHeader>
+      <span slot="title">Dashboard</span>
+    </PageHeader>
 
     <FormByStep :steps="steps" v-model="currentStep" v-if="false">
       <template v-if="currentStep === 'company'">
@@ -17,19 +19,18 @@
         </div>
       </div>
     </FormByStep>
-  </Page>
+  </div>
 </template>
 
 <script>
-import Page from '@/components/Page.vue';
-import { Button, TextField, FormByStep } from '@protocol-one/ui-kit';
+import { Button, TextField, FormByStep, PageHeader } from '@protocol-one/ui-kit';
 
 export default {
   components: {
-    Page,
     FormByStep,
     TextField,
     Button,
+    PageHeader,
   },
 
   data() {

@@ -1,6 +1,8 @@
 <template>
-  <Page>
-    <span slot="header-title">Add project</span>
+  <div>
+    <PageHeader :breadcrumbs="breadcrumbs">
+      <span slot="title">Create project</span>
+    </PageHeader>
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-12">
@@ -8,18 +10,29 @@
         </div>
       </div>
     </div>
-  </Page>
+  </div>
 </template>
 
 <script>
-import Page from '@/components/Page.vue';
+import { PageHeader } from '@protocol-one/ui-kit';
 import Project from '../../components/Project.vue';
 
 export default {
   middleware: 'IsNotAuthenticated',
-  components: { Project, Page },
+  components: { Project, PageHeader },
   data() {
-    return {};
+    return {
+      breadcrumbs: [
+        {
+          label: 'Projects list',
+          url: '/project/',
+          router: true,
+        },
+        {
+          label: 'Create project',
+        },
+      ],
+    };
   },
 };
 </script>

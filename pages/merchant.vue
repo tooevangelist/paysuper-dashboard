@@ -1,6 +1,8 @@
 <template>
-  <Page>
-    <span slot="header-title">Merchant</span>
+  <div>
+    <PageHeader>
+      <span slot="title">Merchant</span>
+    </PageHeader>
     <div class="container-fluid" style="margin-top: 30px;">
       <div class="row">
         <div class="col-md-12">
@@ -59,13 +61,12 @@
         </div>
       </div>
     </div>
-  </Page>
+  </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
-import { Button, Select, TextField } from '@protocol-one/ui-kit';
-import Page from '@/components/Page.vue';
+import { Button, Select, TextField, PageHeader } from '@protocol-one/ui-kit';
 import Notifications from '../mixins/notificaton';
 import Country from '../mixins/country';
 import Currency from '../mixins/currency';
@@ -74,7 +75,7 @@ export default {
   middleware: 'IsNotAuthenticated',
   mixins: [Notifications, Currency, Country],
   components: {
-    Page,
+    PageHeader,
     Button,
     Select,
     TextField,

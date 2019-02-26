@@ -1,21 +1,21 @@
 <template>
-  <Page>
-    <span slot="header-title">Projects</span>
-
-    <template slot="header-right">
-      <div>
-        <a href="#" @click="viewType = 'panels'">panels</a>
-        /
-        <a href="#" @click="viewType = 'table'">table</a>
-        &nbsp;
-      </div>
-      <nuxt-link
-        slot="header-right"
-        to="/project/add"
-      >
-        <Button>Create project</Button>
-      </nuxt-link>
-    </template>
+  <div>
+    <PageHeader :breadcrumbs="[{label: 'Projects list'}]">
+      <span slot="title">Projects</span>
+      <template slot="right">
+        <div>
+          <a href="#" @click="viewType = 'panels'">panels</a>
+          /
+          <a href="#" @click="viewType = 'table'">table</a>
+          &nbsp;
+        </div>
+        <nuxt-link
+          to="/project/add"
+        >
+          <Button>Create project</Button>
+        </nuxt-link>
+      </template>
+    </PageHeader>
 
     <div class="content-wrapper" v-if="viewType === 'panels' || !projects.length">
       <div v-if="projects.length" class="cont-list">
@@ -53,7 +53,7 @@
         <ui-table-cell>{{project.created_at}}</ui-table-cell>
       </ui-table-row>
     </ui-table>
-  </Page>
+  </div>
 </template>
 
 <script>
@@ -63,20 +63,20 @@ import {
   UiTable,
   UiTableCell,
   UiTableRow,
+  PageHeader,
 } from '@protocol-one/ui-kit';
-import Page from '@/components/Page.vue';
 import PanelItem from '@/components/PanelItem.vue';
 import StatusIcon from '@/components/StatusIcon.vue';
 
 export default {
   middleware: 'IsNotAuthenticated',
   components: {
-    Page,
     Button,
     PanelItem,
     UiTable,
     UiTableCell,
     UiTableRow,
+    PageHeader,
     StatusIcon,
   },
   data() {
