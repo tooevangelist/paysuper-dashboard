@@ -210,19 +210,20 @@ export default {
   layout: 'login',
   head: {
     script: [
-      { src: 'https://static.protocol.one/payone/sdk/dev/p1payone.js' },
+      { src: 'https://static.protocol.one/paysuper/sdk/dev/paysuper.js' },
     ],
   },
   mixins: [Notifications],
   methods: {
     buy(amount, currency) {
+      const { PaySuper } = window;
       this.$nextTick(() => {
-        const payoneForm = new P1PayOne({
+        const paySuper = new PaySuper({
           projectID: process.env.apiProjectIdentifier,
           region: 'US',
           // account: 'dmitriy.sinichkin@protocol.one',
         });
-        payoneForm.setCurrency(currency).setAmount(amount).renderModal();
+        paySuper.setCurrency(currency).setAmount(amount).renderModal();
       });
     },
   },
