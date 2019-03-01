@@ -21,11 +21,15 @@
     "@protocol-one/ui-kit": "~1.14.0",
 =======
     "@protocol-one/ui-kit": "~1.8.0",
+<<<<<<< HEAD
     "@sentry/node": "^4.6.3",
 <<<<<<< HEAD
     "authone-middleware-node": "github:ProtocolONE/authone-middleware-node#master",
 >>>>>>> Added authentication backend app with auth1 middleware
 =======
+=======
+    "@sentry/node": "^4.6.4",
+>>>>>>> Docker configuration
     "authone-jwt-verifier-node": "github:ProtocolONE/authone-jwt-verifier-node#master",
 >>>>>>> Authentication backend app with new authone-jwt-verifier-node middleware
     "axios": "^0.18.0",
@@ -46,7 +50,6 @@
     "koa-router": "^7.4.0",
     "koa-session2": "^2.2.8",
     "koa2-cors": "^2.0.6",
-    "lodash": "^4.17.11",
     "lodash-es": "^4.17.11",
     "mobx": "^4.8.0",
     "moment": "^2.23.0",

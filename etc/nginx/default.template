@@ -1,0 +1,11 @@
+server {
+    listen ${NGINX_PORT};
+    server_name ${NGINX_HOST};
+
+    root /var/www/static;
+    index index.spa.html;
+
+    location ~* ^/auth1/(login|logout|refresh|callback)(.*)$ {
+        proxy_pass ${APP};
+    }
+}
