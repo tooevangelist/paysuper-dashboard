@@ -22,8 +22,12 @@
 =======
     "@protocol-one/ui-kit": "~1.8.0",
     "@sentry/node": "^4.6.3",
+<<<<<<< HEAD
     "authone-middleware-node": "github:ProtocolONE/authone-middleware-node#master",
 >>>>>>> Added authentication backend app with auth1 middleware
+=======
+    "authone-jwt-verifier-node": "github:ProtocolONE/authone-jwt-verifier-node#master",
+>>>>>>> Authentication backend app with new authone-jwt-verifier-node middleware
     "axios": "^0.18.0",
     "bootstrap-vue": "^2.0.0-rc.11",
     "build-url": "^1.3.2",
@@ -46,12 +50,11 @@
     "lodash-es": "^4.17.11",
     "mobx": "^4.8.0",
     "moment": "^2.23.0",
-    "node-fetch": "^2.3.0",
     "nodemon": "^1.18.10",
     "nuxt": "^2.4.5",
     "os": "^0.1.1",
-    "qs": "^6.6.0",
     "path": "^0.12.7",
+    "qs": "^6.6.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "redoc": "^2.0.0-alpha.41",

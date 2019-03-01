@@ -11,32 +11,27 @@ const config = {
   redisHost: getEnvVariable('REDIS_HOST', 'localhost'),
   redisPort: +getEnvVariable('REDIS_PORT', '6379'),
 
-  sessionCookieName: getEnvVariable('SESSION_COOKIE_NAME', 'ptahsid'),
-  sessionCookieSignKey: getEnvVariable('SESSION_COOKIE_SIGN_KEY', '3a610fe5-fd7f-41a3-89ba-e7c8c9bcd1d1'),
+  sessionMaxAge: +getEnvVariable('SESSION_MAX_AGE', '21600'), // 6 hours, in seconds
+  sessionCookieName: getEnvVariable('SESSION_COOKIE_NAME', 'pssid'),
+  sessionCookieSignKey: getEnvVariable('SESSION_COOKIE_SIGN_KEY', '02e435ef-7015-4c9b-8e4e-00a376f80332'),
 
   routesPrefix: getEnvVariable('ROUTES_PREFIX', ''),
   auth1RoutesNamespace: '/auth1',
 
-  sentryDsn: getEnvVariable('SENTRY_DSN', 'https://0c02631c9b4645699161cffa21721ef4@sentry.tst.protocol.one/9'),
+  sentryDsn: getEnvVariable('SENTRY_DSN', 'https://2fc1a112904e472da22284cad12c6d87@sentry.tst.protocol.one/10'),
 
   publicHost: getEnvVariable('PUBLIC_HOST', 'http://127.0.0.1'),
 
-  postMessageTargetOrigin: getEnvVariable('POST_MESSAGE_TARGET_ORIGIN', 'http://127.0.0.1:3000'),
+  postMessageTargetOrigin: getEnvVariable('POST_MESSAGE_TARGET_ORIGIN', 'http://127.0.0.1:8080'),
 
-  ptahApiHostUrl: getEnvVariable('PTAH_API_HOST_URL', 'https://ptahapi.tst.protocol.one'),
-
-  auth1ClientId: getEnvVariable('AUTH1_CLIENT_ID', '5c6fc4888db4bc0001beacec'),
-  auth1ClientSecret: getEnvVariable('AUTH1_CLIENT_SECRET', 'RUOuk4bkWFNljuZzqwq5zrs0GdCLY9U3MJqubuDViUv7XQzgiU84y288Jh0klK1Z'),
+  auth1ClientId: getEnvVariable('AUTH1_CLIENT_ID', '5c79297b1ba28e00014ff57b'),
+  auth1ClientSecret: getEnvVariable('AUTH1_CLIENT_SECRET', 'ACWFDVzUE9whecVRTH5OOIIedkioUMsC6GgXhcrFpui798fDz8ADW0GZbde7ukxg'),
   auth1Scope: getEnvVariableArray('AUTH1_CLIENT_SCOPE', 'openid,offline'),
-  auth1AuthorizeUrl: getEnvVariable('AUTH1_AUTHORIZE_URL', 'https://oauth.tst.protocol.one/oauth2/auth'),
-  auth1TokenUrl: getEnvVariable('AUTH1_TOKEN_URL', 'https://oauth.tst.protocol.one/oauth2/token'),
-  auth1RevokeTokenUrl: getEnvVariable('AUTH1_REVOKE_TOKEN_URL', 'https://oauth.tst.protocol.one/oauth2/revoke'),
-  auth1UserinfoUrl: getEnvVariable('AUTH1_USERINFO_URL', 'https://oauth.tst.protocol.one/userinfo'),
+  auth1Issuer: getEnvVariable('AUTH1_ISSUER_URL', 'https://auth1.tst.protocol.one'),
   auth1PostmessageHtmlTemplatePath: path.resolve('backend/templates/auth1.postmessage.html.template'),
   auth1SessionNamespace: 'auth1',
 
-  corsValidOrigins: getEnvVariableArray('CORS_VALID_ORIGINS', 'http://127.0.0.1:3000'),
-
+  corsValidOrigins: getEnvVariableArray('CORS_VALID_ORIGINS', '*'),
 };
 
 module.exports = config;

@@ -1,7 +1,6 @@
 const os = require('os');
 const Koa = require('koa');
 const cors = require('koa2-cors');
-// const serve = require('koa-static')
 const urlParse = require('url-parse');
 const Sentry = require('@sentry/node');
 const session = require('koa-session2');
@@ -13,6 +12,8 @@ const config = require('../config/config');
 const router = require('./middleware/router');
 
 const RedisStore = require('./middleware/redis-session-store');
+
+const sessionMaxAge = config.sessionMaxAge || 6 * 60 * 60; // 6 hours in seconds
 
 Sentry.init({
   dsn: config.sentryDsn,
@@ -34,16 +35,18 @@ app.use(logger.getMiddleware());
 // session
 const publicUrl = urlParse(config.publicHost);
 app.keys = [config.sessionCookieSignKey];
-app.use(session({
+const sessionParams = {
   key: config.sessionCookieName,
   store: new RedisStore(config.redisPort, config.redisHost),
   signed: true,
   httpOnly: true,
   domain: publicUrl.host,
-}));
-
-// serve statics (mainly for development; in production static must be served by nginx)
-// app.use(serve(config.staticPath))
+  maxAge: sessionMaxAge * 1000,
+};
+if (config.redisPort && config.redisHost) {
+  sessionParams.store = new RedisStore(config.redisPort, config.redisHost, sessionMaxAge);
+}
+app.use(session(sessionParams));
 
 // CORS setup
 const corsRoutes = ['/auth1/refresh', '/auth1/logout'];

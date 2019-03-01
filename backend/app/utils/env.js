@@ -13,7 +13,7 @@ if (!nodeEnv) {
 const isLocal = nodeEnv === 'local';
 const isTest = nodeEnv === 'test';
 
-const getEnvVariable = function (variableName, defaultValue) {
+const getEnvVariable = (variableName, defaultValue) => {
   const envVal = process.env[variableName];
   if (typeof envVal !== 'undefined') {
     return envVal;
@@ -24,7 +24,7 @@ const getEnvVariable = function (variableName, defaultValue) {
   return defaultValue;
 };
 
-const getEnvVariableArray = function (variableName, defaultValue, allowedList) {
+const getEnvVariableArray = (variableName, defaultValue, allowedList) => {
   const valuesList = _.compact(getEnvVariable(variableName, defaultValue)
     .split(','));
   if (!valuesList.length) {
