@@ -381,9 +381,9 @@
 <script>
 import axios from 'axios';
 import { Button } from '@protocol-one/ui-kit';
-import Notifications from '~/mixins/notificaton';
-import Currency from '~/mixins/currency';
-import Validate from '~/mixins/validate';
+import Notifications from '@/mixins/notificaton';
+import Currency from '@/mixins/currency';
+import Validate from '@/mixins/validate';
 
 export default {
   mixins: [Notifications, Currency, Validate],

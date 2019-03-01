@@ -39,7 +39,14 @@ module.exports = {
   ** Build configuration
   */
   build: {
-
+    loaders: {
+      scss: {
+        importer(url, prev, done) {
+          // hack for handling imports like "~vue-wysiwyg/dist/vueWysiwyg.css"
+          done({ file: url.replace(/^~(?!\/)/, 'node_modules/') });
+        },
+      },
+    },
     transpile: [
       // /^@protocol-one\/ui-kit\/?((?!node_modules).)*$/,
       /@protocol-one\/ui-kit/,
@@ -73,16 +80,20 @@ module.exports = {
       }),
     ],
   },
+  modulesDir: [
+    // for ui-kit in dev (when linked)
+    'node_modules/@protocol-one/ui-kit/node_modules',
+  ],
   modules: [
     '@nuxtjs/toast',
     '@nuxtjs/moment',
     ['bootstrap-vue/nuxt', { css: false }],
   ],
   plugins: [
-    { src: '~/plugins/vue-select', ssr: false },
-    { src: '~/plugins/vue-datepicker', ssr: false },
-    { src: '~/plugins/vue-multiselect', ssr: false },
-    '~/plugins/vue-u18n.js',
+    { src: 'plugins/vue-select', ssr: false },
+    { src: 'plugins/vue-datepicker', ssr: false },
+    { src: 'plugins/vue-multiselect', ssr: false },
+    'plugins/vue-u18n.js',
   ],
   vendor: ['axios', 'jquery', 'vue-select', 'vue2-datepicker', 'vue-multiselect'],
 };

@@ -107,7 +107,7 @@
 </template>
 
 <script>
-import Commission from '../mixins/commission';
+import Commission from '@/mixins/commission';
 
 export default {
   mixins: [Commission],
