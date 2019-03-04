@@ -1,11 +1,18 @@
 server {
-    listen ${NGINX_PORT};
+    listen ${NGINX_PORT} default_server;
     server_name ${NGINX_HOST};
 
-    root /var/www/static;
+    charset utf-8;
+    server_tokens off;
+
+    root /var/www/static/server;
     index index.spa.html;
 
     location ~* ^/auth1/(login|logout|refresh|callback)(.*)$ {
         proxy_pass ${APP};
+    }
+
+    location ^~ /_nuxt/ {
+      alias /var/www/static/client/;
     }
 }

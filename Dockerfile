@@ -4,11 +4,6 @@ RUN apk update && apk add git
 
 WORKDIR /application
 
-COPY package.json /application
-RUN npm rebuild --force && npm install
-
-COPY . /application
-
 ENV NODE_ENV=production \
     AUTH1_CLIENT_ID="" \
     AUTH1_CLIENT_SCOPE="openid,offline" \
@@ -21,16 +16,19 @@ ENV NODE_ENV=production \
     REDIS_PORT="" \
     ROUTES_PREFIX="" \
     SENTRY_DSN="" \
-    SERVER_PORT=80 \
+    SERVER_PORT=8080 \
     SESSION_COOKIE_NAME="" \
     SESSION_COOKIE_SIGN_KEY="" \
     SESSION_MAX_AGE=21600 \
-    P1AUTH_URL='https://auth.tst.protocol.one/api/v1' \
-    P1PAYAPI_URL='https://p1payapi.tst.protocol.one' \
-    P1PAYAPI_PROJECT_IDENTIFIER='5be2e16701d96d00012d26c3'
+    P1AUTH_URL="" \
+    P1PAYAPI_URL="" \
+    P1PAYAPI_PROJECT_IDENTIFIER=""
 
-RUN npm run build
+COPY package.json /application
+RUN npm rebuild --force && npm install && npm run build && npm prune --production
 
-EXPOSE 80
+COPY . /application
+
+EXPOSE 8080
 
 CMD ["node", "./index.js"]
