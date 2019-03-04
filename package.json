@@ -11,7 +11,7 @@
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "precommit": "npm run lint",
-    "start-app:local": "cross-env NODE_ENV=local nodemon --ignore './node_modules' -w ./ ./index.js"
+    "start-app:local": "cross-env NODE_ENV=local nodemon --watch './backend' -w ./*.js ./index.js"
   },
   "dependencies": {
     "@coreui/coreui": "^2.1.4",
