@@ -1,0 +1,18 @@
+FROM node:10.12-alpine as node
+
+RUN apk update && apk add git
+
+WORKDIR /application
+
+COPY package.json /application
+
+RUN npm rebuild --force && npm install
+
+COPY . /application
+
+RUN npm run build && npm prune --production
+
+FROM nginx:1.15.4
+
+WORKDIR /usr/share/nginx/html
+COPY --from=node /application/.nuxt/dist/ /usr/share/nginx/html/
