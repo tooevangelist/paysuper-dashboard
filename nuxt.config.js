@@ -16,11 +16,11 @@ module.exports = {
     apiProjectIdentifier: process.env.P1PAYAPI_PROJECT_IDENTIFIER,
   },
   head: {
-    title: 'PonePay',
+    title: 'PaySuper',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: 'PONE payment solution customer control panel' },
+      { hid: 'description', name: 'description', content: 'PaySuper solution customer control panel' },
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
