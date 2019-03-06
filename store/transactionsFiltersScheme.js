@@ -1,32 +1,31 @@
 import { find, flatten, difference } from 'lodash-es';
-import moment from 'moment';
 
 const filters = {
   id: {
-    emptyValue: '',
+    defaultValue: '',
   },
   orderID: {
-    emptyValue: '',
+    defaultValue: '',
     apiQueryName: 'order_id',
   },
   account: {
-    emptyValue: '',
+    defaultValue: '',
   },
   project: {
-    emptyValue: () => [],
-    getFilterValueFromQuery({ queryValue, dictionaries }) {
+    defaultValue: () => [],
+    queryToFilter({ queryValue, dictionaries }) {
       return queryValue.split(',').map(id => find(dictionaries.projects, { id }));
     },
-    getQueryValueFromFilterValue({ filterValue }) {
+    filterToQuery({ filterValue }) {
       return filterValue.map(item => item.id).join(',');
     },
-    getApiQueryValueFromFilterValue({ filterValue }) {
+    filterToApiQuery({ filterValue }) {
       return filterValue.map(item => item.id);
     },
   },
   status: {
-    emptyValue: () => [],
-    getFilterValueFromQuery({ queryValue, dictionaries }) {
+    defaultValue: () => [],
+    queryToFilter({ queryValue, dictionaries }) {
       const queryValueArray = queryValue.split(',');
       return dictionaries.statuses.filter((item) => {
         const ids = item.id.split(',');
@@ -38,94 +37,76 @@ const filters = {
         return false;
       });
     },
-    getQueryValueFromFilterValue({ filterValue }) {
+    filterToQuery({ filterValue }) {
       return flatten(filterValue.map(item => item.id.split(','))).join(',');
     },
-    getApiQueryValueFromFilterValue({ filterValue }) {
+    filterToApiQuery({ filterValue }) {
       return flatten(filterValue.map(item => item.id.split(',').map(num => Number(num))));
     },
   },
   paymentMethod: {
-    emptyValue: () => [],
-    getFilterValueFromQuery({ queryValue, dictionaries }) {
+    defaultValue: () => [],
+    queryToFilter({ queryValue, dictionaries }) {
       return queryValue.split(',').map(id => find(dictionaries.paymentMethods, { id }));
     },
-    getQueryValueFromFilterValue({ filterValue }) {
+    filterToQuery({ filterValue }) {
       return filterValue.map(item => item.id).join(',');
     },
-    getApiQueryValueFromFilterValue({ filterValue }) {
+    filterToApiQuery({ filterValue }) {
       return filterValue.map(item => item.id);
     },
     apiQueryName: 'payment_method',
   },
   quickFilter: {
-    emptyValue: '',
+    defaultValue: '',
     apiQueryName: 'quick_filter',
   },
-  date: {
-    emptyValue: '',
-    group: 'date',
-  },
   dateFrom: {
-    emptyValue: '',
-    group: 'date',
+    defaultValue: null,
+    apiQueryName: 'project_date_from',
+    queryToFilter({ queryValue }) {
+      return Number(queryValue);
+    },
   },
   dateTo: {
-    emptyValue: '',
-    group: 'date',
+    defaultValue: null,
+    apiQueryName: 'project_date_to',
+    queryToFilter({ queryValue }) {
+      return Number(queryValue);
+    },
   },
 
   limit: {
-    emptyValue: 5,
+    defaultValue: 10,
     group: 'page',
   },
 
   offset: {
-    emptyValue: 0,
+    defaultValue: 0,
     group: 'page',
   },
 
   sort: {
-    emptyValue: () => ['_id'],
+    defaultValue: '_id',
   },
 };
 
-function getDateQuery({ filterValues: { date, dateFrom, dateTo } }) {
-  const result = {};
-
-  if (date) {
-    const nextDay = moment.unix(date).add(1, 'days').unix();
-    result.project_date_from = (date / 1000).toFixed();
-    result.project_date_to = (nextDay / 1000).toFixed();
-  }
-  if (dateFrom) {
-    result.project_date_from = (dateFrom / 1000).toFixed();
-  }
-  if (dateTo) {
-    result.project_date_to = (dateTo / 1000).toFixed();
-  }
-  return result;
-}
-function getPageQuery({ queryValue, filterValues }) {
+function getPageQuery({ queryValue, groupFilterValues: { limit } }) {
   return {
-    limit: filterValues.limit,
-    offset: (queryValue - 1) * filterValues.limit,
+    limit,
+    offset: (queryValue - 1) * limit,
   };
 }
 
 const groupHandlers = {
   page: {
-    getQueryValueFromFilterValue({ filterValues: { offset, limit } }) {
+    filterToQuery({ groupFilterValues: { offset, limit } }) {
       return {
         page: (offset / limit) + 1,
       };
     },
-    getFilterValueFromQuery: getPageQuery,
-    getApiQueryValueFromQuery: getPageQuery,
-  },
-  date: {
-    getApiQueryValueFromQuery: getDateQuery,
-    getApiQueryValueFromFilterValue: getDateQuery,
+    queryToFilter: getPageQuery,
+    queryToApiQuery: getPageQuery,
   },
 };
 

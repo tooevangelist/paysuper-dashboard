@@ -17,9 +17,7 @@ export default {
     filterValues: {},
     query: {},
     apiQuery: {},
-    paymentMethods: [
-      { label: 'test', id: '111' }, { label: 'test2', id: '222' },
-    ],
+    paymentMethods: [],
     projects: [],
     statuses: [
       { label: 'New', id: '0' },

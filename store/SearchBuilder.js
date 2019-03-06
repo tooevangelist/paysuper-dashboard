@@ -1,5 +1,4 @@
 import { includes, omitBy, isEmpty, mapValues, forEach } from 'lodash-es';
-import assert from 'simple-assert';
 
 function getCleanQuery(query) {
   return omitBy(query, (value) => {
@@ -30,22 +29,22 @@ export default class SearchBulder {
       const queryName = schemeItem.queryName || filterName;
 
       if (query[queryName]) {
-        if (schemeItem.getFilterValueFromQuery) {
-          return schemeItem.getFilterValueFromQuery({
+        if (schemeItem.queryToFilter) {
+          return schemeItem.queryToFilter({
             query,
             dictionaries,
             queryValue: query[queryName],
-            emptyValue: schemeItem.emptyValue,
+            defaultValue: schemeItem.defaultValue,
             emptyFilterValues,
           });
         }
         return query[queryName];
       }
 
-      if (typeof schemeItem.emptyValue === 'function') {
-        return schemeItem.emptyValue();
+      if (typeof schemeItem.defaultValue === 'function') {
+        return schemeItem.defaultValue();
       }
-      return schemeItem.emptyValue;
+      return schemeItem.defaultValue;
     });
 
     let result = {};
@@ -54,7 +53,7 @@ export default class SearchBulder {
 
       if (
         schemeItem.group &&
-        this.scheme.groupHandlers[schemeItem.group].getFilterValueFromQuery
+        this.scheme.groupHandlers[schemeItem.group].queryToFilter
       ) {
         groups[schemeItem.group] = groups[schemeItem.group] || {};
         groups[schemeItem.group][filterName] = filterValue;
@@ -63,18 +62,18 @@ export default class SearchBulder {
       }
     });
 
-    forEach(groups, (filterValues, name) => {
-      const handler = this.scheme.groupHandlers[name].getFilterValueFromQuery;
+    forEach(groups, (groupFilterValues, name) => {
+      const handler = this.scheme.groupHandlers[name].queryToFilter;
       const queryValue = query[name];
       if (queryValue) {
         result = {
           ...result,
-          ...handler({ query, queryValue, filterValues }),
+          ...handler({ query, queryValue, groupFilterValues }),
         };
       } else {
         result = {
           ...result,
-          ...filterValues,
+          ...groupFilterValues,
         };
       }
     });
@@ -88,10 +87,10 @@ export default class SearchBulder {
       schemeFilters = omitBy(this.scheme.filters, (value, name) => !includes(filterNames, name));
     }
     return mapValues(schemeFilters, (filter) => {
-      if (typeof filter.emptyValue === 'function') {
-        return filter.emptyValue();
+      if (typeof filter.defaultValue === 'function') {
+        return filter.defaultValue();
       }
-      return filter.emptyValue;
+      return filter.defaultValue;
     });
   }
 
@@ -103,23 +102,23 @@ export default class SearchBulder {
 
       if (
         schemeItem.group &&
-        this.scheme.groupHandlers[schemeItem.group].getQueryValueFromFilterValue
+        this.scheme.groupHandlers[schemeItem.group].filterToQuery
       ) {
         groups[schemeItem.group] = groups[schemeItem.group] || {};
         groups[schemeItem.group][filterName] = filterValue;
       } else {
         query[schemeItem.queryName || filterName] =
-          schemeItem.getQueryValueFromFilterValue ?
-            schemeItem.getQueryValueFromFilterValue({ filterValue }) :
+          schemeItem.filterToQuery ?
+            schemeItem.filterToQuery({ filterValue }) :
             filterValue;
       }
     });
 
-    forEach(groups, (filterValues, name) => {
-      const handler = this.scheme.groupHandlers[name].getQueryValueFromFilterValue;
+    forEach(groups, (groupFilterValues, name) => {
+      const handler = this.scheme.groupHandlers[name].filterToQuery;
       query = {
         ...query,
-        ...handler({ filterValues }),
+        ...handler({ groupFilterValues }),
       };
     });
 
@@ -134,20 +133,20 @@ export default class SearchBulder {
 
       if (
         schemeItem.group &&
-        this.scheme.groupHandlers[schemeItem.group].getApiQueryValueFromFilterValue
+        this.scheme.groupHandlers[schemeItem.group].filterToApiQuery
       ) {
         groups[schemeItem.group] = groups[schemeItem.group] || {};
         groups[schemeItem.group][filterName] = filterValue;
       } else {
         apiQuery[schemeItem.apiQueryName || filterName] =
-          schemeItem.getApiQueryValueFromFilterValue ?
-            schemeItem.getApiQueryValueFromFilterValue({ filterValue }) :
+          schemeItem.filterToApiQuery ?
+            schemeItem.filterToApiQuery({ filterValue }) :
             filterValue;
       }
     });
 
     forEach(groups, (filterValues, name) => {
-      const handler = this.scheme.groupHandlers[name].getApiQueryValueFromFilterValue;
+      const handler = this.scheme.groupHandlers[name].filterToApiQuery;
       apiQuery = {
         ...apiQuery,
         ...handler({ filterValues }),
@@ -165,22 +164,22 @@ export default class SearchBulder {
       const queryName = schemeItem.queryName || filterName;
 
       if (query[queryName]) {
-        if (schemeItem.getApiQueryValueFromQuery) {
-          return schemeItem.getApiQueryValueFromQuery({
+        if (schemeItem.queryToApiQuery) {
+          return schemeItem.queryToApiQuery({
             query,
             queryValue: query[queryName],
-            emptyValue: schemeItem.emptyValue,
+            defaultValue: schemeItem.defaultValue,
             emptyFilterValues,
           });
         }
         return query[queryName];
       }
 
-      if (typeof schemeItem.emptyValue === 'function') {
-        return schemeItem.emptyValue();
+      if (typeof schemeItem.defaultValue === 'function') {
+        return schemeItem.defaultValue();
       }
 
-      return schemeItem.emptyValue;
+      return schemeItem.defaultValue;
     });
 
     let apiQuery = {};
@@ -189,7 +188,7 @@ export default class SearchBulder {
 
       if (
         schemeItem.group &&
-        this.scheme.groupHandlers[schemeItem.group].getApiQueryValueFromQuery
+        this.scheme.groupHandlers[schemeItem.group].queryToApiQuery
       ) {
         groups[schemeItem.group] = groups[schemeItem.group] || {};
         groups[schemeItem.group][filterName] = filterValue;
@@ -198,18 +197,18 @@ export default class SearchBulder {
       }
     });
 
-    forEach(groups, (filterValues, name) => {
-      const handler = this.scheme.groupHandlers[name].getApiQueryValueFromQuery;
+    forEach(groups, (groupFilterValues, name) => {
+      const handler = this.scheme.groupHandlers[name].queryToApiQuery;
       const queryValue = query[name];
       if (queryValue) {
         apiQuery = {
           ...apiQuery,
-          ...handler({ query, queryValue, filterValues }),
+          ...handler({ query, queryValue, groupFilterValues }),
         };
       } else {
         apiQuery = {
           ...apiQuery,
-          ...filterValues,
+          ...groupFilterValues,
         };
       }
     });

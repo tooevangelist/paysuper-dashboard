@@ -2,7 +2,7 @@
   <div>
     <PageHeader :breadcrumbs="[{label: '...', url: '/'}]" title="Transactions search" />
     <div style="width: 100%;">
-      <TransactionDetailedFilters
+      <TransactionFilters
         @searchRequested="handleFiltersSearchRequest"
         :getFilterValues="getFilterValues"
         :getEmptyFilterValues="getEmptyFilterValues"
@@ -30,14 +30,14 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
 import { PageHeader } from '@protocol-one/ui-kit';
-import TransactionDetailedFilters from '@/components/TransactionDetailedFilters.vue';
+import TransactionFilters from '@/components/TransactionFilters.vue';
 import TransactionsList from '@/components/TransactionsList.vue';
 import UiPaginator from '@/components/UiPaginator.vue';
 
 export default {
   middleware: 'IsNotAuthenticated',
   components: {
-    TransactionDetailedFilters, TransactionsList, PageHeader, UiPaginator,
+    TransactionFilters, TransactionsList, PageHeader, UiPaginator,
   },
   asyncData({ store, app }) {
     return store.dispatch('order/initState', {
