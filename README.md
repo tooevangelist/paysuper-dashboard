@@ -7,6 +7,14 @@ Uses Nuxt.js
 npm run dev
 ```
 
+You'll need an `.env.local` file:
+```
+VUE_APP_I18N_FALLBACK_LOCALE=en
+VUE_APP_P1AUTH_URL=https://yourhost/auth
+VUE_APP_P1PAYAPI_URL=https://yourhost/api
+VUE_APP_P1PAYAPI_PROJECT_IDENTIFIER=123123123
+```
+
 ### Compiles and starts for production
 ```
 npm run build

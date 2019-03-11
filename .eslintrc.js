@@ -1,31 +1,25 @@
 module.exports = {
   root: true,
   env: {
-    browser: true,
-    node: true
-  },
-  parserOptions: {
-    parser: 'babel-eslint'
+    node: true,
   },
   extends: [
-    'airbnb-base',
-    // https://github.com/vuejs/eslint-plugin-vue#priority-a-essential-error-prevention
-    // consider switching to `plugin:vue/strongly-recommended` or `plugin:vue/recommended` for stricter rules.
     'plugin:vue/essential',
+    '@vue/airbnb',
   ],
-  // required to lint *.vue files
-  plugins: [
-    'vue'
-  ],
-  // add your custom rules here
-  rules: {
-    'no-param-reassign': ['error', { ignorePropertyModificationsFor: ['state'] }],
-    'no-plusplus': 'off'
-  },
   settings: {
-    'import/resolver': {
-      // We need this for eslint to understand ~ path aliases
-      'nuxt-import': {}
-    }
-  }
-}
+    webpack: {
+      config: require.resolve('@vue/cli-service/webpack.config.js'),
+    },
+  },
+  rules: {
+    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'no-param-reassign': ['error', { ignorePropertyModificationsFor: ['state'] }],
+  },
+  parserOptions: {
+    parser: 'babel-eslint',
+    sourceType: 'module',
+    allowImportExportEverywhere: true,
+  },
+};
