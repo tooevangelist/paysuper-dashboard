@@ -36,7 +36,7 @@ services:
     networks:
       - p1devnet
     volumes:
-      - paysuper-static-content:/application/.nuxt/dist
+      - paysuper-static-content:/application/dist
     environment:
       - NODE_ENV=production
       - AUTH1_CLIENT_ID=${AUTH1_CLIENT_ID}

@@ -14,5 +14,5 @@ RUN npm run build && npm prune --production
 
 FROM nginx:1.15.4
 
-WORKDIR /usr/share/nginx/html
-COPY --from=node /application/.nuxt/dist/ /usr/share/nginx/html/
+WORKDIR /var/www/static
+COPY --from=node /application/dist/ /var/www/static
