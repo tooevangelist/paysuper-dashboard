@@ -1,0 +1,47 @@
+{{- $configMapName := printf "%s-%s" .Release.Name .Values.frontend.name }}
+{{ $deployment := .Values.frontend }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $configMapName }}
+  labels:
+    app: {{ .Chart.Name }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }} 
+    role: {{ $deployment.role }}
+data:
+  {{ .Values.ingress.hostname }}.conf: |
+      server {
+        server_name {{ .Values.ingress.hostname }};
+        listen {{ .Values.frontend.port }} default_server;
+
+        charset utf-8;
+
+        gzip on;
+        gzip_vary on;
+        gzip_proxied any;
+        gzip_comp_level 6;
+        gzip_buffers 16 8k;
+        gzip_http_version 1.1;
+        gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+
+        server_tokens off;
+
+        root /var/www/static/server;
+        index index.spa.html;
+       
+        location ^~ /_nuxt/ {
+          alias /var/www/static/client/;
+        }
+
+        location / {
+          index index.html;
+          try_files $uri /index.html;
+        }
+
+        location = /_healthz {
+          add_header Content-Type text/plain;
+          return 200 'ok';
+        }
+      }
