@@ -1,6 +1,5 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
-import Page from '@/components/Page.vue';
 import { PageHeader } from '@protocol-one/ui-kit';
 import TransactionFilters from '@/components/TransactionFilters.vue';
 import TransactionsList from '@/components/TransactionsList.vue';
@@ -10,7 +9,7 @@ import TransactionSearchStore from '@/store/TransactionSearchStore';
 export default {
   middleware: 'IsNotAuthenticated',
   components: {
-    TransactionFilters, TransactionsList, PageHeader, UiPaginator, Page,
+    TransactionFilters, TransactionsList, PageHeader, UiPaginator,
   },
   asyncData({ store, route }) {
     store.registerModule('TransactionSearch', TransactionSearchStore);
@@ -73,7 +72,7 @@ export default {
 </script>
 
 <template>
-  <Page>
+  <div>
     <PageHeader :breadcrumbs="[{label: '...', url: '/'}]" title="Transactions search" />
     <div style="width: 100%;">
       <TransactionFilters
@@ -98,7 +97,7 @@ export default {
       <p v-if="!items.length" class="no-results">Computer says no results</p>
 
     </div>
-  </Page>
+  </div>
 </template>
 
 <style lang="scss">

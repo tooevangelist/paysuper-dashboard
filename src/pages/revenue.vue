@@ -1,5 +1,4 @@
 <script>
-import Page from '@/components/Page.vue';
 import axios from 'axios';
 import moment from 'moment';
 import { PageHeader } from '@protocol-one/ui-kit';
@@ -7,7 +6,7 @@ import Linechart from '@/components/Linechart';
 import Notifications from '@/mixins/notificaton';
 
 export default {
-  components: { Linechart, PageHeader, Page },
+  components: { Linechart, PageHeader },
   mixins: [Notifications],
   data() {
     return {
@@ -26,7 +25,6 @@ export default {
     };
   },
   asyncData(context) {
-    console.log(11111, '111', 111);
     const from = moment().subtract(7, 'days').unix();
     const to = moment().unix();
 
@@ -144,7 +142,7 @@ export default {
 </script>
 
 <template>
-  <Page>
+  <div>
     <PageHeader>
       <span slot="title">Revenue</span>
     </PageHeader>
@@ -213,7 +211,7 @@ export default {
         </div>
       </div>
     </div>
-  </Page>
+  </div>
 </template>
 
 

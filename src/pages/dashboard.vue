@@ -1,12 +1,10 @@
 <script>
-import Page from '@/components/Page.vue';
 import {
   Button, TextField, FormByStep, PageHeader,
 } from '@protocol-one/ui-kit';
 
 export default {
   components: {
-    Page,
     FormByStep,
     TextField,
     Button,
@@ -72,7 +70,7 @@ export default {
 </script>
 
 <template>
-  <Page>
+  <div>
     <PageHeader>
       <span slot="title">Dashboard</span>
     </PageHeader>
@@ -92,5 +90,5 @@ export default {
         </div>
       </div>
     </FormByStep>
-  </Page>
+  </div>
 </template>

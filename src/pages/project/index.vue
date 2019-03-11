@@ -1,5 +1,47 @@
+<script>
+import axios from 'axios';
+import {
+  Button,
+  UiTable,
+  UiTableCell,
+  UiTableRow,
+  PageHeader,
+} from '@protocol-one/ui-kit';
+import PanelItem from '@/components/PanelItem.vue';
+import StatusIcon from '@/components/StatusIcon.vue';
+
+export default {
+  middleware: 'IsNotAuthenticated',
+  components: {
+    Button,
+    PanelItem,
+    UiTable,
+    UiTableCell,
+    UiTableRow,
+    PageHeader,
+    StatusIcon,
+  },
+  data() {
+    return {
+      projects: [],
+      viewType: 'panels',
+    };
+  },
+  mounted() {
+    const self = this;
+
+    axios.get(`${process.env.VUE_APP_P1PAYAPI_URL}/api/v1/s/project`, {
+      headers: { Authorization: `Bearer ${this.$store.state.user.accessToken}` },
+    }).then((response) => {
+      self.projects = response.data;
+    }).catch(() => {});
+  },
+  methods: {},
+};
+</script>
+
 <template>
-  <Page>
+  <div>
     <PageHeader :breadcrumbs="[{label: '...', url: '/'}]" title="Projects">
       <template slot="right">
         <div>
@@ -52,52 +94,8 @@
         <ui-table-cell>{{project.created_at}}</ui-table-cell>
       </ui-table-row>
     </ui-table>
-  </Page>
+  </div>
 </template>
-
-<script>
-import axios from 'axios';
-import {
-  Button,
-  UiTable,
-  UiTableCell,
-  UiTableRow,
-  PageHeader,
-} from '@protocol-one/ui-kit';
-import Page from '@/components/Page.vue';
-import PanelItem from '@/components/PanelItem.vue';
-import StatusIcon from '@/components/StatusIcon.vue';
-
-export default {
-  middleware: 'IsNotAuthenticated',
-  components: {
-    Page,
-    Button,
-    PanelItem,
-    UiTable,
-    UiTableCell,
-    UiTableRow,
-    PageHeader,
-    StatusIcon,
-  },
-  data() {
-    return {
-      projects: [],
-      viewType: 'panels',
-    };
-  },
-  mounted() {
-    const self = this;
-
-    axios.get(`${process.env.VUE_APP_P1PAYAPI_URL}/api/v1/s/project`, {
-      headers: { Authorization: `Bearer ${this.$store.state.user.accessToken}` },
-    }).then((response) => {
-      self.projects = response.data;
-    }).catch(() => {});
-  },
-  methods: {},
-};
-</script>
 
 <style lang="scss" scoped>
 .content-wrapper {

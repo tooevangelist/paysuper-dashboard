@@ -1,13 +1,26 @@
 <script>
+import Page from '@/components/Page.vue';
+
 export default {
   name: 'App',
+  components: {
+    Page,
+  },
+  computed: {
+    layoutComponentName() {
+      if (this.$route.meta && this.$route.meta.layout) {
+        return this.$route.meta.layout;
+      }
+      return 'div';
+    },
+  },
 };
 </script>
 
 <template>
-  <div class="app">
+  <component class="app" :is="layoutComponentName">
     <router-view></router-view>
-  </div>
+  </component>
 </template>
 
 <style lang="scss">

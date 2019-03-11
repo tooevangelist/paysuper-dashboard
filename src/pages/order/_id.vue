@@ -1,7 +1,6 @@
 <script>
 // import axios from 'axios';
 import moment from 'moment';
-import Page from '@/components/Page.vue';
 import { PageHeader } from '@protocol-one/ui-kit';
 import Commission from '@/mixins/commission';
 
@@ -9,7 +8,6 @@ export default {
   middleware: 'IsNotAuthenticated',
   mixins: [Commission],
   components: {
-    Page,
     PageHeader,
   },
   asyncData() {
@@ -161,7 +159,7 @@ export default {
 </script>
 
 <template>
-  <Page>
+  <div>
     <PageHeader :breadcrumbs="breadcrumbs">
       <span slot="title">Transaction #{{order.id}}</span>
     </PageHeader>
@@ -371,7 +369,7 @@ export default {
         </dl>
       </div>
     </div>
-  </Page>
+  </div>
 </template>
 
 <style lang="scss">

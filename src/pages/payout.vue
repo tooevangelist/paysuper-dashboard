@@ -1,5 +1,5 @@
 <template>
-  <Page>
+  <div>
     <PageHeader>
       <span slot="title">Payout</span>
     </PageHeader>
@@ -58,13 +58,12 @@
         </div>
       </div>
     </div>
-  </Page>
+  </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
 import { PageHeader } from '@protocol-one/ui-kit';
-import Page from '@/components/Page.vue';
 import axios from 'axios';
 import Notifications from '@/mixins/notificaton';
 
@@ -72,7 +71,6 @@ export default {
   mixins: [Notifications],
   components: {
     PageHeader,
-    Page,
   },
   data() {
     return {

@@ -3,7 +3,6 @@ import { mapState } from 'vuex';
 import {
   Button, Select, TextField, PageHeader,
 } from '@protocol-one/ui-kit';
-import Page from '@/components/Page.vue';
 import MerchantStore from '@/store/MerchantStore';
 import Notifications from '../mixins/notificaton';
 import Country from '../mixins/country';
@@ -16,7 +15,6 @@ export default {
     Button,
     Select,
     TextField,
-    Page,
   },
   asyncData({ store, route }) {
     store.registerModule('Merchant', MerchantStore);
@@ -83,7 +81,7 @@ export default {
 </script>
 
 <template>
-  <Page>
+  <div>
     <PageHeader>
       <span slot="title">Merchant</span>
     </PageHeader>
@@ -145,5 +143,5 @@ export default {
         </div>
       </div>
     </div>
-  </Page>
+  </div>
 </template>
