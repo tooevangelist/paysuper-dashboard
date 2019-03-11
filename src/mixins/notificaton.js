@@ -36,7 +36,7 @@ export default {
 
       options = extend({}, options, opts);
 
-      const toast = this.$toast.show(message, options);
+      const toast = this.$toasted.show(message, options);
 
       toast.el.addEventListener('click', () => {
         toast.goAway(0);

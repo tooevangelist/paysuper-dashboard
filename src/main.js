@@ -6,6 +6,7 @@ import { sync } from 'vuex-router-sync';
 import './plugins/bootstrap';
 import './plugins/vue-datepicker';
 import './plugins/vue-select';
+import './plugins/vue-toasted';
 import i18n from './plugins/i18n';
 import router from './router';
 import store from './store/RootStore';
