@@ -6,7 +6,7 @@ WORKDIR /application
 
 COPY package.json /application
 
-RUN npm rebuild --force && npm install
+RUN npm install
 
 COPY . /application
 

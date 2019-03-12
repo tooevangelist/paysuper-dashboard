@@ -6,7 +6,7 @@ WORKDIR /application
 
 COPY . /application
 
-RUN npm rebuild --force && npm install && npm run build && npm prune --production
+RUN npm install && npm run build && npm prune --production
 
 EXPOSE 8080
 
