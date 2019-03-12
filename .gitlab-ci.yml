@@ -47,7 +47,7 @@ deploy_production:
       kubectl config use-context ci &&
       helm init --client-only &&
       helm upgrade --install $P1_PROJECT .helm
-         --set backend.image=$CI_REGISTRY_IMAGE
+        --set backend.image=$CI_REGISTRY_IMAGE
         --set backend.imageTag=$CI_COMMIT_REF_SLUG.$CI_PIPELINE_ID
         --set frontend.image=$NGX_IMAGE
         --set frontend.imageTag="$CI_COMMIT_REF_SLUG"-static.$CI_PIPELINE_ID
