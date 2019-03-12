@@ -4,9 +4,9 @@ RUN apk update && apk add git
 
 WORKDIR /application
 
-COPY package.json ./
+COPY package.json package-lock.json ./
 
-RUN npm install
+RUN npm install --production
 
 COPY . /application
 
