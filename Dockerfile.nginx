@@ -4,13 +4,13 @@ RUN apk update && apk add git
 
 WORKDIR /application
 
-COPY package.json /application
+COPY package.json ./
 
 RUN npm install
 
 COPY . /application
 
-RUN npm run build && npm rebuild node-sass && npm prune --production
+RUN npm rebuild node-sass && npm run build && npm prune --production
 
 FROM nginx:1.15.4
 

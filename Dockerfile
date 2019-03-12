@@ -4,9 +4,13 @@ RUN apk update && apk add git
 
 WORKDIR /application
 
+COPY package.json ./
+
+RUN npm install
+
 COPY . /application
 
-RUN npm install && npm rebuild node-sass && npm run build && npm prune --production
+RUN npm rebuild node-sass && npm run build && npm prune --production
 
 EXPOSE 8080
 
