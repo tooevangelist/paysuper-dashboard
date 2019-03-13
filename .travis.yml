@@ -11,6 +11,7 @@ jobs:
     script:
     - echo 'tests here'
   - stage: deploy
+    install: true
     script:
     - 'curl -H "Content-Type: application/json;" -X POST -d "{\"PROJECT\": \"$TRAVIS_REPO_SLUG\",
       \"BRANCH\": \"$TRAVIS_BRANCH\"}" $JENKINS'
