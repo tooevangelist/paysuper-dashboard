@@ -13,7 +13,7 @@
     "test:dev": "vue-cli-service test:unit --watchAll",
     "coverage": "vue-cli-service test:unit --coverage --coverageReporters=lcov",
     "coverage:publish": "npm run coverage && codecov",
-    "start-app:local": "cross-env NODE_ENV=local nodemon --watch './backend' -w ./*.js ./index.js"
+    "serve:be": "cross-env NODE_ENV=local nodemon ./index.js --watch './backend/**/*.js'"
   },
   "dependencies": {
     "@protocol-one/ui-kit": "^1.15.0",

@@ -5,13 +5,14 @@
     <meta name="robots" content="noindex, nofollow">
     <script>
         var result = {
+            source: "PAYSUPER_MANAGEMENT_SERVER",
             error: "{errorCode}",
             access_token: "{accessToken}",
             expires_in: {expiresIn},
             success: {isSuccess},
         };
         var targetOrigin = "{targetOrigin}";
-        parent.postMessage(JSON.stringify(result), targetOrigin);
+        parent.postMessage(result, targetOrigin);
     </script>
 </head>
 <body></body>

@@ -20,9 +20,9 @@ const config = {
 
   sentryDsn: getEnvVariable('SENTRY_DSN', 'https://2fc1a112904e472da22284cad12c6d87@sentry.tst.protocol.one/10'),
 
-  publicHost: getEnvVariable('PUBLIC_HOST', 'http://localhost:8080'),
+  publicHost: getEnvVariable('PUBLIC_HOST', 'https://paysupermgmt.tst.protocol.one'),
 
-  postMessageTargetOrigin: getEnvVariable('POST_MESSAGE_TARGET_ORIGIN', 'http://localhost:8080'),
+  postMessageTargetOrigin: getEnvVariable('POST_MESSAGE_TARGET_ORIGIN', 'https://paysupermgmt.tst.protocol.one'),
 
   auth1ClientId: getEnvVariable('AUTH1_CLIENT_ID', '5c88be64ebe80e0001ed2e3e'),
   auth1ClientSecret: getEnvVariable('AUTH1_CLIENT_SECRET', '6LBSHzkJVWOLiU7iCpbffpE3fcyIrqoyeCfgpDqiMPhnQwW7KFqtalsrsVyLP3Ee'),
