@@ -8,6 +8,7 @@ stages:
 jobs:
   include:
   - stage: test
+    install: true
     script:
     - echo 'tests here'
   - stage: deploy
