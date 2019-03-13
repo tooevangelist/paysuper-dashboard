@@ -36,7 +36,7 @@ export default {
       },
 
       set(value) {
-        this.project.callback_protocol = value ? 'default' : 'someshit';
+        this.project.callback_protocol = value ? 'default' : 'empty';
       },
     },
   },
