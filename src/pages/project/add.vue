@@ -1,9 +1,12 @@
 <script>
-import { PageHeader } from '@protocol-one/ui-kit';
+import { PageHeader, Button } from '@protocol-one/ui-kit';
 import Project from '@/components/Project.vue';
+import ProjectForm from '@/components/ProjectForm.vue';
 
 export default {
-  components: { Project, PageHeader },
+  components: {
+    Project, PageHeader, ProjectForm, Button,
+  },
   data() {
     return {
       breadcrumbs: [
@@ -25,7 +28,10 @@ export default {
   <div>
     <PageHeader :breadcrumbs="breadcrumbs">
       <span slot="title">Create project</span>
+      <Button slot="right">Create project</Button>
     </PageHeader>
+    <ProjectForm />
+    <br>
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-12">

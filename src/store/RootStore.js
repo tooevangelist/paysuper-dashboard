@@ -1,6 +1,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
+import DictionariesStore from './DictionariesStore';
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -11,8 +13,12 @@ export default new Vuex.Store({
     getUser: state => state.user || null,
   },
   actions: {
-    initState() {
-
+    async initState({ dispatch }) {
+      await dispatch('Dictionaries/initState');
     },
+  },
+
+  modules: {
+    Dictionaries: DictionariesStore,
   },
 });

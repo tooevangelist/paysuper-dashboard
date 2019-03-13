@@ -17,12 +17,18 @@ Vue.use(VueRouter);
 Vue.use(Vuex);
 sync(store, router);
 
-new Vue(
-  {
-    i18n,
-    router,
-    store,
-    data: {},
-    render: h => h(AppView),
-  },
-).$mount('#app');
+async function initApp() {
+  await store.dispatch('initState');
+
+  new Vue(
+    {
+      i18n,
+      router,
+      store,
+      data: {},
+      render: h => h(AppView),
+    },
+  ).$mount('#app');
+}
+
+initApp();

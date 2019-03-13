@@ -38,4 +38,8 @@ module.exports = {
       enableInSFC: true,
     },
   },
+
+  devServer: {
+    port: 3030,
+  },
 };

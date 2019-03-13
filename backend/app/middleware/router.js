@@ -8,7 +8,7 @@ const router = new Router({
   prefix: config.routesPrefix,
 });
 
-const auth1RoutesNamespace = config.auth1RoutesNamespace;
+const { auth1RoutesNamespace } = config;
 
 router
   .get('/_healthz', async (ctx, next) => {

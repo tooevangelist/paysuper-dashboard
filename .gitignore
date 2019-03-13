@@ -7,7 +7,7 @@ node_modules
 
 /coverage/
 
-# local env files
+# env files
 .env.local
 .env.*.local
 
