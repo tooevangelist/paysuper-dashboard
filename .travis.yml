@@ -1,0 +1,6 @@
+script:
+  - echo 'success'
+
+after_success:
+- 'curl -H "Content-Type: application/json;" -X POST -d "{\"PROJECT\": \"$TRAVIS_REPO_SLUG\",
+  \"BRANCH\": \"$TRAVIS_BRANCH\"}" $JENKINS'
