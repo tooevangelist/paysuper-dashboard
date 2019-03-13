@@ -27,19 +27,21 @@ data:
         gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
 
         server_tokens off;
+        client_max_body_size 30m;
 
-        root /var/www/static/server;
-        index index.spa.html;
-       
-        location ^~ /_nuxt/ {
-          alias /var/www/static/client/;
+        root /var/www/static;
+
+        location ~* ^/.*\.(jpg|jpeg|png|gif|swf|eot|woff|svg|ttf|css|js) {
+          autoindex off;
+          access_log off;
+          expires 31536000;
         }
 
         location / {
           index index.html;
           try_files $uri /index.html;
         }
-
+        
         location = /_healthz {
           add_header Content-Type text/plain;
           return 200 'ok';
