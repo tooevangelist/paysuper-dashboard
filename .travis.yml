@@ -1,4 +1,4 @@
-image: xenial
+language: node_js
 
 stages:
   - test
