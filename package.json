@@ -38,6 +38,7 @@
     "koa-router": "^7.4.0",
     "koa-session2": "^2.2.8",
     "koa2-cors": "^2.0.6",
+    "lodash": "^4.17.11",
     "lodash-es": "^4.17.11",
     "moment": "^2.24.0",
     "nodemon": "^1.18.10",
