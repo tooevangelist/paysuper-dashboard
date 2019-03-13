@@ -42,4 +42,8 @@ ul {
   margin: 0;
   padding: 0;
 }
+
+label {
+  margin: 0;
+}
 </style>

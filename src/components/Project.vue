@@ -11,7 +11,7 @@
       </Button>
     </div>
     <div class="card-body">
-      <div class="form-group">
+      <div class="form-group" v-if="false">
         <label for="name">Name</label>
         <input
           class="form-control"
@@ -22,7 +22,7 @@
         >
       </div>
 
-      <div class="form-group">
+      <div class="form-group" v-if="false">
         <label for="url-check">Validation request URL</label>
         <input
           class="form-control"
@@ -33,7 +33,7 @@
         >
       </div>
 
-      <div class="form-group">
+      <div class="form-group" v-if="false">
         <label for="url-notify">Payment notify request URL</label>
         <input
           class="form-control"
@@ -44,7 +44,7 @@
         >
       </div>
 
-      <div class="form-group">
+      <div class="form-group" v-if="false">
         <label for="create-order-allowed-urls">Create order allowed URLs</label>
         <input
           class="form-control"
@@ -59,7 +59,7 @@
         </small>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" v-if="false">
         <label for="url-redirect-success">
           URL for redirect user after
           successfully completed payment
@@ -73,7 +73,7 @@
         >
       </div>
 
-      <div class="form-group">
+      <div class="form-group" v-if="false">
         <label for="url-redirect-fail">URL for redirect user after failed payment</label>
         <input
           class="form-control"

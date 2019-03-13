@@ -7,11 +7,13 @@ const routes = [
     path: '/order/',
     component: () => import('@/pages/order/index.vue'),
     meta: { layout: 'Page' },
+    name: 'order',
   },
   {
     path: '/order/:id',
     component: () => import('@/pages/order/_id.vue'),
     meta: { layout: 'Page' },
+    name: 'order-card',
   },
   {
     path: '/demo/',
@@ -25,6 +27,7 @@ const routes = [
     path: '/dashboard/',
     component: () => import('@/pages/dashboard.vue'),
     meta: { layout: 'Page' },
+    name: 'dashboard',
   },
   {
     path: '/eula/',
@@ -54,6 +57,7 @@ const routes = [
     path: '/revenue/',
     component: () => import('@/pages/revenue.vue'),
     meta: { layout: 'Page' },
+    name: 'revenue',
   },
   {
     path: '/payout/',
@@ -64,21 +68,25 @@ const routes = [
     path: '/merchant/',
     component: () => import('@/pages/merchant.vue'),
     meta: { layout: 'Page' },
+    name: 'merchant',
   },
   {
     path: '/project/',
     component: () => import('@/pages/project/index.vue'),
     meta: { layout: 'Page' },
+    name: 'project',
   },
   {
     path: '/project/add/',
     component: () => import('@/pages/project/add.vue'),
     meta: { layout: 'Page' },
+    name: 'project-add',
   },
   {
     path: '/project/:id',
     component: () => import('@/pages/project/_id.vue'),
     meta: { layout: 'Page' },
+    name: 'project-card',
   },
 ];
 

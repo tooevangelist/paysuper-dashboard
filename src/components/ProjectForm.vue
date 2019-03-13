@@ -3,6 +3,7 @@ import {
   Button, FormByStep,
 } from '@protocol-one/ui-kit';
 import ProjectFormSettings from '@/components/ProjectFormSettings.vue';
+import ProjectFormSimpleCheckout from '@/components/ProjectFormSimpleCheckout.vue';
 
 export default {
   name: 'ProjectForm',
@@ -11,6 +12,7 @@ export default {
     FormByStep,
     Button,
     ProjectFormSettings,
+    ProjectFormSimpleCheckout,
   },
 
   props: {
@@ -20,9 +22,12 @@ export default {
         name: '',
         url_check_account: '',
         url_process_payment: '',
+        url_redirect_success: '',
         url_redirect_fail: '',
         secret_key: '',
         create_invoice_allowed_urls: [],
+
+        callback_protocol: 'default',
       }),
     },
   },
@@ -70,6 +75,7 @@ export default {
   <div class="project-form">
     <FormByStep :steps="steps" v-model="currentStep">
       <ProjectFormSettings v-if="currentStep === 'settings'" :project="project" />
+      <ProjectFormSimpleCheckout v-if="currentStep === 'simple-checkout'" :project="project" />
 
       <div slot="side-footer" v-if="isFormComplete">
         You have finished filling out company details, send them for review
