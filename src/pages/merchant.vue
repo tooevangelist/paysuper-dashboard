@@ -16,12 +16,17 @@ export default {
     Select,
     TextField,
   },
-  asyncData({ store, route }) {
-    store.registerModule('Merchant', MerchantStore);
+
+  asyncData({ store, route, resources }) {
+    if (store.state.Merchant) {
+      return undefined;
+    }
+    store.registerModule('Merchant', MerchantStore(resources));
     return store.dispatch('Merchant/initState', {
       query: route.query,
     });
   },
+
   data() {
     return {
       name: '',
@@ -38,22 +43,6 @@ export default {
         { label: 'Every year', value: 'year' },
       ],
     };
-  },
-  methods: {
-    update() {
-      this.$store.dispatch('Merchant/update', {
-        ...this.data,
-        name: this.name,
-        currency: this.currency,
-        country: this.country,
-        accounting_period: this.accountingPeriod,
-      })
-        .then(() => {
-          this.showSuccessMessage('Merchant data updated successfully');
-        }).catch((e) => {
-          this.showErrorMessage(this.getErrorMessage(e));
-        });
-    },
   },
   computed: {
     ...mapState('Merchant', ['merchant']),
@@ -76,6 +65,23 @@ export default {
 
       this.accountingPeriod = item.value;
     });
+  },
+
+  methods: {
+    update() {
+      this.$store.dispatch('Merchant/update', {
+        ...this.data,
+        name: this.name,
+        currency: this.currency,
+        country: this.country,
+        accounting_period: this.accountingPeriod,
+      })
+        .then(() => {
+          this.showSuccessMessage('Merchant data updated successfully');
+        }).catch((e) => {
+          this.showErrorMessage(this.getErrorMessage(e));
+        });
+    },
   },
 };
 </script>

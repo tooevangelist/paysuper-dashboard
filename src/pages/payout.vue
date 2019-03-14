@@ -65,6 +65,7 @@
 import { mapState } from 'vuex';
 import { PageHeader } from '@protocol-one/ui-kit';
 import axios from 'axios';
+import moment from 'moment';
 import Notifications from '@/mixins/notificaton';
 
 export default {
@@ -101,8 +102,8 @@ export default {
       && this.merchant.first_payment_at != null
       && this.merchant.accounting_period != null
     ) {
-      const cDate = this.$moment();
-      const fpDate = this.$moment(this.merchant.first_payment_at);
+      const cDate = moment();
+      const fpDate = moment(this.merchant.first_payment_at);
 
       while (fpDate.unix() <= cDate.unix()) {
         const item = { from: fpDate.unix() };

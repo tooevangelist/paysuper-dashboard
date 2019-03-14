@@ -1,6 +1,7 @@
 import VueRouter from 'vue-router';
 import qs from 'qs';
 import store from './store/RootStore';
+import resources from './resources';
 import routes from './routes';
 
 const router = new VueRouter(
@@ -48,14 +49,14 @@ router.beforeResolve((to, from, next) => {
     return next();
   }
 
-  // здесь мы должны вызвать индикатор загрузки, если используем его
   Promise.all(activated.map((c) => {
     if (c.asyncData) {
-      return c.asyncData({ store, route: to });
+      store.dispatch('setIsLoading', true);
+      return c.asyncData({ store, route: to, resources });
     }
     return undefined;
   })).then(() => {
-    // останавливаем индикатор загрузки
+    store.dispatch('setIsLoading', false);
 
     next();
   }).catch(next);

@@ -1,12 +1,14 @@
 <script>
 import { mapState, mapActions } from 'vuex';
-import { PageNavbar } from '@protocol-one/ui-kit';
+import { UiPageNavbar } from '@protocol-one/ui-kit';
+import Loading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/vue-loading.css';
 import IconLogo from './IconLogo.vue';
 
 export default {
   name: 'Page',
 
-  components: { IconLogo, PageNavbar },
+  components: { IconLogo, UiPageNavbar, Loading },
 
   data() {
     return {
@@ -20,6 +22,7 @@ export default {
   },
 
   computed: {
+    ...mapState(['isLoading']),
     ...mapState('User', ['isAuthorised']),
     // ...mapState('merchant', ['merchant']),
 
@@ -89,7 +92,11 @@ export default {
 
 <template>
   <div class="main-wrapper">
-    <PageNavbar
+    <Loading
+      :active="isLoading"
+      :is-full-page="true"
+    ></Loading>
+    <UiPageNavbar
       title="Pay Super"
       :navigationLinks="navigationLinks"
       :logoLink="logoLink"
@@ -98,7 +105,7 @@ export default {
       @logout="handleLogout"
     >
       <IconLogo slot="logo" />
-    </PageNavbar>
+    </UiPageNavbar>
     <div>
       <slot></slot>
     </div>

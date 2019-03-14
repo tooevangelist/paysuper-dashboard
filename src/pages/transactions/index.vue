@@ -3,15 +3,17 @@ import { mapState, mapGetters, mapActions } from 'vuex';
 import { PageHeader, UiPaginator } from '@protocol-one/ui-kit';
 import TransactionFilters from '@/components/TransactionFilters.vue';
 import TransactionsList from '@/components/TransactionsList.vue';
-import TransactionSearchStore from '@/store/TransactionSearchStore';
+import TransactionsSearchStore from '@/store/TransactionsSearchStore';
 
 export default {
-  middleware: 'IsNotAuthenticated',
   components: {
     TransactionFilters, TransactionsList, PageHeader, UiPaginator,
   },
-  asyncData({ store, route }) {
-    store.registerModule('TransactionSearch', TransactionSearchStore);
+  asyncData({ store, route, resources }) {
+    if (store.state.TransactionSearch) {
+      return undefined;
+    }
+    store.registerModule('TransactionSearch', TransactionsSearchStore(resources));
     return store.dispatch('TransactionSearch/initState', {
       query: route.query,
     });

@@ -5,7 +5,6 @@ import { PageHeader } from '@protocol-one/ui-kit';
 import Commission from '@/mixins/commission';
 
 export default {
-  middleware: 'IsNotAuthenticated',
   mixins: [Commission],
   components: {
     PageHeader,

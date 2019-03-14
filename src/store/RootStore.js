@@ -11,6 +11,12 @@ export default new Vuex.Store({
   state: {
     user: {},
     config: resources.config,
+    isLoading: false,
+  },
+  mutations: {
+    isLoading(state, value) {
+      state.isLoading = value;
+    },
   },
   getters: {
     getUser: state => state.user || null,
@@ -21,6 +27,10 @@ export default new Vuex.Store({
         dispatch('User/initState'),
         dispatch('Dictionaries/initState'),
       ]);
+    },
+
+    setIsLoading({ commit }, value) {
+      commit('isLoading', value);
     },
   },
 

@@ -16,7 +16,7 @@
     "serve:be": "cross-env NODE_ENV=local nodemon ./index.js --watch './backend/**/*.js'"
   },
   "dependencies": {
-    "@protocol-one/ui-kit": "^1.15.0",
+    "@protocol-one/ui-kit": "^1.16.0",
     "@sentry/browser": "^4.5.2",
     "@sentry/node": "^4.6.4",
     "authone-jwt-verifier-node": "github:ProtocolONE/authone-jwt-verifier-node#master",
@@ -52,6 +52,7 @@
     "vue": "^2.5.17",
     "vue-chartjs": "^3.4.0",
     "vue-i18n": "^8.0.0",
+    "vue-loading-overlay": "^3.2.0",
     "vue-multiselect": "^2.1.4",
     "vue-router": "^3.0.2",
     "vue-select": "^2.5.1",

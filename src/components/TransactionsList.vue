@@ -42,6 +42,7 @@
 
 <script>
 import { get } from 'lodash-es';
+import moment from 'moment';
 import {
   UiTable,
   UiTableCell,
@@ -76,7 +77,7 @@ export default {
     },
 
     getFormattedDate(item) {
-      return this.$moment.unix(item.created_at).format('YYYY-MM-DD hh:mm a');
+      return moment.unix(item.created_at).format('YYYY-MM-DD hh:mm a');
     },
   },
 };
