@@ -84,6 +84,12 @@ const routes = [
     path: '/login/',
     component: () => import('@/pages/login.vue'),
   },
+
+  {
+    path: '*',
+    name: 'notFound',
+    component: () => import('@/pages/404.vue'),
+  },
 ];
 
 export default routes;

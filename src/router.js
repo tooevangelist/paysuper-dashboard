@@ -60,6 +60,7 @@ router.beforeResolve((to, from, next) => {
     next();
   }).catch(next);
 
+
   return undefined;
 });
 
