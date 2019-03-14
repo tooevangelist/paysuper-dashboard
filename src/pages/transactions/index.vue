@@ -1,9 +1,8 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
-import { PageHeader } from '@protocol-one/ui-kit';
+import { PageHeader, UiPaginator } from '@protocol-one/ui-kit';
 import TransactionFilters from '@/components/TransactionFilters.vue';
 import TransactionsList from '@/components/TransactionsList.vue';
-import UiPaginator from '@/components/UiPaginator.vue';
 import TransactionSearchStore from '@/store/TransactionSearchStore';
 
 export default {
