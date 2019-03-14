@@ -84,10 +84,6 @@ const routes = [
     path: '/login/',
     component: () => import('@/pages/login.vue'),
   },
-  {
-    path: '/register/',
-    component: () => import('@/pages/register.vue'),
-  },
 ];
 
 export default routes;

@@ -81,13 +81,12 @@ export default function createUserStore({ config }) {
           await axios.get(`${config.ownBackendUrl}/auth1/logout`, {
             withCredentials: true,
           });
-          localStorage.removeItem('token');
-          commit('isAuthorised', false);
-          commit('accessToken', '');
-          // router.push({ path: '/login' });
-        } catch (error) {
-          console.error(error);
-        }
+          // eslint-disable-next-line
+        } catch (error) { }
+        localStorage.removeItem('token');
+        commit('isAuthorised', false);
+        commit('accessToken', '');
+        // router.push({ path: '/login' });
       },
     },
 
