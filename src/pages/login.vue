@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <iframe width="500" height="500" :src="iframeSrc" frameborder="1"></iframe>
+  <div class="login-page">
+    <iframe class="iframe" width="360" height="500" :src="iframeSrc" frameborder="0"></iframe>
   </div>
 </template>
 
@@ -18,23 +18,38 @@ export default {
   },
 
   created() {
-    this.listenFrame();
+    this.listenToMessages();
   },
 
   methods: {
     ...mapActions('User', ['setAccessToken']),
-    listenFrame() {
+    listenToMessages() {
       window.addEventListener('message', (event) => {
         if (!event.data || event.data.source !== 'PAYSUPER_MANAGEMENT_SERVER') {
           return;
         }
-        console.log(11111, 'event.data', event.data);
         if (event.data.access_token && event.data.success) {
-          this.setToken(event.data.access_token);
-          this.$router.push({ path: '/dashboard' });
+          this.setAccessToken(event.data.access_token);
+
+          if (this.$route.query.redirect) {
+            this.$router.push({ path: this.$route.query.redirect });
+          } else {
+            this.$router.push({ path: '/dashboard' });
+          }
         }
       });
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.login-page {
+  display: flex;
+  justify-content: center;
+}
+
+.iframe {
+  margin-top: 20px;
+}
+</style>

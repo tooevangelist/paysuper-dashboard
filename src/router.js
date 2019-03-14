@@ -26,6 +26,15 @@ router.beforeEach(
 );
 
 router.beforeResolve((to, from, next) => {
+  if (to.matched.some(record => record.meta.isAuthRequired)) {
+    if (!store.state.User.isAuthorised) {
+      next({
+        path: '/login',
+        query: { redirect: to.fullPath },
+      });
+    }
+  }
+
   const matched = router.getMatchedComponents(to);
   const prevMatched = router.getMatchedComponents(from);
 
