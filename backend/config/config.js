@@ -31,7 +31,7 @@ const config = {
   auth1PostmessageHtmlTemplatePath: path.resolve('backend/templates/auth1.postmessage.html.template'),
   auth1SessionNamespace: 'auth1',
 
-  corsValidOrigins: getEnvVariableArray('CORS_VALID_ORIGINS', '*'),
+  corsValidOrigins: getEnvVariableArray('CORS_VALID_ORIGINS', 'http://localhost:3030'),
 };
 
 module.exports = config;

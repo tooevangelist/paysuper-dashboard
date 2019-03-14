@@ -1,5 +1,5 @@
 <script>
-// import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import { PageNavbar } from '@protocol-one/ui-kit';
 import IconLogo from './IconLogo.vue';
 
@@ -20,7 +20,7 @@ export default {
   },
 
   computed: {
-    // ...mapState(['user']),
+    ...mapState('User', ['isAuthorised']),
     // ...mapState('merchant', ['merchant']),
 
     navigationLinks() {
@@ -39,9 +39,9 @@ export default {
         },
         {
           label: 'Projects',
-          url: '/project',
+          url: '/projects',
           router: true,
-          name: 'project',
+          name: 'projects',
         },
       ];
 
@@ -50,9 +50,9 @@ export default {
         ...links,
         {
           label: 'Transactions search',
-          url: '/order',
+          url: '/transactions',
           router: true,
-          name: 'order',
+          name: 'transactions',
         },
         {
           label: 'Revenue',
@@ -75,6 +75,15 @@ export default {
       });
     },
   },
+
+  methods: {
+    ...mapActions('User', ['logout']),
+
+    async handleLogout() {
+      await this.logout();
+      this.$router.push({ path: '/login' });
+    },
+  },
 };
 </script>
 
@@ -84,8 +93,9 @@ export default {
       title="Pay Super"
       :navigationLinks="navigationLinks"
       :logoLink="logoLink"
-      :isAuthorised="Boolean(user)"
-      :userName="user ? user.email : ''"
+      :isAuthorised="isAuthorised"
+      :userName="'test'"
+      @logout="handleLogout"
     >
       <IconLogo slot="logo" />
     </PageNavbar>

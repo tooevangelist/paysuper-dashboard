@@ -4,16 +4,57 @@ const routes = [
     component: () => import('@/pages/index.vue'),
   },
   {
-    path: '/order/',
-    component: () => import('@/pages/order/index.vue'),
+    path: '/transactions/',
+    component: () => import('@/pages/transactions/index.vue'),
     meta: { layout: 'Page', isAuthRequired: true },
-    name: 'order',
+    name: 'transactions',
   },
   {
-    path: '/order/:id',
-    component: () => import('@/pages/order/_id.vue'),
+    path: '/transactions/:id',
+    component: () => import('@/pages/transactions/_id.vue'),
     meta: { layout: 'Page', isAuthRequired: true },
-    name: 'order-card',
+    name: 'transactions-card',
+  },
+  {
+    path: '/projects/',
+    component: () => import('@/pages/projects/index.vue'),
+    meta: { layout: 'Page', isAuthRequired: true },
+    name: 'projects',
+  },
+  {
+    path: '/projects/add/',
+    component: () => import('@/pages/projects/add.vue'),
+    meta: { layout: 'Page', isAuthRequired: true },
+    name: 'projects-add',
+  },
+  {
+    path: '/projects/:id',
+    component: () => import('@/pages/projects/_id.vue'),
+    meta: { layout: 'Page', isAuthRequired: true },
+    name: 'projects-card',
+  },
+  {
+    path: '/dashboard/',
+    component: () => import('@/pages/dashboard.vue'),
+    meta: { layout: 'Page', isAuthRequired: true },
+    name: 'dashboard',
+  },
+  {
+    path: '/revenue/',
+    component: () => import('@/pages/revenue.vue'),
+    meta: { layout: 'Page', isAuthRequired: true },
+    name: 'revenue',
+  },
+  {
+    path: '/payout/',
+    component: () => import('@/pages/payout.vue'),
+    meta: { layout: 'Page', isAuthRequired: true },
+  },
+  {
+    path: '/merchant/',
+    component: () => import('@/pages/merchant.vue'),
+    meta: { layout: 'Page', isAuthRequired: true },
+    name: 'merchant',
   },
   {
     path: '/demo/',
@@ -22,12 +63,6 @@ const routes = [
   {
     path: '/docs/',
     component: () => import('@/pages/docs.vue'),
-  },
-  {
-    path: '/dashboard/',
-    component: () => import('@/pages/dashboard.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
-    name: 'dashboard',
   },
   {
     path: '/eula/',
@@ -52,41 +87,6 @@ const routes = [
   {
     path: '/register/',
     component: () => import('@/pages/register.vue'),
-  },
-  {
-    path: '/revenue/',
-    component: () => import('@/pages/revenue.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
-    name: 'revenue',
-  },
-  {
-    path: '/payout/',
-    component: () => import('@/pages/payout.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
-  },
-  {
-    path: '/merchant/',
-    component: () => import('@/pages/merchant.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
-    name: 'merchant',
-  },
-  {
-    path: '/project/',
-    component: () => import('@/pages/project/index.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
-    name: 'project',
-  },
-  {
-    path: '/project/add/',
-    component: () => import('@/pages/project/add.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
-    name: 'project-add',
-  },
-  {
-    path: '/project/:id',
-    component: () => import('@/pages/project/_id.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
-    name: 'project-card',
   },
 ];
 

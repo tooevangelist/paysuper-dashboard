@@ -49,7 +49,6 @@ router.beforeResolve((to, from, next) => {
   }
 
   // здесь мы должны вызвать индикатор загрузки, если используем его
-
   Promise.all(activated.map((c) => {
     if (c.asyncData) {
       return c.asyncData({ store, route: to });

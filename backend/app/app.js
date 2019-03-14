@@ -31,6 +31,9 @@ const logger = new KoaReqLogger({
   alwaysError: true, // treat all non-2** http codes as error records in logs
 });
 app.use(logger.getMiddleware());
+// app.use(function controlOrigin() {
+//   this.set('Access-Control-Allow-Origin', 'https://localhost:3030');
+// });
 
 // session
 const publicUrl = urlParse(config.publicHost);
@@ -39,7 +42,7 @@ const sessionParams = {
   key: config.sessionCookieName,
   signed: true,
   httpOnly: true,
-  domain: publicUrl.host,
+  domain: publicUrl.hostname,
   maxAge: sessionMaxAge * 1000,
 };
 if (config.redisPort && config.redisHost) {
