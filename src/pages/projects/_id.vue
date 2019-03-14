@@ -28,7 +28,7 @@ export default {
       return [
         {
           label: 'Projects list',
-          url: '/project/',
+          url: '/projects/',
           router: true,
         },
       ];

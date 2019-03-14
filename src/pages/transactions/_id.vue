@@ -29,7 +29,7 @@ export default {
     //     };
     //   }).catch((e) => {
     //     self.error(self.getErrorMessage(e));
-    //     self.$router.push('/order');
+    //     self.$router.push('/transactions');
     //   });
   },
   data() {
@@ -109,7 +109,7 @@ export default {
       return [
         {
           label: 'Transactions search',
-          url: '/order/',
+          url: '/transactions/',
           router: true,
         },
       ];
@@ -139,7 +139,7 @@ export default {
       return val;
     },
     projectLink() {
-      return `/project/${this.order.project.id}`;
+      return `/projects/${this.order.project.id}`;
     },
     paymentMethod() {
       let val = '&mdash;';

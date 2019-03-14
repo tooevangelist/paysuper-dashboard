@@ -51,7 +51,7 @@ export default {
           &nbsp;
         </div>
         <router-link
-          to="/project/add"
+          to="/projects/add"
         >
           <Button>Create project</Button>
         </router-link>
@@ -82,7 +82,7 @@ export default {
         v-for="project in projects"
         :key="project.id"
         :link="{
-          url: `/project/${project.id}`,
+          url: `/projects/${project.id}`,
           router: true
         }"
       >

@@ -592,7 +592,7 @@ export default {
           self.success('Project updated successfully');
         }
 
-        self.$router.push('/project');
+        self.$router.push('/projects');
       }).catch((e) => {
         self.error(self.getErrorMessage(e));
       });

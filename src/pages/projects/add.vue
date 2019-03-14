@@ -12,7 +12,7 @@ export default {
       breadcrumbs: [
         {
           label: 'Projects list',
-          url: '/project/',
+          url: '/projects/',
           router: true,
         },
         {

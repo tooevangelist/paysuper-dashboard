@@ -16,7 +16,7 @@
         v-for="item in items"
         :key="item.id"
         :link="{
-          url: `/order/${item.id}`,
+          url: `/transactions/${item.id}`,
           router: true
         }"
       >

@@ -44,7 +44,7 @@
                 <router-link
                   type="button"
                   class="btn btn-outline-primary btn-sm"
-                  :to="{ path: '/order', query: {
+                  :to="{ path: '/transactions', query: {
                     pm_date_from: selected.from, pm_date_to: selected.to
                   }}"
                   active-class

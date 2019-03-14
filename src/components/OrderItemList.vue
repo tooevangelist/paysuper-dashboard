@@ -55,17 +55,17 @@
           </tr>
           <tr v-for="item in items" :key="item['id']">
             <td class="no-wrap">
-              <router-link :to="'/order/' + item['id']">
+              <router-link :to="'/transactions/' + item['id']">
                 <span :class="getStateClass(item)" class="badge">{{ item['status']['name'] }}</span>
                 {{ item['id'] }}
               </router-link>
             </td>
             <td class="no-wrap">
-              <router-link :to="'/order/' + item['id']">{{ getDate(item) }}</router-link>
+              <router-link :to="'/transactions/' + item['id']">{{ getDate(item) }}</router-link>
             </td>
             <td v-html="getExternalId(item)"/>
             <td>
-              <router-link :to="'/project/' + item['project']['id']">
+              <router-link :to="'/projects/' + item['project']['id']">
                 {{ item['project']['name'] }}
               </router-link>
             </td>

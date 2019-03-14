@@ -3,7 +3,7 @@
   <div class="header-block">
     <router-link
       class="header-link"
-      :to="`/project/${id}`"
+      :to="`/projects/${id}`"
     >
       <div class="hover-layer">
         <button
