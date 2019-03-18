@@ -46,6 +46,7 @@
     "os": "^0.1.1",
     "path": "^0.12.7",
     "qs": "^6.6.0",
+    "random-string": "^0.2.0",
     "simple-assert": "^1.0.0",
     "url-join": "^4.0.0",
     "url-parse": "^1.4.4",

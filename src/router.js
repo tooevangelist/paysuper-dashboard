@@ -49,10 +49,20 @@ router.beforeResolve((to, from, next) => {
     return next();
   }
 
+  async function registerStoreModule(moduleName, module, initParams) {
+    if (store.state[moduleName]) {
+      return undefined;
+    }
+    store.registerModule(moduleName, module(resources));
+    return store.dispatch(`${moduleName}/initState`, initParams);
+  }
+
   Promise.all(activated.map((c) => {
     if (c.asyncData) {
       store.dispatch('setIsLoading', true);
-      return c.asyncData({ store, route: to, resources });
+      return c.asyncData({
+        store, route: to, resources, registerStoreModule,
+      });
     }
     return undefined;
   })).then(() => {

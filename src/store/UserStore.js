@@ -2,9 +2,10 @@ import axios from 'axios';
 // import router from '@/router';
 
 export default function createUserStore({ config }) {
+  const accessToken = localStorage.getItem('token') || '';
   return {
     state: {
-      accessToken: localStorage.getItem('token') || '',
+      accessToken,
       isAuthorised: false,
       authIframeSrc: `${config.ownBackendUrl}/auth1/login`,
     },

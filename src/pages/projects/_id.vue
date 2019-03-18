@@ -1,29 +1,20 @@
 <script>
-import axios from 'axios';
+import { mapState } from 'vuex';
 import { PageHeader } from '@protocol-one/ui-kit';
 import Notifications from '@/mixins/notificaton';
 import Project from '@/components/Project.vue';
+import ProjectStore from '@/store/ProjectStore';
 
 export default {
   components: { Project, PageHeader },
   mixins: [Notifications],
-  asyncData(context) {
-    return axios.get(`${process.env.VUE_APP_P1PAYAPI_URL}/api/v1/s/project/${context.route.params.id}`, {
-      headers: { Authorization: `Bearer ${context.store.state.user.accessToken}` },
-    }).then(response => ({
-      project: response.data,
-    })).catch(() => {});
-  },
 
-  data() {
-    return {
-      project: {
-
-      },
-    };
+  asyncData({ registerStoreModule, route }) {
+    return registerStoreModule('Project', ProjectStore, route.params.id);
   },
 
   computed: {
+    ...mapState('Project', ['project']),
     breadcrumbs() {
       return [
         {

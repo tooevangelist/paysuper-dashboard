@@ -1,6 +1,8 @@
 <script>
+import randomString from 'random-string';
+import { required, minLength } from 'vuelidate/lib/validators';
 import {
-  Button, TextField, Header, UiTextarea, SwitchBox,
+  UiButton, UiTextField, UiHeader, UiTextarea, UiSwitchBox,
 } from '@protocol-one/ui-kit';
 
 import { isEmpty } from 'lodash-es';
@@ -9,11 +11,11 @@ export default {
   name: 'ProjectForm',
 
   components: {
-    TextField,
-    Button,
-    Header,
+    UiTextField,
+    UiButton,
+    UiHeader,
     UiTextarea,
-    SwitchBox,
+    UiSwitchBox,
   },
 
   props: {
@@ -40,36 +42,138 @@ export default {
       },
     },
   },
+
+  validations() {
+    const rules = {
+      project: {
+        name: {
+          required,
+        },
+        url_check_account: {
+          required,
+        },
+        url_process_payment: {
+          required,
+        },
+        url_redirect_success: {
+          required,
+        },
+        url_redirect_fail: {
+          required,
+        },
+        secret_key: {
+          required,
+          minLength: minLength(12),
+        },
+      },
+    };
+
+    // if (!this.initialEmail) {
+    //   rules.email = {
+    //     required,
+    //     email,
+    //   };
+    // }
+
+    // if (!this.isBankCardPayment) {
+    //   rules.ewallet = {
+    //     wrongFormatType(value) {
+    //       if (!this.activePaymentMethod.account_regexp) {
+    //         return true;
+    //       }
+    //       return getRegexp(this.activePaymentMethod.account_regexp).test(value);
+    //     },
+    //   };
+    // }
+
+    return rules;
+  },
+
+  methods: {
+    validateForm() {
+      this.$v.$touch();
+      // const isValidArray = [
+      //   !this.$v.$invalid,
+      // ];
+
+      // if (this.isBankCardPayment) {
+      //   const { isValid } = this.$refs.bankCardForm.validate();
+      //   isValidArray.push(isValid);
+      // }
+
+      // if (isValidArray.filter(item => !item).length) {
+      //   // has errors
+      //   return;
+      // }
+      return !this.$v.$invalid;
+    },
+
+    generateSecretKey() {
+      this.project.secret_key = randomString({
+        length: 15,
+        special: true,
+        exclude: ['`', '/', '\\'],
+      });
+    },
+
+    getTextFieldProps(path) {
+      return {
+        required: true,
+        hasError: this.$isFieldInvalid(path),
+        errorText: this.$getFieldErrorMessages(path),
+      };
+    },
+  },
 };
 </script>
 
 <template>
   <div class="project-form-settings">
-    <Header level="2" :hasMargin="true">Settings</Header>
+    <UiHeader level="2" :hasMargin="true">Settings</UiHeader>
 
     <div class="field-row">
-      <TextField v-model="project.name" label="Project name" />
+      <UiTextField
+        v-model="project.name"
+        label="Project name"
+        v-bind="getTextFieldProps('project.name')"
+      />
     </div>
 
     <div class="field-row">
-      <TextField v-model="project.url_check_account" label="Validation request URL" />
+      <UiTextField
+        v-model="project.url_check_account"
+        label="Validation request URL"
+        v-bind="getTextFieldProps('project.url_check_account')"
+      />
     </div>
 
     <div class="field-row">
-      <TextField v-model="project.url_process_payment" label="Payment notifications URL" />
+      <UiTextField
+        v-model="project.url_process_payment"
+        label="Payment notifications URL"
+        v-bind="getTextFieldProps('project.url_process_payment')"
+      />
     </div>
 
     <div class="field-row">
-      <TextField v-model="project.url_redirect_success" label="Success redirect URL" />
+      <UiTextField
+        v-model="project.url_redirect_success"
+        label="Success redirect URL"
+        v-bind="getTextFieldProps('project.url_redirect_success')"
+      />
     </div>
 
     <div class="field-row">
-      <TextField v-model="project.url_redirect_fail" label="Failed attempt redirect URL" />
+      <UiTextField
+        v-model="project.url_redirect_fail"
+        label="Failed attempt redirect URL"
+        v-bind="getTextFieldProps('project.url_redirect_fail')"
+      />
     </div>
 
     <div class="field-row">
       Restrict payment attempts
-      <SwitchBox class="switch-box" v-model="isPaymentsRestricted" />
+      <UiSwitchBox class="switch-box" v-model="isPaymentsRestricted" />
     </div>
 
     <div class="field-row" v-if="isPaymentsRestricted">
@@ -81,10 +185,13 @@ export default {
     </div>
 
     <div class="field-row">
-      <TextField v-model="project.secret_key" label="Secret key" />
-      <Button class="generate-button">Generate</Button>
+      <UiTextField
+        v-model="project.secret_key"
+        label="Secret key"
+        v-bind="getTextFieldProps('project.secret_key')"
+      />
+      <UiButton class="generate-button" @click="generateSecretKey">Generate</UiButton>
     </div>
-
   </div>
 </template>
 

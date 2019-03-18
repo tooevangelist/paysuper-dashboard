@@ -18,17 +18,7 @@ export default {
   props: {
     project: {
       type: Object,
-      default: () => ({
-        name: '',
-        url_check_account: '',
-        url_process_payment: '',
-        url_redirect_success: '',
-        url_redirect_fail: '',
-        secret_key: '',
-        create_invoice_allowed_urls: [],
-
-        callback_protocol: 'default',
-      }),
+      required: true,
     },
   },
 
@@ -68,14 +58,35 @@ export default {
       return !this.steps.filter(item => item.status !== 'complete').length;
     },
   },
+
+  methods: {
+    validateForm() {
+      if (
+        this.$refs.formSettings.validateForm()
+        && this.$refs.formCheckout.validateForm()
+      ) {
+        return true;
+      }
+
+      return false;
+    },
+  },
 };
 </script>
 
 <template>
   <div class="project-form">
     <FormByStep :steps="steps" v-model="currentStep">
-      <ProjectFormSettings v-if="currentStep === 'settings'" :project="project" />
-      <ProjectFormSimpleCheckout v-if="currentStep === 'simple-checkout'" :project="project" />
+      <ProjectFormSettings
+        v-show="currentStep === 'settings'"
+        :project="project"
+        ref="formSettings"
+      />
+      <ProjectFormSimpleCheckout
+        v-show="currentStep === 'simple-checkout'"
+        :project="project"
+        ref="formCheckout"
+      />
 
       <div slot="side-footer" v-if="isFormComplete">
         You have finished filling out company details, send them for review

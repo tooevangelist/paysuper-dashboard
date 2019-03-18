@@ -1,6 +1,7 @@
 <script>
+import { required } from 'vuelidate/lib/validators';
 import {
-  Select, TextField, Header, SwitchBox,
+  UiSelect, UiTextField, UiHeader, UiSwitchBox,
 } from '@protocol-one/ui-kit';
 
 import { mapState } from 'vuex';
@@ -9,10 +10,10 @@ export default {
   name: 'ProjectForm',
 
   components: {
-    Select,
-    TextField,
-    Header,
-    SwitchBox,
+    UiSelect,
+    UiTextField,
+    UiHeader,
+    UiSwitchBox,
   },
 
   props: {
@@ -40,30 +41,56 @@ export default {
       },
     },
   },
+
+  validations: {
+    project: {
+      callback_currency: {
+        required,
+      },
+    },
+  },
+
+  methods: {
+    validateForm() {
+      this.$v.$touch();
+      return !this.$v.$invalid;
+    },
+  },
 };
 </script>
 
 <template>
   <div class="project-form-simple-checkout">
-    <Header level="2" :hasMargin="true">
+    <UiHeader level="2" :hasMargin="true">
       Simple checkout
-      <SwitchBox class="switch-box" v-model="isSimpleCheckout" />
-    </Header>
+      <UiSwitchBox class="switch-box" v-model="isSimpleCheckout" />
+    </UiHeader>
 
     <div class="field-row">
-      <Select v-model="project.name" :options="currencies" label="Default request currency" />
+      <UiSelect
+        v-model="project.callback_currency"
+        :options="currencies"
+        :required="true"
+        :hasError="$isFieldInvalid('project.callback_currency')"
+        :errorText="$getFieldErrorMessages('project.callback_currency')"
+        label="Default request currency"
+      />
     </div>
 
     <div class="field-row">
-      <Select v-model="project.name" :options="currencies" label="Limits currency" />
+      <UiSelect
+        v-model="project.limits_currency"
+        :options="currencies"
+        label="Limits currency"
+      />
     </div>
 
     <div class="field-row">
       <div class="field-item">
-        <TextField v-model="project.url_process_payment" label="Minimal amount allowed" />
+        <UiTextField v-model="project.min_payment_amount" label="Minimal amount allowed" />
       </div>
       <div class="field-item">
-        <TextField v-model="project.url_process_payment" label="Maximal amount allowed" />
+        <UiTextField v-model="project.max_payment_amount" label="Maximal amount allowed" />
       </div>
     </div>
 

@@ -111,7 +111,6 @@ export default {
   bottom: 10px;
   left: 0;
   right: 0;
-  text-align: center;
   padding: 0 10px;
 }
 
@@ -120,6 +119,7 @@ export default {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    justify-content: center;
   }
 }
 
