@@ -21,10 +21,8 @@ export default function createUserStore({ config }) {
     },
 
     actions: {
-      async initState({ state, dispatch }) {
-        if (state.accessToken) {
-          await dispatch('refreshToken');
-        }
+      async initState({ dispatch }) {
+        await dispatch('refreshToken');
       },
 
       // async fetchUserInfo({ state }) {
@@ -50,7 +48,7 @@ export default function createUserStore({ config }) {
        * @param token
        */
       setAccessToken({ commit }, token) {
-        localStorage.setItem('token', token);
+        // localStorage.setItem('token', token);
         commit('isAuthorised', true);
         commit('accessToken', token);
       },
@@ -68,7 +66,7 @@ export default function createUserStore({ config }) {
           withCredentials: true,
         })
           .then((response) => {
-            dispatch('setAccessToken', response.data.accessToken);
+            dispatch('setAccessToken', response.data.access_token);
             return response;
           })
           .catch((error) => {
@@ -84,7 +82,7 @@ export default function createUserStore({ config }) {
           });
           // eslint-disable-next-line
         } catch (error) { }
-        localStorage.removeItem('token');
+        // localStorage.removeItem('token');
         commit('isAuthorised', false);
         commit('accessToken', '');
         // router.push({ path: '/login' });
