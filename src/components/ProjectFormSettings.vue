@@ -1,6 +1,6 @@
 <script>
 import randomString from 'random-string';
-import { required, minLength } from 'vuelidate/lib/validators';
+import { required, minLength, url } from 'vuelidate/lib/validators';
 import {
   UiButton, UiTextField, UiHeader, UiTextarea, UiSwitchBox,
 } from '@protocol-one/ui-kit';
@@ -51,15 +51,19 @@ export default {
         },
         url_check_account: {
           required,
+          url,
         },
         url_process_payment: {
           required,
+          url,
         },
         url_redirect_success: {
           required,
+          url,
         },
         url_redirect_fail: {
           required,
+          url,
         },
         secret_key: {
           required,
@@ -105,7 +109,10 @@ export default {
       //   // has errors
       //   return;
       // }
-      return !this.$v.$invalid;
+      this.$watch('$v.$invalid', (value) => {
+        this.$emit('validationResult', !value);
+      });
+      this.$emit('validationResult', !this.$v.$invalid);
     },
 
     generateSecretKey() {

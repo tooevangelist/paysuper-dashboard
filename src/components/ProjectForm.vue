@@ -25,6 +25,12 @@ export default {
   data() {
     return {
       currentStep: 'settings',
+      stepsStatus: {
+        settings: 'initial',
+        simpleCheckout: 'initial',
+        products: 'initial',
+        subscriptions: 'initial',
+      },
     };
   },
 
@@ -34,41 +40,40 @@ export default {
         {
           value: 'settings',
           label: 'Settings',
-          status: 'initial',
+          status: this.stepsStatus.settings,
         },
         {
-          value: 'simple-checkout',
+          value: 'simpleCheckout',
           label: 'Simple checkout',
-          status: 'initial',
+          status: this.stepsStatus.simpleCheckout,
         },
         {
           value: 'products',
           label: 'Products',
-          status: 'initial',
+          status: this.stepsStatus.products,
         },
         {
           value: 'subscriptions',
           label: 'Subscriptions',
-          status: 'initial',
+          status: this.stepsStatus.subscriptions,
         },
       ];
     },
 
-    isFormComplete() {
+    isFormValid() {
       return !this.steps.filter(item => item.status !== 'complete').length;
     },
   },
 
   methods: {
-    validateForm() {
-      if (
-        this.$refs.formSettings.validateForm()
-        && this.$refs.formCheckout.validateForm()
-      ) {
-        return true;
-      }
+    chekIfFormValid() {
+      this.$refs.formSettings.validateForm();
+      this.$refs.formCheckout.validateForm();
+      return this.isFormValid;
+    },
 
-      return false;
+    setStepStatus(name, isValid) {
+      this.stepsStatus[name] = isValid ? 'complete' : 'incomplete';
     },
   },
 };
@@ -81,14 +86,16 @@ export default {
         v-show="currentStep === 'settings'"
         :project="project"
         ref="formSettings"
+        @validationResult="setStepStatus('settings', $event)"
       />
       <ProjectFormSimpleCheckout
-        v-show="currentStep === 'simple-checkout'"
+        v-show="currentStep === 'simpleCheckout'"
         :project="project"
         ref="formCheckout"
+        @validationResult="setStepStatus('simpleCheckout', $event)"
       />
 
-      <div slot="side-footer" v-if="isFormComplete">
+      <div slot="side-footer" v-if="isFormValid">
         You have finished filling out company details, send them for review
         <div style="text-align: center; margin-top: 20px; ">
           <Button>Finish</Button>

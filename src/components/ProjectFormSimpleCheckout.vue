@@ -53,7 +53,11 @@ export default {
   methods: {
     validateForm() {
       this.$v.$touch();
-      return !this.$v.$invalid;
+
+      this.$watch('$v.$invalid', (value) => {
+        this.$emit('validationResult', !value);
+      });
+      this.$emit('validationResult', !this.$v.$invalid);
     },
   },
 };

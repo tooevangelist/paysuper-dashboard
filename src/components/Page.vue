@@ -95,6 +95,7 @@ export default {
     <Loading
       :active="isLoading"
       :is-full-page="true"
+      :opacity="0.2"
     ></Loading>
     <UiPageNavbar
       title="Pay Super"

@@ -13,6 +13,17 @@
         >
           <IconPencil />
         </button>
+        <button
+          class="control-button"
+          type="button"
+          title="Remove"
+          @click.prevent="$emit('remove', id)"
+        >
+          <svg viewBox="0 0 16 16" width="16" height="16" stroke="#333333" stroke-width="1">
+            <path d="M0,0 L16,16" />
+            <path d="M16,0 L0,16" />
+          </svg>
+        </button>
       </div>
       <span class="id" v-if="id">{{id}}</span>
       <StatusIcon class="status-icon" :status="status" />

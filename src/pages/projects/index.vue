@@ -1,5 +1,5 @@
 <script>
-import axios from 'axios';
+import { mapState, mapActions } from 'vuex';
 import {
   Button,
   UiTable,
@@ -9,9 +9,9 @@ import {
 } from '@protocol-one/ui-kit';
 import PanelItem from '@/components/PanelItem.vue';
 import StatusIcon from '@/components/StatusIcon.vue';
+import ProjectsListingStore from '@/store/ProjectsListingStore';
 
 export default {
-  middleware: 'IsNotAuthenticated',
   components: {
     Button,
     PanelItem,
@@ -21,22 +21,21 @@ export default {
     PageHeader,
     StatusIcon,
   },
+  asyncData({ registerStoreModule }) {
+    return registerStoreModule('ProjectsListing', ProjectsListingStore);
+  },
   data() {
     return {
-      projects: [],
       viewType: 'panels',
     };
   },
-  mounted() {
-    const self = this;
-
-    axios.get(`${process.env.VUE_APP_P1PAYAPI_URL}/api/v1/s/project`, {
-      headers: { Authorization: `Bearer ${this.$store.state.user.accessToken}` },
-    }).then((response) => {
-      self.projects = response.data;
-    }).catch(() => {});
+  computed: {
+    ...mapState('ProjectsListing', ['projects']),
   },
-  methods: {},
+
+  methods: {
+    ...mapActions('ProjectsListing', ['removeProject']),
+  },
 };
 </script>
 
@@ -66,6 +65,7 @@ export default {
           :id="project.id"
           :title="project.name"
           :status="project.is_active ? 'complete' : 'initial'"
+          @remove="removeProject"
         />
       </div>
       <p v-else>Projects list is empty</p>

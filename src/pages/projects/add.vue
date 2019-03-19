@@ -39,10 +39,10 @@ export default {
   methods: {
     ...mapActions('NewProject', ['createProject']),
     tryCreateProject() {
-      const isValid = this.$refs.projectForm.validateForm();
+      const isValid = this.$refs.projectForm.chekIfFormValid();
+      console.log(11111, 'isAllFormValid', isValid);
 
-      console.log(11111, 'isValid', isValid);
-      this.createProject();
+      // this.createProject();
 
       // if (isValid) {
       //   this.createProject();

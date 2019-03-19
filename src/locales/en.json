@@ -4,7 +4,8 @@
     "between": "Enter value from %min% to %max%",
     "email": "Enter correct email",
     "minLength": "The value is too short",
-    "wrongFormatType": "Wrong value format type"
+    "wrongFormatType": "Wrong value format type",
+    "url": "Enter correct URL"
   },
   "orderID": "Order #",
   "account": "Account",
