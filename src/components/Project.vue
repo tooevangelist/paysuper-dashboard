@@ -11,7 +11,7 @@
       </Button>
     </div>
     <div class="card-body">
-      <div class="form-group" v-if="false">
+      <div class="form-group" v-if="true">
         <label for="name">Name</label>
         <input
           class="form-control"
@@ -22,7 +22,7 @@
         >
       </div>
 
-      <div class="form-group" v-if="false">
+      <div class="form-group" v-if="true">
         <label for="url-check">Validation request URL</label>
         <input
           class="form-control"
@@ -33,7 +33,7 @@
         >
       </div>
 
-      <div class="form-group" v-if="false">
+      <div class="form-group" v-if="true">
         <label for="url-notify">Payment notify request URL</label>
         <input
           class="form-control"
@@ -44,7 +44,7 @@
         >
       </div>
 
-      <div class="form-group" v-if="false">
+      <div class="form-group" v-if="true">
         <label for="create-order-allowed-urls">Create order allowed URLs</label>
         <input
           class="form-control"
@@ -59,7 +59,7 @@
         </small>
       </div>
 
-      <div class="form-group" v-if="false">
+      <div class="form-group" v-if="true">
         <label for="url-redirect-success">
           URL for redirect user after
           successfully completed payment
@@ -73,7 +73,7 @@
         >
       </div>
 
-      <div class="form-group" v-if="false">
+      <div class="form-group" v-if="true">
         <label for="url-redirect-fail">URL for redirect user after failed payment</label>
         <input
           class="form-control"
@@ -575,13 +575,15 @@ export default {
         }
       });
 
+      console.log(11111, 'this.data', this.data);
+
       if (this.isNew === true) {
         promise = axios.post(`${process.env.VUE_APP_P1PAYAPI_URL}/api/v1/s/project`, this.data, {
-          headers: { Authorization: `Bearer ${this.$store.state.user.accessToken}` },
+          headers: { Authorization: `Bearer ${this.$store.state.User.accessToken}` },
         });
       } else {
         promise = axios.put(`${process.env.VUE_APP_P1PAYAPI_URL}/api/v1/s/project/${this.data.id}`, this.data, {
-          headers: { Authorization: `Bearer ${this.$store.state.user.accessToken}` },
+          headers: { Authorization: `Bearer ${this.$store.state.User.accessToken}` },
         });
       }
 
