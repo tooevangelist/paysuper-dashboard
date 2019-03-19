@@ -7,7 +7,7 @@ import transactionsFiltersScheme from '@/store/transactionsFiltersScheme';
 
 const searchBuilder = new SearchBuilder(transactionsFiltersScheme);
 
-export default function createTransactionsSearchStore() {
+export default function createTransactionsSearchStore({ config }) {
   return {
     namespaced: true,
 
@@ -109,7 +109,7 @@ export default function createTransactionsSearchStore() {
       async searchTransactions({
         state, commit, dispatch, rootState,
       }) {
-        let url = `${process.env.VUE_APP_P1PAYAPI_URL}/api/v1/s/order`;
+        let url = `${config.apiUrl}/api/v1/s/order`;
 
         const params = {
           ...state.apiQuery,
@@ -119,7 +119,7 @@ export default function createTransactionsSearchStore() {
 
         dispatch('setIsLoading', true, { root: true });
 
-        await axios.get(url, { headers: { Authorization: `Bearer ${rootState.user.accessToken}` } })
+        await axios.get(url, { headers: { Authorization: `Bearer ${rootState.User.accessToken}` } })
           .then((response) => {
             if (!response.data || !response.data.count || !response.data.items) {
               commit('transactions', {
@@ -140,11 +140,11 @@ export default function createTransactionsSearchStore() {
       },
 
       async fetchPaymentMethods({ commit, rootState }) {
-        const url = `${process.env.VUE_APP_P1PAYAPI_URL}/api/v1/s/payment_method/merchant`;
+        const url = `${config.apiUrl}/api/v1/s/payment_method/merchant`;
 
         await axios.get(
           url,
-          { headers: { Authorization: `Bearer ${rootState.user.accessToken}` } },
+          { headers: { Authorization: `Bearer ${rootState.User.accessToken}` } },
         )
           .then((response) => {
             if (isEmpty(response.data)) {
@@ -159,11 +159,11 @@ export default function createTransactionsSearchStore() {
       },
 
       async fetchProjects({ commit, rootState }) {
-        const url = `${process.env.VUE_APP_P1PAYAPI_URL}/api/v1/s/project/filters`;
+        const url = `${config.apiUrl}/api/v1/s/project/filters`;
 
         await axios.get(
           url,
-          { headers: { Authorization: `Bearer ${rootState.user.accessToken}` } },
+          { headers: { Authorization: `Bearer ${rootState.User.accessToken}` } },
         )
           .then((response) => {
             if (isEmpty(response.data)) {

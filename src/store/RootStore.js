@@ -35,7 +35,7 @@ export default new Vuex.Store({
   },
 
   modules: {
-    Dictionaries: DictionariesStore,
+    Dictionaries: DictionariesStore(resources),
     User: UserStore(resources),
   },
 });
