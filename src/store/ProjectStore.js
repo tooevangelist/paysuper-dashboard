@@ -68,7 +68,7 @@ export default function createUserStore({ config }) {
 
       fetchProject({ commit, rootState }, id) {
         return axios.get(`${config.apiUrl}/api/v1/s/project/${id}`, {
-          headers: { Authorization: `Bearer ${rootState.user.accessToken}` },
+          headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
         })
           .then((response) => {
             commit('project', response.data);
