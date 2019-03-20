@@ -50,7 +50,7 @@ export default {
           &nbsp;
         </div>
         <router-link
-          to="/projects/add"
+          to="/projects/new"
         >
           <Button>Create project</Button>
         </router-link>

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { mapValues } from 'lodash-es';
+import { includes, mapValues, cloneDeep } from 'lodash-es';
 
 function prepareRequestData(data) {
   return mapValues(data, (value) => {
@@ -10,21 +10,25 @@ function prepareRequestData(data) {
   });
 }
 
-export default function createUserStore({ config }) {
+export default function createUserStore({ config, notifications }) {
   return {
     state: () => ({
       project: null,
+      product: null,
     }),
 
     mutations: {
       project(state, value) {
         state.project = value;
       },
+      product(state, value) {
+        state.product = value;
+      },
     },
 
     actions: {
       async initState({ commit, dispatch }, id) {
-        if (!id) {
+        if (id === 'new') {
           commit('project', {
             name: '',
             url_check_account: '',
@@ -71,20 +75,84 @@ export default function createUserStore({ config }) {
           headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
         })
           .then((response) => {
-            commit('project', response.data);
+            commit('project', mapValues(response.data, (value, key) => {
+              if (includes(['limits_currency', 'callback_currency'], key)) {
+                return value.code_int;
+              }
+              return value;
+            }));
           })
           .catch(() => { });
       },
 
-      async createProject({ state, rootState }) {
+      async createProject({ state, dispatch, rootState }) {
+        dispatch('setIsLoading', true, { root: true });
         try {
-          axios.post(`${config.apiUrl}/api/v1/s/project`, prepareRequestData(state.project), {
+          await axios.post(`${config.apiUrl}/api/v1/s/project`, prepareRequestData(state.project), {
             headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
           });
-          // eslint-disable-next-line
+          notifications.showSuccessMessage('Project created successfully');
         } catch (error) {
-
+          notifications.showErrorMessage('Failed to create project');
         }
+        dispatch('setIsLoading', false, { root: true });
+      },
+
+      async saveProject({ state, dispatch, rootState }) {
+        dispatch('setIsLoading', true, { root: true });
+        try {
+          await axios.put(
+            `${config.apiUrl}/api/v1/s/project/${state.project.id}`,
+            prepareRequestData(state.project),
+            {
+              headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
+            },
+          );
+          notifications.showSuccessMessage('Project saved successfully');
+        } catch (error) {
+          notifications.showErrorMessage('Failed to save project');
+        }
+        dispatch('setIsLoading', false, { root: true });
+      },
+
+      openProduct({ commit, state }, { region, index }) {
+        const product = state.project.fixed_package[region][index];
+
+        commit('product', {
+          data: cloneDeep(product),
+          region,
+          index,
+        });
+      },
+
+      closeProduct({ commit }) {
+        commit('product', null);
+      },
+
+      createProduct({ commit }) {
+        commit('product', {
+          data: {
+            id: '',
+            name: '',
+            currency_int: '',
+            price: '',
+            is_active: true,
+          },
+          region: null,
+          index: null,
+        });
+      },
+
+      saveProduct({ commit, state }) {
+        const newProject = cloneDeep(state.project);
+        if (state.product.region && state.product.index) {
+          newProject.fixed_package[state.product.region][state.product.index] = state.product.data;
+        } else {
+          newProject.fixed_package = newProject.fixed_package || { RU: [] };
+          newProject.fixed_package.RU = newProject.fixed_package.RU || [];
+          newProject.fixed_package.RU.push(state.product.data);
+        }
+        commit('project', newProject);
       },
     },
 

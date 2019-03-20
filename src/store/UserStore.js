@@ -60,19 +60,17 @@ export default function createUserStore({ config }) {
        * @param dispatch
        * @returns {Promise.<T>|Promise<any>|Promise}
        */
-      refreshToken({ dispatch }) {
-        return axios.get(`${config.ownBackendUrl}/auth1/refresh`, {
-          // this method requires only cookies for authrization
-          withCredentials: true,
-        })
-          .then((response) => {
-            dispatch('setAccessToken', response.data.access_token);
-            return response;
-          })
-          .catch((error) => {
-            console.warn(error);
-            dispatch('logout');
+      async refreshToken({ dispatch }) {
+        try {
+          const response = await axios.get(`${config.ownBackendUrl}/auth1/refresh`, {
+            // this method requires only cookies for authrization
+            withCredentials: true,
           });
+          await dispatch('setAccessToken', response.data.access_token);
+        } catch (error) {
+          console.warn(error);
+          await dispatch('logout');
+        }
       },
 
       async logout({ commit }) {

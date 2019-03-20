@@ -1,13 +1,18 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
 import { PageHeader, UiPaginator } from '@protocol-one/ui-kit';
+import TransactionsSearchStore from '@/store/TransactionsSearchStore';
 import TransactionFilters from '@/components/TransactionFilters.vue';
 import TransactionsList from '@/components/TransactionsList.vue';
-import TransactionsSearchStore from '@/store/TransactionsSearchStore';
+import NoResults from '@/components/NoResults.vue';
 
 export default {
   components: {
-    TransactionFilters, TransactionsList, PageHeader, UiPaginator,
+    TransactionFilters,
+    TransactionsList,
+    PageHeader,
+    UiPaginator,
+    NoResults,
   },
   asyncData({ store, route, resources }) {
     if (store.state.TransactionSearch) {
@@ -95,17 +100,7 @@ export default {
         :count="count"
         @pageChanged="handlePageChange"
       />
-      <p v-if="!items.length" class="no-results">Computer says no results</p>
-
+      <NoResults v-if="!items.length" />
     </div>
   </div>
 </template>
-
-<style lang="scss">
-.no-results {
-  font-size: 20px;
-  color: #b1b1b1;
-  text-align: center;
-  padding: 100px 0;
-}
-</style>

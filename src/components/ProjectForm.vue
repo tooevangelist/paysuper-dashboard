@@ -1,9 +1,11 @@
 <script>
+import { find } from 'lodash-es';
 import {
   Button, FormByStep,
 } from '@protocol-one/ui-kit';
 import ProjectFormSettings from '@/components/ProjectFormSettings.vue';
 import ProjectFormSimpleCheckout from '@/components/ProjectFormSimpleCheckout.vue';
+import ProjectFormProducts from '@/components/ProjectFormProducts.vue';
 
 export default {
   name: 'ProjectForm',
@@ -13,6 +15,7 @@ export default {
     Button,
     ProjectFormSettings,
     ProjectFormSimpleCheckout,
+    ProjectFormProducts,
   },
 
   props: {
@@ -20,16 +23,19 @@ export default {
       type: Object,
       required: true,
     },
+    currentStep: {
+      type: String,
+      required: true,
+    },
   },
 
   data() {
     return {
-      currentStep: 'settings',
+      currentStepInner: this.currentStep,
       stepsStatus: {
         settings: 'initial',
         simpleCheckout: 'initial',
         products: 'initial',
-        subscriptions: 'initial',
       },
     };
   },
@@ -52,16 +58,20 @@ export default {
           label: 'Products',
           status: this.stepsStatus.products,
         },
-        {
-          value: 'subscriptions',
-          label: 'Subscriptions',
-          status: this.stepsStatus.subscriptions,
-        },
       ];
     },
 
     isFormValid() {
-      return !this.steps.filter(item => item.status !== 'complete').length;
+      return (
+        find(this.steps, { value: 'settings' }).status === 'complete'
+        && find(this.steps, { value: 'simpleCheckout' }).status === 'complete'
+      );
+    },
+  },
+
+  watch: {
+    currentStep(value) {
+      this.currentStepInner = value;
     },
   },
 
@@ -75,36 +85,49 @@ export default {
     setStepStatus(name, isValid) {
       this.stepsStatus[name] = isValid ? 'complete' : 'incomplete';
     },
+
+    updateCurrentStep(value) {
+      this.currentStepInner = value;
+      this.$emit('stepChanged', this.currentStepInner);
+    },
   },
 };
 </script>
 
 <template>
   <div class="project-form">
-    <FormByStep :steps="steps" v-model="currentStep">
+    <FormByStep
+      :steps="steps"
+      :currentStep="currentStepInner"
+      v-model="currentStepInner"
+      @stepSelected="updateCurrentStep"
+    >
       <ProjectFormSettings
-        v-show="currentStep === 'settings'"
+        v-show="currentStepInner === 'settings'"
         :project="project"
         ref="formSettings"
         @validationResult="setStepStatus('settings', $event)"
       />
       <ProjectFormSimpleCheckout
-        v-show="currentStep === 'simpleCheckout'"
+        v-show="currentStepInner === 'simpleCheckout'"
         :project="project"
         ref="formCheckout"
         @validationResult="setStepStatus('simpleCheckout', $event)"
       />
+      <ProjectFormProducts
+        v-show="currentStepInner === 'products'"
+        :project="project"
+        ref="formProducts"
+        @validationResult="setStepStatus('products', $event)"
+        @requestOpenProduct="$emit('requestOpenProduct', $event)"
+      />
 
-      <div slot="side-footer" v-if="isFormValid">
+      <div slot="side-footer" v-if="false">
         You have finished filling out company details, send them for review
         <div style="text-align: center; margin-top: 20px; ">
           <Button>Finish</Button>
         </div>
       </div>
     </FormByStep>
-    <pre>{{project}}</pre>
   </div>
 </template>
-
-<style lang="scss" scoped>
-</style>

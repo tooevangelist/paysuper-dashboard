@@ -3,11 +3,10 @@ import { required } from 'vuelidate/lib/validators';
 import {
   UiSelect, UiTextField, UiHeader, UiSwitchBox,
 } from '@protocol-one/ui-kit';
-
 import { mapState } from 'vuex';
 
 export default {
-  name: 'ProjectForm',
+  name: 'ProjectFormSimpleCheckout',
 
   components: {
     UiSelect,
@@ -40,13 +39,31 @@ export default {
         this.project.callback_protocol = value ? 'default' : 'empty';
       },
     },
+
+    callbackCurrency: {
+      get() {
+        return this.project.callback_currency;
+      },
+
+      set(value) {
+        this.project.callback_currency = Number(value);
+      },
+    },
+
+    limitsCurrency: {
+      get() {
+        return this.project.limits_currency;
+      },
+
+      set(value) {
+        this.project.limits_currency = Number(value);
+      },
+    },
   },
 
   validations: {
-    project: {
-      callback_currency: {
-        required,
-      },
+    callbackCurrency: {
+      required,
     },
   },
 
@@ -72,18 +89,18 @@ export default {
 
     <div class="field-row">
       <UiSelect
-        v-model="project.callback_currency"
+        v-model="callbackCurrency"
         :options="currencies"
         :required="true"
-        :hasError="$isFieldInvalid('project.callback_currency')"
-        :errorText="$getFieldErrorMessages('project.callback_currency')"
+        :hasError="$isFieldInvalid('callbackCurrency')"
+        :errorText="$getFieldErrorMessages('callbackCurrency')"
         label="Default request currency"
       />
     </div>
 
     <div class="field-row">
       <UiSelect
-        v-model="project.limits_currency"
+        v-model="limitsCurrency"
         :options="currencies"
         label="Limits currency"
       />
@@ -121,10 +138,6 @@ export default {
 
 .switch-box {
   margin-left: 16px;
-}
-
-.textarea {
-  width: 100%;
 }
 
 .generate-button {

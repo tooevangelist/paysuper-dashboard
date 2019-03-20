@@ -8,7 +8,7 @@ import {
 import { isEmpty } from 'lodash-es';
 
 export default {
-  name: 'ProjectForm',
+  name: 'ProjectFormSettings',
 
   components: {
     UiTextField,
@@ -199,6 +199,11 @@ export default {
       />
       <UiButton class="generate-button" @click="generateSecretKey">Generate</UiButton>
     </div>
+
+    <UiHeader level="2" :hasMargin="true">
+      Active
+      <UiSwitchBox class="switch-box" v-model="project.is_active" />
+    </UiHeader>
   </div>
 </template>
 

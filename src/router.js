@@ -50,10 +50,9 @@ router.beforeResolve((to, from, next) => {
   }
 
   async function registerStoreModule(moduleName, module, initParams) {
-    if (store.state[moduleName]) {
-      return undefined;
+    if (!store.state[moduleName]) {
+      store.registerModule(moduleName, module(resources));
     }
-    store.registerModule(moduleName, module(resources));
     return store.dispatch(`${moduleName}/initState`, initParams);
   }
 

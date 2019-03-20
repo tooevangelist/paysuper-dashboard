@@ -22,14 +22,8 @@ const routes = [
     name: 'projects',
   },
   {
-    path: '/projects/add/',
-    component: () => import('@/pages/projects/add.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
-    name: 'projects-add',
-  },
-  {
     path: '/projects/:id',
-    component: () => import('@/pages/projects/_id.vue'),
+    component: () => import('@/pages/projects/card.vue'),
     meta: { layout: 'Page', isAuthRequired: true },
     name: 'projects-card',
   },
