@@ -44,6 +44,8 @@ export default function createUserStore({ config, notifications }) {
 
             callback_currency: '',
             limits_currency: '',
+
+            is_active: true,
           });
           // commit('project', {
           //   name: 'Universe of Futurama222',
