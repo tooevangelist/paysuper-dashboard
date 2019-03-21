@@ -41,7 +41,7 @@ export default {
 
 <template>
   <div>
-    <PageHeader :breadcrumbs="[{label: '...', url: '/'}]" title="Projects">
+    <PageHeader title="Projects">
       <template slot="right">
         <div>
           <a href="#" @click="viewType = 'panels'">panels</a>
@@ -58,7 +58,7 @@ export default {
     </PageHeader>
 
     <div class="content-wrapper" v-if="viewType === 'panels' || !projects.length">
-      <div v-if="projects.length" class="cont-list">
+      <div>
         <PanelItem
           v-for="project in projects"
           :key="project.id"
@@ -67,8 +67,12 @@ export default {
           :status="project.is_active ? 'complete' : 'initial'"
           @remove="removeProject"
         />
+        <PanelItem
+          v-if="!projects.length"
+          title="Create your first project now"
+          :isNew="true"
+        />
       </div>
-      <p v-else>Projects list is empty</p>
     </div>
 
     <ui-table v-if="viewType === 'table'">
@@ -101,7 +105,7 @@ export default {
 .content-wrapper {
   padding: 16px 32px;
 }
-.cont-list {
+.content-list {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;

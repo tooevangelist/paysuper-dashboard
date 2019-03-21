@@ -3,9 +3,9 @@
   <div class="header-block">
     <router-link
       class="header-link"
-      :to="`/projects/${id}`"
+      :to="isNew ? '/projects/new' : `/projects/${id}`"
     >
-      <div class="hover-layer">
+      <div class="hover-layer" v-if="!isNew">
         <button
           class="control-button"
           type="button"
@@ -26,12 +26,21 @@
         </button>
       </div>
       <span class="id" v-if="id">{{id}}</span>
-      <StatusIcon class="status-icon" :status="status" />
-      <div class="picture"></div>
+      <StatusIcon v-if="!isNew" class="status-icon" :status="status" />
+      <div class="picture">
+        <svg width="36" height="38" viewBox="0 0 36 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- eslint-disable-next-line -->
+        <path d="M21.6289 15.543H35.9023V21.6953H21.6289V37.8672H15.0898V21.6953H0.816406V15.543H15.0898V0.601562H21.6289V15.543Z" fill="white"/>
+        </svg>
+
+      </div>
       <div class="title">
         <Header class="title-text" level="2">{{title}}</Header>
       </div>
     </router-link>
+  </div>
+  <div class="footer" v-if="isNew">
+    It’s easy like 1-2-3
   </div>
   <div class="footer" v-if="false">
     <div class="footer-item">
@@ -78,6 +87,11 @@ export default {
         return includes(['initial', 'incomplete', 'complete'], value);
       },
     },
+
+    isNew: {
+      type: Boolean,
+      default: false,
+    },
   },
 };
 </script>
@@ -115,6 +129,9 @@ export default {
   border-radius: 50%;
   overflow: hidden;
   background: #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .title {
