@@ -1,5 +1,5 @@
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import {
   Button, Select, TextField, PageHeader,
 } from '@protocol-one/ui-kit';
@@ -17,12 +17,8 @@ export default {
     TextField,
   },
 
-  asyncData({ store, route, resources }) {
-    if (store.state.Merchant) {
-      return undefined;
-    }
-    store.registerModule('Merchant', MerchantStore(resources));
-    return store.dispatch('Merchant/initState', {
+  asyncData({ registerStoreModule, route }) {
+    return registerStoreModule('Merchant', MerchantStore, {
       query: route.query,
     });
   },
@@ -68,19 +64,15 @@ export default {
   },
 
   methods: {
+    ...mapActions('Merchant', ['updateMerchant']),
     update() {
-      this.$store.dispatch('Merchant/update', {
+      this.updateMerchant({
         ...this.data,
         name: this.name,
         currency: this.currency,
         country: this.country,
         accounting_period: this.accountingPeriod,
-      })
-        .then(() => {
-          this.showSuccessMessage('Merchant data updated successfully');
-        }).catch((e) => {
-          this.showErrorMessage(this.getErrorMessage(e));
-        });
+      });
     },
   },
 };

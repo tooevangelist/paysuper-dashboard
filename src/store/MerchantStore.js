@@ -1,6 +1,6 @@
 import api from '@/api/merchant';
 
-export default function createMerchantStore() {
+export default function createMerchantStore({ notifications }) {
   return {
     state: () => ({
       merchant: null,
@@ -13,18 +13,18 @@ export default function createMerchantStore() {
     },
 
     actions: {
-      initState() {
-
+      initState({ dispatch }) {
+        return dispatch('fetchMerchant');
       },
-      create({ commit, rootState }) {
-        return api.create({ email: rootState.user.email }, rootState.user.accessToken)
+      createMerchant({ commit, rootState }) {
+        return api.create({ email: rootState.User.email }, rootState.User.accessToken)
           .then((response) => {
             commit('merchant', response.data);
             return response;
           });
       },
-      get({ commit, rootState }) {
-        return api.get(rootState.user.accessToken)
+      fetchMerchant({ commit, rootState }) {
+        return api.get(rootState.User.accessToken)
           .then((response) => {
             commit('merchant', response.data);
             return response;
@@ -32,11 +32,15 @@ export default function createMerchantStore() {
 
           });
       },
-      update({ commit, rootState }, data) {
-        return api.update(data, rootState.user.accessToken)
+      updateMerchant({ commit, rootState }, data) {
+        return api.update(data, rootState.User.accessToken)
           .then((response) => {
             commit('merchant', response.data);
+            notifications.showSuccessMessage('Merchant data updated successfully');
             return response;
+          })
+          .catch((error) => {
+            notifications.showErrorMessage(error);
           });
       },
     },

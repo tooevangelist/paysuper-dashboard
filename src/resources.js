@@ -20,6 +20,18 @@ function showToasted(type, message, opts = {}) {
   });
 }
 
+function getErrorMessage(e) {
+  let message = 'Unknown error. Try request later.';
+
+  if (e.response && e.response.data
+    && typeof e.response.data === 'object') {
+    const keys = Object.keys(e.response.data);
+    message = e.response.data[keys[0]];
+  }
+
+  return message;
+}
+
 export default {
   config,
   notifications: {
@@ -28,7 +40,12 @@ export default {
     },
 
     showErrorMessage(message, opts = {}) {
-      showToasted('error', message, opts);
+      const isMessageObject = typeof message !== 'string';
+      showToasted(
+        'error',
+        isMessageObject ? getErrorMessage(message) : message,
+        opts,
+      );
     },
   },
 };
