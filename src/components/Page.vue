@@ -107,7 +107,7 @@ export default {
     >
       <IconLogo slot="logo" />
     </UiPageNavbar>
-    <div>
+    <div class="page-content">
       <slot></slot>
     </div>
   </div>
@@ -117,5 +117,11 @@ export default {
 .main-wrapper {
   margin-left: 80px;
   background: #fff;
+}
+
+.page-content {
+  & > * {
+    min-height: 100vh;
+  }
 }
 </style>

@@ -44,6 +44,7 @@ export default function createUserStore({ config, notifications }) {
 
             callback_currency: '',
             limits_currency: '',
+            only_fixed_amounts: false,
 
             is_active: true,
           });

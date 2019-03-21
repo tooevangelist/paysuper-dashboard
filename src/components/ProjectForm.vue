@@ -97,6 +97,7 @@ export default {
 <template>
   <div class="project-form">
     <FormByStep
+      class="project-form__form-by-step"
       :steps="steps"
       :currentStep="currentStepInner"
       v-model="currentStepInner"
@@ -131,3 +132,14 @@ export default {
     </FormByStep>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.project-form {
+  display: flex;
+  min-height: calc(100vh - 84px);
+
+  &__form-by-step {
+    flex-grow: 1;
+  }
+}
+</style>

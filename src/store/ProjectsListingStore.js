@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export default function createMerchantStore({ config }) {
+export default function createMerchantStore({ config, notifications }) {
   return {
     state: () => ({
       projects: [],
@@ -25,12 +25,18 @@ export default function createMerchantStore({ config }) {
         }).catch(() => { });
       },
 
-      removeProject({ dispatch, rootState }, id) {
-        return axios.delete(`${config.apiUrl}/api/v1/s/project/${id}`, {
-          headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-        }).then(() => {
-          dispatch('fetchProjects');
-        }).catch(() => { });
+      async removeProject({ dispatch, rootState }, id) {
+        dispatch('setIsLoading', true, { root: true });
+        try {
+          await axios.delete(`${config.apiUrl}/api/v1/s/project/${id}`, {
+            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
+          });
+          await dispatch('fetchProjects');
+          notifications.showSuccessMessage('Project disactivated');
+        } catch (error) {
+          notifications.showErrorMessage('Failed to disactivate project');
+        }
+        dispatch('setIsLoading', false, { root: true });
       },
     },
 

@@ -79,49 +79,51 @@ export default {
   <div class="project-form-products">
     <UiHeader level="2" :hasMargin="true">
       Products
-      <UiSwitchBox class="switch-box" v-model="hz" :disabled="true" />
+      <UiSwitchBox class="switch-box" v-model="project.only_fixed_amounts" />
     </UiHeader>
 
-    <div class="products-controls">
-      <div>
-        <UiButton
-          class="products-controls__button"
-          @click="$emit('requestOpenProduct')"
-        >
-          Add product
-        </UiButton>
-        <UiButton class="products-controls__button" :disabled="true">Use Qilin packages</UiButton>
+    <template v-if="project.only_fixed_amounts">
+      <div class="products-controls">
+        <div>
+          <UiButton
+            class="products-controls__button"
+            @click="$emit('requestOpenProduct')"
+          >
+            Add product
+          </UiButton>
+          <UiButton class="products-controls__button" :disabled="true">Use Qilin packages</UiButton>
+        </div>
+        <div>
+          <UiTextField label="Search" :disabled="true"></UiTextField>
+        </div>
       </div>
-      <div>
-        <UiTextField label="Search" :disabled="true"></UiTextField>
-      </div>
-    </div>
 
-    <div class="table-container">
-      <ui-table>
-        <ui-table-row :isHead="true">
-          <ui-table-cell>Name</ui-table-cell>
-          <ui-table-cell>SKU</ui-table-cell>
-          <ui-table-cell>Price</ui-table-cell>
-          <ui-table-cell>Active</ui-table-cell>
-        </ui-table-row>
-        <ui-table-row
-          v-for="(product, index) in products"
-          :key="index"
-          @click.native="requestOpenProduct(product)"
-        >
-          <ui-table-cell>{{product.name}}</ui-table-cell>
-          <ui-table-cell>{{product.id}}</ui-table-cell>
-          <ui-table-cell>
-            {{product.price}} {{product.currency ? product.currency.code_a3 : ''}}
-          </ui-table-cell>
-          <ui-table-cell>
-            <StatusIcon v-if="product.is_active" status="complete"/>
-          </ui-table-cell>
-        </ui-table-row>
-      </ui-table>
-      <NoResults v-if="!products.length" />
-    </div>
+      <div class="table-container">
+        <ui-table>
+          <ui-table-row :isHead="true">
+            <ui-table-cell>Name</ui-table-cell>
+            <ui-table-cell>SKU</ui-table-cell>
+            <ui-table-cell>Price</ui-table-cell>
+            <ui-table-cell>Active</ui-table-cell>
+          </ui-table-row>
+          <ui-table-row
+            v-for="(product, index) in products"
+            :key="index"
+            @click.native="requestOpenProduct(product)"
+          >
+            <ui-table-cell>{{product.name}}</ui-table-cell>
+            <ui-table-cell>{{product.id}}</ui-table-cell>
+            <ui-table-cell>
+              {{product.price}} {{product.currency ? product.currency.code_a3 : ''}}
+            </ui-table-cell>
+            <ui-table-cell>
+              <StatusIcon v-if="product.is_active" status="complete"/>
+            </ui-table-cell>
+          </ui-table-row>
+        </ui-table>
+        <NoResults v-if="!products.length" />
+      </div>
+    </template>
 
 
   </div>
