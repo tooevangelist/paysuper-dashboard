@@ -30,7 +30,7 @@ router.beforeResolve((to, from, next) => {
   if (to.matched.some(record => record.meta.isAuthRequired)) {
     if (!store.state.User.isAuthorised) {
       next({
-        path: '/login',
+        path: '/',
         query: { redirect: to.fullPath },
       });
     }

@@ -59,7 +59,7 @@ export default {
       links = [
         ...links,
         {
-          label: 'Transactions search',
+          label: 'Transactions',
           url: '/transactions',
           router: true,
           name: ['transactions'],
@@ -91,7 +91,7 @@ export default {
 
     async handleLogout() {
       await this.logout();
-      this.$router.push({ path: '/login' });
+      this.$router.push({ path: '/' });
     },
   },
 };
