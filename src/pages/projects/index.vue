@@ -58,7 +58,7 @@ export default {
     </PageHeader>
 
     <div class="content-wrapper" v-if="viewType === 'panels' || !projects.length">
-      <div>
+      <div class="content-list">
         <PanelItem
           v-for="project in projects"
           :key="project.id"

@@ -1,9 +1,10 @@
 <script>
+import { includes } from 'lodash-es';
 import { mapState, mapActions } from 'vuex';
 import { UiPageNavbar } from '@protocol-one/ui-kit';
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
-import IconLogo from './IconLogo.vue';
+import IconLogo from '@/components/IconLogo.vue';
 
 export default {
   name: 'Page',
@@ -32,19 +33,25 @@ export default {
           label: 'Dashboard',
           url: '/dashboard',
           router: true,
-          name: 'dashboard',
+          name: ['dashboard'],
         },
         {
           label: 'Merchant',
           url: '/merchant',
           router: true,
-          name: 'merchant',
+          name: ['merchant'],
+        },
+        {
+          label: 'Merchants (new)',
+          url: '/merchants',
+          router: true,
+          name: ['merchants'],
         },
         {
           label: 'Projects',
           url: '/projects',
           router: true,
-          name: 'projects',
+          name: ['projects', 'projects-card'],
         },
       ];
 
@@ -55,19 +62,19 @@ export default {
           label: 'Transactions search',
           url: '/transactions',
           router: true,
-          name: 'transactions',
+          name: ['transactions'],
         },
         {
           label: 'Revenue',
           url: '/revenue',
           router: true,
-          name: 'revenue',
+          name: ['revenue'],
         },
       ];
       // }
 
       return links.map((item) => {
-        if (item.name === this.$route.name) {
+        if (includes(item.name, this.$route.name)) {
           return {
             ...item,
             isActive: true,

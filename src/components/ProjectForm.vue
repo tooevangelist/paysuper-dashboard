@@ -1,7 +1,7 @@
 <script>
 import { find } from 'lodash-es';
 import {
-  Button, FormByStep,
+  UiButton, UiFormByStep,
 } from '@protocol-one/ui-kit';
 import ProjectFormSettings from '@/components/ProjectFormSettings.vue';
 import ProjectFormSimpleCheckout from '@/components/ProjectFormSimpleCheckout.vue';
@@ -11,8 +11,8 @@ export default {
   name: 'ProjectForm',
 
   components: {
-    FormByStep,
-    Button,
+    UiFormByStep,
+    UiButton,
     ProjectFormSettings,
     ProjectFormSimpleCheckout,
     ProjectFormProducts,
@@ -96,7 +96,7 @@ export default {
 
 <template>
   <div class="project-form">
-    <FormByStep
+    <UiFormByStep
       class="project-form__form-by-step"
       :steps="steps"
       :currentStep="currentStepInner"
@@ -126,10 +126,10 @@ export default {
       <div slot="side-footer" v-if="false">
         You have finished filling out company details, send them for review
         <div style="text-align: center; margin-top: 20px; ">
-          <Button>Finish</Button>
+          <UiButton>Finish</UiButton>
         </div>
       </div>
-    </FormByStep>
+    </UiFormByStep>
   </div>
 </template>
 

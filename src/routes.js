@@ -51,6 +51,12 @@ const routes = [
     name: 'merchant',
   },
   {
+    path: '/merchants/',
+    component: () => import('@/pages/merchants/list.vue'),
+    meta: { layout: 'Page', isAuthRequired: true },
+    name: 'merchants',
+  },
+  {
     path: '/demo/',
     component: () => import('@/pages/demo.vue'),
   },

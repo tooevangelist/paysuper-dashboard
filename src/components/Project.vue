@@ -1,14 +1,14 @@
 <template>
   <div class="card">
     <div class="card-header">
-      <Button @click="save">Save</Button>
-      <Button
+      <UiButton @click="save">Save</UiButton>
+      <UiButton
         class="pull-right"
         :color="data.is_active ? 'orange' : 'green'"
         @click="save"
       >
         {{ data.is_active ? 'Deactivate' : 'Activate' }}
-      </Button>
+      </UiButton>
     </div>
     <div class="card-body">
       <div class="form-group" v-if="true">
@@ -380,7 +380,7 @@
 
 <script>
 import axios from 'axios';
-import { Button } from '@protocol-one/ui-kit';
+import { UiButton } from '@protocol-one/ui-kit';
 import Notifications from '@/mixins/notificaton';
 import Currency from '@/mixins/currency';
 import Validate from '@/mixins/validate';
@@ -388,7 +388,7 @@ import Validate from '@/mixins/validate';
 export default {
   mixins: [Notifications, Currency, Validate],
   components: {
-    Button,
+    UiButton,
   },
   props: {
     project: {

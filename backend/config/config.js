@@ -24,10 +24,10 @@ const config = {
 
   postMessageTargetOrigin: getEnvVariable('POST_MESSAGE_TARGET_ORIGIN', 'https://paysupermgmt.tst.protocol.one'),
 
-  auth1ClientId: getEnvVariable('AUTH1_CLIENT_ID', '5c88be64ebe80e0001ed2e3e'),
-  auth1ClientSecret: getEnvVariable('AUTH1_CLIENT_SECRET', '6LBSHzkJVWOLiU7iCpbffpE3fcyIrqoyeCfgpDqiMPhnQwW7KFqtalsrsVyLP3Ee'),
+  auth1ClientId: getEnvVariable('AUTH1_CLIENT_ID', '5c77953f51c0950001436152'),
+  auth1ClientSecret: getEnvVariable('AUTH1_CLIENT_SECRET', 'tGtL8HcRDY5X7VxEhyIye2EhiN9YyTJ5Ny0AndLNXQFgKCSgUKE0Ti4X9fHK6Qib'),
   auth1Scope: getEnvVariableArray('AUTH1_CLIENT_SCOPE', 'openid,offline'),
-  auth1Issuer: getEnvVariable('AUTH1_ISSUER_URL', 'https://dev-auth1.tst.protocol.one'),
+  auth1Issuer: getEnvVariable('AUTH1_ISSUER_URL', 'https://auth1.tst.protocol.one'),
   auth1PostmessageHtmlTemplatePath: path.resolve('backend/templates/auth1.postmessage.html.template'),
   auth1SessionNamespace: 'auth1',
 
