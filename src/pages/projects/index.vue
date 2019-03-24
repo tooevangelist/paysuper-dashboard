@@ -9,7 +9,7 @@ import {
 } from '@protocol-one/ui-kit';
 import PanelItem from '@/components/PanelItem.vue';
 import StatusIcon from '@/components/StatusIcon.vue';
-import ProjectsListingStore from '@/store/ProjectsListingStore';
+import ProjectsListStore from '@/store/ProjectsListStore';
 
 export default {
   components: {
@@ -22,7 +22,7 @@ export default {
     StatusIcon,
   },
   asyncData({ registerStoreModule }) {
-    return registerStoreModule('ProjectsListing', ProjectsListingStore);
+    return registerStoreModule('ProjectsListing', ProjectsListStore);
   },
   data() {
     return {

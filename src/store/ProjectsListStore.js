@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export default function createMerchantStore({ config, notifications }) {
+export default function createProjectsListStore({ config, notifications }) {
   return {
     state: () => ({
       projects: [],

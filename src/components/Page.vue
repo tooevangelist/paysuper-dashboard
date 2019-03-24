@@ -36,13 +36,7 @@ export default {
           name: ['dashboard'],
         },
         {
-          label: 'Merchant',
-          url: '/merchant',
-          router: true,
-          name: ['merchant'],
-        },
-        {
-          label: 'Merchants (new)',
+          label: 'Merchants',
           url: '/merchants',
           router: true,
           name: ['merchants'],
