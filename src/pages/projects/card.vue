@@ -2,14 +2,13 @@
 import { mapState, mapActions } from 'vuex';
 import { UiButton, UiPageHeader } from '@protocol-one/ui-kit';
 import Notifications from '@/mixins/Notifications';
-import Project from '@/components/Project.vue';
 import ProjectForm from '@/components/ProjectForm.vue';
 import ProductForm from '@/components/ProductForm.vue';
 import ProjectStore from '@/store/ProjectStore';
 
 export default {
   components: {
-    Project, UiButton, UiPageHeader, ProjectForm, ProductForm,
+    UiButton, UiPageHeader, ProjectForm, ProductForm,
   },
   mixins: [Notifications],
 
@@ -157,12 +156,5 @@ export default {
       @requestOpenProduct="handleRequestOpenProduct"
       @stepChanged="handleSectionChange"
     />
-    <div class="container-fluid" v-if="false">
-      <div class="row">
-        <div class="col-md-12">
-          <project :project="project"/>
-        </div>
-      </div>
-    </div>
   </div>
 </template>

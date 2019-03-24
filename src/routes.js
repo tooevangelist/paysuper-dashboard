@@ -28,6 +28,18 @@ const routes = [
     name: 'projects-card',
   },
   {
+    path: '/merchants/',
+    component: () => import('@/pages/MerchantsList.vue'),
+    meta: { layout: 'Page', isAuthRequired: true },
+    name: 'merchants',
+  },
+  {
+    path: '/merchants/:id',
+    component: () => import('@/pages/MerchantsCard.vue'),
+    meta: { layout: 'Page', isAuthRequired: true },
+    name: 'merchants-card',
+  },
+  {
     path: '/dashboard/',
     component: () => import('@/pages/dashboard.vue'),
     meta: { layout: 'Page', isAuthRequired: true },
@@ -43,18 +55,6 @@ const routes = [
     path: '/payout/',
     component: () => import('@/pages/payout.vue'),
     meta: { layout: 'Page', isAuthRequired: true },
-  },
-  {
-    path: '/merchant/',
-    component: () => import('@/pages/merchant.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
-    name: 'merchant',
-  },
-  {
-    path: '/merchants/',
-    component: () => import('@/pages/merchants/list.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
-    name: 'merchants',
   },
   {
     path: '/demo/',

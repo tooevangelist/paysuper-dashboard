@@ -123,7 +123,7 @@ export default {
       });
     },
 
-    getTextFieldProps(path) {
+    getValidatedFieldProps(path) {
       return {
         required: true,
         hasError: this.$isFieldInvalid(path),
@@ -142,7 +142,7 @@ export default {
       <UiTextField
         v-model="project.name"
         label="Project name"
-        v-bind="getTextFieldProps('project.name')"
+        v-bind="getValidatedFieldProps('project.name')"
       />
     </div>
 
@@ -150,7 +150,7 @@ export default {
       <UiTextField
         v-model="project.url_check_account"
         label="Validation request URL"
-        v-bind="getTextFieldProps('project.url_check_account')"
+        v-bind="getValidatedFieldProps('project.url_check_account')"
       />
     </div>
 
@@ -158,7 +158,7 @@ export default {
       <UiTextField
         v-model="project.url_process_payment"
         label="Payment notifications URL"
-        v-bind="getTextFieldProps('project.url_process_payment')"
+        v-bind="getValidatedFieldProps('project.url_process_payment')"
       />
     </div>
 
@@ -166,7 +166,7 @@ export default {
       <UiTextField
         v-model="project.url_redirect_success"
         label="Success redirect URL"
-        v-bind="getTextFieldProps('project.url_redirect_success')"
+        v-bind="getValidatedFieldProps('project.url_redirect_success')"
       />
     </div>
 
@@ -174,7 +174,7 @@ export default {
       <UiTextField
         v-model="project.url_redirect_fail"
         label="Failed attempt redirect URL"
-        v-bind="getTextFieldProps('project.url_redirect_fail')"
+        v-bind="getValidatedFieldProps('project.url_redirect_fail')"
       />
     </div>
 
@@ -195,7 +195,7 @@ export default {
       <UiTextField
         v-model="project.secret_key"
         label="Secret key"
-        v-bind="getTextFieldProps('project.secret_key')"
+        v-bind="getValidatedFieldProps('project.secret_key')"
       />
       <UiButton class="generate-button" @click="generateSecretKey">Generate</UiButton>
     </div>

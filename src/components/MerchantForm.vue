@@ -1,7 +1,11 @@
 <script>
+import { map, filter } from 'lodash-es';
 import {
   UiButton, UiFormByStep,
 } from '@protocol-one/ui-kit';
+import MerchantFormBasicInfo from '@/components/MerchantFormBasicInfo.vue';
+import MerchantFormContacts from '@/components/MerchantFormContacts.vue';
+import MerchantFormBankingInfo from '@/components/MerchantFormBankingInfo.vue';
 
 export default {
   name: 'MerchantForm',
@@ -9,6 +13,9 @@ export default {
   components: {
     UiFormByStep,
     UiButton,
+    MerchantFormBasicInfo,
+    MerchantFormContacts,
+    MerchantFormBankingInfo,
   },
 
   props: {
@@ -25,43 +32,46 @@ export default {
   data() {
     return {
       currentStepInner: this.currentStep,
-      stepsStatus: {
-        settings: 'initial',
-        simpleCheckout: 'initial',
-        products: 'initial',
-        payouts: 'initial',
+      steps: {
+        basicInfo: {
+          label: 'Basic info',
+          status: 'initial',
+          component: 'MerchantFormBasicInfo',
+        },
+        contacts: {
+          label: 'Contacts',
+          status: 'initial',
+          component: 'MerchantFormContacts',
+        },
+        bankingInfo: {
+          label: 'Banking info',
+          status: 'initial',
+          component: 'MerchantFormBankingInfo',
+        },
+        licenseAgreement: {
+          label: 'License agreement',
+          status: 'initial',
+          component: 'UiButton',
+        },
+        paymentMethods: {
+          label: 'Payment methods',
+          status: 'initial',
+          component: 'UiButton',
+        },
       },
     };
   },
 
   computed: {
-    steps() {
-      return [
-        {
-          label: 'Company Info',
-          value: 'companyInfo',
-          status: this.stepsStatus.settings,
-        },
-        {
-          label: 'Agreement',
-          value: 'agreement',
-          status: this.stepsStatus.simpleCheckout,
-        },
-        {
-          label: 'Payment methods',
-          value: 'paymentMethods',
-          status: this.stepsStatus.products,
-        },
-        {
-          label: 'Payouts',
-          value: 'payouts',
-          status: this.stepsStatus.payouts,
-        },
-      ];
+    isFormValid() {
+      return !filter(this.steps, item => item.status !== 'complete').length;
     },
 
-    isFormValid() {
-      return !this.steps.filter(item => item.status !== 'complete').length;
+    stepsList() {
+      return map(this.steps, (item, value) => ({
+        ...item,
+        value,
+      }));
     },
   },
 
@@ -73,13 +83,16 @@ export default {
 
   methods: {
     chekIfFormValid() {
-      this.$refs.formSettings.validateForm();
-      this.$refs.formCheckout.validateForm();
+      this.$refs.forms.forEach((form) => {
+        if (form.validateForm) {
+          form.validateForm();
+        }
+      });
       return this.isFormValid;
     },
 
     setStepStatus(name, isValid) {
-      this.stepsStatus[name] = isValid ? 'complete' : 'incomplete';
+      this.steps[name].status = isValid ? 'complete' : 'incomplete';
     },
 
     updateCurrentStep(value) {
@@ -94,20 +107,31 @@ export default {
   <div class="merchant-form">
     <UiFormByStep
       class="merchant-form__form-by-step"
-      :steps="steps"
+      :steps="stepsList"
       :currentStep="currentStepInner"
       v-model="currentStepInner"
       @stepSelected="updateCurrentStep"
     >
-
-      <UiButton>lal</UiButton>
+      <component
+        v-for="(step, stepValue) in steps"
+        :is="step.component"
+        :key="stepValue"
+        v-show="currentStepInner === stepValue"
+        :merchant="merchant"
+        ref="forms"
+        @validationResult="setStepStatus(stepValue, $event)"
+      />
     </UiFormByStep>
+    <pre style="width: 100%;">
+      {{merchant}}
+    </pre>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .merchant-form {
   display: flex;
+  flex-direction: column;
   min-height: calc(100vh - 84px);
 
   &__form-by-step {
