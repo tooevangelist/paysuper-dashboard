@@ -1,18 +1,15 @@
 <template>
-  <div class="page-404">
-    <Header level="1">404</Header>
-    <Header level="2">Page not found</Header>
-  </div>
+  <PageError :errorCode="404" />
 </template>
 
 <script>
-import { Header } from '@protocol-one/ui-kit';
+import PageError from '@/components/PageError.vue';
 
 export default {
   name: 'Page404',
 
   components: {
-    Header,
+    PageError,
   },
 };
 </script>

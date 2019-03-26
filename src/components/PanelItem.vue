@@ -28,7 +28,10 @@
       <span class="id" v-if="id">{{id}}</span>
       <StatusIcon v-if="!isNew" class="status-icon" :status="status" />
       <div class="picture">
-        <svg width="36" height="38" viewBox="0 0 36 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg
+          v-if="isNew"
+          width="36" height="38" viewBox="0 0 36 38" fill="none" xmlns="http://www.w3.org/2000/svg"
+        >
         <!-- eslint-disable-next-line -->
         <path d="M21.6289 15.543H35.9023V21.6953H21.6289V37.8672H15.0898V21.6953H0.816406V15.543H15.0898V0.601562H21.6289V15.543Z" fill="white"/>
         </svg>

@@ -28,7 +28,7 @@ export default {
   },
 
   computed: {
-    ...mapState('Dictionaries', ['currencies']),
+    ...mapState('Dictionaries', ['currenciesInt']),
 
     isSimpleCheckout: {
       get() {
@@ -90,7 +90,7 @@ export default {
     <div class="field-row">
       <UiSelect
         v-model="callbackCurrency"
-        :options="currencies"
+        :options="currenciesInt"
         :required="true"
         :hasError="$isFieldInvalid('callbackCurrency')"
         :errorText="$getFieldErrorMessages('callbackCurrency')"
@@ -101,7 +101,7 @@ export default {
     <div class="field-row">
       <UiSelect
         v-model="limitsCurrency"
-        :options="currencies"
+        :options="currenciesInt"
         label="Limits currency"
       />
     </div>

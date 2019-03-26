@@ -1,0 +1,100 @@
+<script>
+import { mapState } from 'vuex';
+import { UiButton, UiPageHeader } from '@protocol-one/ui-kit';
+import Notifications from '@/mixins/Notifications';
+import MerchantForm from '@/components/MerchantForm.vue';
+import MerchantStore from '@/store/MerchantStore';
+
+export default {
+  components: {
+    UiButton, UiPageHeader, MerchantForm,
+  },
+  mixins: [Notifications],
+
+  asyncData({ registerStoreModule, route }) {
+    return registerStoreModule('Merchant', MerchantStore, route.params.id);
+  },
+
+  data() {
+    return {
+      defaultStep: 'companyInfo',
+      currentStep: '',
+    };
+  },
+
+  computed: {
+    ...mapState('Merchant', ['merchant']),
+    breadcrumbs() {
+      const crumbs = [
+        {
+          label: 'Merchants list',
+          url: '/merchants/',
+        },
+      ];
+      return crumbs;
+    },
+  },
+
+  beforeRouteUpdate(to, from, next) {
+    this.applyQueryParams(to);
+    next();
+  },
+
+  created() {
+    this.applyQueryParams(this.$route);
+  },
+
+  methods: {
+    // ...mapActions('Merchant', [
+    //   'createMerchant',
+    // ]),
+
+    applyQueryParams(route) {
+      this.currentStep = route.query.step || this.defaultStep;
+    },
+
+    handleSectionChange(step) {
+      this.$router.push({ query: { step } });
+    },
+
+    handleSaveButtonClick() {
+      this.validateAndSaveMerchant();
+    },
+
+    async validateAndSaveMerchant() {
+      const isMerchantValid = this.$refs.merchantForm.chekIfFormValid();
+
+      if (isMerchantValid) {
+        if (this.merchant.id) {
+          this.saveMerchant();
+        } else {
+          this.createMerchant();
+        }
+      } else {
+        this.$_Notifications_showErrorMessage('The form is not filled right');
+      }
+    },
+  },
+};
+</script>
+
+<template>
+  <div>
+    <UiPageHeader
+      :breadcrumbs="breadcrumbs"
+      :title="merchant.name || 'New merchant'"
+    >
+      <UiButton
+        slot="right"
+        @click="handleSaveButtonClick"
+        :text="merchant.id ? 'Save' : 'Create merchant'"
+      />
+    </UiPageHeader>
+    <MerchantForm
+      ref="merchantForm"
+      :merchant="merchant"
+      :currentStep="currentStep"
+      @stepChanged="handleSectionChange"
+    />
+  </div>
+</template>

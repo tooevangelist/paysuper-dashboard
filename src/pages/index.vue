@@ -72,7 +72,7 @@ export default {
 }
 .text {
   display: block;
-  font-size: 12px;
+  font-size: 14px;
   margin-top: 8px;
   margin-bottom: 16px;
   text-align: center;

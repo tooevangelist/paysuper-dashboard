@@ -1,17 +1,30 @@
 <script>
-import { PageHeader } from '@protocol-one/ui-kit';
+import { UiPageHeader, UiButton } from '@protocol-one/ui-kit';
+import { mapState, mapMutations } from 'vuex';
 
 export default {
   components: {
-    PageHeader,
+    UiPageHeader,
+    UiButton,
+  },
+
+  computed: {
+    ...mapState('User', ['isAdmin']),
+  },
+
+  methods: {
+    ...mapMutations('User', { setIsAdmin: 'isAdmin' }),
   },
 };
 </script>
 
 <template>
   <div>
-    <PageHeader>
+    <UiPageHeader>
       <span slot="title">Dashboard</span>
-    </PageHeader>
+    </UiPageHeader>
+
+    <UiButton @click="setIsAdmin(true)" :disabled="isAdmin">I'm Admin</UiButton>
+    <UiButton @click="setIsAdmin(false)" :disabled="!isAdmin">I'm Client</UiButton>
   </div>
 </template>

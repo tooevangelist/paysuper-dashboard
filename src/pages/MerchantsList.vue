@@ -9,6 +9,7 @@ import {
 } from '@protocol-one/ui-kit';
 import MerchanstListStore from '@/store/MerchanstListStore';
 import NoResults from '@/components/NoResults.vue';
+import StatusIcon from '@/components/StatusIcon.vue';
 
 export default {
   components: {
@@ -18,6 +19,7 @@ export default {
     UiTableCell,
     UiTableRow,
     NoResults,
+    StatusIcon,
   },
 
   asyncData({ registerStoreModule, route }) {
@@ -71,7 +73,9 @@ export default {
       >
         <ui-table-cell>{{merchant.name}}</ui-table-cell>
         <ui-table-cell></ui-table-cell>
-        <ui-table-cell></ui-table-cell>
+        <ui-table-cell>
+          <StatusIcon v-if="merchant.status === 6" status="complete" />
+        </ui-table-cell>
         <ui-table-cell></ui-table-cell>
         <ui-table-cell></ui-table-cell>
 
@@ -79,7 +83,7 @@ export default {
     </ui-table>
 
     <UiPaginator
-      v-if="merchants.length"
+      v-if="false && merchants.length"
       :offset="filters.offset"
       :limit="filters.limit"
       :count="count"

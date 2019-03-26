@@ -1,5 +1,5 @@
 <script>
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 import { required } from 'vuelidate/lib/validators';
 import {
   UiTextField, UiHeader, UiTextarea, UiSelect,
@@ -28,7 +28,7 @@ export default {
   },
 
   computed: {
-    ...mapState('Dictionaries', ['currencies']),
+    ...mapGetters('Dictionaries', ['currenciesThreeLetters']),
   },
 
   validations: {
@@ -86,7 +86,7 @@ export default {
       <UiSelect
         v-model="merchant.banking.currency"
         label="Payout currency"
-        :options="currencies"
+        :options="currenciesThreeLetters"
         v-bind="getValidatedFieldProps('merchant.banking.currency')"
       />
     </div>

@@ -1,6 +1,10 @@
 import axios from 'axios';
 import { includes, mapValues, cloneDeep } from 'lodash-es';
 
+/**
+ * Probobaly not needed
+ * @todo check & remove
+ */
 function prepareRequestData(data) {
   return mapValues(data, (value) => {
     if (value === '') {
@@ -73,7 +77,7 @@ export default function createUserStore({ config, notifications }) {
         await dispatch('fetchProject', id);
       },
 
-      fetchProject({ commit, rootState }, id) {
+      fetchProject({ commit, dispatch, rootState }, id) {
         return axios.get(`${config.apiUrl}/api/v1/s/project/${id}`, {
           headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
         })
@@ -85,7 +89,9 @@ export default function createUserStore({ config, notifications }) {
               return value;
             }));
           })
-          .catch(() => { });
+          .catch((error) => {
+            dispatch('setPageError', error.response.status, { root: true });
+          });
       },
 
       async createProject({ state, dispatch, rootState }) {

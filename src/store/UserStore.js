@@ -8,6 +8,7 @@ export default function createUserStore({ config }) {
       accessToken,
       isAuthorised: false,
       authIframeSrc: `${config.ownBackendUrl}/auth1/login`,
+      isAdmin: false,
     },
 
     mutations: {
@@ -17,6 +18,10 @@ export default function createUserStore({ config }) {
 
       isAuthorised(state, value) {
         state.isAuthorised = value;
+      },
+
+      isAdmin(state, value) {
+        state.isAdmin = value;
       },
     },
 
