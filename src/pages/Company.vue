@@ -1,5 +1,5 @@
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState } from 'vuex';
 import { UiButton, UiPageHeader } from '@protocol-one/ui-kit';
 import Notifications from '@/mixins/Notifications';
 import MerchantForm from '@/components/MerchantForm.vue';
@@ -17,7 +17,7 @@ export default {
 
   data() {
     return {
-      defaultStep: 'basicInfo',
+      defaultStep: 'companyInfo',
       currentStep: '',
     };
   },
@@ -45,9 +45,9 @@ export default {
   },
 
   methods: {
-    ...mapActions('Merchant', [
-      'createMerchant',
-    ]),
+    // ...mapActions('Merchant', [
+    //   'createMerchant',
+    // ]),
 
     applyQueryParams(route) {
       this.currentStep = route.query.step || this.defaultStep;

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export default function createMerchantStore({ config }) {
+export default function createMerchantStore({ config, notifications }) {
   return {
     state: () => ({
       merchant: null,
@@ -53,19 +53,33 @@ export default function createMerchantStore({ config }) {
         }
         await dispatch('fetchMerchant', id);
       },
-      // createMerchant({ commit, rootState }) {
-      //   return api.create({ email: rootState.User.email }, rootState.User.accessToken)
-      //     .then((response) => {
-      //       commit('merchant', response.data);
-      //       return response;
-      //     });
-      // },
-      fetchMerchant({ commit, rootState }, id) {
-        return axios.get(`${config.apiUrl}/api/v1/s/merchants/${id}`, {
+      async createMerchant({
+        state, commit, dispatch, rootState,
+      }) {
+        dispatch('setIsLoading', true, { root: true });
+        try {
+          const response = await axios.post(
+            `${config.apiUrl}/admin/api/v1/merchants`,
+            state.merchant,
+            {
+              headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
+            },
+          );
+          commit('merchant', response.data);
+          notifications.showSuccessMessage('Merchant created successfully');
+        } catch (error) {
+          notifications.showErrorMessage('Failed to create merchant');
+        }
+        dispatch('setIsLoading', false, { root: true });
+      },
+      fetchMerchant({ commit, dispatch, rootState }, id) {
+        return axios.get(`${config.apiUrl}/admin/api/v1/merchants/${id}`, {
           headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
         }).then((response) => {
           commit('merchant', response.data);
-        }).catch(() => { });
+        }).catch((error) => {
+          dispatch('setPageError', error.response.status, { root: true });
+        });
       },
       // updateMerchant({ commit, rootState }, data) {
       //   return api.update(data, rootState.User.accessToken)

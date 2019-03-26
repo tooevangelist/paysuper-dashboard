@@ -28,7 +28,7 @@ export default {
     // ...mapState('merchant', ['merchant']),
 
     navigationLinks() {
-      let links = [
+      const links = [
         {
           label: 'Dashboard',
           url: '/dashboard',
@@ -36,35 +36,42 @@ export default {
           name: ['dashboard'],
         },
         {
-          label: 'Merchants',
-          url: '/merchants',
-          router: true,
-          name: ['merchants'],
+          label: 'Transactions',
+          url: '/transactions',
+          name: ['transactions'],
         },
         {
           label: 'Projects',
           url: '/projects',
-          router: true,
           name: ['projects', 'projects-card'],
+        },
+        {
+          label: 'Payout',
+          url: '/payout',
+          name: ['payout'],
+        },
+        {
+          label: 'Merchants',
+          url: '/merchants',
+          name: ['merchants'],
+        },
+        {
+          label: 'Company',
+          url: '/company',
+          name: ['company'],
         },
       ];
 
       // if (this.merchant && this.merchant.status >= 1) {
-      links = [
-        ...links,
-        {
-          label: 'Transactions',
-          url: '/transactions',
-          router: true,
-          name: ['transactions'],
-        },
-        {
-          label: 'Revenue',
-          url: '/revenue',
-          router: true,
-          name: ['revenue'],
-        },
-      ];
+      // links = [
+      //   ...links,
+      //   {
+      //     label: 'Revenue',
+      //     url: '/revenue',
+      //     router: true,
+      //     name: ['revenue'],
+      //   },
+      // ];
       // }
 
       return links.map((item) => {

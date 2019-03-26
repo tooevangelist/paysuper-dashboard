@@ -9,6 +9,21 @@ export default function createDictionariesStore({ config }) {
       countries: [],
     }),
 
+    getters: {
+      currenciesInt(state) {
+        return state.currencies.map(item => ({ label: item.name.en, value: item.code_int }));
+      },
+      countriesInt(state) {
+        return state.countries.map(item => ({ label: item.name.en, value: item.code_int }));
+      },
+      countriesTwoLetters(state) {
+        return state.countries.map(item => ({ label: item.name.en, value: item.code_a2 }));
+      },
+      currenciesThreeLetters(state) {
+        return state.currencies.map(item => ({ label: item.name.en, value: item.code_a3 }));
+      },
+    },
+
     mutations: {
       currencies(store, value) {
         store.currencies = value;
@@ -38,15 +53,7 @@ export default function createDictionariesStore({ config }) {
               return;
             }
 
-            const currencies = [];
-
-            for (let i = 0; i < response.data.length; i += 1) {
-              const item = response.data[i];
-
-              currencies.push({ label: item.name.en, value: item.code_int });
-            }
-
-            commit('currencies', currencies);
+            commit('currencies', response.data);
           }).catch(() => { });
       },
 
@@ -62,16 +69,7 @@ export default function createDictionariesStore({ config }) {
             if (response.data.length <= 0) {
               return;
             }
-
-            const countries = [];
-
-            for (let i = 0; i < response.data.length; i += 1) {
-              const item = response.data[i];
-
-              countries.push({ label: item.name.en, value: item.code_int });
-            }
-
-            commit('countries', countries);
+            commit('countries', response.data);
           }).catch(() => { });
       },
     },

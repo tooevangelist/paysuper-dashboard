@@ -6,6 +6,9 @@ import {
 import MerchantFormBasicInfo from '@/components/MerchantFormBasicInfo.vue';
 import MerchantFormContacts from '@/components/MerchantFormContacts.vue';
 import MerchantFormBankingInfo from '@/components/MerchantFormBankingInfo.vue';
+import MerchantFormAgreement from '@/components/MerchantFormAgreement.vue';
+import MerchantFormPaymentMethods from '@/components/MerchantFormPaymentMethods.vue';
+
 
 export default {
   name: 'MerchantForm',
@@ -16,6 +19,8 @@ export default {
     MerchantFormBasicInfo,
     MerchantFormContacts,
     MerchantFormBankingInfo,
+    MerchantFormAgreement,
+    MerchantFormPaymentMethods,
   },
 
   props: {
@@ -37,26 +42,29 @@ export default {
           label: 'Basic info',
           status: 'initial',
           component: 'MerchantFormBasicInfo',
+          isValidable: true,
         },
         contacts: {
           label: 'Contacts',
           status: 'initial',
           component: 'MerchantFormContacts',
+          isValidable: true,
         },
         bankingInfo: {
           label: 'Banking info',
           status: 'initial',
           component: 'MerchantFormBankingInfo',
+          isValidable: true,
         },
         licenseAgreement: {
           label: 'License agreement',
           status: 'initial',
-          component: 'UiButton',
+          component: 'MerchantFormAgreement',
         },
         paymentMethods: {
           label: 'Payment methods',
           status: 'initial',
-          component: 'UiButton',
+          component: 'MerchantFormPaymentMethods',
         },
       },
     };
@@ -64,7 +72,7 @@ export default {
 
   computed: {
     isFormValid() {
-      return !filter(this.steps, item => item.status !== 'complete').length;
+      return !filter(this.steps, item => item.status !== 'complete' && item.isValidable).length;
     },
 
     stepsList() {

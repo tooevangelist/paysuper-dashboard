@@ -1,5 +1,5 @@
 <script>
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 import { required } from 'vuelidate/lib/validators';
 import {
   UiTextField, UiHeader, UiSelect,
@@ -27,7 +27,7 @@ export default {
   },
 
   computed: {
-    ...mapState('Dictionaries', ['countries']),
+    ...mapGetters('Dictionaries', ['countriesTwoLetters']),
   },
 
   validations: {
@@ -98,7 +98,7 @@ export default {
       <UiSelect
         v-model="merchant.country"
         label="Country"
-        :options="countries"
+        :options="countriesTwoLetters"
         v-bind="getValidatedFieldProps('merchant.country')"
       />
     </div>

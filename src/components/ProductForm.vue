@@ -31,7 +31,7 @@ export default {
   },
 
   computed: {
-    ...mapState('Dictionaries', ['currencies']),
+    ...mapState('Dictionaries', ['currenciesInt']),
 
     price: {
       get() {
@@ -126,7 +126,7 @@ export default {
       <div class="field-item">
         <UiSelect
           v-model="currency"
-          :options="currencies"
+          :options="currenciesInt"
           :required="true"
           :hasError="$isFieldInvalid('currency')"
           :errorText="$getFieldErrorMessages('currency')"

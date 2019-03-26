@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export default function createMerchantsListStore({ config, notifications }) {
+export default function createMerchantsListStore({ config }) {
   return {
     state: () => ({
       merchants: [],
@@ -18,25 +18,11 @@ export default function createMerchantsListStore({ config, notifications }) {
       },
 
       fetchMerchants({ commit, rootState }) {
-        return axios.get(`${config.apiUrl}/api/v1/s/merchants`, {
+        return axios.get(`${config.apiUrl}/admin/api/v1/merchants`, {
           headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
         }).then((response) => {
           commit('merchants', response.data);
         }).catch(() => { });
-      },
-
-      async removeMerchant({ dispatch, rootState }, id) {
-        dispatch('setIsLoading', true, { root: true });
-        try {
-          await axios.delete(`${config.apiUrl}/api/v1/s/merchants/${id}`, {
-            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-          });
-          await dispatch('fetchMerchants');
-          notifications.showSuccessMessage('Merchant disactivated');
-        } catch (error) {
-          notifications.showErrorMessage('Failed to disactivate merchant');
-        }
-        dispatch('setIsLoading', false, { root: true });
       },
     },
 
