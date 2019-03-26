@@ -3,6 +3,7 @@
     <IconDocument v-if="status === 'initial'" />
     <IconCheck v-if="status === 'complete'" />
     <IconIncomplete v-if="status === 'incomplete'" />
+    <IconHourglass v-if="status === 'waiting'" />
   </span>
 </template>
 
@@ -11,12 +12,14 @@ import { includes } from 'lodash-es';
 import IconCheck from './IconCheck.vue';
 import IconIncomplete from './IconIncomplete.vue';
 import IconDocument from './IconDocument.vue';
+import IconHourglass from './IconHourglass.vue';
 
 export default {
   components: {
     IconCheck,
     IconIncomplete,
     IconDocument,
+    IconHourglass,
   },
 
   props: {
@@ -24,7 +27,7 @@ export default {
       type: String,
       default: 'initial',
       validator(value) {
-        return includes(['initial', 'incomplete', 'complete'], value);
+        return includes(['initial', 'incomplete', 'complete', 'waiting'], value);
       },
     },
   },
@@ -50,6 +53,10 @@ export default {
 
   &._incomplete {
     background: rgba(216, 90, 43, 0.37);
+  }
+
+  &._waiting {
+    background: rgba(210, 210, 210, 0.37);
   }
 }
 </style>

@@ -24,10 +24,68 @@ export default {
 
   data() {
     return {
+      fakeStatus: this.merchant.status,
+      statusesScheme: {
+        1: {
+          name: 'agreementRequested',
+          chronology: [
+            { code: 'complete', text: 'Agreement requested' },
+            { code: 'waiting', text: 'Waiting for the review' },
+          ],
+        },
+        2: {
+          name: 'onReview',
+          chronology: [
+            { code: 'complete', text: 'Review started' },
+            { code: 'waiting', text: 'Waiting for the review to complete' },
+          ],
+        },
+        3: {
+          name: 'approved',
+          chronology: [
+            { code: 'complete', text: 'Agreement request approved' },
+            { code: 'waiting', text: 'Waiting for dunno what' },
+          ],
+        },
+        4: {
+          name: 'rejected',
+          chronology: [
+            { code: 'incomplete', text: 'Agreement request rejected. <a href="#">Details</a>' },
+          ],
+        },
+        5: {
+          name: 'agreementSigning',
+          chronology: [
+            { code: 'complete', text: 'Agreement request approved' },
+            { code: 'waiting', text: 'Waiting for Pay Super to sign' },
+          ],
+        },
+        6: {
+          name: 'agreementSigned',
+          chronology: [
+            { code: 'waiting', text: 'Signed by Pay Super' },
+          ],
+        },
+      },
     };
   },
 
   computed: {
+    chronology() {
+      if (!this.statusesScheme[this.fakeStatus]) {
+        return null;
+      }
+      return this.statusesScheme[this.fakeStatus].chronology;
+    },
+
+    fakeStatusMirror: {
+      get() {
+        return this.fakeStatus;
+      },
+      set(value) {
+        this.fakeStatus = Number(value);
+      },
+    },
   },
 
   methods: {
@@ -62,15 +120,33 @@ export default {
       </p>
     </div>
 
+    <input type="number" v-model="fakeStatusMirror" >
+    <div>from 0 to 6</div>
+    <div v-if="statusesScheme[fakeStatus]">{{statusesScheme[fakeStatus].name}}</div>
+
+    <template v-if="chronology">
+      <div class="signed-row" v-for="(item, index) in chronology" :key="index">
+        <StatusIcon :status="item.code" />
+        <span class="signed-row__text" v-html="item.text"></span>
+      </div>
+    </template>
+
     <div class="controls">
-      <UiButton class="controls__button">Ask for e-agreement</UiButton>
-      <UiButton class="controls__button">Ask paper agreement</UiButton>
+      <UiButton
+        class="controls__button"
+        v-if="!fakeStatus || fakeStatus === 4"
+        @click="$emit('requestStatusChange', 'agreementRequested')"
+      >
+        Ask for agreement {{fakeStatus === 4 ? 'again' : ''}}
+      </UiButton>
+      <!-- <UiButton class="controls__button">Ask for e-agreement</UiButton> -->
+      <!-- <UiButton class="controls__button">Ask paper agreement</UiButton> -->
     </div>
 
-    <div class="signed-row">
+    <!-- <div class="signed-row">
       <StatusIcon status="complete" />
       <span class="signed-row__text">E-signed by Pay Super</span>
-    </div>
+    </div> -->
 
   </div>
 </template>
@@ -88,7 +164,7 @@ export default {
   // font-family: Lato;
   font-size: 16px;
   line-height: 20px;
-  color: #B1B1B1;
+  color: #b1b1b1;
   width: 450px;
 
   p {
@@ -105,6 +181,7 @@ export default {
 .signed-row {
   display: flex;
   align-items: center;
+  margin: 12px 0;
 
   &__text {
     margin-left: 10px;

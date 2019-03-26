@@ -1,6 +1,10 @@
 import axios from 'axios';
 import { includes, mapValues, cloneDeep } from 'lodash-es';
 
+/**
+ * Probobaly not needed
+ * @todo check & remove
+ */
 function prepareRequestData(data) {
   return mapValues(data, (value) => {
     if (value === '') {

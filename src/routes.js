@@ -38,6 +38,20 @@ const routes = [
     component: () => import('@/pages/MerchantsCard.vue'),
     meta: { layout: 'Page', isAuthRequired: true },
     name: 'merchants-card',
+    children: [
+      {
+        path: '',
+        component: () => import('@/pages/MerchantsCardForm.vue'),
+        meta: { layout: 'Page', isAuthRequired: true },
+        name: 'merchants-card-form',
+      },
+      {
+        path: 'paymentMethod/:paymentMethodID',
+        component: () => import('@/pages/MerchantsCardPaymentMethod.vue'),
+        meta: { layout: 'Page', isAuthRequired: true },
+        name: 'merchants-card-payment-method',
+      },
+    ],
   },
   {
     path: '/dashboard/',

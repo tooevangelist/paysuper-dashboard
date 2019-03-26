@@ -21,6 +21,10 @@ export default {
       required: true,
       type: Object,
     },
+    paymentMethods: {
+      required: true,
+      type: Array,
+    },
   },
 };
 </script>
@@ -32,15 +36,17 @@ export default {
         <ui-table-cell>Method</ui-table-cell>
         <ui-table-cell>Available</ui-table-cell>
         <ui-table-cell>Comission rate</ui-table-cell>
-        <ui-table-cell>Fee per transaction</ui-table-cell>
       </ui-table-row>
-      <ui-table-row>
-        <ui-table-cell>111</ui-table-cell>
+      <ui-table-row
+        v-for="paymentMethod in paymentMethods"
+        :key="paymentMethod.payment_method.id"
+        :link="`/merchants/${merchant.id}/paymentMethod/${paymentMethod.payment_method.id}`"
+      >
+        <ui-table-cell>{{paymentMethod.payment_method.name}}</ui-table-cell>
         <ui-table-cell>
-          <StatusIcon status="complete" />
+          <StatusIcon v-if="paymentMethod.is_active" status="complete" />
         </ui-table-cell>
-        <ui-table-cell></ui-table-cell>
-        <ui-table-cell></ui-table-cell>
+        <ui-table-cell>{{paymentMethod.commission}}</ui-table-cell>
 
       </ui-table-row>
     </ui-table>

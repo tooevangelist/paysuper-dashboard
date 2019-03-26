@@ -28,6 +28,10 @@ export default {
       type: Object,
       required: true,
     },
+    paymentMethods: {
+      type: Array,
+      required: true,
+    },
     currentStep: {
       type: String,
       required: true,
@@ -126,8 +130,10 @@ export default {
         :key="stepValue"
         v-show="currentStepInner === stepValue"
         :merchant="merchant"
+        :paymentMethods="stepValue === 'paymentMethods' ? paymentMethods : undefined"
         ref="forms"
         @validationResult="setStepStatus(stepValue, $event)"
+        @requestStatusChange="$emit('requestStatusChange', $event)"
       />
     </UiFormByStep>
     <pre style="width: 100%;">
