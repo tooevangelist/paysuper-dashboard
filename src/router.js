@@ -20,11 +20,14 @@ const router = new VueRouter(
   },
 );
 
-router.beforeEach(
-  (to, from, next) => {
-    next();
-  },
-);
+async function registerStoreModule(moduleName, module, initParams) {
+  store.dispatch('setPageError', null);
+
+  if (!store.state[moduleName]) {
+    store.registerModule(moduleName, module(resources));
+  }
+  return store.dispatch(`${moduleName}/initState`, initParams);
+}
 
 router.beforeResolve((to, from, next) => {
   if (to.matched.some(record => record.meta.isAuthRequired)) {
@@ -47,13 +50,6 @@ router.beforeResolve((to, from, next) => {
 
   if (!activated.length) {
     return next();
-  }
-
-  async function registerStoreModule(moduleName, module, initParams) {
-    if (!store.state[moduleName]) {
-      store.registerModule(moduleName, module(resources));
-    }
-    return store.dispatch(`${moduleName}/initState`, initParams);
   }
 
   Promise.all(activated.map((c) => {
