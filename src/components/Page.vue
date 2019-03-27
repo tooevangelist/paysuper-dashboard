@@ -89,9 +89,12 @@ export default {
 
   methods: {
     ...mapActions('User', ['logout']),
+    ...mapActions(['setIsLoading']),
 
     async handleLogout() {
+      this.setIsLoading(true);
       await this.logout();
+      this.setIsLoading(false);
       this.$router.push({ path: '/' });
     },
   },

@@ -1,9 +1,8 @@
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import { UiButton, UiPageHeader } from '@protocol-one/ui-kit';
 import Notifications from '@/mixins/Notifications';
 import MerchantForm from '@/components/MerchantForm.vue';
-import MerchantStore from '@/store/MerchantStore';
 
 export default {
   components: {
@@ -11,28 +10,20 @@ export default {
   },
   mixins: [Notifications],
 
-  asyncData({ registerStoreModule, route }) {
-    return registerStoreModule('Merchant', MerchantStore, route.params.id);
+  asyncData({ store }) {
+    const merchantId = store.state.User.Merchant.merchant.id;
+    return store.dispatch('User/Merchant/fetchMerchantPaymentMethods', merchantId);
   },
 
   data() {
     return {
-      defaultStep: 'companyInfo',
+      defaultStep: 'basicInfo',
       currentStep: '',
     };
   },
 
   computed: {
-    ...mapState('Merchant', ['merchant']),
-    breadcrumbs() {
-      const crumbs = [
-        {
-          label: 'Merchants list',
-          url: '/merchants/',
-        },
-      ];
-      return crumbs;
-    },
+    ...mapState('User/Merchant', ['merchant', 'paymentMethods']),
   },
 
   beforeRouteUpdate(to, from, next) {
@@ -45,9 +36,10 @@ export default {
   },
 
   methods: {
-    // ...mapActions('Merchant', [
-    //   'createMerchant',
-    // ]),
+    ...mapActions('User/Merchant', [
+      'saveMerchant',
+      'changeMerchantStatus',
+    ]),
 
     applyQueryParams(route) {
       this.currentStep = route.query.step || this.defaultStep;
@@ -65,11 +57,7 @@ export default {
       const isMerchantValid = this.$refs.merchantForm.chekIfFormValid();
 
       if (isMerchantValid) {
-        if (this.merchant.id) {
-          this.saveMerchant();
-        } else {
-          this.createMerchant();
-        }
+        this.saveMerchant();
       } else {
         this.$_Notifications_showErrorMessage('The form is not filled right');
       }
@@ -81,8 +69,7 @@ export default {
 <template>
   <div>
     <UiPageHeader
-      :breadcrumbs="breadcrumbs"
-      :title="merchant.name || 'New merchant'"
+      title="Company"
     >
       <UiButton
         slot="right"
@@ -93,8 +80,10 @@ export default {
     <MerchantForm
       ref="merchantForm"
       :merchant="merchant"
+      :paymentMethods="paymentMethods"
       :currentStep="currentStep"
       @stepChanged="handleSectionChange"
+      @requestStatusChange="changeMerchantStatus"
     />
   </div>
 </template>
