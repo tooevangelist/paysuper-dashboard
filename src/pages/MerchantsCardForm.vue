@@ -41,7 +41,6 @@ export default {
 
   methods: {
     ...mapActions('Merchant', [
-      'createMerchant',
       'updateMerchant',
       'changeMerchantStatus',
     ]),
@@ -62,11 +61,7 @@ export default {
       const isMerchantValid = this.$refs.merchantForm.chekIfFormValid();
 
       if (isMerchantValid) {
-        if (this.merchant.id) {
-          this.updateMerchant();
-        } else {
-          this.createMerchant();
-        }
+        this.updateMerchant();
       } else {
         this.$_Notifications_showErrorMessage('The form is not filled right');
       }

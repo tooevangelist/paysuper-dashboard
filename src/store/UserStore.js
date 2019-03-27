@@ -1,7 +1,9 @@
 import axios from 'axios';
+import MerchantStore from '@/store/MerchantStore';
+import { NOT_FOUND_ERROR } from '@/errors';
 // import router from '@/router';
 
-export default function createUserStore({ config }) {
+export default function createUserStore({ config, notifications }) {
   const accessToken = localStorage.getItem('token') || '';
   return {
     state: {
@@ -27,7 +29,27 @@ export default function createUserStore({ config }) {
 
     actions: {
       async initState({ dispatch }) {
-        await dispatch('refreshToken');
+        try {
+          await dispatch('refreshToken');
+          try {
+            await dispatch('Merchant/fetchMerchant');
+          } catch (error) {
+            if (error === NOT_FOUND_ERROR) {
+              await dispatch('Merchant/createMerchant', {
+                contacts: {
+                  authorized: {},
+                  technical: {},
+                },
+                banking: {},
+              });
+            } else {
+              console.warn(error);
+            }
+          }
+        } catch (error) {
+          console.warn(error);
+          await dispatch('logout');
+        }
       },
 
       // async fetchUserInfo({ state }) {
@@ -66,16 +88,11 @@ export default function createUserStore({ config }) {
        * @returns {Promise.<T>|Promise<any>|Promise}
        */
       async refreshToken({ dispatch }) {
-        try {
-          const response = await axios.get(`${config.ownBackendUrl}/auth1/refresh`, {
-            // this method requires only cookies for authrization
-            withCredentials: true,
-          });
-          await dispatch('setAccessToken', response.data.access_token);
-        } catch (error) {
-          console.warn(error);
-          await dispatch('logout');
-        }
+        const response = await axios.get(`${config.ownBackendUrl}/auth1/refresh`, {
+          // this method requires only cookies for authrization
+          withCredentials: true,
+        });
+        await dispatch('setAccessToken', response.data.access_token);
       },
 
       async logout({ commit }) {
@@ -93,5 +110,9 @@ export default function createUserStore({ config }) {
     },
 
     namespaced: true,
+
+    modules: {
+      Merchant: MerchantStore({ config, notifications }),
+    },
   };
 }
