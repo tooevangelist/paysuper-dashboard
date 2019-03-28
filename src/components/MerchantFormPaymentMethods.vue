@@ -46,7 +46,7 @@ export default {
         <ui-table-cell>
           <StatusIcon v-if="paymentMethod.is_active" status="complete" />
         </ui-table-cell>
-        <ui-table-cell>{{paymentMethod.commission}}</ui-table-cell>
+        <ui-table-cell>{{paymentMethod.commission.fee}}%</ui-table-cell>
 
       </ui-table-row>
     </ui-table>

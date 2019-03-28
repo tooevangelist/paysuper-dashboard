@@ -90,7 +90,7 @@ export default function createUserStore({ config, notifications }) {
             }));
           })
           .catch((error) => {
-            dispatch('setPageError', error.response.status, { root: true });
+            dispatch('setPageError', error, { root: true });
           });
       },
 

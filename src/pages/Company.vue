@@ -36,8 +36,9 @@ export default {
   },
 
   methods: {
+    ...mapActions(['setIsLoading']),
     ...mapActions('User/Merchant', [
-      'saveMerchant',
+      'updateMerchant',
       'changeMerchantStatus',
     ]),
 
@@ -49,18 +50,35 @@ export default {
       this.$router.push({ query: { step } });
     },
 
-    handleSaveButtonClick() {
-      this.validateAndSaveMerchant();
-    },
-
     async validateAndSaveMerchant() {
       const isMerchantValid = this.$refs.merchantForm.chekIfFormValid();
 
       if (isMerchantValid) {
-        this.saveMerchant();
+        this.setIsLoading(true);
+        try {
+          await this.updateMerchant();
+          this.$_Notifications_showSuccessMessage('Merchant updated successfully');
+        } catch (error) {
+          console.warn(error);
+          this.$_Notifications_showErrorMessage('Failed to update merchant');
+        }
+        this.setIsLoading(false);
       } else {
         this.$_Notifications_showErrorMessage('The form is not filled right');
       }
+    },
+
+    async handleStatusChangeRequest() {
+      this.setIsLoading(true);
+      try {
+        await this.changeMerchantStatus();
+
+        this.$_Notifications_showSuccessMessage('Merchant status updated successfully');
+      } catch (error) {
+        console.warn(error);
+        this.$_Notifications_showErrorMessage('Failed to update merchant status');
+      }
+      this.setIsLoading(false);
     },
   },
 };
@@ -73,8 +91,8 @@ export default {
     >
       <UiButton
         slot="right"
-        @click="handleSaveButtonClick"
-        :text="merchant.id ? 'Save' : 'Create merchant'"
+        text="Save"
+        @click="validateAndSaveMerchant"
       />
     </UiPageHeader>
     <MerchantForm
@@ -83,7 +101,7 @@ export default {
       :paymentMethods="paymentMethods"
       :currentStep="currentStep"
       @stepChanged="handleSectionChange"
-      @requestStatusChange="changeMerchantStatus"
+      @requestStatusChange="handleStatusChangeRequest"
     />
   </div>
 </template>

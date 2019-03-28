@@ -19,14 +19,6 @@ export default {
     },
   },
 
-  data() {
-    return {
-    };
-  },
-
-  computed: {
-  },
-
   validations: {
     merchant: {
       contacts: {

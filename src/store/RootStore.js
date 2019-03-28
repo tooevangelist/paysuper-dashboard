@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import assert from 'simple-assert';
 import { includes } from 'lodash-es';
 
 import DictionariesStore from './DictionariesStore';
@@ -39,9 +38,14 @@ export default new Vuex.Store({
       commit('isLoading', value);
     },
 
-    setPageError({ commit }, value) {
-      assert(includes([404, 500, null], value), `Unknown page error "${value}"`);
-      commit('pageError', value);
+    setPageError({ commit }, error) {
+      if (!error) {
+        commit('pageError', null);
+      } else if (error.response && includes([404, 500], error.response.status)) {
+        commit('pageError', error.response.status);
+      } else {
+        console.error(error);
+      }
     },
   },
 

@@ -45,7 +45,7 @@ const routes = [
         name: 'merchants-card',
       },
       {
-        path: 'paymentMethod/:paymentMethodID',
+        path: 'paymentMethod/:paymentMethodId',
         component: () => import('@/pages/MerchantsCardPaymentMethod.vue'),
         meta: { layout: 'Page', isAuthRequired: true },
         name: 'merchants-card-payment-method',

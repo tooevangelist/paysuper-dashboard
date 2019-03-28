@@ -42,8 +42,6 @@ export default function createUserStore({ config, notifications }) {
                 },
                 banking: {},
               });
-            } else {
-              console.warn(error);
             }
           }
         } catch (error) {

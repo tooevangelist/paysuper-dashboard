@@ -7,49 +7,57 @@ function mapDataApiToForm(data) {
 export default function createPaymentMethodStore({ config }) {
   return {
     state: () => ({
+      merchantId: null,
+      paymentMethodId: null,
       paymentMethod: null,
     }),
 
     mutations: {
+      merchantId(store, data) {
+        store.merchantId = data;
+      },
+      paymentMethodId(store, data) {
+        store.paymentMethodId = data;
+      },
       paymentMethod(store, data) {
         store.paymentMethod = data;
       },
     },
 
     actions: {
-      initState({ dispatch }, id) {
-        return dispatch('fetchPaymentMethod', id);
+      initState({ commit, dispatch }, { merchantId, paymentMethodId }) {
+        commit('merchantId', merchantId);
+        commit('paymentMethodId', paymentMethodId);
+        return dispatch('fetchPaymentMethod');
       },
 
-      fetchPaymentMethod({ commit, dispatch, rootState }, { merchantID, methodID }) {
-        return axios.get(`${config.apiUrl}/admin/api/v1/merchants/${merchantID}/methods/${methodID}`, {
-          headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-        }).then((response) => {
+      fetchPaymentMethod({
+        state, commit, dispatch, rootState,
+      }) {
+        return axios.get(
+          `${config.apiUrl}/admin/api/v1/merchants/${state.merchantId}/methods/${state.paymentMethodId}`,
+          {
+            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
+          },
+        ).then((response) => {
           commit('paymentMethod', mapDataApiToForm(response.data));
         }).catch((error) => {
-          dispatch('setPageError', error.response.status, { root: true });
+          dispatch('setPageError', error, { root: true });
         });
       },
 
-      // async updatePaymentMethod({
-      //   state, commit, dispatch, rootState,
-      // }) {
-      //   dispatch('setIsLoading', true, { root: true });
-      //   try {
-      //     const response = await axios.put(
-      //       `${config.apiUrl}/admin/api/v1/merchants`,
-      //       state.merchant,
-      //       {
-      //         headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-      //       },
-      //     );
-      //     commit('merchant', mapDataApiToForm(response.data));
-      //     notifications.showSuccessMessage('PaymentMethod updated successfully');
-      //   } catch (error) {
-      //     notifications.showErrorMessage('Failed to update merchant');
-      //   }
-      //   dispatch('setIsLoading', false, { root: true });
-      // },
+      async updatePaymentMethod({
+        state, commit, rootState,
+      }) {
+        const response = await axios.put(
+          `${config.apiUrl}/admin/api/v1/merchants/${state.merchantId}/methods/${state.paymentMethodId}`,
+          state.paymentMethod,
+          {
+            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
+          },
+        );
+        commit('paymentMethod', response.data);
+      },
     },
 
     namespaced: true,

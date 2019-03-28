@@ -135,10 +135,6 @@ export default {
       </div>
     </div>
 
-    <div class="field-row">
-
-    </div>
-
     <UiHeader level="2" :hasMargin="true">
       Active
       <UiSwitchBox class="switch-box" v-model="product.is_active" />
