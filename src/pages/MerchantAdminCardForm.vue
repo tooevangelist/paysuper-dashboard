@@ -2,11 +2,11 @@
 import { mapState, mapActions } from 'vuex';
 import { UiButton, UiPageHeader } from '@protocol-one/ui-kit';
 import Notifications from '@/mixins/Notifications';
-import MerchantForm from '@/components/MerchantForm.vue';
+import MerchantAdminForm from '@/components/MerchantAdminForm.vue';
 
 export default {
   components: {
-    UiButton, UiPageHeader, MerchantForm,
+    UiButton, UiPageHeader, MerchantAdminForm,
   },
   mixins: [Notifications],
 
@@ -100,7 +100,7 @@ export default {
         text="Save"
       />
     </UiPageHeader>
-    <MerchantForm
+    <MerchantAdminForm
       ref="merchantForm"
       :merchant="merchant"
       :paymentMethods="paymentMethods"
