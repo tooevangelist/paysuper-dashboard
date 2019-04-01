@@ -1,11 +1,13 @@
 <script>
-import { mapState } from 'vuex';
+import { debounce } from 'lodash-es';
+import { mapState, mapGetters, mapActions } from 'vuex';
 import {
-  UiButton,
   UiPageHeader,
   UiTable,
   UiTableCell,
   UiTableRow,
+  UiTextField,
+  UiPaginator,
 } from '@protocol-one/ui-kit';
 import MerchanstListStore from '@/store/MerchanstListStore';
 import NoResults from '@/components/NoResults.vue';
@@ -14,31 +16,80 @@ import StatusIcon from '@/components/StatusIcon.vue';
 export default {
   components: {
     UiPageHeader,
-    UiButton,
     UiTable,
     UiTableCell,
     UiTableRow,
+    UiTextField,
+    UiPaginator,
     NoResults,
     StatusIcon,
   },
 
-  asyncData({ registerStoreModule, route }) {
-    return registerStoreModule('MerchanstList', MerchanstListStore, {
-      query: route.query,
-    });
+  async asyncData({ store, registerStoreModule, route }) {
+    try {
+      await registerStoreModule('MerchanstList', MerchanstListStore, {
+        query: route.query,
+      });
+    } catch (error) {
+      store.dispatch('setPageError', error);
+    }
   },
 
   data() {
     return {
-
+      filters: {},
+      isSearchRouting: false,
     };
   },
-  computed: {
-    ...mapState('MerchanstList', ['merchants']),
+
+  beforeRouteUpdate(to, from, next) {
+    if (!this.isSearchRouting) {
+      this.updateFiltersFromQuery();
+    }
+    this.isSearchRouting = false;
+    next();
   },
 
 
+  created() {
+    this.filters = this.getFilterValues(['quickFilter', 'limit', 'offset']);
+  },
+
+  computed: {
+    ...mapState('MerchanstList', ['merchants', 'filterValues', 'query', 'apiQuery']),
+    ...mapGetters('MerchanstList', ['getFilterValues']),
+
+    handleQuickSearchInput() {
+      return debounce(() => {
+        this.searchMerchants();
+      }, 500);
+    },
+  },
+
   methods: {
+    ...mapActions(['setIsLoading']),
+    ...mapActions('MerchanstList', ['submitFilters', 'fetchMerchants']),
+
+    async searchMerchants() {
+      this.isSearchRouting = true;
+      this.setIsLoading(true);
+      this.submitFilters(this.filters);
+      this.navigate();
+      await this.fetchMerchants();
+      this.setIsLoading(false);
+    },
+
+    handlePageChange({ offset }) {
+      this.filters.offset = offset;
+      this.searchMerchants();
+    },
+
+    navigate() {
+      this.$router.push({
+        path: this.$route.path,
+        query: this.query,
+      });
+    },
   },
 };
 </script>
@@ -47,12 +98,12 @@ export default {
   <div>
     <UiPageHeader>
       <span slot="title">Merchants</span>
-      <router-link
+      <UiTextField
         slot="right"
-        to="/merchants/new"
-      >
-       <UiButton>Create merchant</UiButton>
-      </router-link>
+        label="Quick search"
+        v-model="filters.quickFilter"
+        @input="handleQuickSearchInput"
+      />
     </UiPageHeader>
 
     <ui-table>
@@ -64,32 +115,37 @@ export default {
         <ui-table-cell>Last payout</ui-table-cell>
       </ui-table-row>
       <ui-table-row
-        v-for="merchant in merchants"
+        v-for="merchant in merchants.items"
         :key="merchant.id"
         :link="{
           url: `/merchants/${merchant.id}`,
           router: true
         }"
       >
-        <ui-table-cell>{{merchant.name}}</ui-table-cell>
-        <ui-table-cell></ui-table-cell>
+        <ui-table-cell>{{merchant.name || '—'}}</ui-table-cell>
+        <ui-table-cell>
+          {{merchant.user ? merchant.user.email : '—'}}
+        </ui-table-cell>
         <ui-table-cell>
           <StatusIcon v-if="merchant.status === 6" status="complete" />
         </ui-table-cell>
-        <ui-table-cell></ui-table-cell>
-        <ui-table-cell></ui-table-cell>
+        <ui-table-cell>
+          {{merchant.last_payout ? merchant.last_payout.date : '—'}}
+        </ui-table-cell>
+        <ui-table-cell>
+          {{merchant.last_payout ? merchant.last_payout.amount : '—'}}
+        </ui-table-cell>
 
       </ui-table-row>
     </ui-table>
 
     <UiPaginator
-      v-if="false && merchants.length"
+      v-if="merchants.items.length"
       :offset="filters.offset"
       :limit="filters.limit"
-      :count="count"
+      :count="merchants.count"
       @pageChanged="handlePageChange"
     />
-    <NoResults v-if="!merchants.length" />
-    <pre>{{merchants}}</pre>
+    <NoResults v-if="!merchants.items.length" />
   </div>
 </template>

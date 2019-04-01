@@ -1,5 +1,5 @@
 import {
-  includes, omitBy, isEmpty, mapValues, forEach,
+  merge, includes, omitBy, isEmpty, mapValues, forEach,
 } from 'lodash-es';
 
 function getCleanQuery(query) {
@@ -17,7 +17,10 @@ function getCleanQuery(query) {
 
 export default class SearchBulder {
   constructor(scheme) {
-    this.scheme = scheme;
+    this.scheme = merge(
+      { groupHandlers: {} },
+      scheme,
+    );
   }
 
   getFilterValues({ filterNames = null, query = {}, dictionaries = {} } = {}) {
@@ -55,6 +58,7 @@ export default class SearchBulder {
 
       if (
         schemeItem.group
+        && this.scheme.groupHandlers[schemeItem.group]
         && this.scheme.groupHandlers[schemeItem.group].queryToFilter
       ) {
         groups[schemeItem.group] = groups[schemeItem.group] || {};
@@ -104,6 +108,7 @@ export default class SearchBulder {
 
       if (
         schemeItem.group
+        && this.scheme.groupHandlers[schemeItem.group]
         && this.scheme.groupHandlers[schemeItem.group].filterToQuery
       ) {
         groups[schemeItem.group] = groups[schemeItem.group] || {};
@@ -134,6 +139,7 @@ export default class SearchBulder {
 
       if (
         schemeItem.group
+        && this.scheme.groupHandlers[schemeItem.group]
         && this.scheme.groupHandlers[schemeItem.group].filterToApiQuery
       ) {
         groups[schemeItem.group] = groups[schemeItem.group] || {};
@@ -188,6 +194,7 @@ export default class SearchBulder {
 
       if (
         schemeItem.group
+        && this.scheme.groupHandlers[schemeItem.group]
         && this.scheme.groupHandlers[schemeItem.group].queryToApiQuery
       ) {
         groups[schemeItem.group] = groups[schemeItem.group] || {};

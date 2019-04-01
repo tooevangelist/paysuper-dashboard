@@ -1,17 +1,14 @@
-import axios from 'axios';
-import SearchBuilder from '@/tools/SearchBuilder';
-import merchantsListScheme from '@/schemes/merchantsListScheme';
+# SearchBuilder
+
+```
 import qs from 'qs';
+import SearchBuilder from '@/tools/SearchBuilder';
+import abcScheme from '@/schemes/abcScheme';
+const searchBuilder = new SearchBuilder(abcScheme);
 
-const searchBuilder = new SearchBuilder(merchantsListScheme);
-
-export default function createStore({ config }) {
+export default function createAbcStore({ config }) {
   return {
     state: () => ({
-      merchants: {
-        items: [],
-        count: 0,
-      },
       filterValues: {},
       query: {},
       apiQuery: {},
@@ -34,9 +31,6 @@ export default function createStore({ config }) {
     },
 
     mutations: {
-      merchants(store, data) {
-        store.merchants = data;
-      },
       filterValues(store, value) {
         store.filterValues = value;
       },
@@ -53,15 +47,6 @@ export default function createStore({ config }) {
         await dispatch('initQuery', query);
       },
 
-      async fetchMerchants({ state, commit, rootState }) {
-        const url = `${config.apiUrl}/admin/api/v1/merchants?${qs.stringify(state.apiQuery)}`;
-
-        const response = await axios.get(url, {
-          headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-        });
-        commit('merchants', response.data || []);
-      },
-
       async initQuery({ commit, dispatch }, query) {
         commit('query', query);
 
@@ -71,7 +56,7 @@ export default function createStore({ config }) {
         const filterValues = searchBuilder.getEmptyFilterValues();
         commit('filterValues', filterValues);
 
-        await dispatch('fetchMerchants');
+        await dispatch('search');
       },
 
       submitFilters({ state, commit }, filters) {
@@ -87,8 +72,72 @@ export default function createStore({ config }) {
         const query = searchBuilder.getQueryFromFilterValues(newFilters);
         commit('query', query);
       },
-    },
 
+      async search({ state }) {
+        const params = {
+          ...state.apiQuery,
+        };
+
+        await axios.get(`https://mysite.ru/api/?${qs.stringify(params)}`);
+      },
+
+    },
+    
     namespaced: true,
   };
 }
+```
+
+```
+<script>
+import { mapGetters, mapActions } from 'vuex';
+
+export default {
+  data() {
+    return {
+      filters: {},
+      isSearchRouting: false,
+    };
+  },
+
+  computed: {
+    ...mapGetters('Abc', ['getFilterValues']),
+  },
+
+  beforeRouteUpdate(to, from, next) {
+    if (!this.isSearchRouting) {
+      this.updateFiltersFromQuery();
+    }
+    this.isSearchRouting = false;
+    next();
+  },
+
+  created() {
+    this.updateFiltersFromQuery();
+  },
+
+  methods: {
+    ...mapState('Abc', ['query']),
+    ...mapActions('Abc', ['submitFilters', 'search']),
+
+    updateFiltersFromQuery() {
+      this.filters = this.getFilterValues(['quickFilter', 'limit', 'offset', 'sort']);
+    },
+
+    async emitSearch() {
+      this.isSearchRouting = true;
+      this.submitFilters(this.filters);
+      this.navigate();
+      await this.search();
+    },
+
+    navigate() {
+      this.$router.push({
+        path: this.$route.path,
+        query: this.query,
+      });
+    },
+  },
+};
+</script>
+```

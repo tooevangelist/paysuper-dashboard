@@ -60,8 +60,6 @@ function mapDataApiToForm(data) {
 
   const newData = mergeApiValuesWithDefaults(defaultData, data);
 
-  console.log(11111, 'newData', newData);
-
   if (newData.country) {
     newData.country = newData.country.code_a2;
   }

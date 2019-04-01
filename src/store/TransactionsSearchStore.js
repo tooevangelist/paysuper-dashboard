@@ -2,10 +2,10 @@ import axios from 'axios';
 import qs from 'qs';
 import { map, isEmpty } from 'lodash-es';
 
-import SearchBuilder from '@/store/SearchBuilder';
-import transactionsFiltersScheme from '@/store/transactionsFiltersScheme';
+import SearchBuilder from '@/tools/SearchBuilder';
+import transactionsListScheme from '@/schemes/transactionsListScheme';
 
-const searchBuilder = new SearchBuilder(transactionsFiltersScheme);
+const searchBuilder = new SearchBuilder(transactionsListScheme);
 
 export default function createTransactionsSearchStore({ config }) {
   return {

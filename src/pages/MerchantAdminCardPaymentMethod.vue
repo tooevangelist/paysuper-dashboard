@@ -122,7 +122,6 @@ export default {
         </div>
       </div>
     </div>
-    <pre>{{paymentMethod}}</pre>
   </div>
 </template>
 
