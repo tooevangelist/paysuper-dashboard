@@ -30,7 +30,7 @@ export default {
 </script>
 
 <template>
-  <div class="merchant-form-licence">
+  <div class="merchant-admin-form-licence">
     <ui-table>
       <ui-table-row :isHead="true">
         <ui-table-cell>Method</ui-table-cell>
@@ -58,7 +58,7 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.merchant-form-licence {
+.merchant-admin-form-licence {
   margin: -25px -35px;
 }
 </style>

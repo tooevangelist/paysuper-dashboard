@@ -3,9 +3,7 @@ import { map, filter } from 'lodash-es';
 import {
   UiButton, UiFormByStep,
 } from '@protocol-one/ui-kit';
-import MerchantFormBasicInfo from '@/components/MerchantFormBasicInfo.vue';
-import MerchantFormContacts from '@/components/MerchantFormContacts.vue';
-import MerchantFormBankingInfo from '@/components/MerchantFormBankingInfo.vue';
+import MerchantFormAdminCompanyInfo from '@/components/MerchantFormAdminCompanyInfo.vue';
 import MerchantAdminFormAgreement from '@/components/MerchantAdminFormAgreement.vue';
 import MerchantAdminFormPaymentMethods from '@/components/MerchantAdminFormPaymentMethods.vue';
 
@@ -16,9 +14,7 @@ export default {
   components: {
     UiFormByStep,
     UiButton,
-    MerchantFormBasicInfo,
-    MerchantFormContacts,
-    MerchantFormBankingInfo,
+    MerchantFormAdminCompanyInfo,
     MerchantAdminFormAgreement,
     MerchantAdminFormPaymentMethods,
   },
@@ -45,19 +41,7 @@ export default {
         basicInfo: {
           label: 'Basic info',
           status: 'initial',
-          component: 'MerchantFormBasicInfo',
-          isValidable: true,
-        },
-        contacts: {
-          label: 'Contacts',
-          status: 'initial',
-          component: 'MerchantFormContacts',
-          isValidable: true,
-        },
-        bankingInfo: {
-          label: 'Banking info',
-          status: 'initial',
-          component: 'MerchantFormBankingInfo',
+          component: 'MerchantFormAdminCompanyInfo',
           isValidable: true,
         },
         licenseAgreement: {
@@ -116,9 +100,9 @@ export default {
 </script>
 
 <template>
-  <div class="merchant-form">
+  <div class="merchant-admin-form">
     <UiFormByStep
-      class="merchant-form__form-by-step"
+      class="merchant-admin-form__form-by-step"
       :steps="stepsList"
       :currentStep="currentStepInner"
       v-model="currentStepInner"
@@ -143,7 +127,7 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.merchant-form {
+.merchant-admin-form {
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 84px);
