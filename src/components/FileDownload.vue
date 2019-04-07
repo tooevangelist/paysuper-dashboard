@@ -11,7 +11,7 @@
       <g mask="url(#mask0)">
       <rect x="7" y="17" width="22" height="14" rx="2" fill="black" fill-opacity="0.15"/>
       </g>
-      <rect x="9" y="15" width="22" height="14" rx="2" :fill="extentionColor"/>
+      <rect x="9" y="15" width="22" height="14" rx="2" :fill="extensionColor"/>
       <g filter="url(#filter0_d)"></g>
       <defs>
         <filter
@@ -28,7 +28,7 @@
         </filter>
       </defs>
       </svg>
-      <span class="extention">{{extention}}</span>
+      <span class="extension">{{extension}}</span>
     </span>
     <div class="description">
       <div class="name">{{name}}</div>
@@ -57,7 +57,7 @@ export default {
     size: {
       type: String,
     },
-    extention: {
+    extension: {
       required: true,
       type: String,
     },
@@ -68,8 +68,8 @@ export default {
   },
 
   computed: {
-    extentionColor() {
-      if (this.extention.toLowerCase() === 'pdf') {
+    extensionColor() {
+      if (this.extension.toLowerCase() === 'pdf') {
         return '#DA6464';
       }
 
@@ -92,7 +92,7 @@ export default {
   position: relative;
 }
 
-.extention {
+.extension {
   color: #fff;
   font-size: 9px;
   line-height: 12px;
@@ -124,7 +124,7 @@ export default {
 }
 
 .size {
-  color: #B1B1B1;
+  color: #b1b1b1;
   font-size: 14px;
 }
 </style>

@@ -16,7 +16,7 @@
     "serve:be": "cross-env NODE_ENV=local nodemon ./index.js --watch './backend/**/*.js'"
   },
   "dependencies": {
-    "@protocol-one/ui-kit": "^1.20.0",
+    "@protocol-one/ui-kit": "^1.23.1",
     "@sentry/browser": "^4.5.2",
     "@sentry/node": "^4.6.4",
     "authone-jwt-verifier-node": "github:ProtocolONE/authone-jwt-verifier-node#master",

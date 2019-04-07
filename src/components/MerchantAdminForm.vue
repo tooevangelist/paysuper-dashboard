@@ -3,10 +3,11 @@ import { map, filter } from 'lodash-es';
 import {
   UiButton, UiFormByStep,
 } from '@protocol-one/ui-kit';
-import MerchantFormAdminCompanyInfo from '@/components/MerchantFormAdminCompanyInfo.vue';
+import MerchantAdminFormCompanyInfo from '@/components/MerchantAdminFormCompanyInfo.vue';
 import MerchantAdminFormAgreement from '@/components/MerchantAdminFormAgreement.vue';
 import MerchantAdminFormPaymentMethods from '@/components/MerchantAdminFormPaymentMethods.vue';
 
+import MerchantFormAgreement from '@/components/MerchantFormAgreement.vue';
 
 export default {
   name: 'MerchantForm',
@@ -14,9 +15,10 @@ export default {
   components: {
     UiFormByStep,
     UiButton,
-    MerchantFormAdminCompanyInfo,
+    MerchantAdminFormCompanyInfo,
     MerchantAdminFormAgreement,
     MerchantAdminFormPaymentMethods,
+    MerchantFormAgreement,
   },
 
   props: {
@@ -32,6 +34,10 @@ export default {
       type: String,
       required: true,
     },
+    agreementDocument: {
+      type: Object,
+      required: true,
+    },
   },
 
   data() {
@@ -41,7 +47,7 @@ export default {
         basicInfo: {
           label: 'Basic info',
           status: 'initial',
-          component: 'MerchantFormAdminCompanyInfo',
+          component: 'MerchantAdminFormCompanyInfo',
           isValidable: true,
         },
         licenseAgreement: {
@@ -49,6 +55,11 @@ export default {
           status: 'initial',
           component: 'MerchantAdminFormAgreement',
         },
+        // licenseAgreementClient: {
+        //   label: 'License agreement client',
+        //   status: 'initial',
+        //   component: 'MerchantFormAgreement',
+        // },
         paymentMethods: {
           label: 'Payment methods',
           status: 'initial',
@@ -115,9 +126,10 @@ export default {
         v-show="currentStepInner === stepValue"
         :merchant="merchant"
         :paymentMethods="stepValue === 'paymentMethods' ? paymentMethods : undefined"
+        :agreementDocument="agreementDocument"
         ref="forms"
         @validationResult="setStepStatus(stepValue, $event)"
-        @requestStatusChange="$emit('requestStatusChange', $event)"
+        @requestAgreementChange="$emit('requestAgreementChange', $event)"
       />
     </UiFormByStep>
     <pre style="width: 100%;">

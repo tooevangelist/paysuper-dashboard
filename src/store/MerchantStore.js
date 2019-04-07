@@ -1,26 +1,19 @@
 import axios from 'axios';
-import assert from 'simple-assert';
-import { map, includes } from 'lodash-es';
 import { NOT_FOUND_ERROR } from '@/errors';
 import mergeApiValuesWithDefaults from '@/helpers/mergeApiValuesWithDefaults';
 
-const merchantStatues = {
-  draft: 0,
-  agreementRequested: 1,
-  onReview: 2,
-  approved: 3,
-  rejected: 4,
-  agreementSigning: 5,
-  agreementSigned: 6,
-};
-const mechantStatusNamesArray = map(merchantStatues, (value, key) => key);
-
-// const merchantAgreementTypes = {
-//   undefined: 0,
-//   paper: 1,
-//   e: 2,
+// const merchantStatues = {
+//   draft: 0,
+//   agreementRequested: 1,
+//   onReview: 2,
+//   agreementSigning: 3,
+//   agreementSigned: 4,
 // };
-
+const merchantAgreementTypes = {
+  undefined: 0,
+  paper: 1,
+  electro: 2,
+};
 
 function mapDataApiToForm(data) {
   const defaultData = {
@@ -71,11 +64,19 @@ function mapDataApiToForm(data) {
   return newData;
 }
 
-export default function createMerchantStore({ config, notifications }) {
+export default function createMerchantStore({ config }) {
   return {
     state: () => ({
       merchant: null,
       paymentMethods: [],
+      agreementDocument: {
+        metadata: {
+          name: 'Fake agreement.pdf',
+          extension: 'pdf',
+          size: '0',
+        },
+        url: '#',
+      },
     }),
 
     mutations: {
@@ -85,6 +86,9 @@ export default function createMerchantStore({ config, notifications }) {
       paymentMethods(store, data) {
         store.paymentMethods = data;
       },
+      agreementDocument(store, data) {
+        store.agreementDocument = data;
+      },
     },
 
     actions: {
@@ -92,6 +96,7 @@ export default function createMerchantStore({ config, notifications }) {
         await Promise.all([
           dispatch('fetchMerchantById', id),
           dispatch('fetchMerchantPaymentMethods', id),
+          dispatch('fetchAgreement', id),
         ]);
       },
 
@@ -157,28 +162,113 @@ export default function createMerchantStore({ config, notifications }) {
         commit('merchant', mapDataApiToForm(response.data));
       },
 
-      async changeMerchantStatus({
-        state, commit, dispatch, rootState,
-      }, statusName) {
-        assert(includes(mechantStatusNamesArray, statusName), `Unknown status ${statusName}`);
-        const status = merchantStatues[statusName];
-        dispatch('setIsLoading', true, { root: true });
-        try {
-          const response = await axios.put(
-            `${config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}/change-status`,
+      async patchMerchant({ state, commit, rootState }, props) {
+        const response = await axios.patch(
+          `${config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}`,
+          props,
+          {
+            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
+          },
+        );
+        commit('merchant', mapDataApiToForm(response.data));
+      },
+
+      async changeMerchantAgreement(
+        {
+          state, commit, dispatch, rootState,
+        },
+        {
+          action, value, message,
+        },
+      ) {
+        if (action === 'setAgreementType') {
+          // newMerchantData.agreement_type = merchantAgreementTypes[value];
+
+          // if (newMerchantData.status === 4) {
+          //   newMerchantData.status = 1;
+          // }
+          const response = await axios.patch(
+            `${config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}`,
             {
-              status,
+              agreement_type: merchantAgreementTypes[value],
             },
             {
               headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
             },
           );
           commit('merchant', mapDataApiToForm(response.data));
-          notifications.showSuccessMessage('Merchant updated successfully');
-        } catch (error) {
-          notifications.showErrorMessage('Failed to update merchant');
         }
-        dispatch('setIsLoading', false, { root: true });
+
+        if (action === 'setStatus') {
+          await dispatch('changeMerchantStatus', { status: value, message });
+        }
+
+        if (action === 'generateAgreement') {
+          await dispatch('changeMerchantStatus', { status: 3 });
+          await dispatch('fetchAgreement', state.merchant.id);
+        }
+
+        if (action === 'revokeSigning') {
+          await dispatch('changeMerchantStatus', { status: 0 });
+        }
+
+        if (action === 'setPspSignature') {
+          await dispatch('patchMerchant', { has_psp_signature: value });
+        }
+
+        if (action === 'setMerchantSignature') {
+          await dispatch('patchMerchant', { has_merchant_signature: value });
+        }
+
+        if (action === 'setSentViaEmail') {
+          await dispatch('patchMerchant', { agreement_sent_via_mail: value });
+        }
+
+        if (action === 'setMailTrackingLink') {
+          await dispatch('patchMerchant', { mail_tracking_link: value });
+        }
+      },
+
+      async changeMerchantStatus({ state, commit, rootState }, { status, message = '' }) {
+        const response = await axios.put(
+          `${config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}/change-status`,
+          {
+            status,
+            message,
+          },
+          {
+            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
+          },
+        );
+        commit('merchant', mapDataApiToForm(response.data));
+      },
+
+      // async generateAgreement({ state, commit, rootState }, { isPreSigned }) {
+      //   const response = await axios.get(
+      //     `${config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}/agreement`,
+      //     {
+      //       headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
+      //     },
+      //   );
+
+      //   commit('agreementDocument', response.data);
+      //   console.log(11111, 'generateAgreement', response.data);
+      //   console.log(11111, 'isPreSigned', isPreSigned);
+      // },
+
+      async fetchAgreement({ commit, rootState }, merchantId) {
+        try {
+          const response = await axios.get(
+            `${config.apiUrl}/admin/api/v1/merchants/${merchantId}/agreement`,
+            {
+              headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
+            },
+          );
+
+          commit('agreementDocument', response.data);
+        } catch (error) {
+          console.warn(error);
+        }
       },
     },
 

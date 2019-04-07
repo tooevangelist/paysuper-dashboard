@@ -18,7 +18,7 @@ export default {
   },
 
   computed: {
-    ...mapState('Merchant', ['merchant', 'paymentMethods']),
+    ...mapState('Merchant', ['merchant', 'paymentMethods', 'agreementDocument']),
     breadcrumbs() {
       const crumbs = [
         {
@@ -44,6 +44,7 @@ export default {
     ...mapActions('Merchant', [
       'updateMerchant',
       'changeMerchantStatus',
+      'changeMerchantAgreement',
     ]),
 
     applyQueryParams(route) {
@@ -72,15 +73,15 @@ export default {
       }
     },
 
-    async handleStatusChangeRequest() {
+    async handleAgreementChangeRequest(payload) {
       this.setIsLoading(true);
       try {
-        await this.changeMerchantStatus();
+        await this.changeMerchantAgreement(payload);
 
-        this.$_Notifications_showSuccessMessage('Merchant status updated successfully');
+        this.$_Notifications_showSuccessMessage('Merchant\'s agreement updated successfully');
       } catch (error) {
         console.warn(error);
-        this.$_Notifications_showErrorMessage('Failed to update merchant status');
+        this.$_Notifications_showErrorMessage('Failed to update merchant\'s agreement');
       }
       this.setIsLoading(false);
     },
@@ -105,8 +106,9 @@ export default {
       :merchant="merchant"
       :paymentMethods="paymentMethods"
       :currentStep="currentStep"
+      :agreementDocument="agreementDocument"
       @stepChanged="handleSectionChange"
-      @requestStatusChange="handleStatusChangeRequest"
+      @requestAgreementChange="handleAgreementChangeRequest"
     />
   </div>
 </template>

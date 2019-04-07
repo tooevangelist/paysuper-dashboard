@@ -2,26 +2,24 @@
 Uses Nuxt.js
 
 ## Usage
-### Compiles and hot-reloads for development
-```
-npm run dev
-```
+### Development
 
-You'll need an `.env.local` file:
+1. Add a `.env.local` file:
 ```
 VUE_APP_BACKEND_DOMAIN=http://localhost:8080
 PUBLIC_HOST=http://localhost:8080
 POST_MESSAGE_TARGET_ORIGIN=http://localhost:3030
 ```
 
-### Compiles and starts for production
+2. Run these in different terminal windows:
 ```
-npm run build
-npm run start
+npm run serve
+```
+```
+npm run serve:be
 ```
 
 # Authentication backend for PayOne
-
 
 ## Dependencies: 
 * Node.js v10+

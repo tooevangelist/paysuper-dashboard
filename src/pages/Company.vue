@@ -23,7 +23,7 @@ export default {
   },
 
   computed: {
-    ...mapState('User/Merchant', ['merchant', 'paymentMethods']),
+    ...mapState('User/Merchant', ['merchant', 'paymentMethods', 'agreementDocument']),
   },
 
   beforeRouteUpdate(to, from, next) {
@@ -68,10 +68,10 @@ export default {
       }
     },
 
-    async handleStatusChangeRequest() {
+    async handleStatusChangeRequest(statusName) {
       this.setIsLoading(true);
       try {
-        await this.changeMerchantStatus();
+        await this.changeMerchantStatus(statusName);
 
         this.$_Notifications_showSuccessMessage('Merchant status updated successfully');
       } catch (error) {
@@ -100,8 +100,9 @@ export default {
       :merchant="merchant"
       :paymentMethods="paymentMethods"
       :currentStep="currentStep"
+      :agreementDocument="agreementDocument"
       @stepChanged="handleSectionChange"
-      @requestStatusChange="handleStatusChangeRequest"
+      @requestAgreementChange="handleStatusChangeRequest"
     />
   </div>
 </template>

@@ -1,7 +1,10 @@
 <script>
 import { map, filter } from 'lodash-es';
 import {
-  UiButton, UiFormByStep,
+  UiButton,
+  UiHeader,
+  UiFormByStep,
+  UiModal,
 } from '@protocol-one/ui-kit';
 import MerchantFormBasicInfo from '@/components/MerchantFormBasicInfo.vue';
 import MerchantFormContacts from '@/components/MerchantFormContacts.vue';
@@ -16,6 +19,8 @@ export default {
   components: {
     UiFormByStep,
     UiButton,
+    UiHeader,
+    UiModal,
     MerchantFormBasicInfo,
     MerchantFormContacts,
     MerchantFormBankingInfo,
@@ -36,10 +41,15 @@ export default {
       type: String,
       required: true,
     },
+    agreementDocument: {
+      type: Object,
+      required: true,
+    },
   },
 
   data() {
     return {
+      isAgreementBlockerDialogOpen: false,
       currentStepInner: this.currentStep,
       steps: {
         basicInfo: {
@@ -93,6 +103,10 @@ export default {
     },
   },
 
+  mounted() {
+    this.validateStepsForAgreement();
+  },
+
   methods: {
     chekIfFormValid() {
       this.$refs.forms.forEach((form) => {
@@ -107,9 +121,31 @@ export default {
       this.steps[name].status = isValid ? 'complete' : 'incomplete';
     },
 
-    updateCurrentStep(value) {
+    handleStepChange(value) {
+      this.setCurrentStep(value);
+      this.validateStepsForAgreement();
+    },
+
+    setCurrentStep(value) {
       this.currentStepInner = value;
       this.$emit('stepChanged', this.currentStepInner);
+    },
+
+    validateStepsForAgreement() {
+      if (this.currentStepInner !== 'licenseAgreement') {
+        this.isAgreementBlockerDialogOpen = false;
+        return;
+      }
+
+      this.chekIfFormValid();
+      if (!this.isFormValid) {
+        this.isAgreementBlockerDialogOpen = true;
+      }
+    },
+
+    closeAgreementBlockerDialog() {
+      this.isAgreementBlockerDialogOpen = false;
+      this.setCurrentStep('basicInfo');
     },
   },
 };
@@ -122,7 +158,7 @@ export default {
       :steps="stepsList"
       :currentStep="currentStepInner"
       v-model="currentStepInner"
-      @stepSelected="updateCurrentStep"
+      @stepSelected="handleStepChange"
     >
       <component
         v-for="(step, stepValue) in steps"
@@ -131,11 +167,25 @@ export default {
         v-show="currentStepInner === stepValue"
         :merchant="merchant"
         :paymentMethods="stepValue === 'paymentMethods' ? paymentMethods : undefined"
+        :agreementDocument="agreementDocument"
         ref="forms"
         @validationResult="setStepStatus(stepValue, $event)"
-        @requestStatusChange="$emit('requestStatusChange', $event)"
+        @requestAgreementChange="$emit('requestAgreementChange', $event)"
       />
     </UiFormByStep>
+    <UiModal v-if="isAgreementBlockerDialogOpen" @close="closeAgreementBlockerDialog">
+      <div class="dialog" slot="main">
+        <UiHeader level="2" :hasMargin="true">Please fill company info first</UiHeader>
+        <p>
+          We will consider your application,
+          but you need to fill in the required fields about the company first.
+        </p>
+        <div class="dialog__controls">
+          <UiButton @click="closeAgreementBlockerDialog">OK</UiButton>
+        </div>
+      </div>
+    </UiModal>
+
     <pre style="width: 100%;">
       {{merchant}}
     </pre>
@@ -150,6 +200,16 @@ export default {
 
   &__form-by-step {
     flex-grow: 1;
+  }
+}
+
+.dialog {
+  width: 450px;
+
+  &__controls {
+    margin-top: 5px;
+    display: flex;
+    justify-content: flex-end;
   }
 }
 </style>

@@ -1,9 +1,13 @@
 <script>
 import {
-  UiButton, UiHeader,
+  UiButton,
+  UiHeader,
+  UiCheckbox,
+  UiTextField,
 } from '@protocol-one/ui-kit';
-import FileDownload from '@/components/FileDownload.vue';
 import StatusIcon from '@/components/StatusIcon.vue';
+import FileDownload from '@/components/FileDownload.vue';
+import MerchantStatusChanger from '@/components/MerchantStatusChanger.vue';
 
 export default {
   name: 'MerchantFormCompanyInfo',
@@ -11,8 +15,11 @@ export default {
   components: {
     UiButton,
     UiHeader,
-    FileDownload,
+    UiCheckbox,
+    UiTextField,
     StatusIcon,
+    FileDownload,
+    MerchantStatusChanger,
   },
 
   props: {
@@ -20,147 +27,198 @@ export default {
       required: true,
       type: Object,
     },
+    agreementDocument: {
+      type: Object,
+      required: true,
+    },
   },
 
   data() {
     return {
-      fakeStatus: this.merchant.status,
-      statusesScheme: {
-        1: {
-          name: 'agreementRequested',
-          chronology: [
-            { code: 'complete', text: 'Agreement requested' },
-            { code: 'waiting', text: 'Waiting for the review' },
-          ],
-        },
-        2: {
-          name: 'onReview',
-          chronology: [
-            { code: 'complete', text: 'Review started' },
-            { code: 'waiting', text: 'Waiting for the review to complete' },
-          ],
-        },
-        3: {
-          name: 'approved',
-          chronology: [
-            { code: 'complete', text: 'Agreement request approved' },
-            { code: 'waiting', text: 'Waiting for dunno what' },
-          ],
-        },
-        4: {
-          name: 'rejected',
-          chronology: [
-            { code: 'incomplete', text: 'Agreement request rejected. <a href="#">Details</a>' },
-          ],
-        },
-        5: {
-          name: 'agreementSigning',
-          chronology: [
-            { code: 'complete', text: 'Agreement request approved' },
-            { code: 'waiting', text: 'Waiting for Pay Super to sign' },
-          ],
-        },
-        6: {
-          name: 'agreementSigned',
-          chronology: [
-            { code: 'waiting', text: 'Signed by Pay Super' },
-          ],
-        },
-      },
+      isPreSigned: this.merchant.has_psp_signature,
+      mailTrackingLink: '',
     };
   },
 
-  computed: {
-    chronology() {
-      if (!this.statusesScheme[this.fakeStatus]) {
-        return null;
-      }
-      return this.statusesScheme[this.fakeStatus].chronology;
-    },
-
-    fakeStatusMirror: {
-      get() {
-        return this.fakeStatus;
-      },
-      set(value) {
-        this.fakeStatus = Number(value);
-      },
-    },
-  },
-
   methods: {
-
+    requestAgreementGeneration() {
+      this.$emit('requestAgreementChange', {
+        action: 'generateAgreement',
+        isPreSigned: this.isPreSigned,
+      });
+    },
   },
 };
 </script>
 
 <template>
-  <div class="merchant-form-agreement">
+  <div class="merchant-admin-form-agreement">
+    <!-- <div>
+      11 July 2019, 18:01
+    </div> -->
     <UiHeader level="2" :hasMargin="true">Licence agreement</UiHeader>
 
-    <FileDownload
-      class="file-download"
-      name="Pay Super - License agreement - form.pdf"
-      size="2,56 Mb"
-      extention="pdf"
-      url="#"
-    />
-
-    <div class="description">
-      <p>
-        Here is our typical agreement form.
-        You could e-sign agreement with Pay Super or use good old paper signing via mail delivery.
-      </p>
-      <p>
-        Before asking us for agreement please make sure you fill in
-        all the company information fields correctly.
-      </p>
-      <p>
-        Our manager will check all information and notify you as soon as the agreement is ready.
-      </p>
-    </div>
-
-    <input type="number" v-model="fakeStatusMirror" >
-    <div>from 0 to 6</div>
-    <div v-if="statusesScheme[fakeStatus]">{{statusesScheme[fakeStatus].name}}</div>
-
-    <template v-if="chronology">
-      <div class="signed-row" v-for="(item, index) in chronology" :key="index">
-        <StatusIcon :status="item.code" />
-        <span class="signed-row__text" v-html="item.text"></span>
-      </div>
+    <template v-if="!merchant.agreement_type">
+      Agreement is not requested yet.
     </template>
 
-    <div
-      class="controls"
-      v-if="!fakeStatus || fakeStatus === 4"
-    >
-      <UiButton
-        class="controls__button"
-        @click="$emit('requestStatusChange', 'agreementRequested')"
-      >
-        Ask for e-agreement
-      </UiButton>
-      <UiButton
-        class="controls__button"
-        @click="$emit('requestStatusChange', 'agreementRequested')"
-      >
-        Ask for paper agreement
-      </UiButton>
-      <!-- <UiButton class="controls__button">Ask for e-agreement</UiButton> -->
-      <!-- <UiButton class="controls__button">Ask paper agreement</UiButton> -->
-    </div>
+    <template v-if="
+      merchant.agreement_type &&
+      (
+        merchant.status === 1 ||
+        merchant.status === 2
+      )
+    ">
+      <MerchantStatusChanger
+        :status="merchant.status"
+        @statusChange="$emit('requestAgreementChange', {
+          action: 'setStatus',
+          value: $event.code,
+          message: $event.message
+        })"
+      />
 
-    <!-- <div class="signed-row">
-      <StatusIcon status="complete" />
-      <span class="signed-row__text">E-signed by Pay Super</span>
-    </div> -->
+      <p class="status-description">
+        Merchant asked for
+        <template v-if="merchant.agreement_type === 1">paper signing</template>
+        <template v-if="merchant.agreement_type === 2">e-signing</template>
+      </p>
 
+      <div class="checkbox-row">
+        <label class="checkbox" v-if="merchant.agreement_type === 2">
+          <UiCheckbox
+            class="checkbox__field"
+            :checked="isPreSigned"
+            @change="isPreSigned = $event"
+          />
+          <span class="checkbox__text">Pre-signed</span>
+        </label>
+
+        <UiButton @click="requestAgreementGeneration">
+          Generate
+        </UiButton>
+      </div>
+
+    </template>
+
+    <template v-if="merchant.status === 3">
+      <UiHeader level="3">Signing</UiHeader>
+      <FileDownload
+        class="file-download"
+        :name="agreementDocument.metadata.name"
+        :size="`${agreementDocument.metadata.size} kb`"
+        :extension="agreementDocument.metadata.extension"
+        :url="agreementDocument.url"
+      />
+
+      <!-- paper sign -->
+      <template v-if="merchant.agreement_type === 1">
+        <div class="signed-row" v-if="merchant.has_psp_signature">
+          <StatusIcon status="complete" />
+          <span class="signed-row__text">Physically signed by Pay Super</span>
+        </div>
+
+        <div class="signed-row" v-if="merchant.agreement_sent_via_mail">
+          <StatusIcon status="complete" />
+          <span class="signed-row__text">Sent by mail by Pay Super</span>
+        </div>
+
+        <div class="signed-row" v-if="merchant.has_merchant_signature">
+          <StatusIcon status="complete" />
+          <span class="signed-row__text">Physically signed by {{merchant.name}}</span>
+        </div>
+
+
+        <div class="checkbox-row">
+          <label class="checkbox">
+            <UiCheckbox
+              class="checkbox__field"
+              :disabled="merchant.agreement_sent_via_mail"
+              :checked="merchant.has_psp_signature"
+              @change="$emit('requestAgreementChange', {
+                action: 'setPspSignature',
+                value: $event
+              })"
+            />
+            <span class="checkbox__text">Phisicaly signed by Pay Super</span>
+          </label>
+        </div>
+
+        <template v-if="merchant.has_psp_signature">
+          <div class="checkbox-row">
+            <label class="checkbox">
+              <UiCheckbox
+                class="checkbox__field"
+                :disabled="merchant.agreement_sent_via_mail"
+                :checked="merchant.agreement_sent_via_mail"
+                @change="$emit('requestAgreementChange', {
+                  action: 'setSentViaEmail',
+                  value: $event
+                })"
+              />
+              <span class="checkbox__text">Sent via mail</span>
+            </label>
+          </div>
+          <div>
+            <UiTextField
+              class="mail-tracking-link-field"
+              label="Mail traking Link"
+              v-model="mailTrackingLink"
+              @input="$emit('requestAgreementChange', {
+                action: 'setMailTrackingLink',
+                value: mailTrackingLink
+              })"
+            />
+          </div>
+        </template>
+
+        <div class="checkbox-row">
+          <label class="checkbox">
+            <UiCheckbox
+              class="checkbox__field"
+              :checked="merchant.has_merchant_signature"
+              @change="$emit('requestAgreementChange', {
+                action: 'setMerchantSignature',
+                value: $event
+              })"
+            />
+            <span class="checkbox__text">Phisicaly signed by {{merchant.name}}</span>
+          </label>
+        </div>
+
+      </template>
+
+      <!-- e-sign -->
+      <template v-if="merchant.agreement_type === 2">
+        <div class="signed-row" v-if="merchant.has_psp_signature">
+          <StatusIcon status="complete" />
+          <span class="signed-row__text">E-signed by Pay Super</span>
+        </div>
+
+        <div class="signed-row" v-if="merchant.has_merchant_signature">
+          <StatusIcon status="complete" />
+          <span class="signed-row__text">E-signed by {{merchant.name}}</span>
+        </div>
+
+        <div class="controls">
+          <UiButton
+            class="controls__button"
+            v-if="!merchant.has_psp_signature"
+            @click="$emit('requestAgreementChange', {action: 'setPspSignature', value: true})"
+          >E-sign</UiButton>
+          <UiButton
+            class="controls__button"
+            @click="$emit('requestAgreementChange', {action: 'revokeSigning'})"
+          >Revoke</UiButton>
+        </div>
+      </template>
+
+    </template>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.merchant-form-agreement {
+.merchant-admin-form-agreement {
   width: 528px;
 }
 
@@ -168,21 +226,33 @@ export default {
   margin: 30px 0 20px;
 }
 
-.description {
-  // font-family: Lato;
+.status-description {
   font-size: 16px;
   line-height: 20px;
   color: #b1b1b1;
-  width: 450px;
-
-  p {
-    margin-bottom: 20px;
-  }
+  margin: 10px 0;
 }
 
 .controls {
   &__button {
     margin-right: 30px;
+  }
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  cursor: pointer;
+  margin-right: 30px;
+
+  &__field {
+    margin-right: 16px;
   }
 }
 
@@ -194,5 +264,9 @@ export default {
   &__text {
     margin-left: 10px;
   }
+}
+
+.mail-tracking-link-field {
+  width: 300px;
 }
 </style>

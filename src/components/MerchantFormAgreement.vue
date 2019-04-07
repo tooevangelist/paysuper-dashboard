@@ -1,4 +1,5 @@
 <script>
+import { includes } from 'lodash-es';
 import {
   UiButton, UiHeader,
 } from '@protocol-one/ui-kit';
@@ -20,136 +21,155 @@ export default {
       required: true,
       type: Object,
     },
-  },
-
-  data() {
-    return {
-      fakeStatus: this.merchant.status,
-      statusesScheme: {
-        1: {
-          name: 'agreementRequested',
-          chronology: [
-            { code: 'complete', text: 'Agreement requested' },
-            { code: 'waiting', text: 'Waiting for the review' },
-          ],
-        },
-        2: {
-          name: 'onReview',
-          chronology: [
-            { code: 'complete', text: 'Review started' },
-            { code: 'waiting', text: 'Waiting for the review to complete' },
-          ],
-        },
-        3: {
-          name: 'approved',
-          chronology: [
-            { code: 'complete', text: 'Agreement request approved' },
-            { code: 'waiting', text: 'Waiting for dunno what' },
-          ],
-        },
-        4: {
-          name: 'rejected',
-          chronology: [
-            { code: 'incomplete', text: 'Agreement request rejected. <a href="#">Details</a>' },
-          ],
-        },
-        5: {
-          name: 'agreementSigning',
-          chronology: [
-            { code: 'complete', text: 'Agreement request approved' },
-            { code: 'waiting', text: 'Waiting for Pay Super to sign' },
-          ],
-        },
-        6: {
-          name: 'agreementSigned',
-          chronology: [
-            { code: 'waiting', text: 'Signed by Pay Super' },
-          ],
-        },
-      },
-    };
-  },
-
-  computed: {
-    chronology() {
-      if (!this.statusesScheme[this.fakeStatus]) {
-        return null;
-      }
-      return this.statusesScheme[this.fakeStatus].chronology;
-    },
-
-    fakeStatusMirror: {
-      get() {
-        return this.fakeStatus;
-      },
-      set(value) {
-        this.fakeStatus = Number(value);
-      },
+    agreementDocument: {
+      type: Object,
+      required: true,
     },
   },
 
   methods: {
-
+    includes,
   },
 };
 </script>
 
 <template>
   <div class="merchant-form-agreement">
-    <UiHeader level="2" :hasMargin="true">Licence agreement</UiHeader>
+    <UiHeader level="2" :hasMargin="true">
+      Licence agreement
+    </UiHeader>
 
-    <FileDownload
-      class="file-download"
-      name="Pay Super - License agreement - form.pdf"
-      size="2,56 Mb"
-      extention="pdf"
-      url="#"
-    />
+    <template v-if="includes([0, 1, 2], merchant.status)">
+      <FileDownload
+        class="file-download"
+        :name="agreementDocument.metadata.name"
+        :size="`${agreementDocument.metadata.size} kb`"
+        :extension="agreementDocument.metadata.extension"
+        :url="agreementDocument.url"
+      />
 
-    <div class="description">
-      <p>
-        Here is our typical agreement form.
-        You could e-sign agreement with Pay Super or use good old paper signing via mail delivery.
-      </p>
-      <p>
-        Before asking us for agreement please make sure you fill in
-        all the company information fields correctly.
-      </p>
-      <p>
-        Our manager will check all information and notify you as soon as the agreement is ready.
-      </p>
-    </div>
+      <div class="description">
+        <p>
+          Here is our typical agreement form.
+          You could e-sign agreement with Pay Super or use good old paper signing via mail delivery.
+        </p>
+        <template v-if="!merchant.agreement_type">
+          <p>
+            Before asking us for agreement please make sure you fill in
+            all the company information fields correctly.
+          </p>
+          <p>
+            Our manager will check all information and notify you as soon as the agreement is ready.
+          </p>
+        </template>
+        <template v-else>
+          <p>
+            You have requested an agreement from us to sign.
+            We study information about your company.
+          </p>
+          <p>
+            If you want to make changes, feel free to revoke the application for an agreement.
+          </p>
+        </template>
+      </div>
 
-    <input type="number" v-model="fakeStatusMirror" >
-    <div>from 0 to 6</div>
-    <div v-if="statusesScheme[fakeStatus]">{{statusesScheme[fakeStatus].name}}</div>
-
-    <template v-if="chronology">
-      <div class="signed-row" v-for="(item, index) in chronology" :key="index">
-        <StatusIcon :status="item.code" />
-        <span class="signed-row__text" v-html="item.text"></span>
+      <div class="controls">
+        <template v-if="!merchant.agreement_type">
+          <UiButton
+            class="controls__button"
+            @click="$emit('requestAgreementChange', {action: 'setAgreementType', value: 'electro'})"
+          >
+            Ask for e-agreement
+          </UiButton>
+          <UiButton
+            class="controls__button"
+            @click="$emit('requestAgreementChange', {action: 'setAgreementType', value: 'paper'})"
+          >
+            Ask for paper agreement
+          </UiButton>
+        </template>
+        <template v-else>
+          <UiButton
+            @click="$emit('requestAgreementChange', {action: 'revokeSigning'})"
+            :isTransparent="true"
+          >
+            Revoke
+          </UiButton>
+        </template>
       </div>
     </template>
 
-    <div
-      class="controls"
-      v-if="!fakeStatus || fakeStatus === 4"
-    >
-      <UiButton
-        class="controls__button"
-        @click="$emit('requestStatusChange', 'agreementRequested')"
-      >
-        Ask for e-agreement
-      </UiButton>
-      <UiButton
-        class="controls__button"
-        @click="$emit('requestStatusChange', 'agreementRequested')"
-      >
-        Ask for paper agreement
-      </UiButton>
-      <!-- <UiButton class="controls__button">Ask for e-agreement</UiButton> -->
-      <!-- <UiButton class="controls__button">Ask paper agreement</UiButton> -->
-    </div>
+    <template v-if="merchant.status === 3">
+      <FileDownload
+        class="file-download"
+        :name="agreementDocument.metadata.name"
+        :size="`${agreementDocument.metadata.size} kb`"
+        :extension="agreementDocument.metadata.extension"
+        :url="agreementDocument.url"
+      />
+
+      <!-- paper sign -->
+      <template v-if="merchant.agreement_type === 1">
+        <div
+          class="signed-row"
+          v-if="merchant.has_psp_signature"
+        >
+          <StatusIcon status="complete" />
+          <span class="signed-row__text">Physically signed by Pay Super</span>
+        </div>
+
+        <template v-if="merchant.agreement_sent_via_mail">
+          <div class="signed-row">
+            <StatusIcon status="complete" />
+            <span class="signed-row__text">
+              Sent to you via mail.
+              <a
+                v-if="merchant.mail_tracking_link"
+                :href="merchant.mail_tracking_link"
+                target="_blank"
+              >
+                Tracking info.
+              </a>
+            </span>
+          </div>
+
+          <div class="signed-row">
+            <StatusIcon status="waiting" />
+            <span class="signed-row__text">Waiting our hard copy</span>
+          </div>
+        </template>
+      </template>
+
+      <!-- e-sign -->
+      <template v-if="merchant.agreement_type === 2">
+        <div
+          class="signed-row"
+          v-if="merchant.has_psp_signature"
+        >
+          <StatusIcon status="complete" />
+          <span class="signed-row__text">E-signed by Pay Super</span>
+        </div>
+        <div
+          class="signed-row"
+          v-if="merchant.has_merchant_signature"
+        >
+          <StatusIcon status="complete" />
+          <span class="signed-row__text">E-signed by {{merchant.name}}</span>
+        </div>
+
+        <div class="controls">
+          <UiButton
+            class="controls__button"
+            v-if="!merchant.has_merchant_signature"
+            @click="$emit('requestAgreementChange', {action: 'setMerchantSignature', value: true})"
+          >
+            E-sign
+          </UiButton>
+        </div>
+      </template>
+
+    </template>
+
 
     <!-- <div class="signed-row">
       <StatusIcon status="complete" />
