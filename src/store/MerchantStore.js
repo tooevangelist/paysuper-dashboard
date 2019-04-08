@@ -64,19 +64,23 @@ function mapDataApiToForm(data) {
   return newData;
 }
 
+function getDefaultAgreementDocument() {
+  return {
+    metadata: {
+      name: 'Default agreement',
+      extension: 'pdf',
+      size: '0',
+    },
+    url: '#',
+  };
+}
+
 export default function createMerchantStore({ config }) {
   return {
     state: () => ({
       merchant: null,
       paymentMethods: [],
-      agreementDocument: {
-        metadata: {
-          name: 'Fake agreement.pdf',
-          extension: 'pdf',
-          size: '0',
-        },
-        url: '#',
-      },
+      agreementDocument: getDefaultAgreementDocument(),
     }),
 
     mutations: {
@@ -92,7 +96,7 @@ export default function createMerchantStore({ config }) {
     },
 
     actions: {
-      async initState({ state, dispatch }, id) {
+      async initState({ state, commit, dispatch }, id) {
         await Promise.all([
           dispatch('fetchMerchantById', id),
           dispatch('fetchMerchantPaymentMethods', id),
@@ -100,6 +104,8 @@ export default function createMerchantStore({ config }) {
 
         if (state.merchant.status >= 3) {
           await dispatch('fetchAgreement', id);
+        } else {
+          commit('agreementDocument', getDefaultAgreementDocument());
         }
       },
 
@@ -178,28 +184,14 @@ export default function createMerchantStore({ config }) {
 
       async changeMerchantAgreement(
         {
-          state, commit, dispatch, rootState,
+          state, commit, dispatch,
         },
         {
           action, value, message,
         },
       ) {
         if (action === 'setAgreementType') {
-          // newMerchantData.agreement_type = merchantAgreementTypes[value];
-
-          // if (newMerchantData.status === 4) {
-          //   newMerchantData.status = 1;
-          // }
-          const response = await axios.patch(
-            `${config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}`,
-            {
-              agreement_type: merchantAgreementTypes[value],
-            },
-            {
-              headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-            },
-          );
-          commit('merchant', mapDataApiToForm(response.data));
+          await dispatch('patchMerchant', { agreement_type: merchantAgreementTypes[value] });
         }
 
         if (action === 'setStatus') {
@@ -213,6 +205,7 @@ export default function createMerchantStore({ config }) {
 
         if (action === 'revokeSigning') {
           await dispatch('changeMerchantStatus', { status: 0 });
+          commit('agreementDocument', getDefaultAgreementDocument());
         }
 
         if (action === 'setPspSignature') {
@@ -245,19 +238,6 @@ export default function createMerchantStore({ config }) {
         );
         commit('merchant', mapDataApiToForm(response.data));
       },
-
-      // async generateAgreement({ state, commit, rootState }, { isPreSigned }) {
-      //   const response = await axios.get(
-      //     `${config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}/agreement`,
-      //     {
-      //       headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-      //     },
-      //   );
-
-      //   commit('agreementDocument', response.data);
-      //   console.log(11111, 'generateAgreement', response.data);
-      //   console.log(11111, 'isPreSigned', isPreSigned);
-      // },
 
       async fetchAgreement({ commit, rootState }, merchantId) {
         try {

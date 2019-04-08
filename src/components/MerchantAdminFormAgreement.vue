@@ -84,7 +84,7 @@ export default {
         <template v-if="merchant.agreement_type === 2">e-signing</template>
       </p>
 
-      <div class="checkbox-row">
+      <div class="checkbox-row" v-if="merchant.status === 2">
         <label class="checkbox" v-if="merchant.agreement_type === 2">
           <UiCheckbox
             class="checkbox__field"
