@@ -38,7 +38,7 @@ export default {
         {
           label: 'Transactions',
           url: '/transactions',
-          name: ['transactions'],
+          name: ['transactions', 'transactions-card'],
         },
         {
           label: 'Projects',
@@ -53,7 +53,7 @@ export default {
         {
           label: 'Merchants',
           url: '/merchants',
-          name: ['merchants'],
+          name: ['merchants', 'MerchantAdminCardForm', 'MerchantAdminCardPaymentMethod'],
         },
         {
           label: 'Company',
