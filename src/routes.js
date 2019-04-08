@@ -74,6 +74,7 @@ const routes = [
     path: '/payout/',
     component: () => import('@/pages/payout.vue'),
     meta: { layout: 'Page', isAuthRequired: true },
+    name: 'payout',
   },
   {
     path: '/demo/',

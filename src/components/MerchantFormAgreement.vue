@@ -43,7 +43,7 @@ export default {
       <FileDownload
         class="file-download"
         :name="agreementDocument.metadata.name"
-        :size="`${agreementDocument.metadata.size} kb`"
+        :size="agreementDocument.metadata.size"
         :extension="agreementDocument.metadata.extension"
         :url="agreementDocument.url"
       />
@@ -103,7 +103,7 @@ export default {
       <FileDownload
         class="file-download"
         :name="agreementDocument.metadata.name"
-        :size="`${agreementDocument.metadata.size} kb`"
+        :size="agreementDocument.metadata.size"
         :extension="agreementDocument.metadata.extension"
         :url="agreementDocument.url"
       />
@@ -168,6 +168,24 @@ export default {
         </div>
       </template>
 
+    </template>
+    <template v-if="merchant.status === 4">
+      <FileDownload
+        class="file-download"
+        :name="agreementDocument.metadata.name"
+        :size="agreementDocument.metadata.size"
+        :extension="agreementDocument.metadata.extension"
+        :url="agreementDocument.url"
+      />
+      <div class="signed-row">
+        <StatusIcon status="complete" />
+        <span class="signed-row__text">
+          Agreement
+          <template v-if="merchant.agreement_type === 1">paper signing</template>
+          <template v-if="merchant.agreement_type === 2">e-signing</template>
+           is finished
+        </span>
+      </div>
     </template>
 
 

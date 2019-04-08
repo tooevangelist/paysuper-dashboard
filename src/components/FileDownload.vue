@@ -1,6 +1,75 @@
+<script>
+import axios from 'axios';
+import { UiButton } from '@protocol-one/ui-kit';
+
+export default {
+  name: 'FileDownload',
+
+  components: {
+    UiButton,
+  },
+
+  props: {
+    name: {
+      required: true,
+      type: String,
+    },
+    size: {
+      type: [String, Number],
+    },
+    extension: {
+      required: true,
+      type: String,
+    },
+    url: {
+      required: true,
+      type: String,
+    },
+  },
+
+  computed: {
+    extensionColor() {
+      if (this.extension.toLowerCase() === 'pdf') {
+        return '#DA6464';
+      }
+
+      return '#ddd';
+    },
+  },
+
+  methods: {
+    formatFileSize(value, decimalPoint) {
+      const bytes = parseInt(value, 10);
+      if (bytes === 0) return '0 Bytes';
+      const k = 1000;
+      const dm = decimalPoint || 2;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return `${parseFloat((bytes / (k ** i)).toFixed(dm))} ${sizes[i]}`;
+    },
+
+    downloadFile(fileUrl) {
+      axios({
+        url: fileUrl,
+        method: 'GET',
+        responseType: 'blob', // important
+        headers: { Authorization: `Bearer ${this.$store.state.User.accessToken}` },
+      }).then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'file.pdf');
+        document.body.appendChild(link);
+        link.click();
+      });
+    },
+  },
+};
+</script>
+
 <template>
 <div class="file-download">
-  <a class="download-link" :href="url">
+  <a class="download-link" :href="url" @click.prevent="downloadFile(url)">
     <span class="icon">
       <svg width="31" height="40" viewBox="0 0 31 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M0.5 0.5H19.7929L27.5 8.20711V39.5H0.5V0.5Z" fill="white" stroke="#B1B1B1"/>
@@ -32,52 +101,12 @@
     </span>
     <div class="description">
       <div class="name">{{name}}</div>
-      <div class="size" v-if="size">{{size}}</div>
+      <div class="size" v-if="size">{{formatFileSize(size)}}</div>
     </div>
     <UiButton>Download</UiButton>
   </a>
 </div>
 </template>
-
-<script>
-import { UiButton } from '@protocol-one/ui-kit';
-
-export default {
-  name: 'FileDownload',
-
-  components: {
-    UiButton,
-  },
-
-  props: {
-    name: {
-      required: true,
-      type: String,
-    },
-    size: {
-      type: String,
-    },
-    extension: {
-      required: true,
-      type: String,
-    },
-    url: {
-      required: true,
-      type: String,
-    },
-  },
-
-  computed: {
-    extensionColor() {
-      if (this.extension.toLowerCase() === 'pdf') {
-        return '#DA6464';
-      }
-
-      return '#ddd';
-    },
-  },
-};
-</script>
 
 <style lang="scss" scoped>
 .file-download {
