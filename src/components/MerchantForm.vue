@@ -172,7 +172,13 @@ export default {
         @validationResult="setStepStatus(stepValue, $event)"
         @requestAgreementChange="$emit('requestAgreementChange', $event)"
       />
+      <details>
+        <pre>
+          {{merchant}}
+        </pre>
+      </details>
     </UiFormByStep>
+
     <UiModal v-if="isAgreementBlockerDialogOpen" @close="closeAgreementBlockerDialog">
       <div class="dialog" slot="main">
         <UiHeader level="2" :hasMargin="true">Please fill company info first</UiHeader>
@@ -185,10 +191,6 @@ export default {
         </div>
       </div>
     </UiModal>
-
-    <pre style="width: 100%;">
-      {{merchant}}
-    </pre>
   </div>
 </template>
 

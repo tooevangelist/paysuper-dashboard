@@ -131,10 +131,13 @@ export default {
         @validationResult="setStepStatus(stepValue, $event)"
         @requestAgreementChange="$emit('requestAgreementChange', $event)"
       />
+
+      <details>
+        <pre>
+          {{merchant}}
+        </pre>
+      </details>
     </UiFormByStep>
-    <pre style="width: 100%;">
-      {{merchant}}
-    </pre>
   </div>
 </template>
 
