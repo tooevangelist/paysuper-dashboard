@@ -1,8 +1,102 @@
+<script>
+import { mapState, mapActions } from 'vuex';
+import { UiPageHeader } from '@protocol-one/ui-kit';
+import moment from 'moment';
+import Notifications from '@/mixins/notificaton';
+import PayoutStore from '@/store/PayoutStore';
+
+export default {
+  mixins: [Notifications],
+  components: {
+    UiPageHeader,
+  },
+
+  async asyncData({ store, registerStoreModule, route }) {
+    try {
+      await registerStoreModule('Payout', PayoutStore, route.params.id);
+    } catch (error) {
+      store.dispatch('setPageError', error);
+    }
+  },
+
+  data() {
+    return {
+      periods: [],
+      selected: null,
+      payout: null,
+    };
+  },
+
+  computed: {
+    ...mapState('User/Merchant', ['merchant']),
+  },
+
+  mounted() {
+    if (
+      this.merchant.first_payment_at
+      && this.merchant.first_payment_at != null
+      && this.merchant.accounting_period != null
+    ) {
+      const cDate = moment();
+      const fpDate = moment(this.merchant.first_payment_at);
+
+      while (fpDate.unix() <= cDate.unix()) {
+        const item = { from: fpDate.unix() };
+
+        switch (this.merchant.accounting_period) {
+          case 'day':
+            item.label = fpDate.format('MMM Do YYYY');
+            fpDate.add(1, 'd');
+            break;
+          case 'week':
+            item.label = fpDate.format('MMM Do YYYY');
+            fpDate.add(1, 'w');
+            break;
+          case '2week':
+            item.label = fpDate.format('MMM Do YYYY');
+            fpDate.add(2, 'w');
+            break;
+          case 'month':
+            item.label = fpDate.format('MMM YYYY');
+            fpDate.add(1, 'M');
+            break;
+          case 'quarter':
+            item.label = fpDate.format('MMM YYYY');
+            fpDate.add(3, 'M');
+            break;
+          case 'half-year':
+            item.label = fpDate.format('MMM YYYY');
+            fpDate.add(6, 'M');
+            break;
+          case 'year':
+            item.label = fpDate.format('MMM YYYY');
+            fpDate.add(1, 'y');
+            break;
+          default:
+            fpDate.add(0, 'day');
+        }
+
+        item.to = fpDate.unix();
+
+        this.periods.push(item);
+      }
+    }
+  },
+
+  methods: {
+    ...mapActions('Payout', ['fetchPayout']),
+    show() {
+      this.fetchPayout(this.selected);
+    },
+  },
+};
+</script>
+
 <template>
   <div>
-    <PageHeader>
+    <UiPageHeader>
       <span slot="title">Payout</span>
-    </PageHeader>
+    </UiPageHeader>
     <div class="page-container">
       <div class="row">
         <div class="col">
@@ -60,92 +154,3 @@
     </div>
   </div>
 </template>
-
-<script>
-import { mapState } from 'vuex';
-import { PageHeader } from '@protocol-one/ui-kit';
-import axios from 'axios';
-import moment from 'moment';
-import Notifications from '@/mixins/notificaton';
-
-export default {
-  mixins: [Notifications],
-  components: {
-    PageHeader,
-  },
-  data() {
-    return {
-      periods: [],
-      selected: null,
-      payout: null,
-    };
-  },
-  methods: {
-    show() {
-      const self = this;
-      const url = `${process.env.VUE_APP_P1PAYAPI_URL}/api/v1/s/order/accounting_payment?from=${this.selected.from}&to=${this.selected.to}`;
-
-      axios.get(url, { headers: { Authorization: `Bearer ${this.$store.state.user.accessToken}` } })
-        .then((response) => {
-          self.payout = response.data;
-        }).catch(() => {
-
-        });
-    },
-  },
-  computed: {
-    ...mapState('merchant', ['merchant']),
-  },
-  mounted() {
-    if (
-      this.merchant.first_payment_at
-      && this.merchant.first_payment_at != null
-      && this.merchant.accounting_period != null
-    ) {
-      const cDate = moment();
-      const fpDate = moment(this.merchant.first_payment_at);
-
-      while (fpDate.unix() <= cDate.unix()) {
-        const item = { from: fpDate.unix() };
-
-        switch (this.merchant.accounting_period) {
-          case 'day':
-            item.label = fpDate.format('MMM Do YYYY');
-            fpDate.add(1, 'd');
-            break;
-          case 'week':
-            item.label = fpDate.format('MMM Do YYYY');
-            fpDate.add(1, 'w');
-            break;
-          case '2week':
-            item.label = fpDate.format('MMM Do YYYY');
-            fpDate.add(2, 'w');
-            break;
-          case 'month':
-            item.label = fpDate.format('MMM YYYY');
-            fpDate.add(1, 'M');
-            break;
-          case 'quarter':
-            item.label = fpDate.format('MMM YYYY');
-            fpDate.add(3, 'M');
-            break;
-          case 'half-year':
-            item.label = fpDate.format('MMM YYYY');
-            fpDate.add(6, 'M');
-            break;
-          case 'year':
-            item.label = fpDate.format('MMM YYYY');
-            fpDate.add(1, 'y');
-            break;
-          default:
-            fpDate.add(0, 'day');
-        }
-
-        item.to = fpDate.unix();
-
-        this.periods.push(item);
-      }
-    }
-  },
-};
-</script>

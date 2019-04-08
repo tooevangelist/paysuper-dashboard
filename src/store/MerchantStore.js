@@ -92,12 +92,15 @@ export default function createMerchantStore({ config }) {
     },
 
     actions: {
-      async initState({ dispatch }, id) {
+      async initState({ state, dispatch }, id) {
         await Promise.all([
           dispatch('fetchMerchantById', id),
           dispatch('fetchMerchantPaymentMethods', id),
-          dispatch('fetchAgreement', id),
         ]);
+
+        if (state.merchant.status >= 3) {
+          await dispatch('fetchAgreement', id);
+        }
       },
 
       async createMerchant({ commit, rootState }, merchant) {

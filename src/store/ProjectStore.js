@@ -14,7 +14,7 @@ function prepareRequestData(data) {
   });
 }
 
-export default function createUserStore({ config, notifications }) {
+export default function createProjectStore({ config, notifications }) {
   return {
     state: () => ({
       project: null,
