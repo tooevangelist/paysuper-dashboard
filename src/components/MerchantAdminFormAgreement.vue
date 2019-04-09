@@ -182,7 +182,7 @@ export default {
                 value: $event
               })"
             />
-            <span class="checkbox__text">Phisicaly signed by {{merchant.name}}</span>
+            <span class="checkbox__text">Merchan’t signature approved</span>
           </label>
         </div>
 
