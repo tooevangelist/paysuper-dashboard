@@ -51,6 +51,11 @@ export default {
           name: ['payout'],
         },
         {
+          label: 'Agreement Requests',
+          url: '/agreement-requests',
+          name: ['AgreementRequestsList'],
+        },
+        {
           label: 'Merchants',
           url: '/merchants',
           name: ['merchants', 'MerchantAdminCardForm', 'MerchantAdminCardPaymentMethod'],

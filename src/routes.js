@@ -53,6 +53,12 @@ const routes = [
     ],
   },
   {
+    path: '/agreement-requests/',
+    component: () => import('@/pages/AgreementRequestsList.vue'),
+    meta: { layout: 'Page', isAuthRequired: true },
+    name: 'AgreementRequestsList',
+  },
+  {
     path: '/dashboard/',
     component: () => import('@/pages/dashboard.vue'),
     meta: { layout: 'Page', isAuthRequired: true },
