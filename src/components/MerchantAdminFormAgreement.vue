@@ -79,7 +79,13 @@ export default {
         <LabelTag
           v-if="merchant.status === 3"
           color="aqua"
-        >Signing</LabelTag>
+          v-text="'Signing'"
+        />
+        <LabelTag
+          v-if="merchant.status === 4"
+          color="green"
+          v-text="'Signed'"
+        />
       </template>
       <template v-else>
         Agreement is not requested yet.
