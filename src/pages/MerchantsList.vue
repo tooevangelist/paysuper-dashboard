@@ -135,7 +135,7 @@ export default {
           {{merchant.user ? merchant.user.email : '—'}}
         </ui-table-cell>
         <ui-table-cell>
-          <StatusIcon v-if="merchant.status === 6" status="complete" />
+          <StatusIcon v-if="merchant.status === 4" status="complete" />
         </ui-table-cell>
         <ui-table-cell>
           {{merchant.last_payout ? merchant.last_payout.date : '—'}}
