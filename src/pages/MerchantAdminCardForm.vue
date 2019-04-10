@@ -43,7 +43,6 @@ export default {
     ...mapActions(['setIsLoading']),
     ...mapActions('Merchant', [
       'updateMerchant',
-      'changeMerchantStatus',
       'changeMerchantAgreement',
     ]),
 

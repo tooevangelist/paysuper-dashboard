@@ -96,17 +96,12 @@ export default function createMerchantStore({ config }) {
     },
 
     actions: {
-      async initState({ state, commit, dispatch }, id) {
+      async initState({ dispatch }, id) {
         await Promise.all([
           dispatch('fetchMerchantById', id),
           dispatch('fetchMerchantPaymentMethods', id),
         ]);
-
-        if (state.merchant.status >= 3) {
-          await dispatch('fetchAgreement', id);
-        } else {
-          commit('agreementDocument', getDefaultAgreementDocument());
-        }
+        await dispatch('fetchAgreement');
       },
 
       async createMerchant({ commit, rootState }, merchant) {
@@ -146,10 +141,12 @@ export default function createMerchantStore({ config }) {
         }
       },
 
-      async fetchMerchantPaymentMethods({ commit, rootState }, id) {
+      async fetchMerchantPaymentMethods({ state, commit, rootState }, id) {
+        const merchantId = id || state.merchant.id;
+
         try {
           const response = await axios.get(
-            `${config.apiUrl}/admin/api/v1/merchants/${id}/methods`,
+            `${config.apiUrl}/admin/api/v1/merchants/${merchantId}/methods`,
             {
               headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
             },
@@ -184,10 +181,10 @@ export default function createMerchantStore({ config }) {
 
       async changeMerchantAgreement(
         {
-          state, commit, dispatch,
+          commit, dispatch,
         },
         {
-          action, value, message,
+          action, value, message, isPreSigned,
         },
       ) {
         if (action === 'setAgreementType') {
@@ -200,7 +197,10 @@ export default function createMerchantStore({ config }) {
 
         if (action === 'generateAgreement') {
           await dispatch('changeMerchantStatus', { status: 3 });
-          await dispatch('fetchAgreement', state.merchant.id);
+          if (isPreSigned) {
+            await dispatch('patchMerchant', { has_psp_signature: true });
+          }
+          await dispatch('fetchAgreement');
         }
 
         if (action === 'revokeSigning') {
@@ -239,10 +239,15 @@ export default function createMerchantStore({ config }) {
         commit('merchant', mapDataApiToForm(response.data));
       },
 
-      async fetchAgreement({ commit, rootState }, merchantId) {
+      async fetchAgreement({ state, commit, rootState }) {
+        if (state.merchant.status < 3) {
+          commit('agreementDocument', getDefaultAgreementDocument());
+          return;
+        }
+
         try {
           const response = await axios.get(
-            `${config.apiUrl}/admin/api/v1/merchants/${merchantId}/agreement`,
+            `${config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}/agreement`,
             {
               headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
             },

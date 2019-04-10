@@ -7,8 +7,6 @@ import MerchantAdminFormCompanyInfo from '@/components/MerchantAdminFormCompanyI
 import MerchantAdminFormAgreement from '@/components/MerchantAdminFormAgreement.vue';
 import MerchantAdminFormPaymentMethods from '@/components/MerchantAdminFormPaymentMethods.vue';
 
-import MerchantFormAgreement from '@/components/MerchantFormAgreement.vue';
-
 export default {
   name: 'MerchantForm',
 
@@ -18,7 +16,6 @@ export default {
     MerchantAdminFormCompanyInfo,
     MerchantAdminFormAgreement,
     MerchantAdminFormPaymentMethods,
-    MerchantFormAgreement,
   },
 
   props: {

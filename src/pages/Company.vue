@@ -11,8 +11,10 @@ export default {
   mixins: [Notifications],
 
   asyncData({ store }) {
-    const merchantId = store.state.User.Merchant.merchant.id;
-    return store.dispatch('User/Merchant/fetchMerchantPaymentMethods', merchantId);
+    return Promise.all([
+      store.dispatch('User/Merchant/fetchMerchantPaymentMethods'),
+      store.dispatch('User/Merchant/fetchAgreement'),
+    ]);
   },
 
   data() {
@@ -39,7 +41,7 @@ export default {
     ...mapActions(['setIsLoading']),
     ...mapActions('User/Merchant', [
       'updateMerchant',
-      'changeMerchantStatus',
+      'changeMerchantAgreement',
     ]),
 
     applyQueryParams(route) {
@@ -68,10 +70,10 @@ export default {
       }
     },
 
-    async handleStatusChangeRequest(statusName) {
+    async handleStatusChangeRequest(payload) {
       this.setIsLoading(true);
       try {
-        await this.changeMerchantStatus(statusName);
+        await this.changeMerchantAgreement(payload);
 
         this.$_Notifications_showSuccessMessage('Merchant status updated successfully');
       } catch (error) {
