@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { times } from 'lodash-es';
 
 export default function createDictionariesStore({ config }) {
   return {
@@ -57,20 +58,43 @@ export default function createDictionariesStore({ config }) {
           }).catch(() => { });
       },
 
-      fetchCountries({ commit }, search = '') {
-        let url = `${config.apiUrl}/api/v1/country`;
+      getCountries(ctx, { limit = 100, offset = 0 }) {
+        const url = `${config.apiUrl}/api/v1/country?limit=${limit}&offset=${offset}`;
 
-        if (search.length > 0) {
-          url += `?name=${search}`;
+        return axios.get(url)
+          .then(response => response.data)
+          .catch(() => ({
+            count: 0,
+            items: null,
+          }));
+      },
+
+      async fetchCountries({ commit, dispatch }) {
+        const countries = [];
+        const limit = 100;
+        const response = await dispatch('getCountries', { limit });
+        if (!response.items) {
+          return;
+        }
+        countries.push(...response.items);
+
+        if (response.count > response.items.length) {
+          const requestsCount = Math.floor(response.count / limit);
+
+          await Promise.all(
+            times(requestsCount).map(async (value, index) => {
+              const responseItem = await dispatch(
+                'getCountries', { limit, offset: (index + 1) * limit },
+              );
+
+              if (responseItem.items) {
+                countries.push(...responseItem.items);
+              }
+            }),
+          );
         }
 
-        axios.get(url)
-          .then((response) => {
-            if (response.data.length <= 0) {
-              return;
-            }
-            commit('countries', response.data);
-          }).catch(() => { });
+        commit('countries', countries);
       },
     },
   };
