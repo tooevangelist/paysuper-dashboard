@@ -44,6 +44,7 @@ export default {
     ...mapActions('Merchant', [
       'updateMerchant',
       'changeMerchantAgreement',
+      'sendNotification',
     ]),
 
     applyQueryParams(route) {
@@ -84,6 +85,18 @@ export default {
       }
       this.setIsLoading(false);
     },
+
+    async handleSendNotification(notification) {
+      this.setIsLoading(true);
+      try {
+        await this.sendNotification(notification);
+        this.$_Notifications_showSuccessMessage('Notification sent successfully');
+      } catch (error) {
+        console.warn(error);
+        this.$_Notifications_showErrorMessage('Failed to send notification');
+      }
+      this.setIsLoading(false);
+    },
   },
 };
 </script>
@@ -108,6 +121,7 @@ export default {
       :agreementDocument="agreementDocument"
       @stepChanged="handleSectionChange"
       @requestAgreementChange="handleAgreementChangeRequest"
+      @sendNotification="handleSendNotification"
     />
   </div>
 </template>

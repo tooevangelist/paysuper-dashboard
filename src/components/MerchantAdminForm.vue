@@ -122,6 +122,7 @@ export default {
         ref="forms"
         @validationResult="setStepStatus(stepValue, $event)"
         @requestAgreementChange="$emit('requestAgreementChange', $event)"
+        @sendNotification="$emit('sendNotification', $event)"
       />
     </UiFormByStep>
   </div>

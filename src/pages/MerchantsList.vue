@@ -9,11 +9,15 @@ import {
   UiTextField,
   UiPaginator,
 } from '@protocol-one/ui-kit';
+import Notifications from '@/mixins/Notifications';
 import MerchanstListStore from '@/store/MerchanstListStore';
 import NoResults from '@/components/NoResults.vue';
 import StatusIcon from '@/components/StatusIcon.vue';
+import MerchantExtendingMenu from '@/components/MerchantExtendingMenu.vue';
 
 export default {
+  mixins: [Notifications],
+
   components: {
     UiPageHeader,
     UiTable,
@@ -23,6 +27,7 @@ export default {
     UiPaginator,
     NoResults,
     StatusIcon,
+    MerchantExtendingMenu,
   },
 
   async asyncData({ store, registerStoreModule, route }) {
@@ -71,7 +76,9 @@ export default {
 
   methods: {
     ...mapActions(['setIsLoading']),
-    ...mapActions('MerchanstList', ['submitFilters', 'fetchMerchants', 'initQuery']),
+    ...mapActions('MerchanstList', [
+      'submitFilters', 'fetchMerchants', 'initQuery', 'sendNotification',
+    ]),
 
     async searchMerchants() {
       this.isSearchRouting = true;
@@ -96,6 +103,21 @@ export default {
 
     updateFiltersFromQuery() {
       this.filters = this.getFilterValues(['quickFilter', 'limit', 'offset']);
+    },
+
+    async handleSendNotification(merchant, notification) {
+      this.setIsLoading(true);
+      try {
+        await this.sendNotification({
+          notification,
+          merchantId: merchant.id,
+        });
+        this.$_Notifications_showSuccessMessage('Notification sent successfully');
+      } catch (error) {
+        console.warn(error);
+        this.$_Notifications_showErrorMessage('Failed to send notification');
+      }
+      this.setIsLoading(false);
     },
   },
 };
@@ -144,7 +166,10 @@ export default {
           {{merchant.last_payout ? merchant.last_payout.amount : '—'}}
         </ui-table-cell>
         <ui-table-cell>
-          <router-link :to="`/merchants/${merchant.id}/history`">history</router-link>
+          <MerchantExtendingMenu
+            :merchant="merchant"
+            @sendNotification="handleSendNotification(merchant, $event)"
+          />
         </ui-table-cell>
       </ui-table-row>
     </ui-table>

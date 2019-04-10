@@ -10,6 +10,7 @@ import StatusIcon from '@/components/StatusIcon.vue';
 import FileDownload from '@/components/FileDownload.vue';
 import MerchantStatusChanger from '@/components/MerchantStatusChanger.vue';
 import LabelTag from '@/components/LabelTag.vue';
+import MerchantExtendingMenu from '@/components/MerchantExtendingMenu.vue';
 
 export default {
   name: 'MerchantFormCompanyInfo',
@@ -23,6 +24,7 @@ export default {
     FileDownload,
     MerchantStatusChanger,
     LabelTag,
+    MerchantExtendingMenu,
   },
 
   props: {
@@ -85,6 +87,11 @@ export default {
           v-if="merchant.status === 4"
           color="green"
           v-text="'Signed'"
+        />
+        <MerchantExtendingMenu
+          class="header-line__menu"
+          :merchant="merchant"
+          @sendNotification="$emit('sendNotification', $event)"
         />
       </template>
       <template v-else>
@@ -252,6 +259,10 @@ export default {
 
   &__date {
     margin-right: 30px;
+  }
+
+  &__menu {
+    margin-left: 20px;
   }
 }
 

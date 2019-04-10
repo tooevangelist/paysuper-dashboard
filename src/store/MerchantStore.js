@@ -258,6 +258,16 @@ export default function createMerchantStore({ config }) {
           console.warn(error);
         }
       },
+
+      async sendNotification({ state, rootState }, notification) {
+        await axios.post(
+          `${config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}/notifications`,
+          notification,
+          {
+            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
+          },
+        );
+      },
     },
 
     namespaced: true,

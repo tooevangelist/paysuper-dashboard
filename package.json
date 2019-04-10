@@ -51,6 +51,7 @@
     "simple-assert": "^1.0.0",
     "url-join": "^4.0.0",
     "url-parse": "^1.4.4",
+    "v-tooltip": "^2.0.0-rc.33",
     "vue": "^2.5.17",
     "vue-chartjs": "^3.4.0",
     "vue-i18n": "^8.0.0",

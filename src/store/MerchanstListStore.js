@@ -97,6 +97,16 @@ export default function createMerchantListStore({ config }) {
         const query = searchBuilder.getQueryFromFilterValues(newFilters);
         commit('query', query);
       },
+
+      async sendNotification({ rootState }, { merchantId, notification }) {
+        await axios.post(
+          `${config.apiUrl}/admin/api/v1/merchants/${merchantId}/notifications`,
+          notification,
+          {
+            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
+          },
+        );
+      },
     },
 
     namespaced: true,
