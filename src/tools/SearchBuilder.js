@@ -106,6 +106,10 @@ export default class SearchBulder {
     forEach(filters, (filterValue, filterName) => {
       const schemeItem = this.scheme.filters[filterName];
 
+      if (schemeItem.isQueryDisabled) {
+        return;
+      }
+
       if (
         schemeItem.group
         && this.scheme.groupHandlers[schemeItem.group]

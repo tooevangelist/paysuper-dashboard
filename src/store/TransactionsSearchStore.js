@@ -100,9 +100,6 @@ export default function createTransactionsSearchStore({ config }) {
         const apiQuery = searchBuilder.getApiQueryFromQuery(query);
         commit('apiQuery', apiQuery);
 
-        const filterValues = searchBuilder.getEmptyFilterValues();
-        commit('filterValues', filterValues);
-
         await dispatch('searchTransactions');
       },
 

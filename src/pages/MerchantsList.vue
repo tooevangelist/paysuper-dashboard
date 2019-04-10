@@ -42,17 +42,20 @@ export default {
     };
   },
 
-  beforeRouteUpdate(to, from, next) {
+  async beforeRouteUpdate(to, from, next) {
     if (!this.isSearchRouting) {
+      this.initQuery(to.query);
       this.updateFiltersFromQuery();
+      this.setIsLoading(true);
+      await this.fetchMerchants();
+      this.setIsLoading(false);
     }
     this.isSearchRouting = false;
     next();
   },
 
-
   created() {
-    this.filters = this.getFilterValues(['quickFilter', 'limit', 'offset']);
+    this.updateFiltersFromQuery();
   },
 
   computed: {
@@ -68,7 +71,7 @@ export default {
 
   methods: {
     ...mapActions(['setIsLoading']),
-    ...mapActions('MerchanstList', ['submitFilters', 'fetchMerchants']),
+    ...mapActions('MerchanstList', ['submitFilters', 'fetchMerchants', 'initQuery']),
 
     async searchMerchants() {
       this.isSearchRouting = true;
@@ -89,6 +92,10 @@ export default {
         path: this.$route.path,
         query: this.query,
       });
+    },
+
+    updateFiltersFromQuery() {
+      this.filters = this.getFilterValues(['quickFilter', 'limit', 'offset']);
     },
   },
 };
@@ -113,6 +120,7 @@ export default {
         <ui-table-cell>Agreement</ui-table-cell>
         <ui-table-cell>Last payout date</ui-table-cell>
         <ui-table-cell>Last payout</ui-table-cell>
+        <ui-table-cell></ui-table-cell>
       </ui-table-row>
       <ui-table-row
         v-for="merchant in merchants.items"
@@ -135,7 +143,9 @@ export default {
         <ui-table-cell>
           {{merchant.last_payout ? merchant.last_payout.amount : '—'}}
         </ui-table-cell>
-
+        <ui-table-cell>
+          <router-link :to="`/merchants/${merchant.id}/history`">history</router-link>
+        </ui-table-cell>
       </ui-table-row>
     </ui-table>
 

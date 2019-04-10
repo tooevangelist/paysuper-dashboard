@@ -13,6 +13,11 @@ const filters = {
     defaultValue: 0,
     group: 'page',
   },
+
+  status: {
+    defaultValue: () => [],
+    isQueryDisabled: true,
+  },
 };
 
 function getPageQuery({ queryValue, groupFilterValues: { limit } }) {

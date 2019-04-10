@@ -58,7 +58,12 @@ export default {
         {
           label: 'Merchants',
           url: '/merchants',
-          name: ['merchants', 'MerchantAdminCardForm', 'MerchantAdminCardPaymentMethod'],
+          name: [
+            'merchants',
+            'MerchantAdminCardForm',
+            'MerchantAdminCardPaymentMethod',
+            'MerchantHistory',
+          ],
         },
         {
           label: 'Company',

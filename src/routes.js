@@ -53,6 +53,12 @@ const routes = [
     ],
   },
   {
+    path: '/merchants/:id/history',
+    component: () => import('@/pages/MerchantHistory.vue'),
+    meta: { layout: 'Page', isAuthRequired: true },
+    name: 'MerchantHistory',
+  },
+  {
     path: '/agreement-requests/',
     component: () => import('@/pages/AgreementRequestsList.vue'),
     meta: { layout: 'Page', isAuthRequired: true },

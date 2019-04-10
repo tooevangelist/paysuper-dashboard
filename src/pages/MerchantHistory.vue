@@ -9,10 +9,9 @@ import {
   UiTextField,
   UiPaginator,
 } from '@protocol-one/ui-kit';
-import MerchanstListStore from '@/store/MerchanstListStore';
-import NoResults from '@/components/NoResults.vue';
-import LabelTag from '@/components/LabelTag.vue';
 import moment from 'moment';
+import MerchantHistoryStore from '@/store/MerchantHistoryStore';
+import NoResults from '@/components/NoResults.vue';
 
 export default {
   components: {
@@ -23,16 +22,13 @@ export default {
     UiTextField,
     UiPaginator,
     NoResults,
-    LabelTag,
   },
 
   async asyncData({ store, registerStoreModule, route }) {
     try {
-      await registerStoreModule('AgreementRequestsList', MerchanstListStore, {
+      await registerStoreModule('MerchantHistory', MerchantHistoryStore, {
+        merchantId: route.params.id,
         query: route.query,
-        apiQueryExtention: {
-          status: [1, 2, 3],
-        },
       });
     } catch (error) {
       store.dispatch('setPageError', error);
@@ -43,30 +39,28 @@ export default {
     return {
       filters: {},
       isSearchRouting: false,
-
-      statuses: {
-        0: {
-          text: '--',
-          color: 'gray',
-        },
-        1: {
-          text: 'New',
-          color: 'blue',
-        },
-        2: {
-          text: 'Checking',
-          color: 'purple',
-        },
-        3: {
-          text: 'Singing',
-          color: 'aqua',
-        },
-        4: {
-          text: '--',
-          color: 'gray',
-        },
-      },
     };
+  },
+
+  computed: {
+    ...mapState('MerchantHistory', ['merchants', 'filterValues', 'query', 'apiQuery']),
+    ...mapGetters('MerchantHistory', ['getFilterValues']),
+
+    handleQuickSearchInput() {
+      return debounce(() => {
+        this.searchMerchants();
+      }, 500);
+    },
+
+    breadcrumbs() {
+      const crumbs = [
+        {
+          label: 'Merchants list',
+          url: '/merchants/',
+        },
+      ];
+      return crumbs;
+    },
   },
 
   async beforeRouteUpdate(to, from, next) {
@@ -85,20 +79,13 @@ export default {
     this.updateFiltersFromQuery();
   },
 
-  computed: {
-    ...mapState('AgreementRequestsList', ['merchants', 'filterValues', 'query', 'apiQuery']),
-    ...mapGetters('AgreementRequestsList', ['getFilterValues']),
-
-    handleQuickSearchInput() {
-      return debounce(() => {
-        this.searchMerchants();
-      }, 500);
-    },
-  },
-
   methods: {
     ...mapActions(['setIsLoading']),
-    ...mapActions('AgreementRequestsList', ['submitFilters', 'fetchMerchants', 'initQuery']),
+    ...mapActions('MerchantHistory', ['submitFilters', 'fetchMerchants', 'initQuery']),
+
+    formatDate(date) {
+      return moment.unix(date).format('D MMM YYYY, HH:MM');
+    },
 
     async searchMerchants() {
       this.isSearchRouting = true;
@@ -124,18 +111,14 @@ export default {
     updateFiltersFromQuery() {
       this.filters = this.getFilterValues(['quickFilter', 'limit', 'offset']);
     },
-
-    formatDate(date) {
-      return moment.unix(date).format('D MMM YYYY, HH:MM');
-    },
   },
 };
 </script>
 
 <template>
   <div>
-    <UiPageHeader>
-      <span slot="title">Agreement requests</span>
+    <UiPageHeader :breadcrumbs="breadcrumbs">
+      <span slot="title">History</span>
       <UiTextField
         slot="right"
         label="Quick search"
@@ -146,41 +129,23 @@ export default {
 
     <ui-table>
       <ui-table-row :isHead="true">
-        <ui-table-cell>Company</ui-table-cell>
-        <ui-table-cell>Country</ui-table-cell>
-        <ui-table-cell>Last change</ui-table-cell>
-        <ui-table-cell>Singing via</ui-table-cell>
-        <ui-table-cell>Operator</ui-table-cell>
-        <ui-table-cell>Status</ui-table-cell>
+        <ui-table-cell>User</ui-table-cell>
+        <ui-table-cell>Event</ui-table-cell>
+        <ui-table-cell>Message</ui-table-cell>
+        <ui-table-cell>Date</ui-table-cell>
       </ui-table-row>
       <ui-table-row
         v-for="merchant in merchants.items"
         :key="merchant.id"
         :link="{
-          url: `/merchants/${merchant.id}?step=licenseAgreement`,
+          url: `/merchants/${merchant.id}`,
           router: true
         }"
       >
-        <ui-table-cell>{{merchant.name || '—'}}</ui-table-cell>
-        <ui-table-cell>
-          {{merchant.country ? merchant.country.code_a3 : '—'}}
-        </ui-table-cell>
-        <ui-table-cell>
-          {{merchant.updated_at ? formatDate(merchant.updated_at.seconds) : '—'}}
-        </ui-table-cell>
-        <ui-table-cell>
-          <template v-if="merchant.agreement_type === 1">Pen and paper</template>
-          <template v-if="merchant.agreement_type === 2">E-sign</template>
-        </ui-table-cell>
-        <ui-table-cell>
-        </ui-table-cell>
-
-        <ui-table-cell>
-          <LabelTag :color="statuses[merchant.status].color">
-            {{statuses[merchant.status].text}}
-          </LabelTag>
-        </ui-table-cell>
-
+        <ui-table-cell></ui-table-cell>
+        <ui-table-cell>{{merchant.title}}</ui-table-cell>
+        <ui-table-cell>{{merchant.message}}</ui-table-cell>
+        <ui-table-cell>{{formatDate(merchant.created_at.seconds)}}</ui-table-cell>
       </ui-table-row>
     </ui-table>
 

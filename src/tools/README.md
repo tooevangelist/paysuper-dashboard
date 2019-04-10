@@ -1,5 +1,7 @@
 # SearchBuilder
 
+## Default setup
+### Store
 ```
 import qs from 'qs';
 import SearchBuilder from '@/tools/SearchBuilder';
@@ -88,6 +90,7 @@ export default function createAbcStore({ config }) {
 }
 ```
 
+### Component container
 ```
 <script>
 import { mapGetters, mapActions } from 'vuex';
@@ -101,11 +104,13 @@ export default {
   },
 
   computed: {
+    ...mapState('Abc', ['query']),
     ...mapGetters('Abc', ['getFilterValues']),
   },
 
   beforeRouteUpdate(to, from, next) {
     if (!this.isSearchRouting) {
+      this.initQuery(to.query);
       this.updateFiltersFromQuery();
     }
     this.isSearchRouting = false;
@@ -117,8 +122,7 @@ export default {
   },
 
   methods: {
-    ...mapState('Abc', ['query']),
-    ...mapActions('Abc', ['submitFilters', 'search']),
+    ...mapActions('Abc', ['submitFilters', 'search', 'initQuery]),
 
     updateFiltersFromQuery() {
       this.filters = this.getFilterValues(['quickFilter', 'limit', 'offset', 'sort']);
@@ -140,4 +144,62 @@ export default {
   },
 };
 </script>
+```
+
+
+## Filter options
+
+```
+{
+  defaultValue: '',
+  defaultValue: () => [],
+  queryName: '',
+  apiQueryName: '',
+  group: 'page',
+  isQueryDisabled: true,
+  queryToFilter({ queryValue }) {
+    return Number(queryValue);
+  },
+  filterToQuery({ filterValue }) {
+    return filterValue.map(item => item.id).join(',');
+  },
+  filterToApiQuery({ filterValue }) {
+    return filterValue.map(item => item.id);
+  },
+}
+```
+
+## Scheme example
+```
+function getPageQuery({ queryValue, groupFilterValues: { limit } }) {
+  return {
+    limit,
+    offset: (queryValue - 1) * limit,
+  };
+}
+
+export default {
+  filters: {
+    limit: {
+      defaultValue: 10,
+      group: 'page',
+    },
+
+    offset: {
+      defaultValue: 0,
+      group: 'page',
+    },
+  },
+  groupHandlers: {
+    page: {
+      filterToQuery({ groupFilterValues: { offset, limit } }) {
+        return {
+          page: (offset / limit) + 1,
+        };
+      },
+      queryToFilter: getPageQuery,
+      queryToApiQuery: getPageQuery,
+    },
+  },
+};
 ```

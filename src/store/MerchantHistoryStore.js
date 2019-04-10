@@ -6,9 +6,10 @@ import merchantsListScheme from '@/schemes/merchantsListScheme';
 
 const searchBuilder = new SearchBuilder(merchantsListScheme);
 
-export default function createMerchantListStore({ config }) {
+export default function createMerchantHistoryStore({ config }) {
   return {
     state: () => ({
+      merchantId: null,
       merchants: {
         items: [],
         count: 0,
@@ -16,7 +17,6 @@ export default function createMerchantListStore({ config }) {
       filterValues: {},
       query: {},
       apiQuery: {},
-      apiQueryExtention: {},
     }),
 
     getters: {
@@ -36,6 +36,9 @@ export default function createMerchantListStore({ config }) {
     },
 
     mutations: {
+      merchantId(store, data) {
+        store.merchantId = data;
+      },
       merchants(store, data) {
         store.merchants = data;
       },
@@ -48,24 +51,18 @@ export default function createMerchantListStore({ config }) {
       apiQuery(store, value) {
         store.apiQuery = value;
       },
-      apiQueryExtention(store, value) {
-        store.apiQueryExtention = value;
-      },
     },
 
     actions: {
-      async initState({ commit, dispatch }, { query, apiQueryExtention }) {
-        commit('apiQueryExtention', apiQueryExtention);
+      async initState({ commit, dispatch }, { merchantId, query }) {
+        commit('merchantId', merchantId);
         dispatch('initQuery', query);
         await dispatch('fetchMerchants');
       },
 
       async fetchMerchants({ state, commit, rootState }) {
-        const query = qs.stringify({
-          ...state.apiQuery,
-          ...state.apiQueryExtention,
-        }, { arrayFormat: 'brackets' });
-        const url = `${config.apiUrl}/admin/api/v1/merchants?${query}`;
+        const query = qs.stringify(state.apiQuery);
+        const url = `${config.apiUrl}/admin/api/v1/merchants/${state.merchantId}/notifications?${query}`;
 
         const response = await axios.get(url, {
           headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
