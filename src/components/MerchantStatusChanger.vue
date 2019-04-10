@@ -27,33 +27,40 @@ export default {
   },
 
   data() {
-    const statusList = [
-      {
-        label: 'New',
-        value: 'new',
-        code: 1,
-      },
-      {
-        label: 'Checking',
-        value: 'checking',
-        code: 2,
-      },
-      {
-        label: 'Rejected',
-        value: 'rejected',
-        code: 0,
-      },
-    ];
     return {
       isConfirmDialogOpen: false,
       message: '',
-      statusValue: find(statusList, { code: this.status }).value,
+      statusValue: '',
       statusPrevValue: '',
-      statusList,
     };
   },
 
   computed: {
+    statusList() {
+      const result = [];
+      if (this.status === 1) {
+        result.push({
+          label: 'New',
+          value: 'new',
+          code: 1,
+        });
+      }
+
+      return [
+        ...result,
+        {
+          label: 'Checking',
+          value: 'checking',
+          code: 2,
+        },
+        {
+          label: 'Rejected',
+          value: 'rejected',
+          code: 0,
+        },
+      ];
+    },
+
     statusLabel() {
       return find(this.statusList, { value: this.statusValue }).label;
     },
@@ -64,6 +71,10 @@ export default {
       }
       return find(this.statusList, { value: this.statusPrevValue }).label;
     },
+  },
+
+  created() {
+    this.statusValue = find(this.statusList, { code: this.status }).value;
   },
 
   methods: {
