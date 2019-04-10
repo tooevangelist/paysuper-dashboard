@@ -1,5 +1,5 @@
 <script>
-import { debounce } from 'lodash-es';
+import { debounce, find } from 'lodash-es';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import {
   UiPageHeader,
@@ -69,6 +69,18 @@ export default {
     };
   },
 
+  computed: {
+    ...mapState('Dictionaries', ['countries']),
+    ...mapState('AgreementRequestsList', ['merchants', 'filterValues', 'query', 'apiQuery']),
+    ...mapGetters('AgreementRequestsList', ['getFilterValues']),
+
+    handleQuickSearchInput() {
+      return debounce(() => {
+        this.searchMerchants();
+      }, 500);
+    },
+  },
+
   async beforeRouteUpdate(to, from, next) {
     if (!this.isSearchRouting) {
       this.initQuery(to.query);
@@ -83,17 +95,6 @@ export default {
 
   created() {
     this.updateFiltersFromQuery();
-  },
-
-  computed: {
-    ...mapState('AgreementRequestsList', ['merchants', 'filterValues', 'query', 'apiQuery']),
-    ...mapGetters('AgreementRequestsList', ['getFilterValues']),
-
-    handleQuickSearchInput() {
-      return debounce(() => {
-        this.searchMerchants();
-      }, 500);
-    },
   },
 
   methods: {
@@ -127,6 +128,13 @@ export default {
 
     formatDate(date) {
       return moment.unix(date).format('D MMM YYYY, HH:MM');
+    },
+
+    getCountryName(country) {
+      if (!country) {
+        return '—';
+      }
+      return find(this.countries, { code_int: country.code_int }).name.en;
     },
   },
 };
@@ -163,7 +171,7 @@ export default {
       >
         <ui-table-cell>{{merchant.name || '—'}}</ui-table-cell>
         <ui-table-cell>
-          {{merchant.country ? merchant.country.code_a3 : '—'}}
+          {{getCountryName(merchant.country)}}
         </ui-table-cell>
         <ui-table-cell>
           {{merchant.updated_at ? formatDate(merchant.updated_at.seconds) : '—'}}
