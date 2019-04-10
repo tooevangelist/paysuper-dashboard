@@ -7,6 +7,7 @@ import {
   UiModal,
   UiTextarea,
 } from '@protocol-one/ui-kit';
+import MerchantStatusTransitionLabel from '@/components/MerchantStatusTransitionLabel.vue';
 
 export default {
   name: 'MerchantStatusChanger',
@@ -17,6 +18,7 @@ export default {
     UiSelect,
     UiModal,
     UiTextarea,
+    MerchantStatusTransitionLabel,
   },
 
   props: {
@@ -61,15 +63,15 @@ export default {
       ];
     },
 
-    statusLabel() {
-      return find(this.statusList, { value: this.statusValue }).label;
+    statusCode() {
+      return find(this.statusList, { value: this.statusValue }).code;
     },
 
-    statusPrevLabel() {
+    statusPrevCode() {
       if (!this.statusPrevValue) {
         return '';
       }
-      return find(this.statusList, { value: this.statusPrevValue }).label;
+      return find(this.statusList, { value: this.statusPrevValue }).code;
     },
   },
 
@@ -120,9 +122,10 @@ export default {
     >
       <div class="dialog" slot="main">
         <UiHeader level="2" :hasMargin="true">Confirm transition</UiHeader>
-        <div>
-          {{statusPrevLabel}} -> <b>{{statusLabel}}</b>
-        </div>
+        <MerchantStatusTransitionLabel
+          :codeFrom="statusPrevCode"
+          :codeTo="statusCode"
+        />
         <UiTextarea
           class="dialog__textarea"
           label="Optional message"

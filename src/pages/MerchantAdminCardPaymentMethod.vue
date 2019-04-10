@@ -37,17 +37,17 @@ export default {
   },
 
   computed: {
-    ...mapState('Merchant', ['paymentMethod']),
+    ...mapState('Merchant', ['merchant']),
     ...mapState('MerchantPaymentMethod', ['paymentMethod']),
     breadcrumbs() {
       const crumbs = [
         {
           label: 'Merchants list',
-          url: '/paymentMethods/',
+          url: '/merchants/',
         },
         {
-          label: this.paymentMethod.name,
-          url: `/paymentMethods/${this.paymentMethod.id}`,
+          label: this.merchant.name,
+          url: `/merchants/${this.merchant.id}`,
         },
       ];
       return crumbs;

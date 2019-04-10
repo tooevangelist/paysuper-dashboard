@@ -50,13 +50,13 @@ const routes = [
         meta: { layout: 'Page', isAuthRequired: true },
         name: 'MerchantAdminCardPaymentMethod',
       },
+      {
+        path: 'history',
+        component: () => import('@/pages/MerchantAdminCardHistory.vue'),
+        meta: { layout: 'Page', isAuthRequired: true },
+        name: 'MerchantAdminCardHistory',
+      },
     ],
-  },
-  {
-    path: '/merchants/:id/history',
-    component: () => import('@/pages/MerchantHistory.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
-    name: 'MerchantHistory',
   },
   {
     path: '/agreement-requests/',

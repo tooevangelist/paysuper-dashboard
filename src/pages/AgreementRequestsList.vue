@@ -12,6 +12,7 @@ import {
 import MerchanstListStore from '@/store/MerchanstListStore';
 import NoResults from '@/components/NoResults.vue';
 import LabelTag from '@/components/LabelTag.vue';
+import merchantStatusScheme from '@/schemes/merchantStatusScheme';
 import moment from 'moment';
 
 export default {
@@ -43,29 +44,7 @@ export default {
     return {
       filters: {},
       isSearchRouting: false,
-
-      statuses: {
-        0: {
-          text: '--',
-          color: 'gray',
-        },
-        1: {
-          text: 'New',
-          color: 'blue',
-        },
-        2: {
-          text: 'Checking',
-          color: 'purple',
-        },
-        3: {
-          text: 'Singing',
-          color: 'aqua',
-        },
-        4: {
-          text: '--',
-          color: 'gray',
-        },
-      },
+      statuses: merchantStatusScheme,
     };
   },
 
@@ -184,9 +163,10 @@ export default {
         </ui-table-cell>
 
         <ui-table-cell>
-          <LabelTag :color="statuses[merchant.status].color">
-            {{statuses[merchant.status].text}}
-          </LabelTag>
+          <LabelTag
+            :color="statuses[merchant.status].color"
+            v-text="statuses[merchant.status].text"
+          />
         </ui-table-cell>
 
       </ui-table-row>
