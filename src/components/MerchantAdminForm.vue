@@ -55,11 +55,6 @@ export default {
           status: 'initial',
           component: 'MerchantAdminFormAgreement',
         },
-        // licenseAgreementClient: {
-        //   label: 'License agreement client',
-        //   status: 'initial',
-        //   component: 'MerchantFormAgreement',
-        // },
         paymentMethods: {
           label: 'Payment methods',
           status: 'initial',
@@ -131,12 +126,6 @@ export default {
         @validationResult="setStepStatus(stepValue, $event)"
         @requestAgreementChange="$emit('requestAgreementChange', $event)"
       />
-
-      <details>
-        <pre>
-          {{merchant}}
-        </pre>
-      </details>
     </UiFormByStep>
   </div>
 </template>

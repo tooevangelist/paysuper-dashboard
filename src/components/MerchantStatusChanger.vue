@@ -136,6 +136,7 @@ export default {
 
 <style lang="scss" scoped>
 .merchant-status-changer {
+  display: inline-flex;
 }
 
 .select {

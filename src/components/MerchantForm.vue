@@ -172,11 +172,6 @@ export default {
         @validationResult="setStepStatus(stepValue, $event)"
         @requestAgreementChange="$emit('requestAgreementChange', $event)"
       />
-      <details>
-        <pre>
-          {{merchant}}
-        </pre>
-      </details>
     </UiFormByStep>
 
     <UiModal v-if="isAgreementBlockerDialogOpen" @close="closeAgreementBlockerDialog">

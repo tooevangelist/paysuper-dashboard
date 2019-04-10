@@ -5,9 +5,11 @@ import {
   UiCheckbox,
   UiTextField,
 } from '@protocol-one/ui-kit';
+import moment from 'moment';
 import StatusIcon from '@/components/StatusIcon.vue';
 import FileDownload from '@/components/FileDownload.vue';
 import MerchantStatusChanger from '@/components/MerchantStatusChanger.vue';
+import LabelTag from '@/components/LabelTag.vue';
 
 export default {
   name: 'MerchantFormCompanyInfo',
@@ -20,6 +22,7 @@ export default {
     StatusIcon,
     FileDownload,
     MerchantStatusChanger,
+    LabelTag,
   },
 
   props: {
@@ -47,20 +50,42 @@ export default {
         isPreSigned: this.isPreSigned,
       });
     },
+
+    formatDate(date) {
+      return moment.unix(date).format('D MMM YYYY, HH:MM');
+    },
   },
 };
 </script>
 
 <template>
   <div class="merchant-admin-form-agreement">
-    <!-- <div>
-      11 July 2019, 18:01
-    </div> -->
-    <UiHeader level="2" :hasMargin="true">Licence agreement</UiHeader>
+    <div class="header-line">
+      <template v-if="merchant.agreement_type">
+        <div class="header-line__date">
+          {{formatDate(merchant.updated_at.seconds)}}
+        </div>
 
-    <template v-if="!merchant.agreement_type">
-      Agreement is not requested yet.
-    </template>
+        <MerchantStatusChanger
+          v-if="merchant.status === 1 || merchant.status === 2"
+          :status="merchant.status"
+          @statusChange="$emit('requestAgreementChange', {
+            action: 'setStatus',
+            value: $event.code,
+            message: $event.message
+          })"
+        />
+
+        <LabelTag
+          v-if="merchant.status === 3"
+          color="aqua"
+        >Signing</LabelTag>
+      </template>
+      <template v-else>
+        Agreement is not requested yet.
+      </template>
+    </div>
+    <UiHeader level="2" :hasMargin="true">Licence agreement</UiHeader>
 
     <template v-if="
       merchant.agreement_type &&
@@ -69,15 +94,6 @@ export default {
         merchant.status === 2
       )
     ">
-      <MerchantStatusChanger
-        :status="merchant.status"
-        @statusChange="$emit('requestAgreementChange', {
-          action: 'setStatus',
-          value: $event.code,
-          message: $event.message
-        })"
-      />
-
       <p class="status-description">
         Merchant asked for
         <template v-if="merchant.agreement_type === 1">paper signing</template>
@@ -102,7 +118,6 @@ export default {
     </template>
 
     <template v-if="merchant.status === 3">
-      <UiHeader level="3">Signing</UiHeader>
       <FileDownload
         class="file-download"
         :name="agreementDocument.metadata.name"
@@ -238,6 +253,18 @@ export default {
 <style lang="scss" scoped>
 .merchant-admin-form-agreement {
   width: 528px;
+}
+
+.header-line {
+  height: 80px;
+  margin-top: -10px;
+  display: flex;
+  align-items: center;
+  color: #0c2441;
+
+  &__date {
+    margin-right: 30px;
+  }
 }
 
 .file-download {
