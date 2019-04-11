@@ -135,7 +135,6 @@ export default {
 
 <template>
   <div>
-    {{this.filters.sort}}
     <UiPageHeader>
       <span slot="title">Merchants</span>
       <UiTextField
