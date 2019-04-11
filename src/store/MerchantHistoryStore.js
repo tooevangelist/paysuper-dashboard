@@ -64,7 +64,7 @@ export default function createMerchantHistoryStore({ config }) {
         const query = qs.stringify({
           ...state.apiQuery,
           is_system: true,
-        });
+        }, { arrayFormat: 'brackets' });
         const url = `${config.apiUrl}/admin/api/v1/merchants/${state.merchantId}/notifications?${query}`;
 
         const response = await axios.get(url, {

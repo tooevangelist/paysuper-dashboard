@@ -16,6 +16,7 @@ import moment from 'moment';
 import MerchantHistoryStore from '@/store/MerchantHistoryStore';
 import NoResults from '@/components/NoResults.vue';
 import MerchantStatusTransitionLabel from '@/components/MerchantStatusTransitionLabel.vue';
+import { toggleSort, getSortDirection } from '@/helpers/handleSort';
 
 export default {
   components: {
@@ -76,6 +77,10 @@ export default {
       ];
       return crumbs;
     },
+
+    dateSortDirection() {
+      return getSortDirection(this.filters.sort, 'created_at');
+    },
   },
 
   async beforeRouteUpdate(to, from, next) {
@@ -124,7 +129,7 @@ export default {
     },
 
     updateFiltersFromQuery() {
-      this.filters = this.getFilterValues(['quickFilter', 'limit', 'offset']);
+      this.filters = this.getFilterValues(['quickFilter', 'limit', 'offset', 'sort']);
     },
 
     openHistoryDetailsDialog(item) {
@@ -135,6 +140,11 @@ export default {
     closeHistoryDetailsDialog() {
       this.isHistoryDetailsDialogOpen = false;
       this.currentHistoryItem = null;
+    },
+
+    sortByDate() {
+      this.filters.sort = toggleSort(this.filters.sort, 'created_at');
+      this.searchHistory();
     },
   },
 };
@@ -157,7 +167,11 @@ export default {
         <ui-table-cell>User</ui-table-cell>
         <ui-table-cell>Event</ui-table-cell>
         <ui-table-cell>Message</ui-table-cell>
-        <ui-table-cell>Date</ui-table-cell>
+        <ui-table-cell
+          :isSortable="true"
+          :sortDirection="dateSortDirection"
+          @click.native="sortByDate"
+        >Date</ui-table-cell>
       </ui-table-row>
       <ui-table-row
         v-for="item in history.items"
