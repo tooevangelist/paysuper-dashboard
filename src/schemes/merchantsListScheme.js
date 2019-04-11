@@ -18,6 +18,10 @@ const filters = {
     defaultValue: () => [],
     isQueryDisabled: true,
   },
+
+  sort: {
+    defaultValue: () => [],
+  },
 };
 
 function getPageQuery({ queryValue, groupFilterValues: { limit } }) {

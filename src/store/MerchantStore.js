@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { NOT_FOUND_ERROR } from '@/errors';
 import mergeApiValuesWithDefaults from '@/helpers/mergeApiValuesWithDefaults';
+import qs from 'qs';
 
 // const merchantStatues = {
 //   draft: 0,
@@ -80,6 +81,7 @@ export default function createMerchantStore({ config }) {
     state: () => ({
       merchant: null,
       paymentMethods: [],
+      paymentMethodsSort: [],
       agreementDocument: getDefaultAgreementDocument(),
     }),
 
@@ -89,6 +91,9 @@ export default function createMerchantStore({ config }) {
       },
       paymentMethods(store, data) {
         store.paymentMethods = data;
+      },
+      paymentMethodsSort(store, data) {
+        store.paymentMethodsSort = data;
       },
       agreementDocument(store, data) {
         store.agreementDocument = data;
@@ -144,9 +149,14 @@ export default function createMerchantStore({ config }) {
       async fetchMerchantPaymentMethods({ state, commit, rootState }, id) {
         const merchantId = id || state.merchant.id;
 
+        const query = qs.stringify({
+          sort: state.paymentMethodsSort,
+        }, { arrayFormat: 'brackets' });
+        const url = `${config.apiUrl}/admin/api/v1/merchants/${merchantId}/methods?${query}`;
+
         try {
           const response = await axios.get(
-            `${config.apiUrl}/admin/api/v1/merchants/${merchantId}/methods`,
+            url,
             {
               headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
             },

@@ -1,5 +1,5 @@
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapMutations, mapActions } from 'vuex';
 import { UiButton, UiPageHeader } from '@protocol-one/ui-kit';
 import Notifications from '@/mixins/Notifications';
 import MerchantAdminForm from '@/components/MerchantAdminForm.vue';
@@ -18,7 +18,9 @@ export default {
   },
 
   computed: {
-    ...mapState('Merchant', ['merchant', 'paymentMethods', 'agreementDocument']),
+    ...mapState('Merchant', [
+      'merchant', 'paymentMethods', 'agreementDocument', 'paymentMethodsSort',
+    ]),
     breadcrumbs() {
       const crumbs = [
         {
@@ -45,7 +47,11 @@ export default {
       'updateMerchant',
       'changeMerchantAgreement',
       'sendNotification',
+      'fetchMerchantPaymentMethods',
     ]),
+    ...mapMutations('Merchant', {
+      setPaymentMethodsSort: 'paymentMethodsSort',
+    }),
 
     applyQueryParams(route) {
       this.currentStep = route.query.step || this.defaultStep;
@@ -97,6 +103,17 @@ export default {
       }
       this.setIsLoading(false);
     },
+
+    async handlePaymentMethodsSort(sort) {
+      this.setIsLoading(true);
+      try {
+        this.setPaymentMethodsSort(sort);
+        await this.fetchMerchantPaymentMethods();
+      } catch (error) {
+        console.warn(error);
+      }
+      this.setIsLoading(false);
+    },
   },
 };
 </script>
@@ -119,9 +136,11 @@ export default {
       :paymentMethods="paymentMethods"
       :currentStep="currentStep"
       :agreementDocument="agreementDocument"
+      :paymentMethodsSort="paymentMethodsSort"
       @stepChanged="handleSectionChange"
       @requestAgreementChange="handleAgreementChangeRequest"
       @sendNotification="handleSendNotification"
+      @sortPaymentMethods="handlePaymentMethodsSort"
     />
   </div>
 </template>

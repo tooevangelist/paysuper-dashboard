@@ -9,11 +9,12 @@ import {
   UiTextField,
   UiPaginator,
 } from '@protocol-one/ui-kit';
+import moment from 'moment';
 import MerchanstListStore from '@/store/MerchanstListStore';
 import NoResults from '@/components/NoResults.vue';
 import LabelTag from '@/components/LabelTag.vue';
 import merchantStatusScheme from '@/schemes/merchantStatusScheme';
-import moment from 'moment';
+import { toggleSort, getSortDirection } from '@/helpers/handleSort';
 
 export default {
   components: {
@@ -57,6 +58,10 @@ export default {
       return debounce(() => {
         this.searchMerchants();
       }, 500);
+    },
+
+    nameSortDirection() {
+      return getSortDirection(this.filters.sort, 'name');
     },
   },
 
@@ -102,7 +107,7 @@ export default {
     },
 
     updateFiltersFromQuery() {
-      this.filters = this.getFilterValues(['quickFilter', 'limit', 'offset']);
+      this.filters = this.getFilterValues(['quickFilter', 'limit', 'offset', 'sort']);
     },
 
     formatDate(date) {
@@ -114,6 +119,11 @@ export default {
         return '—';
       }
       return find(this.countries, { code_int: country.code_int }).name.en;
+    },
+
+    sortByName() {
+      this.filters.sort = toggleSort(this.filters.sort, 'name');
+      this.searchMerchants();
     },
   },
 };
@@ -133,7 +143,11 @@ export default {
 
     <ui-table>
       <ui-table-row :isHead="true">
-        <ui-table-cell>Company</ui-table-cell>
+        <ui-table-cell
+          :isSortable="true"
+          :sortDirection="nameSortDirection"
+          @click.native="sortByName"
+        >Company</ui-table-cell>
         <ui-table-cell>Country</ui-table-cell>
         <ui-table-cell>Last change</ui-table-cell>
         <ui-table-cell>Singing via</ui-table-cell>

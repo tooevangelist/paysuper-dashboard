@@ -5,6 +5,7 @@ import {
   UiTableRow,
 } from '@protocol-one/ui-kit';
 import StatusIcon from '@/components/StatusIcon.vue';
+import { toggleSort, getSortDirection } from '@/helpers/handleSort';
 
 export default {
   name: 'MerchantFormCompanyInfo',
@@ -25,6 +26,22 @@ export default {
       required: true,
       type: Array,
     },
+    paymentMethodsSort: {
+      type: Array,
+      required: true,
+    },
+  },
+
+  computed: {
+    nameSortDirection() {
+      return getSortDirection(this.paymentMethodsSort, 'name');
+    },
+  },
+
+  methods: {
+    sortByName() {
+      this.$emit('sortPaymentMethods', toggleSort(this.paymentMethodsSort, 'name'));
+    },
   },
 };
 </script>
@@ -33,7 +50,11 @@ export default {
   <div class="merchant-admin-form-licence">
     <ui-table>
       <ui-table-row :isHead="true">
-        <ui-table-cell>Method</ui-table-cell>
+        <ui-table-cell
+          :isSortable="true"
+          :sortDirection="nameSortDirection"
+          @click.native="sortByName"
+        >Method</ui-table-cell>
         <ui-table-cell>Key</ui-table-cell>
         <ui-table-cell>Available</ui-table-cell>
         <ui-table-cell>Comission rate</ui-table-cell>

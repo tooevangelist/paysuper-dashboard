@@ -5,6 +5,7 @@ import {
 } from '@protocol-one/ui-kit';
 import MerchantAdminFormCompanyInfo from '@/components/MerchantAdminFormCompanyInfo.vue';
 import MerchantAdminFormAgreement from '@/components/MerchantAdminFormAgreement.vue';
+import MerchantFormAgreement from '@/components/MerchantFormAgreement.vue';
 import MerchantAdminFormPaymentMethods from '@/components/MerchantAdminFormPaymentMethods.vue';
 
 export default {
@@ -15,6 +16,7 @@ export default {
     UiButton,
     MerchantAdminFormCompanyInfo,
     MerchantAdminFormAgreement,
+    MerchantFormAgreement,
     MerchantAdminFormPaymentMethods,
   },
 
@@ -35,6 +37,10 @@ export default {
       type: Object,
       required: true,
     },
+    paymentMethodsSort: {
+      type: Array,
+      required: true,
+    },
   },
 
   data() {
@@ -52,6 +58,11 @@ export default {
           status: 'initial',
           component: 'MerchantAdminFormAgreement',
         },
+        // licenseAgreementClient: {
+        //   label: 'License agreement client',
+        //   status: 'initial',
+        //   component: 'MerchantFormAgreement',
+        // },
         paymentMethods: {
           label: 'Payment methods',
           status: 'initial',
@@ -119,10 +130,12 @@ export default {
         :merchant="merchant"
         :paymentMethods="stepValue === 'paymentMethods' ? paymentMethods : undefined"
         :agreementDocument="agreementDocument"
+        :paymentMethodsSort="paymentMethodsSort"
         ref="forms"
         @validationResult="setStepStatus(stepValue, $event)"
         @requestAgreementChange="$emit('requestAgreementChange', $event)"
         @sendNotification="$emit('sendNotification', $event)"
+        @sortPaymentMethods="$emit('sortPaymentMethods', $event)"
       />
     </UiFormByStep>
   </div>

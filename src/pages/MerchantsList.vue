@@ -14,6 +14,7 @@ import MerchanstListStore from '@/store/MerchanstListStore';
 import NoResults from '@/components/NoResults.vue';
 import StatusIcon from '@/components/StatusIcon.vue';
 import MerchantExtendingMenu from '@/components/MerchantExtendingMenu.vue';
+import { toggleSort, getSortDirection } from '@/helpers/handleSort';
 
 export default {
   mixins: [Notifications],
@@ -72,6 +73,10 @@ export default {
         this.searchMerchants();
       }, 500);
     },
+
+    nameSortDirection() {
+      return getSortDirection(this.filters.sort, 'name');
+    },
   },
 
   methods: {
@@ -102,7 +107,7 @@ export default {
     },
 
     updateFiltersFromQuery() {
-      this.filters = this.getFilterValues(['quickFilter', 'limit', 'offset']);
+      this.filters = this.getFilterValues(['quickFilter', 'limit', 'offset', 'sort']);
     },
 
     async handleSendNotification(merchant, notification) {
@@ -119,12 +124,18 @@ export default {
       }
       this.setIsLoading(false);
     },
+
+    sortByName() {
+      this.filters.sort = toggleSort(this.filters.sort, 'name');
+      this.searchMerchants();
+    },
   },
 };
 </script>
 
 <template>
   <div>
+    {{this.filters.sort}}
     <UiPageHeader>
       <span slot="title">Merchants</span>
       <UiTextField
@@ -137,7 +148,11 @@ export default {
 
     <ui-table>
       <ui-table-row :isHead="true">
-        <ui-table-cell>Name</ui-table-cell>
+        <ui-table-cell
+          :isSortable="true"
+          :sortDirection="nameSortDirection"
+          @click.native="sortByName"
+        >Name</ui-table-cell>
         <ui-table-cell>Owner user</ui-table-cell>
         <ui-table-cell>Agreement</ui-table-cell>
         <ui-table-cell>Last payout date</ui-table-cell>

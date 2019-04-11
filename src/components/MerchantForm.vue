@@ -45,6 +45,10 @@ export default {
       type: Object,
       required: true,
     },
+    paymentMethodsSort: {
+      type: Array,
+      required: true,
+    },
   },
 
   data() {
@@ -168,9 +172,11 @@ export default {
         :merchant="merchant"
         :paymentMethods="stepValue === 'paymentMethods' ? paymentMethods : undefined"
         :agreementDocument="agreementDocument"
+        :paymentMethodsSort="paymentMethodsSort"
         ref="forms"
         @validationResult="setStepStatus(stepValue, $event)"
         @requestAgreementChange="$emit('requestAgreementChange', $event)"
+        @sortPaymentMethods="$emit('sortPaymentMethods', $event)"
       />
     </UiFormByStep>
 
