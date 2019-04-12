@@ -160,6 +160,9 @@ export default {
   queryToFilter({ queryValue }) {
     return Number(queryValue);
   },
+  queryToApiQuery({ queryValue }) {
+    return Number(queryValue);
+  },
   filterToQuery({ filterValue }) {
     return filterValue.map(item => item.id).join(',');
   },

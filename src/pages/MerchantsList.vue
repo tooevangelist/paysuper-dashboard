@@ -15,6 +15,7 @@ import NoResults from '@/components/NoResults.vue';
 import StatusIcon from '@/components/StatusIcon.vue';
 import MerchantExtendingMenu from '@/components/MerchantExtendingMenu.vue';
 import { toggleSort, getSortDirection } from '@/helpers/handleSort';
+import ListFilterDropdown from '@/components/ListFilterDropdown.vue';
 
 export default {
   mixins: [Notifications],
@@ -29,6 +30,7 @@ export default {
     NoResults,
     StatusIcon,
     MerchantExtendingMenu,
+    ListFilterDropdown,
   },
 
   async asyncData({ store, registerStoreModule, route }) {
@@ -45,6 +47,21 @@ export default {
     return {
       filters: {},
       isSearchRouting: false,
+
+      agreementFilterOptions: [
+        {
+          label: 'All',
+          value: '',
+        },
+        {
+          label: 'Signed only',
+          value: 'signed',
+        },
+        {
+          label: 'Not signed only',
+          value: 'not_signed',
+        },
+      ],
     };
   },
 
@@ -107,7 +124,7 @@ export default {
     },
 
     updateFiltersFromQuery() {
-      this.filters = this.getFilterValues(['quickFilter', 'limit', 'offset', 'sort']);
+      this.filters = this.getFilterValues(['quickFilter', 'limit', 'offset', 'sort', 'agreement']);
     },
 
     async handleSendNotification(merchant, notification) {
@@ -127,6 +144,11 @@ export default {
 
     sortByName() {
       this.filters.sort = toggleSort(this.filters.sort, 'name');
+      this.searchMerchants();
+    },
+
+    filterByAgreement(value) {
+      this.filters.agreement = value;
       this.searchMerchants();
     },
   },
@@ -153,7 +175,15 @@ export default {
           @click.native="sortByName"
         >Name</ui-table-cell>
         <ui-table-cell>Owner user</ui-table-cell>
-        <ui-table-cell>Agreement</ui-table-cell>
+        <ui-table-cell>
+          <ListFilterDropdown
+            :options="agreementFilterOptions"
+            :value="filters.agreement"
+            @change="filterByAgreement"
+          >
+            Agreement
+          </ListFilterDropdown>
+        </ui-table-cell>
         <ui-table-cell>Last payout date</ui-table-cell>
         <ui-table-cell>Last payout</ui-table-cell>
         <ui-table-cell></ui-table-cell>
