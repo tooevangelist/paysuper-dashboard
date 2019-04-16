@@ -7,6 +7,7 @@ import {
   UiSwitchBox,
   UiTextField,
 } from '@protocol-one/ui-kit';
+import { between, required } from 'vuelidate/lib/validators';
 import MerchantPaymentMethodStore from '@/store/MerchantPaymentMethodStore';
 import Notifications from '@/mixins/Notifications';
 
@@ -31,11 +32,6 @@ export default {
     );
   },
 
-  data() {
-    return {
-    };
-  },
-
   computed: {
     ...mapState('Merchant', ['merchant']),
     ...mapState('MerchantPaymentMethod', ['paymentMethod']),
@@ -52,6 +48,23 @@ export default {
       ];
       return crumbs;
     },
+    commissionFee: {
+      get() {
+        return this.paymentMethod.commission.fee;
+      },
+
+      set(value) {
+        this.paymentMethod.commission.fee = parseInt(value, 10);
+      },
+    },
+
+  },
+
+  validations: {
+    commissionFee: {
+      required,
+      between: between(0, 100),
+    },
   },
 
   methods: {
@@ -59,7 +72,12 @@ export default {
     ...mapActions(['setIsLoading']),
 
     async savePaymentMethod() {
+      this.$v.$touch();
+      if (this.$v.$invalid) {
+        return;
+      }
       this.setIsLoading(true);
+
       try {
         await this.updatePaymentMethod();
         this.$_Notifications_showSuccessMessage('PaymentMethod updated successfully');
@@ -90,8 +108,10 @@ export default {
         <UiHeader level="2" :hasMargin="true">Terms</UiHeader>
         <div class="field-row">
           <UiTextField
-            v-model="paymentMethod.commission.fee"
+            v-model="commissionFee"
             label="Rate in %"
+            :hasError="$isFieldInvalid('commissionFee')"
+            :errorText="$getFieldErrorMessages('commissionFee')"
           />
         </div>
       </div>
