@@ -135,6 +135,13 @@ export default {
       this.validateStepsForAgreement();
     },
 
+    scrollTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    },
+
     setCurrentStep(value) {
       this.currentStepInner = value;
       this.$emit('stepChanged', this.currentStepInner);
@@ -149,6 +156,8 @@ export default {
       this.chekIfFormValid();
       if (!this.isFormValid) {
         this.isAgreementBlockerDialogOpen = true;
+      } else {
+        this.$emit('requestMerchantSave');
       }
     },
 
@@ -194,7 +203,7 @@ export default {
           <StatusIcon status="complete" />
           <UiButton
             class="next-step-button"
-            @click="setCurrentStep('contacts')"
+            @click="setCurrentStep('contacts'), scrollTop()"
           >To step 2</UiButton>
         </template>
         <template
@@ -204,7 +213,7 @@ export default {
           <StatusIcon status="complete" />
           <UiButton
             class="next-step-button"
-            @click="setCurrentStep('bankingInfo')"
+            @click="setCurrentStep('bankingInfo'), scrollTop()"
           >To step 3</UiButton>
         </template>
         <template
@@ -214,7 +223,7 @@ export default {
           <StatusIcon status="complete" />
           <UiButton
             class="next-step-button"
-            @click="handleStepChange('licenseAgreement')"
+            @click="handleStepChange('licenseAgreement'), scrollTop()"
           >To review</UiButton>
         </template>
       </FormContent>

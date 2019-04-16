@@ -1,3 +1,4 @@
+import { cloneDeep, isEqual } from 'lodash-es';
 import axios from 'axios';
 import { NOT_FOUND_ERROR } from '@/errors';
 import mergeApiValuesWithDefaults from '@/helpers/mergeApiValuesWithDefaults';
@@ -80,23 +81,31 @@ export default function createMerchantStore({ config }) {
   return {
     state: () => ({
       merchant: null,
+      merchantOriginalCopy: null,
       paymentMethods: [],
       paymentMethodsSort: [],
       agreementDocument: getDefaultAgreementDocument(),
     }),
 
+    getters: {
+      isMerchantChanged(state) {
+        return !isEqual(state.merchant, state.merchantOriginalCopy);
+      },
+    },
+
     mutations: {
-      merchant(store, data) {
-        store.merchant = data;
+      merchant(state, data) {
+        state.merchant = data;
+        state.merchantOriginalCopy = cloneDeep(data);
       },
-      paymentMethods(store, data) {
-        store.paymentMethods = data;
+      paymentMethods(state, data) {
+        state.paymentMethods = data;
       },
-      paymentMethodsSort(store, data) {
-        store.paymentMethodsSort = data;
+      paymentMethodsSort(state, data) {
+        state.paymentMethodsSort = data;
       },
-      agreementDocument(store, data) {
-        store.agreementDocument = data;
+      agreementDocument(state, data) {
+        state.agreementDocument = data;
       },
     },
 

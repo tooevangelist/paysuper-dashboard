@@ -1,5 +1,7 @@
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex';
+import {
+  mapState, mapGetters, mapMutations, mapActions,
+} from 'vuex';
 import {
   UiButton,
   UiPageHeader,
@@ -38,6 +40,11 @@ export default {
     ...mapState('User/Merchant', [
       'merchant', 'paymentMethods', 'agreementDocument', 'paymentMethodsSort',
     ]),
+    ...mapGetters('User/Merchant', ['isMerchantChanged']),
+
+    isSavingLocked() {
+      return this.merchant.status !== 0;
+    },
   },
 
   beforeRouteUpdate(to, from, next) {
@@ -68,23 +75,27 @@ export default {
       this.$router.push({ query: { step } });
     },
 
+    async saveMerchant() {
+      this.setIsLoading(true);
+      try {
+        await this.updateMerchant();
+        this.$_Notifications_showSuccessMessage('Merchant updated successfully');
+      } catch (error) {
+        console.warn(error);
+        this.$_Notifications_showErrorMessage('Failed to update merchant');
+      }
+      this.setIsLoading(false);
+    },
+
     async validateAndSaveMerchant() {
-      if (this.merchant.status !== 0) {
+      if (this.isSavingLocked) {
         this.isSaveBlockerDialogOpen = true;
         return;
       }
       const isMerchantValid = this.$refs.merchantForm.chekIfFormValid();
 
       if (isMerchantValid) {
-        this.setIsLoading(true);
-        try {
-          await this.updateMerchant();
-          this.$_Notifications_showSuccessMessage('Merchant updated successfully');
-        } catch (error) {
-          console.warn(error);
-          this.$_Notifications_showErrorMessage('Failed to update merchant');
-        }
-        this.setIsLoading(false);
+        await this.saveMerchant();
       } else {
         this.$_Notifications_showErrorMessage('The form is not filled right');
       }
@@ -113,6 +124,12 @@ export default {
       }
       this.setIsLoading(false);
     },
+
+    saveMerchantIfChanged() {
+      if (!this.isSavingLocked && this.isMerchantChanged) {
+        this.saveMerchant();
+      }
+    },
   },
 };
 </script>
@@ -138,6 +155,7 @@ export default {
       @stepChanged="handleSectionChange"
       @requestAgreementChange="handleStatusChangeRequest"
       @sortPaymentMethods="handlePaymentMethodsSort"
+      @requestMerchantSave="saveMerchantIfChanged"
     />
 
     <UiModal v-if="isSaveBlockerDialogOpen" @close="isSaveBlockerDialogOpen = false">
