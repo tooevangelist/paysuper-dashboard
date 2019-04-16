@@ -1,12 +1,21 @@
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex';
-import { UiButton, UiPageHeader } from '@protocol-one/ui-kit';
+import {
+  UiButton,
+  UiPageHeader,
+  UiHeader,
+  UiModal,
+} from '@protocol-one/ui-kit';
 import Notifications from '@/mixins/Notifications';
 import MerchantForm from '@/components/MerchantForm.vue';
 
 export default {
   components: {
-    UiButton, UiPageHeader, MerchantForm,
+    UiButton,
+    UiPageHeader,
+    UiHeader,
+    UiModal,
+    MerchantForm,
   },
   mixins: [Notifications],
 
@@ -19,6 +28,7 @@ export default {
 
   data() {
     return {
+      isSaveBlockerDialogOpen: false,
       defaultStep: 'basicInfo',
       currentStep: '',
     };
@@ -59,6 +69,10 @@ export default {
     },
 
     async validateAndSaveMerchant() {
+      if (this.merchant.status !== 0) {
+        this.isSaveBlockerDialogOpen = true;
+        return;
+      }
       const isMerchantValid = this.$refs.merchantForm.chekIfFormValid();
 
       if (isMerchantValid) {
@@ -125,5 +139,33 @@ export default {
       @requestAgreementChange="handleStatusChangeRequest"
       @sortPaymentMethods="handlePaymentMethodsSort"
     />
+
+    <UiModal v-if="isSaveBlockerDialogOpen" @close="isSaveBlockerDialogOpen = false">
+      <div class="dialog" slot="main">
+        <UiHeader level="2" :hasMargin="true">Saving is locked</UiHeader>
+        <p v-if="merchant.status === 4">
+          Licence agreement is signed with current data.<br />
+          Only administrators are able to change it now.
+        </p>
+        <p v-else>
+          You need to revoke your application for agreement first.
+        </p>
+        <div class="dialog__controls">
+          <UiButton @click="isSaveBlockerDialogOpen = false">OK</UiButton>
+        </div>
+      </div>
+    </UiModal>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.dialog {
+  width: 450px;
+
+  &__controls {
+    margin-top: 5px;
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+</style>

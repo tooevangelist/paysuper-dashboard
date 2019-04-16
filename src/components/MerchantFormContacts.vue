@@ -34,6 +34,11 @@ export default {
             required,
           },
         },
+        technical: {
+          email: {
+            email,
+          },
+        },
       },
     },
   },
