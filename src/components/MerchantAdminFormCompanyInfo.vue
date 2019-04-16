@@ -4,6 +4,7 @@ import { filter } from 'lodash-es';
 import MerchantFormBasicInfo from '@/components/MerchantFormBasicInfo.vue';
 import MerchantFormContacts from '@/components/MerchantFormContacts.vue';
 import MerchantFormBankingInfo from '@/components/MerchantFormBankingInfo.vue';
+import FormContent from '@/components/FormContent.vue';
 
 export default {
   name: 'MerchantFormCompanyInfo',
@@ -12,6 +13,7 @@ export default {
     MerchantFormBasicInfo,
     MerchantFormContacts,
     MerchantFormBankingInfo,
+    FormContent,
   },
 
   props: {
@@ -80,15 +82,22 @@ export default {
 
 <template>
   <div class="merchant-admin-form-basic-info">
-    <component
-      class="merchant-admin-form-basic-info__form"
-      v-for="(form, formName) in forms"
-      :is="form.component"
-      :merchant="merchant"
-      :key="formName"
-      ref="forms"
-      @validationResult="handleValidationResult(formName, $event)"
-    />
+    <FormContent>
+      <component
+        class="merchant-admin-form-basic-info__form"
+        v-for="(form, formName) in forms"
+        :is="form.component"
+        :merchant="merchant"
+        :key="formName"
+        ref="forms"
+        @validationResult="handleValidationResult(formName, $event)"
+      />
+      <div class="nav-menu" slot="side">
+        <a class="nav-menu__link" href="#merchant-basic-info">Company</a>
+        <a class="nav-menu__link" href="#merchant-contacts">Contacts</a>
+        <a class="nav-menu__link" href="#merchant-banking-info">Banking info</a>
+      </div>
+    </FormContent>
   </div>
 </template>
 
@@ -100,6 +109,13 @@ export default {
     & + & {
       margin-top: 30px;
     }
+  }
+}
+
+.nav-menu {
+  &__link {
+    display: block;
+    padding: 5px 0;
   }
 }
 </style>

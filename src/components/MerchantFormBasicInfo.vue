@@ -75,7 +75,7 @@ export default {
 </script>
 
 <template>
-  <div class="merchant-form-basic-info">
+  <div class="merchant-form-basic-info" id="merchant-basic-info">
     <UiHeader level="2" :hasMargin="true">Company</UiHeader>
 
     <div class="field-row">

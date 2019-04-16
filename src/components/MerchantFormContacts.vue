@@ -67,7 +67,7 @@ export default {
 </script>
 
 <template>
-  <div class="merchant-form-contacts">
+  <div class="merchant-form-contacts" id="merchant-contacts">
     <UiHeader level="2" :hasMargin="true">Contacts</UiHeader>
     <div class="field-row">
       <UiTextField

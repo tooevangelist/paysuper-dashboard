@@ -80,7 +80,7 @@ export default {
 </script>
 
 <template>
-  <div class="merchant-form-banking-info">
+  <div class="merchant-form-banking-info" id="merchant-banking-info">
     <UiHeader level="2" :hasMargin="true">
       Banking info
     </UiHeader>
