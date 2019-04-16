@@ -10,6 +10,10 @@ export default {
   },
   mixins: [Notifications],
 
+  asyncData({ store, route }) {
+    return store.dispatch('Merchant/fetchMerchantPaymentMethods', route.params.id);
+  },
+
   data() {
     return {
       defaultStep: 'basicInfo',
