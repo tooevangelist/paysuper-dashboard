@@ -148,7 +148,9 @@ export default {
           Only administrators are able to change it now.
         </p>
         <p v-else>
-          You need to revoke your application for agreement first.
+          You need to
+          <router-link to="/company?step=licenseAgreement">revoke your application</router-link>
+          for agreement first.
         </p>
         <div class="dialog__controls">
           <UiButton @click="isSaveBlockerDialogOpen = false">OK</UiButton>
