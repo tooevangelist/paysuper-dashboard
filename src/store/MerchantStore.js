@@ -102,11 +102,11 @@ export default function createMerchantStore({ config }) {
 
     actions: {
       async initState({ dispatch }, id) {
+        await dispatch('fetchMerchantById', id);
         await Promise.all([
-          dispatch('fetchMerchantById', id),
           dispatch('fetchMerchantPaymentMethods', id),
+          dispatch('fetchAgreement'),
         ]);
-        await dispatch('fetchAgreement');
       },
 
       async createMerchant({ commit, rootState }, merchant) {

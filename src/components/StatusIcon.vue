@@ -39,7 +39,7 @@ export default {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  display: flex;
+  display: inline-flex;
   justify-content: center;
   align-items: center;
 

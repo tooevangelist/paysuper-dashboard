@@ -11,7 +11,8 @@ import MerchantFormContacts from '@/components/MerchantFormContacts.vue';
 import MerchantFormBankingInfo from '@/components/MerchantFormBankingInfo.vue';
 import MerchantFormAgreement from '@/components/MerchantFormAgreement.vue';
 import MerchantFormPaymentMethods from '@/components/MerchantFormPaymentMethods.vue';
-
+import FormContent from '@/components/FormContent.vue';
+import StatusIcon from '@/components/StatusIcon.vue';
 
 export default {
   name: 'MerchantForm',
@@ -26,6 +27,8 @@ export default {
     MerchantFormBankingInfo,
     MerchantFormAgreement,
     MerchantFormPaymentMethods,
+    FormContent,
+    StatusIcon,
   },
 
   props: {
@@ -78,11 +81,13 @@ export default {
           label: 'License agreement',
           status: 'initial',
           component: 'MerchantFormAgreement',
+          isValidable: false,
         },
         paymentMethods: {
           label: 'Payment methods',
           status: 'initial',
           component: 'MerchantFormPaymentMethods',
+          isValidable: false,
         },
       },
     };
@@ -164,20 +169,55 @@ export default {
       v-model="currentStepInner"
       @stepSelected="handleStepChange"
     >
-      <component
+      <FormContent
         v-for="(step, stepValue) in steps"
-        :is="step.component"
         :key="stepValue"
+        :hasStyling="step.isValidable"
         v-show="currentStepInner === stepValue"
-        :merchant="merchant"
-        :paymentMethods="stepValue === 'paymentMethods' ? paymentMethods : undefined"
-        :agreementDocument="agreementDocument"
-        :paymentMethodsSort="paymentMethodsSort"
-        ref="forms"
-        @validationResult="setStepStatus(stepValue, $event)"
-        @requestAgreementChange="$emit('requestAgreementChange', $event)"
-        @sortPaymentMethods="$emit('sortPaymentMethods', $event)"
-      />
+      >
+        <component
+          :is="step.component"
+          :merchant="merchant"
+          :paymentMethods="stepValue === 'paymentMethods' ? paymentMethods : undefined"
+          :agreementDocument="agreementDocument"
+          :paymentMethodsSort="paymentMethodsSort"
+          ref="forms"
+          @validationResult="setStepStatus(stepValue, $event)"
+          @requestAgreementChange="$emit('requestAgreementChange', $event)"
+          @sortPaymentMethods="$emit('sortPaymentMethods', $event)"
+        />
+
+        <template
+          slot="side"
+          v-if="stepValue === 'basicInfo' && step.status === 'complete'"
+        >
+          <StatusIcon status="complete" />
+          <UiButton
+            class="next-step-button"
+            @click="setCurrentStep('contacts')"
+          >To step 2</UiButton>
+        </template>
+        <template
+          slot="side"
+          v-if="stepValue === 'contacts' && step.status === 'complete'"
+        >
+          <StatusIcon status="complete" />
+          <UiButton
+            class="next-step-button"
+            @click="setCurrentStep('bankingInfo')"
+          >To step 3</UiButton>
+        </template>
+        <template
+          slot="side"
+          v-if="stepValue === 'bankingInfo' && step.status === 'complete'"
+        >
+          <StatusIcon status="complete" />
+          <UiButton
+            class="next-step-button"
+            @click="handleStepChange('licenseAgreement')"
+          >To review</UiButton>
+        </template>
+      </FormContent>
     </UiFormByStep>
 
     <UiModal v-if="isAgreementBlockerDialogOpen" @close="closeAgreementBlockerDialog">
@@ -214,5 +254,9 @@ export default {
     display: flex;
     justify-content: flex-end;
   }
+}
+
+.next-step-button {
+  margin-left: 10px;
 }
 </style>

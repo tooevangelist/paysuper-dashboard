@@ -21,11 +21,6 @@ export default {
     },
   },
 
-  data() {
-    return {
-    };
-  },
-
   computed: {
     ...mapGetters('Dictionaries', ['countriesTwoLetters']),
   },
@@ -56,14 +51,16 @@ export default {
     },
   },
 
+  mounted() {
+    this.$emit('validationResult', !this.$v.$invalid);
+    this.$watch('$v.$invalid', (value) => {
+      this.$emit('validationResult', !value);
+    });
+  },
+
   methods: {
     validateForm() {
       this.$v.$touch();
-
-      this.$watch('$v.$invalid', (value) => {
-        this.$emit('validationResult', !value);
-      });
-      this.$emit('validationResult', !this.$v.$invalid);
     },
 
     getValidatedFieldProps(path) {
@@ -154,7 +151,6 @@ export default {
 
 <style lang="scss" scoped>
 .merchant-form-basic-info {
-  width: 528px;
 }
 
 .field-row {
