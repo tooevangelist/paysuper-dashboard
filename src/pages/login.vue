@@ -20,15 +20,16 @@ export default {
   },
 
   methods: {
-    ...mapActions('User', ['setAccessToken']),
+    ...mapActions('User', ['setAccessToken', 'initUserMerchantData']),
     listenToMessages() {
-      window.addEventListener('message', (event) => {
+      window.addEventListener('message', async (event) => {
         if (!event.data || event.data.source !== 'PAYSUPER_MANAGEMENT_SERVER') {
           return;
         }
 
         if (event.data.access_token && event.data.success) {
           this.setAccessToken(event.data.access_token);
+          await this.initUserMerchantData();
           this.redirectOnSuccessfulAuth();
         }
 

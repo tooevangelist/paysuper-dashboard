@@ -31,41 +31,28 @@ export default function createUserStore({ config, notifications }) {
       async initState({ dispatch }) {
         try {
           await dispatch('refreshToken');
-          try {
-            await dispatch('Merchant/fetchMerchant');
-          } catch (error) {
-            if (error === NOT_FOUND_ERROR) {
-              await dispatch('Merchant/createMerchant', {
-                contacts: {
-                  authorized: {},
-                  technical: {},
-                },
-                banking: {},
-              });
-            }
-          }
+          await dispatch('initUserMerchantData');
         } catch (error) {
           console.warn(error);
           await dispatch('logout');
         }
       },
 
-      // async fetchUserInfo({ state }) {
-      //   try {
-      //     const userinfoResult = await axios.get(config.apiUserInfoUrl, {
-      //       headers: {
-      //         Authorization: `Bearer ${state.accessToken}`,
-      //         // 'X-CLIENT-ID': rootState.clientID,
-      //       },
-      //     });
-
-      //     console.log(11111, 'userinfoResult', userinfoResult);
-      //     // commit('userinfo', userinfoResult.data);
-      //     // eslint-disable-next-line
-      //   } catch (error) {
-      //     // console.log(11111, 'error', error);
-      //   }
-      // },
+      async initUserMerchantData({ dispatch }) {
+        try {
+          await dispatch('Merchant/fetchMerchant');
+        } catch (error) {
+          if (error === NOT_FOUND_ERROR) {
+            await dispatch('Merchant/createMerchant', {
+              contacts: {
+                authorized: {},
+                technical: {},
+              },
+              banking: {},
+            });
+          }
+        }
+      },
 
       /**
        * Set new access token to store and localeStorage
