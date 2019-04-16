@@ -20,7 +20,7 @@ const filters = {
   },
 
   sort: {
-    defaultValue: () => ['created_at'],
+    defaultValue: () => ['-created_at'],
   },
 };
 

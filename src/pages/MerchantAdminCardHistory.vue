@@ -180,7 +180,9 @@ export default {
       >
         <ui-table-cell></ui-table-cell>
         <ui-table-cell>{{item.title}}</ui-table-cell>
-        <ui-table-cell>{{item.message}}</ui-table-cell>
+        <ui-table-cell>
+          <div class="message">{{item.message}}</div>
+        </ui-table-cell>
         <ui-table-cell>{{formatDate(item.created_at.seconds)}}</ui-table-cell>
       </ui-table-row>
     </ui-table>
@@ -232,6 +234,14 @@ export default {
 <style lang="scss" scoped>
 .merchant-status-changer {
   display: inline-flex;
+}
+
+.message {
+  min-width: 360px;
+  max-width: 490px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .select {
