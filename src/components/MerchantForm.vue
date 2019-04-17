@@ -258,6 +258,7 @@ export default {
 
 .dialog {
   width: 450px;
+  color: #b1b1b1;
 
   &__controls {
     margin-top: 5px;
