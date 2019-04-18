@@ -9,6 +9,7 @@ import {
 } from '@protocol-one/ui-kit';
 import PanelItem from '@/components/PanelItem.vue';
 import StatusIcon from '@/components/StatusIcon.vue';
+import NoResults from '@/components/NoResults.vue';
 import ProjectsListStore from '@/store/ProjectsListStore';
 
 export default {
@@ -20,6 +21,7 @@ export default {
     UiTableRow,
     PageHeader,
     StatusIcon,
+    NoResults,
   },
   asyncData({ registerStoreModule }) {
     return registerStoreModule('ProjectsListing', ProjectsListStore);
@@ -57,7 +59,7 @@ export default {
       </template>
     </PageHeader>
 
-    <div class="content-wrapper" v-if="viewType === 'panels' || !projects.length">
+    <div class="content-wrapper" v-if="viewType === 'panels'">
       <div class="content-list">
         <PanelItem
           v-for="project in projects"
@@ -75,29 +77,33 @@ export default {
       </div>
     </div>
 
-    <ui-table v-if="viewType === 'table'">
-      <ui-table-row :isHead="true">
-        <ui-table-cell>Name</ui-table-cell>
-        <ui-table-cell>Product ID</ui-table-cell>
-        <ui-table-cell>Status</ui-table-cell>
-        <ui-table-cell>Creation date</ui-table-cell>
-      </ui-table-row>
-      <ui-table-row
-        v-for="project in projects"
-        :key="project.id"
-        :link="{
-          url: `/projects/${project.id}`,
-          router: true
-        }"
-      >
-        <ui-table-cell>{{project.name}}</ui-table-cell>
-        <ui-table-cell>{{project.id}}</ui-table-cell>
-        <ui-table-cell>
-          <StatusIcon :status="project.is_active ? 'complete' : 'initial'" />
-        </ui-table-cell>
-        <ui-table-cell>{{project.created_at}}</ui-table-cell>
-      </ui-table-row>
-    </ui-table>
+    <template v-if="viewType === 'table'">
+      <ui-table>
+        <ui-table-row :isHead="true">
+          <ui-table-cell>Name</ui-table-cell>
+          <ui-table-cell>Product ID</ui-table-cell>
+          <ui-table-cell>Status</ui-table-cell>
+          <ui-table-cell>Creation date</ui-table-cell>
+        </ui-table-row>
+        <ui-table-row
+          v-for="project in projects"
+          :key="project.id"
+          :link="{
+            url: `/projects/${project.id}`,
+            router: true
+          }"
+        >
+          <ui-table-cell>{{project.name}}</ui-table-cell>
+          <ui-table-cell>{{project.id}}</ui-table-cell>
+          <ui-table-cell>
+            <StatusIcon :status="project.is_active ? 'complete' : 'initial'" />
+          </ui-table-cell>
+          <ui-table-cell>{{project.created_at}}</ui-table-cell>
+        </ui-table-row>
+      </ui-table>
+      <NoResults v-if="!projects.length" />
+    </template>
+
   </div>
 </template>
 

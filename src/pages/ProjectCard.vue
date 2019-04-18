@@ -50,7 +50,10 @@ export default {
     },
   },
 
-  beforeRouteUpdate(to, from, next) {
+  async beforeRouteUpdate(to, from, next) {
+    if (to.params.id !== from.params.id) {
+      await this.initState(to.params.id);
+    }
     this.applyQueryParams(to);
     next();
   },
@@ -60,7 +63,9 @@ export default {
   },
 
   methods: {
+    ...mapActions(['setIsLoading']),
     ...mapActions('Project', [
+      'initState',
       'createProject',
       'saveProject',
       'openProduct',
@@ -121,7 +126,19 @@ export default {
         if (this.project.id) {
           this.saveProject();
         } else {
-          this.createProject();
+          this.setIsLoading(true);
+          try {
+            await this.createProject();
+            this.$router.push({
+              path: `/projects/${this.project.id}`,
+            });
+            this.$_Notifications_showSuccessMessage('Project created successfully');
+          } catch (error) {
+            console.warn(error);
+            this.$_Notifications_showErrorMessage('Failed to create project');
+          }
+
+          this.setIsLoading(false);
         }
       } else {
         this.$_Notifications_showErrorMessage('The form is not filled right');

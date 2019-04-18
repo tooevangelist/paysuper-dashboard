@@ -5,10 +5,19 @@ import { includes, mapValues, cloneDeep } from 'lodash-es';
  * Probobaly not needed
  * @todo check & remove
  */
-function prepareRequestData(data) {
+function mapDataFormToApi(data) {
   return mapValues(data, (value) => {
     if (value === '') {
       return null;
+    }
+    return value;
+  });
+}
+
+function mapDataApiToForm(data) {
+  return mapValues(data, (value, key) => {
+    if (includes(['limits_currency', 'callback_currency'], key)) {
+      return value.code_int;
     }
     return value;
   });
@@ -82,29 +91,23 @@ export default function createProjectStore({ config, notifications }) {
           headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
         })
           .then((response) => {
-            commit('project', mapValues(response.data, (value, key) => {
-              if (includes(['limits_currency', 'callback_currency'], key)) {
-                return value.code_int;
-              }
-              return value;
-            }));
+            commit('project', mapDataApiToForm(response.data));
           })
           .catch((error) => {
             dispatch('setPageError', error, { root: true });
           });
       },
 
-      async createProject({ state, dispatch, rootState }) {
-        dispatch('setIsLoading', true, { root: true });
-        try {
-          await axios.post(`${config.apiUrl}/api/v1/s/project`, prepareRequestData(state.project), {
+      async createProject({ state, commit, rootState }) {
+        const response = await axios.post(
+          `${config.apiUrl}/api/v1/s/project`,
+          mapDataFormToApi(state.project),
+          {
             headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-          });
-          notifications.showSuccessMessage('Project created successfully');
-        } catch (error) {
-          notifications.showErrorMessage('Failed to create project');
-        }
-        dispatch('setIsLoading', false, { root: true });
+          },
+        );
+
+        commit('project', mapDataApiToForm(response.data));
       },
 
       async saveProject({ state, dispatch, rootState }) {
@@ -112,7 +115,7 @@ export default function createProjectStore({ config, notifications }) {
         try {
           await axios.put(
             `${config.apiUrl}/api/v1/s/project/${state.project.id}`,
-            prepareRequestData(state.project),
+            mapDataFormToApi(state.project),
             {
               headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
             },

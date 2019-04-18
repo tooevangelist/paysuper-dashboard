@@ -30,7 +30,7 @@ export default {
     };
   },
   computed: {
-    ...mapState('TransactionSearch', ['query']),
+    ...mapState('TransactionSearch', ['query', 'paymentMethods', 'projects', 'statuses']),
     ...mapGetters('TransactionSearch', ['items', 'count', 'getFilterValues', 'getEmptyFilterValues']),
   },
   beforeRouteUpdate(to, from, next) {
@@ -85,6 +85,9 @@ export default {
         @searchRequested="handleFiltersSearchRequest"
         :getFilterValues="getFilterValues"
         :getEmptyFilterValues="getEmptyFilterValues"
+        :paymentMethods="paymentMethods"
+        :projects="projects"
+        :statuses="statuses"
         ref="filters"
       />
 

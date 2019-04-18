@@ -1,92 +1,7 @@
-<template>
-<div class="transaction-filters">
-  <form @submit.prevent="submitFilters">
-
-    <div class="filters">
-      <div class="filters-column">
-        <div class="filters-item">
-          <TextField label="Quick search" v-model="filters.quickFilter" />
-        </div>
-      </div>
-      <div class="filters-column">
-        <div class="filters-item">
-          <div class="filters-unit">
-            <DateInput dateLabel="Date from" v-model="filters.dateFrom" />
-          </div>
-          <div class="filters-unit">
-            <DateInput dateLabel="Date to" v-model="filters.dateTo" />
-          </div>
-        </div>
-      </div>
-      <div class="filters-column">
-        <div class="controls _short" v-if="!isDetailedSearchMode">
-          <Button type="submit">Search</Button>
-          <div class="controls-addition">
-            or use
-            <a href="#" @click.prevent="toggleSearchMode">Advanced search</a>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="filters" v-if="isDetailedSearchMode">
-      <div class="filters-column">
-        <div class="filters-item">
-          <TagInput
-            label="Project"
-            indent="shallow"
-            :tags="projects"
-            v-model="filters.project"
-          />
-        </div>
-        <div class="filters-item">
-          <TagInput
-            label="Status"
-            indent="shallow"
-            :tags="statuses"
-            v-model="filters.status"
-          />
-        </div>
-      </div>
-      <div class="filters-column">
-        <div class="filters-item">
-          <TextField label="User details" v-model="filters.account" />
-        </div>
-        <div class="filters-item">
-
-          <TagInput
-            label="Payment system"
-            indent="shallow"
-            :tags="paymentMethods"
-            v-model="filters.paymentMethod"
-          />
-        </div>
-      </div>
-      <div class="filters-column">
-        <div class="filters-item">
-          <TextField label="Transaction ID" v-model="filters.id" />
-        </div>
-        <div class="filters-item">
-          <TextField label="External ID" v-model="filters.orderID" />
-        </div>
-      </div>
-    </div>
-    <div class="controls" v-if="isDetailedSearchMode">
-      <Button type="submit">Search</Button>
-      <div class="controls-addition">
-        <a href="#" @click.prevent="clearFilters">Clear</a>
-        or use
-        <a href="#" @click.prevent="toggleSearchMode">Quick search</a>
-      </div>
-    </div>
-  </form>
-</div>
-</template>
-
 <script>
-import { mapState } from 'vuex';
 import { merge, isEmpty } from 'lodash-es';
 import {
-  Button, TagInput, TextField, DateInput,
+  UiButton, UiTagInput, UiTextField, UiDateInput,
 } from '@protocol-one/ui-kit';
 
 function divideByThousand(value) {
@@ -98,10 +13,10 @@ function divideByThousand(value) {
 
 export default {
   components: {
-    Button,
-    TagInput,
-    TextField,
-    DateInput,
+    UiButton,
+    UiTagInput,
+    UiTextField,
+    UiDateInput,
   },
   props: {
     getFilterValues: {
@@ -110,6 +25,18 @@ export default {
     },
     getEmptyFilterValues: {
       type: Function,
+      required: true,
+    },
+    paymentMethods: {
+      type: Array,
+      required: true,
+    },
+    projects: {
+      type: Array,
+      required: true,
+    },
+    statuses: {
+      type: Array,
       required: true,
     },
   },
@@ -130,9 +57,6 @@ export default {
       filterNames,
       filters: this.getFilterValues(filterNames),
     };
-  },
-  computed: {
-    ...mapState('order', ['paymentMethods', 'projects', 'statuses']),
   },
 
   created() {
@@ -184,6 +108,90 @@ export default {
   },
 };
 </script>
+
+<template>
+<div class="transaction-filters">
+  <form @submit.prevent="submitFilters">
+
+    <div class="filters">
+      <div class="filters-column">
+        <div class="filters-item">
+          <UiTextField label="Quick search" v-model="filters.quickFilter" />
+        </div>
+      </div>
+      <div class="filters-column">
+        <div class="filters-item">
+          <div class="filters-unit">
+            <UiDateInput dateLabel="Date from" v-model="filters.dateFrom" />
+          </div>
+          <div class="filters-unit">
+            <UiDateInput dateLabel="Date to" v-model="filters.dateTo" />
+          </div>
+        </div>
+      </div>
+      <div class="filters-column">
+        <div class="controls _short" v-if="!isDetailedSearchMode">
+          <UiButton type="submit">Search</UiButton>
+          <div class="controls-addition">
+            or use
+            <a href="#" @click.prevent="toggleSearchMode">Advanced search</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="filters" v-if="isDetailedSearchMode">
+      <div class="filters-column">
+        <div class="filters-item">
+          <UiTagInput
+            label="Project"
+            indent="shallow"
+            :tags="projects"
+            v-model="filters.project"
+          />
+        </div>
+        <div class="filters-item">
+          <UiTagInput
+            label="Status"
+            indent="shallow"
+            :tags="statuses"
+            v-model="filters.status"
+          />
+        </div>
+      </div>
+      <div class="filters-column">
+        <div class="filters-item">
+          <UiTextField label="User details" v-model="filters.account" />
+        </div>
+        <div class="filters-item">
+
+          <UiTagInput
+            label="Payment system"
+            indent="shallow"
+            :tags="paymentMethods"
+            v-model="filters.paymentMethod"
+          />
+        </div>
+      </div>
+      <div class="filters-column">
+        <div class="filters-item">
+          <UiTextField label="Transaction ID" v-model="filters.id" />
+        </div>
+        <div class="filters-item">
+          <UiTextField label="External ID" v-model="filters.orderID" />
+        </div>
+      </div>
+    </div>
+    <div class="controls" v-if="isDetailedSearchMode">
+      <UiButton type="submit">Search</UiButton>
+      <div class="controls-addition">
+        <a href="#" @click.prevent="clearFilters">Clear</a>
+        or use
+        <a href="#" @click.prevent="toggleSearchMode">Quick search</a>
+      </div>
+    </div>
+  </form>
+</div>
+</template>
 
 <style lang="scss">
 .transaction-filters {
