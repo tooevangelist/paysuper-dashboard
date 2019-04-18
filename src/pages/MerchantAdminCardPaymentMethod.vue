@@ -54,7 +54,12 @@ export default {
       },
 
       set(value) {
-        this.paymentMethod.commission.fee = parseInt(value, 10);
+        const convertedValue = Number(value);
+        if (Number.isNaN(convertedValue)) {
+          this.paymentMethod.commission.fee = value;
+        } else {
+          this.paymentMethod.commission.fee = convertedValue;
+        }
       },
     },
 
