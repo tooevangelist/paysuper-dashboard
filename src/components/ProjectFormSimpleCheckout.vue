@@ -3,7 +3,7 @@ import { required } from 'vuelidate/lib/validators';
 import {
   UiSelect, UiTextField, UiHeader, UiSwitchBox,
 } from '@protocol-one/ui-kit';
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'ProjectFormSimpleCheckout',
@@ -28,7 +28,7 @@ export default {
   },
 
   computed: {
-    ...mapState('Dictionaries', ['currenciesInt']),
+    ...mapGetters('Dictionaries', ['currenciesInt']),
 
     isSimpleCheckout: {
       get() {

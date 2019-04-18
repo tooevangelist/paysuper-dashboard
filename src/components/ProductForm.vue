@@ -6,7 +6,7 @@ import {
   UiHeader,
   UiSwitchBox,
 } from '@protocol-one/ui-kit';
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'ProductForm',
@@ -31,7 +31,7 @@ export default {
   },
 
   computed: {
-    ...mapState('Dictionaries', ['currenciesInt']),
+    ...mapGetters('Dictionaries', ['currenciesInt']),
 
     price: {
       get() {
