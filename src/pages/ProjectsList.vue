@@ -59,10 +59,12 @@ export default {
       </template>
     </PageHeader>
 
+    <!-- <pre>{{projects.items}}</pre> -->
+
     <div class="content-wrapper" v-if="viewType === 'panels'">
       <div class="content-list">
         <PanelItem
-          v-for="project in projects"
+          v-for="project in projects.items"
           :key="project.id"
           :id="project.id"
           :title="project.name"
@@ -70,7 +72,7 @@ export default {
           @remove="removeProject"
         />
         <PanelItem
-          v-if="!projects.length"
+          v-if="!projects.items.length"
           title="Create your first project now"
           :isNew="true"
         />

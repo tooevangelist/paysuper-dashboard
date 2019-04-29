@@ -120,7 +120,6 @@ export default {
         :project="project"
         ref="formProducts"
         @validationResult="setStepStatus('products', $event)"
-        @requestOpenProduct="$emit('requestOpenProduct', $event)"
       />
 
       <div slot="side-footer" v-if="false">

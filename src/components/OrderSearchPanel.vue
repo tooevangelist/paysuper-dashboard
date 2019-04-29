@@ -215,7 +215,7 @@ export default {
     getProjects() {
       const self = this;
 
-      const url = `${process.env.VUE_APP_P1PAYAPI_URL}/api/v1/s/project/filters`;
+      const url = `${process.env.VUE_APP_P1PAYAPI_URL}/admin/api/v1/projects/filters`;
 
       axios.get(url, { headers: { Authorization: `Bearer ${this.$store.state.user.accessToken}` } })
         .then((response) => {

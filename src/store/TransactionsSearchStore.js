@@ -156,7 +156,7 @@ export default function createTransactionsSearchStore({ config }) {
       },
 
       async fetchProjects({ commit, rootState }) {
-        const url = `${config.apiUrl}/api/v1/s/project/filters`;
+        const url = `${config.apiUrl}/admin/api/v1/projects/filters`;
 
         await axios.get(
           url,
@@ -166,12 +166,7 @@ export default function createTransactionsSearchStore({ config }) {
             if (isEmpty(response.data)) {
               return;
             }
-            if (!response.data) {
-              return;
-            }
-
-            const projects = map(response.data, (label, id) => ({ id, label }));
-            commit('projects', projects);
+            commit('projects', response.data);
           })
           .catch(() => {
 

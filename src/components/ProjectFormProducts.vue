@@ -62,16 +62,6 @@ export default {
     },
   },
 
-  methods: {
-    getProductLink(product) {
-      return `${this.$route.path}/product/?region=${product.region}&index=${product.index}`;
-    },
-
-    requestOpenProduct(product) {
-      this.$emit('requestOpenProduct', { index: product.index, region: product.region });
-    },
-  },
-
 };
 </script>
 
@@ -85,12 +75,13 @@ export default {
     <template v-if="project.only_fixed_amounts">
       <div class="products-controls">
         <div>
-          <UiButton
-            class="products-controls__button"
-            @click="$emit('requestOpenProduct')"
-          >
-            Add product
-          </UiButton>
+          <router-link :to="`${$route.path}/product/new`">
+            <UiButton
+              class="products-controls__button"
+            >
+              Add product
+            </UiButton>
+          </router-link>
           <UiButton class="products-controls__button" :disabled="true">Use Qilin packages</UiButton>
         </div>
         <div>
@@ -109,7 +100,7 @@ export default {
           <ui-table-row
             v-for="(product, index) in products"
             :key="index"
-            @click.native="requestOpenProduct(product)"
+            :link="`${$route.path}/product/${product.id}`"
           >
             <ui-table-cell>{{product.name}}</ui-table-cell>
             <ui-table-cell>{{product.id}}</ui-table-cell>

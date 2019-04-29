@@ -25,7 +25,20 @@ const routes = [
     path: '/projects/:id',
     component: () => import('@/pages/ProjectCard.vue'),
     meta: { layout: 'Page', isAuthRequired: true },
-    name: 'projects-card',
+    children: [
+      {
+        path: '',
+        component: () => import('@/pages/ProjectCardForm.vue'),
+        meta: { layout: 'Page', isAuthRequired: true },
+        name: 'projects-card',
+      },
+      {
+        path: 'product/:productId',
+        component: () => import('@/pages/ProjectCardProduct.vue'),
+        meta: { layout: 'Page', isAuthRequired: true },
+        name: 'ProjectCardProduct',
+      },
+    ],
   },
   {
     path: '/merchants/',

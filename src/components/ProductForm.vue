@@ -5,6 +5,7 @@ import {
   UiTextField,
   UiHeader,
   UiSwitchBox,
+  UiLangsBar,
 } from '@protocol-one/ui-kit';
 import { mapGetters } from 'vuex';
 
@@ -16,6 +17,7 @@ export default {
     UiTextField,
     UiHeader,
     UiSwitchBox,
+    UiLangsBar,
   },
 
   props: {
@@ -97,6 +99,9 @@ export default {
         :hasError="$isFieldInvalid('product.name')"
         :errorText="$getFieldErrorMessages('product.name')"
       />
+    </div>
+    <div class="field-row">
+      <UiLangsBar></UiLangsBar>
     </div>
 
     <div class="field-row">

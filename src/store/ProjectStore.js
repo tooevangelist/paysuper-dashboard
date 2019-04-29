@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { includes, mapValues, cloneDeep } from 'lodash-es';
+import { includes, mapValues } from 'lodash-es';
+import qs from 'qs';
 
 /**
  * Probobaly not needed
@@ -27,15 +28,11 @@ export default function createProjectStore({ config, notifications }) {
   return {
     state: () => ({
       project: null,
-      product: null,
     }),
 
     mutations: {
       project(state, value) {
         state.project = value;
-      },
-      product(state, value) {
-        state.product = value;
       },
     },
 
@@ -84,23 +81,33 @@ export default function createProjectStore({ config, notifications }) {
           return;
         }
         await dispatch('fetchProject', id);
+        await dispatch('fetchProductsList', id);
       },
 
-      fetchProject({ commit, dispatch, rootState }, id) {
-        return axios.get(`${config.apiUrl}/api/v1/s/project/${id}`, {
+      async fetchProject({ commit, rootState }, id) {
+        const response = await axios.get(`${config.apiUrl}/admin/api/v1/projects/${id}`, {
           headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-        })
-          .then((response) => {
-            commit('project', mapDataApiToForm(response.data));
-          })
-          .catch((error) => {
-            dispatch('setPageError', error, { root: true });
-          });
+        });
+        commit('project', mapDataApiToForm(response.data));
+      },
+
+      async fetchProductsList({ rootState }, projectId) {
+        const params = {
+          project_id: projectId,
+        };
+
+        let url = `${config.apiUrl}/admin/api/v1/products`;
+        url += `?${qs.stringify(params)}`;
+        const response = await axios.get(url, {
+          headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
+        });
+        console.log(11111, 'response.data', response.data);
+        // commit('project', mapDataApiToForm(response.data));
       },
 
       async createProject({ state, commit, rootState }) {
         const response = await axios.post(
-          `${config.apiUrl}/api/v1/s/project`,
+          `${config.apiUrl}/admin/api/v1/projects`,
           mapDataFormToApi(state.project),
           {
             headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
@@ -114,7 +121,7 @@ export default function createProjectStore({ config, notifications }) {
         dispatch('setIsLoading', true, { root: true });
         try {
           await axios.put(
-            `${config.apiUrl}/api/v1/s/project/${state.project.id}`,
+            `${config.apiUrl}/admin/api/v1/projects/${state.project.id}`,
             mapDataFormToApi(state.project),
             {
               headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
@@ -125,46 +132,6 @@ export default function createProjectStore({ config, notifications }) {
           notifications.showErrorMessage('Failed to save project');
         }
         dispatch('setIsLoading', false, { root: true });
-      },
-
-      openProduct({ commit, state }, { region, index }) {
-        const product = state.project.fixed_package[region][index];
-
-        commit('product', {
-          data: cloneDeep(product),
-          region,
-          index,
-        });
-      },
-
-      closeProduct({ commit }) {
-        commit('product', null);
-      },
-
-      createProduct({ commit }) {
-        commit('product', {
-          data: {
-            id: '',
-            name: '',
-            currency_int: '',
-            price: '',
-            is_active: true,
-          },
-          region: null,
-          index: null,
-        });
-      },
-
-      saveProduct({ commit, state }) {
-        const newProject = cloneDeep(state.project);
-        if (state.product.region && state.product.index) {
-          newProject.fixed_package[state.product.region][state.product.index] = state.product.data;
-        } else {
-          newProject.fixed_package = newProject.fixed_package || { RU: [] };
-          newProject.fixed_package.RU = newProject.fixed_package.RU || [];
-          newProject.fixed_package.RU.push(state.product.data);
-        }
-        commit('project', newProject);
       },
     },
 
