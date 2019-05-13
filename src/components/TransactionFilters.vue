@@ -59,6 +59,15 @@ export default {
     };
   },
 
+  computed: {
+    projectsTags() {
+      return this.projects.map(item => ({
+        label: item.name.en,
+        id: item.id,
+      }));
+    },
+  },
+
   created() {
     if (
       this.filters.orderID
@@ -145,7 +154,7 @@ export default {
           <UiTagInput
             label="Project"
             indent="shallow"
-            :tags="projects"
+            :tags="projectsTags"
             v-model="filters.project"
           />
         </div>

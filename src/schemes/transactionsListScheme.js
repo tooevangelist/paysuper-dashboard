@@ -14,7 +14,16 @@ const filters = {
   project: {
     defaultValue: () => [],
     queryToFilter({ queryValue, dictionaries }) {
-      return queryValue.split(',').map(id => find(dictionaries.projects, { id }));
+      return queryValue.split(',').map((id) => {
+        const item = find(dictionaries.projects, { id });
+        return {
+          id,
+          label: item.name.en,
+        };
+      });
+    },
+    queryToApiQuery({ queryValue }) {
+      return queryValue.split(',');
     },
     filterToQuery({ filterValue }) {
       return filterValue.map(item => item.id).join(',');

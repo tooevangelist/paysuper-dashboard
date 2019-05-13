@@ -106,13 +106,13 @@ export default function createTransactionsSearchStore({ config }) {
       async searchTransactions({
         state, commit, dispatch, rootState,
       }) {
-        let url = `${config.apiUrl}/api/v1/s/order`;
+        let url = `${config.apiUrl}/admin/api/v1/order`;
 
         const params = {
           ...state.apiQuery,
         };
 
-        url += `?${qs.stringify(params)}`;
+        url += `?${qs.stringify(params, { arrayFormat: 'brackets' })}`;
 
         dispatch('setIsLoading', true, { root: true });
 
@@ -155,22 +155,15 @@ export default function createTransactionsSearchStore({ config }) {
           });
       },
 
-      async fetchProjects({ commit, rootState }) {
-        const url = `${config.apiUrl}/admin/api/v1/projects/filters`;
-
-        await axios.get(
-          url,
-          { headers: { Authorization: `Bearer ${rootState.User.accessToken}` } },
-        )
-          .then((response) => {
-            if (isEmpty(response.data)) {
-              return;
-            }
-            commit('projects', response.data);
-          })
-          .catch(() => {
-
-          });
+      fetchProjects({ commit, rootState }) {
+        const query = qs.stringify({
+          merchant_id: rootState.User.Merchant.merchant.id,
+        });
+        return axios.get(`${config.apiUrl}/admin/api/v1/projects?${query}`, {
+          headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
+        }).then((response) => {
+          commit('projects', response.data.items);
+        }).catch(() => { });
       },
 
       submitFilters({ state, commit }, filters) {
