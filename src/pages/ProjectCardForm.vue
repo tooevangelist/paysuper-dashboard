@@ -105,7 +105,7 @@ export default {
   <div>
     <UiPageHeader
       :breadcrumbs="breadcrumbs"
-      :title="product ? `Product ${product.data.name}` : project.name || 'New project'"
+      :title="project.name.en || 'New project'"
     >
       <UiButton
         slot="right"

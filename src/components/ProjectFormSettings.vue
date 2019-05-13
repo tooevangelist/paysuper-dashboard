@@ -4,6 +4,8 @@ import { required, minLength, url } from 'vuelidate/lib/validators';
 import {
   UiButton, UiTextField, UiHeader, UiTextarea, UiSwitchBox,
 } from '@protocol-one/ui-kit';
+import LangTextField from '@/components/LangTextField.vue';
+import CoverImage from '@/components/CoverImage.vue';
 
 import { isEmpty } from 'lodash-es';
 
@@ -16,6 +18,8 @@ export default {
     UiHeader,
     UiTextarea,
     UiSwitchBox,
+    LangTextField,
+    CoverImage,
   },
 
   props: {
@@ -34,7 +38,7 @@ export default {
   computed: {
     createInvoiceAllowedUrls: {
       get() {
-        return this.project.create_invoice_allowed_urls.join('\n');
+        return (this.project.create_invoice_allowed_urls || []).join('\n');
       },
 
       set(value) {
@@ -47,7 +51,9 @@ export default {
     const rules = {
       project: {
         name: {
-          required,
+          en: {
+            required,
+          },
         },
         url_check_account: {
           required,
@@ -138,11 +144,13 @@ export default {
   <div class="project-form-settings">
     <UiHeader level="2" :hasMargin="true">Settings</UiHeader>
 
+    <CoverImage value=""></CoverImage>
+
     <div class="field-row">
-      <UiTextField
-        v-model="project.name"
+      <LangTextField
+        :value="project.name"
         label="Project name"
-        v-bind="getValidatedFieldProps('project.name')"
+        v-bind="getValidatedFieldProps('project.name.en')"
       />
     </div>
 
@@ -199,11 +207,6 @@ export default {
       />
       <UiButton class="generate-button" @click="generateSecretKey">Generate</UiButton>
     </div>
-
-    <UiHeader level="2" :hasMargin="true">
-      Active
-      <UiSwitchBox class="switch-box" v-model="project.is_active" />
-    </UiHeader>
   </div>
 </template>
 

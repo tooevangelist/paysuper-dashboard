@@ -20,7 +20,7 @@ export default function createProjectsListStore({ config, notifications }) {
 
       fetchProjects({ commit, rootState }) {
         const query = qs.stringify({
-          // merchant_id: rootState.User.Merchant.merchant.id,
+          merchant_id: rootState.User.Merchant.merchant.id,
         });
         return axios.get(`${config.apiUrl}/admin/api/v1/projects?${query}`, {
           headers: { Authorization: `Bearer ${rootState.User.accessToken}` },

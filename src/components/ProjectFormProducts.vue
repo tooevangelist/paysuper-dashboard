@@ -4,7 +4,6 @@ import {
   UiButton,
   UiTextField,
   UiHeader,
-  UiSwitchBox,
   UiTable,
   UiTableCell,
   UiTableRow,
@@ -19,7 +18,6 @@ export default {
     UiButton,
     UiTextField,
     UiHeader,
-    UiSwitchBox,
     UiTable,
     UiTableCell,
     UiTableRow,
@@ -69,10 +67,13 @@ export default {
   <div class="project-form-products">
     <UiHeader level="2" :hasMargin="true">
       Products
-      <UiSwitchBox class="switch-box" v-model="project.only_fixed_amounts" />
+      <StatusIcon
+        v-if="project.is_product_checkout && project.products_count > 0"
+        status="complete"
+      />
     </UiHeader>
 
-    <template v-if="project.only_fixed_amounts">
+    <template v-if="project.is_products_checkout">
       <div class="products-controls">
         <div>
           <router-link :to="`${$route.path}/product/new`">

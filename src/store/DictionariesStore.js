@@ -14,6 +14,9 @@ export default function createDictionariesStore({ config }) {
       currenciesInt(state) {
         return state.currencies.map(item => ({ label: item.name.en, value: item.code_int }));
       },
+      currenciesCode(state) {
+        return state.currencies.map(item => ({ label: item.name.en, value: item.code_a3 }));
+      },
       countriesInt(state) {
         return state.countries.map(item => ({ label: item.name.en, value: item.code_int }));
       },

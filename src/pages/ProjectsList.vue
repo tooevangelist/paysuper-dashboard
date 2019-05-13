@@ -7,7 +7,7 @@ import {
   UiTableRow,
   PageHeader,
 } from '@protocol-one/ui-kit';
-import PanelItem from '@/components/PanelItem.vue';
+import ProjectListPanelItem from '@/components/ProjectListPanelItem.vue';
 import StatusIcon from '@/components/StatusIcon.vue';
 import NoResults from '@/components/NoResults.vue';
 import ProjectsListStore from '@/store/ProjectsListStore';
@@ -15,7 +15,7 @@ import ProjectsListStore from '@/store/ProjectsListStore';
 export default {
   components: {
     Button,
-    PanelItem,
+    ProjectListPanelItem,
     UiTable,
     UiTableCell,
     UiTableRow,
@@ -59,19 +59,17 @@ export default {
       </template>
     </PageHeader>
 
-    <!-- <pre>{{projects.items}}</pre> -->
-
     <div class="content-wrapper" v-if="viewType === 'panels'">
       <div class="content-list">
-        <PanelItem
+        <ProjectListPanelItem
           v-for="project in projects.items"
           :key="project.id"
           :id="project.id"
-          :title="project.name"
+          :title="project.name.en"
           :status="project.is_active ? 'complete' : 'initial'"
           @remove="removeProject"
         />
-        <PanelItem
+        <ProjectListPanelItem
           v-if="!projects.items.length"
           title="Create your first project now"
           :isNew="true"
@@ -105,6 +103,7 @@ export default {
       </ui-table>
       <NoResults v-if="!projects.length" />
     </template>
+    <pre>{{projects.items}}</pre>
 
   </div>
 </template>

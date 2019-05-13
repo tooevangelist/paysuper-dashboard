@@ -1,5 +1,45 @@
+<script>
+import { includes } from 'lodash-es';
+import { Header } from '@protocol-one/ui-kit';
+import IconPencil from './IconPencil.vue';
+import StatusIcon from './StatusIcon.vue';
+
+export default {
+  name: 'ProjectListPanelItem',
+
+  components: {
+    IconPencil,
+    StatusIcon,
+    Header,
+  },
+
+  props: {
+    id: {
+      type: [String, Number],
+    },
+
+    title: {
+      type: String,
+    },
+
+    status: {
+      type: String,
+      default: 'initial',
+      validator(value) {
+        return includes(['initial', 'incomplete', 'complete'], value);
+      },
+    },
+
+    isNew: {
+      type: Boolean,
+      default: false,
+    },
+  },
+};
+</script>
+
 <template>
-<div class="panel-item">
+<div class="project-list-panel-item">
   <div class="header-block">
     <router-link
       class="header-link"
@@ -12,17 +52,6 @@
           title="Edit"
         >
           <IconPencil />
-        </button>
-        <button
-          class="control-button"
-          type="button"
-          title="Remove"
-          @click.prevent="$emit('remove', id)"
-        >
-          <svg viewBox="0 0 16 16" width="16" height="16" stroke="#333333" stroke-width="1">
-            <path d="M0,0 L16,16" />
-            <path d="M16,0 L0,16" />
-          </svg>
         </button>
       </div>
       <span class="id" v-if="id">{{id}}</span>
@@ -59,48 +88,9 @@
 </div>
 </template>
 
-<script>
-import { includes } from 'lodash-es';
-import { Header } from '@protocol-one/ui-kit';
-import IconPencil from './IconPencil.vue';
-import StatusIcon from './StatusIcon.vue';
-
-export default {
-  name: 'PanelItem',
-
-  components: {
-    IconPencil,
-    StatusIcon,
-    Header,
-  },
-
-  props: {
-    id: {
-      type: [String, Number],
-    },
-
-    title: {
-      type: String,
-    },
-
-    status: {
-      type: String,
-      default: 'initial',
-      validator(value) {
-        return includes(['initial', 'incomplete', 'complete'], value);
-      },
-    },
-
-    isNew: {
-      type: Boolean,
-      default: false,
-    },
-  },
-};
-</script>
 
 <style lang="scss" scoped>
-.panel-item {
+.project-list-panel-item {
   width: 30%;
   max-width: 350px;
   min-width: 200px;

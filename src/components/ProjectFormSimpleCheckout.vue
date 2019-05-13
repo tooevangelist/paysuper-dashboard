@@ -28,42 +28,14 @@ export default {
   },
 
   computed: {
-    ...mapGetters('Dictionaries', ['currenciesInt']),
-
-    isSimpleCheckout: {
-      get() {
-        return this.project.callback_protocol === 'default';
-      },
-
-      set(value) {
-        this.project.callback_protocol = value ? 'default' : 'empty';
-      },
-    },
-
-    callbackCurrency: {
-      get() {
-        return this.project.callback_currency;
-      },
-
-      set(value) {
-        this.project.callback_currency = Number(value);
-      },
-    },
-
-    limitsCurrency: {
-      get() {
-        return this.project.limits_currency;
-      },
-
-      set(value) {
-        this.project.limits_currency = Number(value);
-      },
-    },
+    ...mapGetters('Dictionaries', ['currenciesCode']),
   },
 
   validations: {
-    callbackCurrency: {
-      required,
+    project: {
+      callback_currency: {
+        required,
+      },
     },
   },
 
@@ -84,24 +56,24 @@ export default {
   <div class="project-form-simple-checkout">
     <UiHeader level="2" :hasMargin="true">
       Simple checkout
-      <UiSwitchBox class="switch-box" v-model="isSimpleCheckout" />
+      <UiSwitchBox class="switch-box" v-model="project.is_products_checkout" />
     </UiHeader>
 
     <div class="field-row">
       <UiSelect
-        v-model="callbackCurrency"
-        :options="currenciesInt"
+        v-model="project.callback_currency"
+        :options="currenciesCode"
         :required="true"
-        :hasError="$isFieldInvalid('callbackCurrency')"
-        :errorText="$getFieldErrorMessages('callbackCurrency')"
+        :hasError="$isFieldInvalid('project.callback_currency')"
+        :errorText="$getFieldErrorMessages('project.callback_currency')"
         label="Default request currency"
       />
     </div>
 
     <div class="field-row">
       <UiSelect
-        v-model="limitsCurrency"
-        :options="currenciesInt"
+        v-model="project.limits_currency"
+        :options="currenciesCode"
         label="Limits currency"
       />
     </div>

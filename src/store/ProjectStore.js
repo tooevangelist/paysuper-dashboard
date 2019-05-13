@@ -1,27 +1,12 @@
 import axios from 'axios';
-import { includes, mapValues } from 'lodash-es';
 import qs from 'qs';
 
-/**
- * Probobaly not needed
- * @todo check & remove
- */
 function mapDataFormToApi(data) {
-  return mapValues(data, (value) => {
-    if (value === '') {
-      return null;
-    }
-    return value;
-  });
+  return data;
 }
 
 function mapDataApiToForm(data) {
-  return mapValues(data, (value, key) => {
-    if (includes(['limits_currency', 'callback_currency'], key)) {
-      return value.code_int;
-    }
-    return value;
-  });
+  return data;
 }
 
 export default function createProjectStore({ config, notifications }) {
@@ -40,7 +25,11 @@ export default function createProjectStore({ config, notifications }) {
       async initState({ commit, dispatch }, id) {
         if (id === 'new') {
           commit('project', {
-            name: '',
+            name: {
+              ru: '',
+              en: '',
+            },
+            image: '',
             url_check_account: '',
             url_process_payment: '',
             url_redirect_success: '',
@@ -49,14 +38,19 @@ export default function createProjectStore({ config, notifications }) {
             create_invoice_allowed_urls: [],
 
             callback_protocol: 'default',
-            min_payment_amount: '',
-            max_payment_amount: '',
+            min_payment_amount: 0,
+            max_payment_amount: 0,
 
             callback_currency: '',
             limits_currency: '',
-            only_fixed_amounts: false,
 
-            is_active: true,
+
+            // allow_dynamic_notify_urls: false,
+            // allow_dynamic_redirect_urls: true,
+            is_products_checkout: true,
+            // notify_emails: [],
+            // send_notify_email: false,
+            // status: 0,
           });
           // commit('project', {
           //   name: 'Universe of Futurama222',
@@ -88,7 +82,7 @@ export default function createProjectStore({ config, notifications }) {
         const response = await axios.get(`${config.apiUrl}/admin/api/v1/projects/${id}`, {
           headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
         });
-        commit('project', mapDataApiToForm(response.data));
+        commit('project', mapDataApiToForm(response.data.item));
       },
 
       async fetchProductsList({ rootState }, projectId) {
@@ -108,19 +102,22 @@ export default function createProjectStore({ config, notifications }) {
       async createProject({ state, commit, rootState }) {
         const response = await axios.post(
           `${config.apiUrl}/admin/api/v1/projects`,
-          mapDataFormToApi(state.project),
+          mapDataFormToApi({
+            merchant_id: rootState.User.Merchant.merchant.id,
+            ...state.project,
+          }),
           {
             headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
           },
         );
 
-        commit('project', mapDataApiToForm(response.data));
+        commit('project', mapDataApiToForm(response.data.item));
       },
 
       async saveProject({ state, dispatch, rootState }) {
         dispatch('setIsLoading', true, { root: true });
         try {
-          await axios.put(
+          await axios.patch(
             `${config.apiUrl}/admin/api/v1/projects/${state.project.id}`,
             mapDataFormToApi(state.project),
             {
