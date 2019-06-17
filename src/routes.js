@@ -131,6 +131,11 @@ const routes = [
   },
 
   {
+    path: '/payform-test/',
+    component: () => import('@/pages/PaymentFormTest.vue'),
+  },
+
+  {
     path: '*',
     name: 'notFound',
     component: () => import('@/pages/404.vue'),
