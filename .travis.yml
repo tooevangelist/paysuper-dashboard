@@ -1,5 +1,10 @@
 language: node_js
 
+dist: trusty
+addons:
+  sonarcloud:
+    organization: "paysuper"
+
 stages:
   - test
   - name: deploy 
@@ -11,6 +16,7 @@ jobs:
     install: true
     script:
     - echo 'tests here'
+    - sonar-scanner
   - stage: deploy
     services: docker
     install: true

@@ -1,3 +1,5 @@
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=paysuper_paysuper-management-api&metric=alert_status)](https://sonarcloud.io/dashboard?id=paysuper_paysuper-management-api)
+
 # PayOne web interface
 Uses Nuxt.js
 
