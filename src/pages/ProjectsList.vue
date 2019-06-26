@@ -70,7 +70,7 @@ export default {
           @remove="removeProject"
         />
         <ProjectListPanelItem
-          v-if="!projects.items.length"
+          v-if="!projects.items"
           title="Create your first project now"
           :isNew="true"
         />
@@ -86,7 +86,7 @@ export default {
           <ui-table-cell>Creation date</ui-table-cell>
         </ui-table-row>
         <ui-table-row
-          v-for="project in projects"
+          v-for="project in projects.items"
           :key="project.id"
           :link="{
             url: `/projects/${project.id}`,
@@ -101,7 +101,7 @@ export default {
           <ui-table-cell>{{project.created_at}}</ui-table-cell>
         </ui-table-row>
       </ui-table>
-      <NoResults v-if="!projects.length" />
+      <NoResults v-if="!projects.items" />
     </template>
     <pre>{{projects.items}}</pre>
 
