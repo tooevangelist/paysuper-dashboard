@@ -41,9 +41,9 @@ export default {
       layout: this.$route.query.layout || 'page',
     };
 
-    const recaptchaScript = document.createElement('script');
-    recaptchaScript.setAttribute('src', 'https://static.protocol.one/paysuper/form/dev/paysuper-form.js');
-    document.head.appendChild(recaptchaScript);
+    const script = document.createElement('script');
+    script.setAttribute('src', 'https://static.protocol.one/paysuper/form/dev/paysuper-form.js');
+    document.head.appendChild(script);
   },
 };
 </script>
