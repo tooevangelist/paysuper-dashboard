@@ -131,8 +131,12 @@ const routes = [
   },
 
   {
-    path: '/payform-test/',
-    component: () => import('@/pages/PaymentFormTest.vue'),
+    path: '/payform-sdk/',
+    component: () => import('@/pages/PaymentFormSdk.vue'),
+  },
+  {
+    path: '/payform-page/',
+    component: () => import('@/pages/PaymentFormPage.vue'),
   },
   {
     path: '/payform-loading/',

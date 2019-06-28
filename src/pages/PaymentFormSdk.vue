@@ -8,8 +8,11 @@
 import axios from 'axios';
 
 export default {
-  async mounted() {
-    let result;
+  async created() {
+    const { data } = await axios.get('https://static.protocol.one/paysuper/sdk/dev/paysuper.js');
+    const script = document.createElement('script');
+    script.innerHTML = data;
+    document.head.appendChild(script);
     let request = {
       project: '5cd5620f06ae110001509185',
       products: ['5cda8d3938e0e2000176988b', '5cda8e6738e0e2000176988c'],
@@ -25,25 +28,12 @@ export default {
         currency,
       };
     }
-    try {
-      const { data } = await axios.post(
-        'https://p1payapi.tst.protocol.one/api/v1/order',
-        request,
-      );
-      result = data;
-    } catch (error) {
-      this.isInited = false;
-      console.error(error);
-    }
-    window.PAYSUPER_FORM_DATA = result;
 
-    window.PAYSUPER_FORM_OPTIONS = {
-      layout: this.$route.query.layout || 'page',
-    };
-
-    const script = document.createElement('script');
-    script.setAttribute('src', 'https://static.protocol.one/paysuper/form/dev/paysuper-form.js');
-    document.head.appendChild(script);
+    const paySuper = new window.PaySuper({
+      formUrl: '/payform-page/',
+      ...request,
+    });
+    paySuper.renderModal();
   },
 };
 </script>
