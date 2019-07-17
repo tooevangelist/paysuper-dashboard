@@ -142,6 +142,11 @@ const routes = [
     path: '/payform-loading/',
     component: () => import('@/pages/PaymentFormLoading.vue'),
   },
+  {
+    path: '/profile/',
+    component: () => import('@/pages/UserProfile.vue'),
+    meta: { layout: 'PageShallow' },
+  },
 
   {
     path: '*',
