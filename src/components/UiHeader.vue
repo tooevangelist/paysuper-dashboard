@@ -83,14 +83,17 @@ export default {
 
   .header._align-left & {
     justify-content: flex-start;
+    text-align: left;
   }
 
   .header._align-center & {
     justify-content: center;
+    text-align: center;
   }
 
   .header._align-right & {
     justify-content: flex-end;
+    text-align: right;
   }
 }
 </style>

@@ -1,24 +1,37 @@
 <template>
 <div class="base-checkbox">
-  <input
-    v-bind="{ checked, disabled, id }"
-    class="input"
-    type="checkbox"
-    @change="emitChange"
-  >
-  <label
-    :for="id"
-    :class="checkboxClasses"
-  >
-    <svg viewBox="0,0,50,50">
-      <path d="M12 27 L 20 35 L 40 15" />
-    </svg>
+  <label class="wrapper">
+    <div class="checkbox">
+      <input
+        v-bind="{ checked, disabled }"
+        class="input"
+        type="checkbox"
+        @change="emitChange"
+      >
+      <div :class="checkboxClasses">
+        <svg
+          class="svg-not-checked"
+          width="14" height="14" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- eslint-disable-next-line -->
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M16 2V16H2V2H16ZM16 0H2C0.9 0 0 0.9 0 2V16C0 17.1 0.9 18 2 18H16C17.1 18 18 17.1 18 16V2C18 0.9 17.1 0 16 0Z" fill="#78909C"/>
+        </svg>
+        <svg
+          class="svg-checked"
+          width="14" height="14" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- eslint-disable-next-line -->
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M16 0H2C0.9 0 0 0.9 0 2V16C0 17.1 0.9 18 2 18H16C17.1 18 18 17.1 18 16V2C18 0.9 17.1 0 16 0ZM7 14L2 9L3.4 7.6L7 11.2L14.6 3.6L16 5L7 14Z" fill="#3D7BF5"/>
+        </svg>
+      </div>
+    </div>
+    <div class="text">
+      <slot></slot>
+    </div>
   </label>
 </div>
 </template>
 
 <script>
-import { includes, uniqueId } from 'lodash-es';
+import { includes } from 'lodash-es';
 
 export default {
   model: {
@@ -50,13 +63,6 @@ export default {
     checkboxClasses() {
       return ['label', `_${this.size}`, this.disabled ? '_disabled' : ''];
     },
-    /**
-     * Unique ID for checkbox element
-     * @return {string}
-     */
-    id() {
-      return uniqueId('checkbox');
-    },
   },
   methods: {
     /**
@@ -75,16 +81,28 @@ export default {
 </script>
 
 <style scoped lang="scss">
-/** @TODO - move to gui consts, fix color and typographics consts */
-$checkbox-color: #fff;
-$checkbox-check-color: #333;
 $disabled-checkbox-color: #e1e1e1;
-$checkbox-border-color: #b1b1b1;
-$hover-checkbox-border-color: #3787ff;
 
 .base-checkbox {
-  display: inline-block;
+  display: inline-flex;
   position: relative;
+}
+
+.wrapper {
+  display: flex;
+  cursor: pointer;
+}
+
+.checkbox {
+  margin-top: 4px;
+}
+
+.svg-checked {
+  display: none;
+}
+
+.text:not(:empty) {
+  margin-left: 12px;
 }
 .input {
   height: 0;
@@ -93,45 +111,30 @@ $hover-checkbox-border-color: #3787ff;
   width: 0;
 
   &:checked + .label {
-    border-color: $hover-checkbox-border-color;
-  }
-  &:checked + .label > svg > path {
-    stroke-dashoffset: 0;
+    .svg-checked {
+      display: inline;
+    }
+    .svg-not-checked {
+      display: none;
+    }
   }
 }
 .label {
-  border-radius: 3px;
-  border: 2px solid $checkbox-border-color;
   cursor: pointer;
   display: block;
   transition: all 0.2s ease-out;
-  background-color: $checkbox-color;
-  height: 20px;
-  width: 20px;
+  height: 14px;
+  width: 14px;
 
   & > svg {
     pointer-events: none;
     vertical-align: top;
-
-    & > path {
-      fill: none;
-      stroke-dasharray: 100;
-      stroke-dashoffset: 101;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      stroke-width: 5px;
-      stroke: $checkbox-check-color;
-      transition: all 0.2s ease-out;
-    }
-  }
-
-  &:hover {
-    border-color: $hover-checkbox-border-color;
   }
 
   &._disabled {
-    background-color: $disabled-checkbox-color;
-    border-color: $disabled-checkbox-color;
+    svg path {
+      fill: $disabled-checkbox-color;
+    }
   }
 }
 </style>
