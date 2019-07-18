@@ -92,17 +92,17 @@ $button-font-color: #fff;
 $disabled-button-color: #e1e1e1;
 
 $primary-button-size: 14px;
-$button-font-style: Loto;
 
 @mixin base-button($background, $color: $button-font-color) {
   background-color: $background;
-  border-radius: 20px;
+  border-radius: 4px;
   border-width: 0;
   color: $color;
   cursor: pointer;
   display: inline-block;
   font-size: $primary-button-size;
-  font-style: $button-font-style;
+  font-family: inherit;
+  font-weight: 500;
   height: 40px;
   line-height: 40px;
   max-width: 100%;
@@ -114,14 +114,14 @@ $button-font-style: Loto;
 
   &:before {
     bottom: 1px;
-    content: '';
+    content: "";
     left: 1px;
     position: absolute;
     right: 1px;
     top: 3px;
     transition: opacity 0.3s;
     pointer-events: none;
-    border-radius: 20px;
+    border-radius: 4px;
     opacity: 0;
   }
 
@@ -158,7 +158,7 @@ $button-font-style: Loto;
   &._transparent {
     background-color: transparent;
     color: $background;
-    box-shadow: inset 0px 0px 0px 2px rgba($background, 0.6);
+    box-shadow: inset 0px 0px 0px 1px #3d7bf5;
   }
 }
 
