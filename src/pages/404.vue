@@ -1,15 +1,15 @@
 <template>
-  <PageError :errorCode="404" />
+  <ErrorPage :errorCode="404" />
 </template>
 
 <script>
-import PageError from '@/components/PageError.vue';
+import ErrorPage from '@/components/ErrorPage.vue';
 
 export default {
   name: 'Page404',
 
   components: {
-    PageError,
+    ErrorPage,
   },
 };
 </script>

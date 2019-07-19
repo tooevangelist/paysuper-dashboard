@@ -1,4 +1,5 @@
 <script>
+import { isEmpty } from 'lodash-es';
 import randomString from 'random-string';
 import { required, minLength, url } from 'vuelidate/lib/validators';
 import {
@@ -7,7 +8,6 @@ import {
 import LangTextField from '@/components/LangTextField.vue';
 import CoverImage from '@/components/CoverImage.vue';
 
-import { isEmpty } from 'lodash-es';
 
 export default {
   name: 'ProjectFormSettings',
