@@ -1,10 +1,11 @@
 <script>
 import { mapState } from 'vuex';
+import UserProfileStore from '@/store/UserProfileStore';
 import UserProfilePerson from '@/components/UserProfilePerson.vue';
 import UserProfileHelp from '@/components/UserProfileHelp.vue';
 import UserProfileCompany from '@/components/UserProfileCompany.vue';
 import StepsProgressBar from '@/components/StepsProgressBar.vue';
-import UserProfileStore from '@/store/UserProfileStore';
+import ConfirmYourEmail from '@/components/ConfirmYourEmail.vue';
 
 export default {
   name: 'PageUserProfile',
@@ -14,6 +15,7 @@ export default {
     UserProfileHelp,
     UserProfileCompany,
     StepsProgressBar,
+    ConfirmYourEmail,
   },
 
   async asyncData({ store, registerStoreModule }) {
@@ -26,6 +28,7 @@ export default {
 
   data() {
     return {
+      isComplete: false,
       steps: [
         {
           name: 'About yourself',
@@ -84,44 +87,47 @@ export default {
 <template>
 <div class="user-profile">
   <div class="wrapper">
-    <StepsProgressBar
-      class="progress-bar"
-      :stepsCount="3"
-      :currentStep="currentStepIndex + 1"
-      :currentStepName="currentStep.name"
-     />
-    <component
-      :is="currentStep.component"
-      :profile="profile"
-      @valid="handleStepComplete"
-    />
+    <ConfirmYourEmail v-if="isComplete" />
+    <template v-if="!isComplete">
+      <StepsProgressBar
+        class="progress-bar"
+        :stepsCount="3"
+        :currentStep="currentStepIndex + 1"
+        :currentStepName="currentStep.name"
+      />
+      <component
+        :is="currentStep.component"
+        :profile="profile"
+        @valid="handleStepComplete"
+      />
 
-    <div class="controls">
-      <UiButton
-        v-if="currentStepIndex > 0"
-        class="controls__button"
-        :isTransparent="true"
-        @click="goBack"
-      >
-        BACK
-      </UiButton>
-      <UiButton
-        v-if="currentStepIndex === steps.length - 1"
-        class="controls__button"
-        :disabled="!isGoNextEnabled"
-        @click="goNext"
-      >
-        DONE
-      </UiButton>
-      <UiButton
-        v-else
-        class="controls__button"
-        :disabled="!isGoNextEnabled"
-        @click="goNext"
-      >
-        NEXT
-      </UiButton>
-    </div>
+      <div class="controls">
+        <UiButton
+          v-if="currentStepIndex > 0"
+          class="controls__button"
+          :isTransparent="true"
+          @click="goBack"
+        >
+          BACK
+        </UiButton>
+        <UiButton
+          v-if="currentStepIndex === steps.length - 1"
+          class="controls__button"
+          :disabled="!isGoNextEnabled"
+          @click="isComplete = true"
+        >
+          DONE
+        </UiButton>
+        <UiButton
+          v-else
+          class="controls__button"
+          :disabled="!isGoNextEnabled"
+          @click="goNext"
+        >
+          NEXT
+        </UiButton>
+      </div>
+    </template>
   </div>
 </div>
 </template>
