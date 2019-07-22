@@ -1,36 +1,88 @@
 <script>
+import { required, maxLength } from 'vuelidate/lib/validators';
+import { onlyRusAndLat } from '@/helpers/customValidators';
+
 export default {
   name: 'UserProfileBasic',
+
+  props: {
+    profile: {
+      required: true,
+      type: Object,
+    },
+  },
 
   data() {
     return {
       positionOptions: [
         {
-          label: 'Разработка',
-          value: '11',
-        },
-        {
-          label: 'Реклама\\Маркетинг',
-          value: '22',
-        },
-        {
           label: 'CEO',
-          value: '33',
+          value: 'CEO',
         },
         {
           label: 'CTO',
-          value: '44',
+          value: 'CTO',
         },
         {
-          label: 'Развитие бизнеса',
-          value: '55',
+          label: 'CMO',
+          value: 'CMO',
         },
         {
-          label: '???',
-          value: '66',
+          label: 'CFO',
+          value: 'CFO',
+        },
+        {
+          label: 'Project Management',
+          value: 'Project Management',
+        },
+        {
+          label: 'Generic Management',
+          value: 'Generic Management',
+        },
+        {
+          label: 'Software Developer',
+          value: 'Software Developer',
+        },
+        {
+          label: 'Marketing',
+          value: 'Marketing',
+        },
+        {
+          label: 'Support',
+          value: 'Support',
         },
       ],
     };
+  },
+
+  watch: {
+    '$v.$invalid': function isInvalid(value) {
+      this.$emit('valid', !value);
+    },
+  },
+
+  validations: {
+    profile: {
+      personal: {
+        first_name: {
+          required,
+          maxLength: maxLength(30),
+          onlyRusAndLat,
+        },
+        last_name: {
+          required,
+          maxLength: maxLength(30),
+          onlyRusAndLat,
+        },
+        position: {
+          required,
+        },
+      },
+    },
+  },
+
+  mounted() {
+    this.$v.$touch();
   },
 };
 </script>
@@ -47,9 +99,19 @@ export default {
     Please tell us how to contact you and what role you play in <br>
     your company.
   </p>
-  <UiTextField label="First name" />
-  <UiTextField label="Last name" />
-  <UiSelect label="Your position or role" :options="positionOptions" />
+  <UiTextField
+    label="First name"
+    v-model="profile.personal.first_name"
+  />
+  <UiTextField
+    label="Last name"
+    v-model="profile.personal.last_name"
+  />
+  <UiSelect
+    label="Your position or role"
+    :options="positionOptions"
+    v-model="profile.personal.position"
+  />
 </div>
 </template>
 

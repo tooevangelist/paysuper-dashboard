@@ -4,8 +4,10 @@
     "between": "Enter value from %min% to %max%",
     "email": "Enter correct email",
     "minLength": "The value is too short",
+    "maxLength": "The value is too long",
     "wrongFormatType": "Wrong value format type",
-    "url": "Enter correct URL"
+    "url": "Enter correct URL",
+    "onlyRusAndLat": "Only latin and russian letters are allowed"
   },
   "orderID": "Order #",
   "account": "Account",
