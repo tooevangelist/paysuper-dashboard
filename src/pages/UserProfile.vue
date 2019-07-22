@@ -46,7 +46,7 @@ export default {
           isValid: false,
         },
       ],
-      currentStepIndex: 2,
+      currentStepIndex: 0,
     };
   },
 
