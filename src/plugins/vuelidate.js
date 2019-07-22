@@ -21,7 +21,7 @@ function $getFieldErrorMessages(fieldPath, errorsToExpose) {
     const message = this.$t(`errorMessages.${name}`);
     const params = field.$params[name];
     return message.replace(/%(.+?)%/g, (a, variable) => params[variable]);
-  }).join(', ');
+  }).join('; ');
 }
 
 function $isFieldInvalid(fieldPath) {
