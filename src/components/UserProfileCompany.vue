@@ -243,6 +243,7 @@ export default {
     <UiTextField
       label="Company name"
       v-model="profile.company.company_name"
+      :required="true"
       :hasError="$isFieldInvalid('profile.company.company_name')"
       :errorText="$getFieldErrorMessages(
         'profile.company.company_name', ['maxLength', 'onlyRusAndLat']
@@ -251,11 +252,18 @@ export default {
     <UiTextField
       label="Website"
       v-model="profile.company.website"
+      :required="true"
     />
-    <UiSelect label="Annual income" v-model="annualIncome" :options="annualIncomeOptions" />
+    <UiSelect
+      label="Annual income"
+      v-model="annualIncome"
+      :options="annualIncomeOptions"
+      :required="true"
+    />
     <UiSelect
       label="Number of employees"
       v-model="employeesNumber"
+      :required="true"
       :options="employeesNumberOptions"
     />
   </div>

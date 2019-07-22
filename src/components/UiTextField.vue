@@ -194,7 +194,7 @@ $left-indent: 12px;
   margin-left: 12px;
 
   &:after {
-    color: #f00;
+    color: #ea3d2f;
   }
 }
 .additional {

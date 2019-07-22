@@ -102,6 +102,7 @@ export default {
   <UiTextField
     label="First name"
     v-model="profile.personal.first_name"
+    :required="true"
     :hasError="$isFieldInvalid('profile.personal.first_name')"
     :errorText="$getFieldErrorMessages(
       'profile.personal.first_name', ['maxLength', 'onlyRusAndLat']
@@ -110,6 +111,7 @@ export default {
   <UiTextField
     label="Last name"
     v-model="profile.personal.last_name"
+    :required="true"
     :hasError="$isFieldInvalid('profile.personal.last_name')"
     :errorText="$getFieldErrorMessages(
       'profile.personal.last_name', ['maxLength', 'onlyRusAndLat']
@@ -117,6 +119,7 @@ export default {
   />
   <UiSelect
     label="Your position or role"
+    :required="true"
     :options="positionOptions"
     v-model="profile.personal.position"
   />
