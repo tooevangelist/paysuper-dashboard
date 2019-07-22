@@ -112,7 +112,8 @@ $focus-input-color: #3787ff;
 $error-input-color: #ff6f6f;
 
 $primary-input-size: 16px;
-$secondary-input-size: 14px;
+$secondary-input-size: 12px;
+$left-indent: 12px;
 
 .text-field {
   display: inline-block;
@@ -132,7 +133,7 @@ $secondary-input-size: 14px;
   height: 32px;
   line-height: 32px;
   outline: none;
-  padding: 0;
+  padding: 0 0 0 12px;
   transition: border-color 0.2s ease-out;
   width: 100%;
 
@@ -143,7 +144,7 @@ $secondary-input-size: 14px;
   &:focus ~ .label,
   &:not(:focus):not(._empty) ~ .label {
     width: 50%;
-    transform: translateY(-24px) scale(0.875, 0.875);
+    transform: translateY(-24px) scale(0.75, 0.75);
   }
   &:focus ~ .label {
     pointer-events: auto;
@@ -190,6 +191,7 @@ $secondary-input-size: 14px;
   transform-origin: left;
   transition: transform 0.2s ease-out, color 0.2s linear, width 0.1s ease-out;
   width: 100%;
+  margin-left: 12px;
 
   &:after {
     color: #f00;
@@ -203,6 +205,7 @@ $secondary-input-size: 14px;
 }
 .error {
   bottom: 0;
+  left: $left-indent;
   color: $error-input-color;
   display: block;
   font-size: $secondary-input-size;

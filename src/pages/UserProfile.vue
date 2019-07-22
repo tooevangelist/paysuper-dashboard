@@ -1,8 +1,10 @@
 <script>
+import { mapState } from 'vuex';
 import UserProfilePerson from '@/components/UserProfilePerson.vue';
 import UserProfileHelp from '@/components/UserProfileHelp.vue';
 import UserProfileCompany from '@/components/UserProfileCompany.vue';
 import StepsProgressBar from '@/components/StepsProgressBar.vue';
+import UserProfileStore from '@/store/UserProfileStore';
 
 export default {
   name: 'PageUserProfile',
@@ -14,33 +16,56 @@ export default {
     StepsProgressBar,
   },
 
+  async asyncData({ store, registerStoreModule }) {
+    try {
+      await registerStoreModule('UserProfile', UserProfileStore);
+    } catch (error) {
+      store.dispatch('setPageError', error);
+    }
+  },
+
   data() {
     return {
       steps: [
         {
           name: 'About yourself',
           component: 'UserProfilePerson',
+          code: 'person',
+          isValid: false,
         },
         {
           name: 'How we can help',
           component: 'UserProfileHelp',
+          code: 'help',
+          isValid: false,
         },
         {
           name: 'About your company and games',
           component: 'UserProfileCompany',
+          code: 'company',
+          isValid: false,
         },
       ],
-      currentStepIndex: 0,
+      currentStepIndex: 2,
     };
   },
 
   computed: {
+    ...mapState('UserProfile', ['profile']),
     currentStep() {
       return this.steps[this.currentStepIndex];
+    },
+
+    isGoNextEnabled() {
+      return this.currentStep.isValid;
     },
   },
 
   methods: {
+    handleStepComplete(value) {
+      this.currentStep.isValid = value;
+    },
+
     goNext() {
       if (this.currentStepIndex < this.steps.length - 1) {
         this.currentStepIndex += 1;
@@ -65,7 +90,11 @@ export default {
       :currentStep="currentStepIndex + 1"
       :currentStepName="currentStep.name"
      />
-    <component :is="currentStep.component" />
+    <component
+      :is="currentStep.component"
+      :profile="profile"
+      @valid="handleStepComplete"
+    />
 
     <div class="controls">
       <UiButton
@@ -77,7 +106,17 @@ export default {
         BACK
       </UiButton>
       <UiButton
+        v-if="currentStepIndex === steps.length - 1"
         class="controls__button"
+        :disabled="!isGoNextEnabled"
+        @click="goNext"
+      >
+        DONE
+      </UiButton>
+      <UiButton
+        v-else
+        class="controls__button"
+        :disabled="!isGoNextEnabled"
         @click="goNext"
       >
         NEXT

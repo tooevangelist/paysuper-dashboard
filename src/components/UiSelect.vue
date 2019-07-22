@@ -197,6 +197,7 @@ $hover-option-color: #deebfa;
 
 $primary-input-size: 16px;
 $secondary-input-size: 14px;
+$left-indent: 12px;
 
 .select-field {
   background-color: $input-background-color;
@@ -223,8 +224,10 @@ $secondary-input-size: 14px;
     & > .label {
       pointer-events: auto;
       width: 50%;
-      transform: translateY(-24px) scale(0.875, 0.875);
+      transform: translateY(-24px) scale(0.75, 0.75);
       border-color: transparent;
+      margin-left: $left-indent;
+      padding-left: 0;
     }
 
     & > .selected {
@@ -285,11 +288,12 @@ $secondary-input-size: 14px;
   text-overflow: ellipsis;
   overflow: hidden;
   border-bottom: 1px solid #e5e5e5;
+  padding-left: $left-indent;
 }
 .box {
   background-color: $input-background-color;
   box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.1);
-  left: -16px;
+  left: -4px;
   position: absolute;
   z-index: 10;
   text-overflow: ellipsis;
@@ -365,6 +369,7 @@ input {
   width: 100%;
   border-bottom: 1px solid #e5e5e5;
   height: 32px;
+  padding-left: $left-indent;
 
   &._required {
     &:after {
@@ -381,6 +386,7 @@ input {
 }
 .error {
   bottom: 0;
+  left: $left-indent;
   color: $error-input-color;
   display: block;
   font-size: $secondary-input-size;

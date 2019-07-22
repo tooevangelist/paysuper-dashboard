@@ -1,26 +1,16 @@
 <template>
-<div class="base-checkbox">
+<div class="ui-radio">
   <label class="wrapper">
-    <div class="checkbox">
+    <div class="radio">
       <input
         v-bind="{ checked, disabled }"
         class="input"
-        type="checkbox"
+        type="radio"
         @change="emitChange"
+        :checked="isRadioChecked"
       >
-      <div :class="checkboxClasses">
-        <svg
-          class="svg-not-checked"
-          width="14" height="14" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- eslint-disable-next-line -->
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M16 2V16H2V2H16ZM16 0H2C0.9 0 0 0.9 0 2V16C0 17.1 0.9 18 2 18H16C17.1 18 18 17.1 18 16V2C18 0.9 17.1 0 16 0Z" fill="#78909C"/>
-        </svg>
-        <svg
-          class="svg-checked"
-          width="14" height="14" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- eslint-disable-next-line -->
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M16 0H2C0.9 0 0 0.9 0 2V16C0 17.1 0.9 18 2 18H16C17.1 18 18 17.1 18 16V2C18 0.9 17.1 0 16 0ZM7 14L2 9L3.4 7.6L7 11.2L14.6 3.6L16 5L7 14Z" fill="#3D7BF5"/>
-        </svg>
+      <div :class="radioClasses">
+
       </div>
     </div>
     <div class="text">
@@ -35,10 +25,16 @@ import { includes } from 'lodash-es';
 
 export default {
   model: {
-    prop: 'checked',
+    prop: 'matchValue',
     event: 'change',
   },
   props: {
+    value: {
+      type: String,
+    },
+    matchValue: {
+      type: String,
+    },
     checked: {
       default: false,
       type: Boolean,
@@ -57,11 +53,19 @@ export default {
   },
   computed: {
     /**
-     * Classes for checkbox
+     * Classes for radio
      * @return {Array<string>}
      */
-    checkboxClasses() {
+    radioClasses() {
       return ['label', `_${this.size}`, this.disabled ? '_disabled' : ''];
+    },
+
+    isRadioChecked() {
+      if (this.value && this.matchValue) {
+        return this.value === this.matchValue;
+      }
+
+      return this.checked;
     },
   },
   methods: {
@@ -74,16 +78,17 @@ export default {
         return;
       }
 
-      this.$emit('change', event.target.checked);
+      this.$emit('change', this.value ? this.value : event.target.checked);
     },
   },
 };
 </script>
 
 <style scoped lang="scss">
-$disabled-checkbox-color: #e1e1e1;
+$checked-radio-color: #3d7bf5;
+$disabled-radio-color: #e1e1e1;
 
-.base-checkbox {
+.ui-radio {
   display: inline-flex;
   position: relative;
   padding-left: 12px;
@@ -94,8 +99,8 @@ $disabled-checkbox-color: #e1e1e1;
   cursor: pointer;
 }
 
-.checkbox {
-  margin-top: 4px;
+.radio {
+  margin-top: 3px;
 }
 
 .svg-checked {
@@ -112,30 +117,22 @@ $disabled-checkbox-color: #e1e1e1;
   width: 0;
 
   &:checked + .label {
-    .svg-checked {
-      display: inline;
-    }
-    .svg-not-checked {
-      display: none;
-    }
+    border-color: $checked-radio-color;
+    background: $checked-radio-color;
+    box-shadow: inset 0 0 0 2.5px #fff;
   }
 }
 .label {
   cursor: pointer;
   display: block;
-  transition: all 0.2s ease-out;
-  height: 14px;
-  width: 14px;
-
-  & > svg {
-    pointer-events: none;
-    vertical-align: top;
-  }
+  height: 16px;
+  width: 16px;
+  border: 2px solid #78909c;
+  border-radius: 50%;
 
   &._disabled {
-    svg path {
-      fill: $disabled-checkbox-color;
-    }
+    border-color: $disabled-radio-color;
+    background: $disabled-radio-color;
   }
 }
 </style>
