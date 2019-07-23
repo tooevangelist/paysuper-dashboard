@@ -79,9 +79,16 @@ const routes = [
   },
   {
     path: '/dashboard/',
-    component: () => import('@/pages/dashboard.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
-    name: 'dashboard',
+    component: () => import('@/pages/Dashboard.vue'),
+    meta: { layout: 'DashboardShallow' },
+    children: [
+      {
+        path: '',
+        component: () => import('@/components/DashboardContent.vue'),
+        meta: { layout: 'DashboardShallow' },
+        name: 'dashboard',
+      },
+    ],
   },
   {
     path: '/company/',
