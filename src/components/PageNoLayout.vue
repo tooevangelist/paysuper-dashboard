@@ -5,7 +5,7 @@ export default {
 </script>
 
 <template>
-<div>
+<div class="template-page-no-layout">
   <slot></slot>
 </div>
 </template>
@@ -18,32 +18,38 @@ body {
   font-family: Lato, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;
   line-height: 1.25;
-}
 
-a {
-  text-decoration: none;
-  color: #2f6ecd;
-
-  &:hover {
-    text-decoration: underline;
+  * {
+    box-sizing: border-box;
   }
 }
-
-* {
-  box-sizing: border-box;
+body,
+html {
+  display: flex;
+  flex-direction: column;
 }
+.template-page-no-layout {
+  a {
+    text-decoration: none;
+    color: #2f6ecd;
 
-p {
-  margin: 0;
-}
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 
-ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
+  p {
+    margin: 0;
+  }
 
-label {
-  margin: 0;
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  label {
+    margin: 0;
+  }
 }
 </style>

@@ -1,17 +1,19 @@
 <script>
 import { mapState } from 'vuex';
+import ErrorPage from '@/components/ErrorPage.vue';
+import Layout from '@/components/Layout.vue';
 import Page from '@/components/Page.vue';
 import PageNoLayout from '@/components/PageNoLayout.vue';
 import PageShallow from '@/components/PageShallow.vue';
-import ErrorPage from '@/components/ErrorPage.vue';
 
 export default {
   name: 'App',
   components: {
+    ErrorPage,
+    Layout,
     Page,
     PageNoLayout,
     PageShallow,
-    ErrorPage,
   },
   computed: {
     ...mapState(['pageError']),

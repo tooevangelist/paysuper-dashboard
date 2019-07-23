@@ -79,8 +79,8 @@ const routes = [
   },
   {
     path: '/dashboard/',
-    component: () => import('@/pages/dashboard.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
+    component: () => import('@/pages/Dashboard.vue'),
+    meta: { layout: 'Layout' },
     name: 'dashboard',
   },
   {

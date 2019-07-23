@@ -11,7 +11,7 @@ export default {
 </script>
 
 <template>
-<div class="page-shallow">
+<div class="template-page-shallow">
   <div class="header">
     <h1 class="title">Pay Super</h1>
     <LocaleSwitcher />
@@ -33,17 +33,22 @@ body {
   font-family: "Roboto", sans-serif;
   font-size: 16px;
   line-height: 24px;
-  color: #3e4345;
+}
+body,
+html {
+  display: flex;
+  flex-direction: column;
 }
 </style>
 
 
 <style lang="scss" scoped>
-.page-shallow {
+.template-page-shallow {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   min-height: 100vh;
+  color: #3e4345;
 }
 
 .header {
