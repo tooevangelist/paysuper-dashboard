@@ -30,6 +30,12 @@ export default {
 <style lang="scss">
 @import url("https://fonts.googleapis.com/css?family=Quicksand:400,500|Roboto&display=swap");
 
+body,
+html {
+  display: flex;
+  flex-direction: column;
+}
+
 .template-layout {
   font-family: "Roboto", sans-serif;
   font-size: 14px;

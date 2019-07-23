@@ -34,6 +34,11 @@ body {
   font-size: 16px;
   line-height: 24px;
 }
+body,
+html {
+  display: flex;
+  flex-direction: column;
+}
 </style>
 
 
