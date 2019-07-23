@@ -1,7 +1,11 @@
 <script>
+import { directive as clickaway } from 'vue-clickaway';
 import locales from '@/locales/scheme';
 
 export default {
+  directives: {
+    clickaway,
+  },
   data() {
     return {
       isOpened: false,
@@ -35,6 +39,7 @@ export default {
 <div
   class="locale-switcher"
   :class="{ '_opened': isOpened }"
+  v-clickaway="hide"
 >
   <span
     class="selected"
@@ -125,12 +130,13 @@ $hover-background-color: #f7f9fa;
   padding: 5px 20px;
   transition: all 0.2s ease-out;
 
-  &:hover {
+  &:hover:not(._selected) {
     background: $hover-background-color;
   }
 
   &._selected {
     color: $selected-text-color;
+    cursor: default;
   }
 }
 </style>
