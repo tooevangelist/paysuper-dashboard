@@ -147,6 +147,11 @@ body {
     box-sizing: border-box;
   }
 }
+body,
+html {
+  display: flex;
+  flex-direction: column;
+}
 .template-page {
   & a {
     text-decoration: none;

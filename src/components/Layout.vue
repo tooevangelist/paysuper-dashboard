@@ -21,7 +21,7 @@ export default {
     </aside>
 
     <section class="content">
-      <RouterView />
+      <slot />
     </section>
   </main>
 </div>

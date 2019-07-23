@@ -23,6 +23,11 @@ body {
     box-sizing: border-box;
   }
 }
+body,
+html {
+  display: flex;
+  flex-direction: column;
+}
 .template-page-no-layout {
   & a {
     text-decoration: none;
