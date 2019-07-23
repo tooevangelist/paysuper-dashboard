@@ -2,7 +2,7 @@
 import { includes } from 'lodash-es';
 
 export default {
-  name: 'DashboardHeader',
+  name: 'LayoutHeader',
   props: {
     projectName: {
       required: true,
@@ -50,7 +50,7 @@ export default {
 <UiPageHeader>
   <template slot="left">
     <a href="#" class="logo">
-      <IconDashboardLogo />
+      <IconLayoutLogo />
     </a>
 
     <div class="project">

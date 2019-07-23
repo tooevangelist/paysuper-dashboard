@@ -1,12 +1,12 @@
 <script>
 export default {
-  name: 'DashboardContent',
+  name: 'LayoutAside',
 };
 </script>
 
 <template>
 <div>
-  Content
+  Aside
 </div>
 </template>
 

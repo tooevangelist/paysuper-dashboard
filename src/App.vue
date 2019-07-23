@@ -1,7 +1,7 @@
 <script>
 import { mapState } from 'vuex';
-import DashboardShallow from '@/components/DashboardShallow.vue';
 import ErrorPage from '@/components/ErrorPage.vue';
+import Layout from '@/components/Layout.vue';
 import Page from '@/components/Page.vue';
 import PageNoLayout from '@/components/PageNoLayout.vue';
 import PageShallow from '@/components/PageShallow.vue';
@@ -9,8 +9,8 @@ import PageShallow from '@/components/PageShallow.vue';
 export default {
   name: 'App',
   components: {
-    DashboardShallow,
     ErrorPage,
+    Layout,
     Page,
     PageNoLayout,
     PageShallow,
