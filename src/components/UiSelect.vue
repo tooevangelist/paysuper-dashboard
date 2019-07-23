@@ -2,15 +2,23 @@
 <div
   v-clickaway="blur"
   :class="selectClasses"
-  @click="focused ? blur() : focus()"
 >
-  <span
-    v-if="label"
-    :class="['label', { '_required': required }]"
-    :title="label"
+  <div
+    class="wrapper"
+    @click="focused ? blur() : focus()"
   >
-    {{ label }}
-  </span>
+    <span
+      v-if="label"
+      class="label"
+      :class="{ '_required': required }"
+      :title="label"
+    >
+      {{ label }}
+    </span>
+    <span class="selected">
+      {{ selectedLabel }}
+    </span>
+  </div>
   <span
     v-if="isVisibleError"
     class="error"
@@ -24,9 +32,6 @@
     :title="additionalInfo"
   >
     {{ additionalInfo }}
-  </span>
-  <span class="selected">
-    {{ selectedLabel }}
   </span>
   <div class="box">
     <div class="options">
@@ -174,11 +179,7 @@ export default {
   methods: {
     emitChange({ target: { value } }) {
       this.$emit('input', value);
-      // ie11 bugfix
-      // иначе сразу после этого срабатывает focus и окно не закрывается
-      this.$nextTick(() => {
-        this.blur();
-      });
+      this.blur();
     },
     focus() {
       this.focused = true;
@@ -207,7 +208,6 @@ $left-indent: 12px;
   background-color: $input-background-color;
   box-sizing: border-box;
   color: $primary-input-color;
-  cursor: pointer;
   display: inline-block;
   vertical-align: top;
   font-size: $primary-input-size;
@@ -225,7 +225,7 @@ $left-indent: 12px;
   }
 
   &:not(._empty) {
-    & > .label {
+    .label {
       pointer-events: auto;
       width: 50%;
       transform: translateY(-24px) scale(0.75, 0.75);
@@ -234,7 +234,7 @@ $left-indent: 12px;
       padding-left: 0;
     }
 
-    & > .selected {
+    .selected {
       transform: scaleY(1);
     }
 
@@ -243,13 +243,13 @@ $left-indent: 12px;
         border-top-color: $focus-input-color;
       }
 
-      & > .label {
+      .label {
         pointer-events: none;
         width: 100%;
         transform: translateY(0) scale(1, 1);
       }
 
-      & > .selected {
+      .selected {
         transform: scaleY(0);
       }
     }
@@ -260,7 +260,7 @@ $left-indent: 12px;
       border-top-color: $focus-input-color;
     }
 
-    & > .label {
+    .label {
       border-color: transparent;
       color: $focus-input-color;
     }
@@ -271,7 +271,7 @@ $left-indent: 12px;
   }
 
   &._error {
-    & > .label {
+    .label {
       border-color: $error-input-color;
     }
   }
@@ -280,6 +280,9 @@ $left-indent: 12px;
     color: $secondary-input-color;
     pointer-events: none;
   }
+}
+.wrapper {
+  cursor: pointer;
 }
 .selected {
   display: block;
