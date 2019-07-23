@@ -47,8 +47,8 @@ export default {
 </script>
 
 <template>
-<UiPageHeader>
-  <template slot="left">
+<div class="layout-header">
+  <div class="left">
     <a href="#" class="logo">
       <IconLayoutLogo />
     </a>
@@ -79,9 +79,9 @@ export default {
         </UiTip>
       </div>
     </div>
-  </template>
+  </div>
 
-  <template slot="right">
+  <div class="right">
     <a href="#" class="feedback">Leave Feedback About This Page</a>
     <a href="#" class="right-icon">
       <IconSettings />
@@ -118,11 +118,34 @@ export default {
     <a href="#" class="right-icon icon-user">
       <IconUser />
     </a>
-  </template>
-</UiPageHeader>
+  </div>
+</div>
 </template>
 
 <style lang="scss" scoped>
+.layout-header {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
+  width: 100%;
+  padding: 4px 16px;
+  background: #fff;
+  box-shadow: 0px 1px 2px rgba(8, 35, 48, 0.24), 0px 2px 6px rgba(8, 35, 48, 0.16);
+  flex-wrap: wrap;
+  align-content: stretch;
+}
+.left,
+.right {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  padding: 8px 0;
+}
+.left {
+  margin-right: 16px;
+}
 .logo {
   width: 40px;
   height: 40px;

@@ -42,7 +42,7 @@ html {
   line-height: 20px;
   color: #5e6366;
 
-  & a {
+  a {
     display: inline-block;
     text-decoration: none;
     color: #78909C;
@@ -53,20 +53,20 @@ html {
       color: #3d7bf5;
     }
   }
-  & *,
-  & *::before,
-  & *::after {
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
   }
-  & p {
+  p {
     margin: 0;
   }
-  & ul {
+  ul {
     list-style: none;
     margin: 0;
     padding: 0;
   }
-  & label {
+  label {
     margin: 0;
   }
 }

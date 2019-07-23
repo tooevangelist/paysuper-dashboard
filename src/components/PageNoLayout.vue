@@ -19,7 +19,7 @@ body {
   font-size: 16px;
   line-height: 1.25;
 
-  & * {
+  * {
     box-sizing: border-box;
   }
 }
@@ -29,7 +29,7 @@ html {
   flex-direction: column;
 }
 .template-page-no-layout {
-  & a {
+  a {
     text-decoration: none;
     color: #2f6ecd;
 
@@ -38,17 +38,17 @@ html {
     }
   }
 
-  & p {
+  p {
     margin: 0;
   }
 
-  & ul {
+  ul {
     list-style: none;
     margin: 0;
     padding: 0;
   }
 
-  & label {
+  label {
     margin: 0;
   }
 }
