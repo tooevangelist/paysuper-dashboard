@@ -47,7 +47,7 @@
           type="radio"
           :required="required"
           :value="option.value"
-          @input="emitChange"
+          @change="emitChange"
         >
       </label>
     </div>
@@ -173,8 +173,12 @@ export default {
   },
   methods: {
     emitChange({ target: { value } }) {
-      this.blur();
       this.$emit('input', value);
+      // ie11 bugfix
+      // иначе сразу после этого срабатывает focus и окно не закрывается
+      this.$nextTick(() => {
+        this.blur();
+      });
     },
     focus() {
       this.focused = true;
@@ -343,11 +347,12 @@ $left-indent: 12px;
     color: $secondary-input-color;
   }
 }
-input {
-  height: 0;
+.input {
+  height: 0px;
   visibility: hidden;
-  width: 0;
+  width: 0px;
 }
+
 .additional,
 .label {
   display: block;
