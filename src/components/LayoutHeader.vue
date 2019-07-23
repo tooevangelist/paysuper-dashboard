@@ -82,7 +82,7 @@ export default {
   </template>
 
   <template slot="right">
-    <a href="#" class="feedback">Leave Feedback</a>
+    <a href="#" class="feedback">Leave Feedback About This Page</a>
     <a href="#" class="right-icon">
       <IconSettings />
     </a>
