@@ -1,7 +1,11 @@
 <script>
+import { directive as clickaway } from 'vue-clickaway';
 import locales from '@/locales/scheme';
 
 export default {
+  directives: {
+    clickaway,
+  },
   data() {
     return {
       isOpened: false,
@@ -35,6 +39,7 @@ export default {
 <div
   class="locale-switcher"
   :class="{ '_opened': isOpened }"
+  v-clickaway="hide"
 >
   <span
     class="selected"
