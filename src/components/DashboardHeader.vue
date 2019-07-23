@@ -19,11 +19,29 @@ export default {
   data() {
     return {
       hasStatusOpened: false,
-      statusNames: {
-        test: 'Test Mode',
-        active: 'Active',
+      hasInfoOpened: false,
+      statuses: {
+        test: {
+          title: 'Test Mode',
+          text: 'You can sell products only after the signing of License Agreement and then your account will be “Active”',
+        },
+        active: {
+          title: 'Active',
+          text: '',
+        },
       },
+      infoItems: [
+        { link: '#', icon: 'IconSupport', text: 'Support' },
+        { link: '#', icon: 'IconQuestion', text: 'FAQ' },
+        { link: '#', icon: 'IconDocumentation', text: 'Documentation' },
+        { link: '#', icon: 'IconPen', text: 'Leave Feedback' },
+      ],
     };
+  },
+  computed: {
+    currentStatus() {
+      return this.statuses[this.status] || {};
+    },
   },
 };
 </script>
@@ -41,22 +59,59 @@ export default {
         :class="['status', `_${status}`, { '_opened': hasStatusOpened }]"
         @click="hasStatusOpened = !hasStatusOpened"
       >
-        {{ statusNames[status] }}
+        {{ currentStatus.title }}
         <IconQuestion
           v-if="status === 'test'"
           class="icon-question"
         />
+
+        <UiTip
+          innerPosition="left"
+          position="bottom"
+          width="calc(100vw - 100px)"
+          maxWidth="280px"
+          :visible="hasStatusOpened"
+        >
+          <div class="status-box">
+            <div class="status-title">{{ currentStatus.title }}</div>
+            <div class="status-text">{{ currentStatus.text }}</div>
+          </div>
+        </UiTip>
       </div>
     </div>
   </template>
+
   <template slot="right">
-    <a href="#" class="feedback">Leave Feedback About This Page</a>
+    <a href="#" class="feedback">Leave Feedback</a>
     <a href="#" class="right-icon">
       <IconSettings />
     </a>
-    <a href="#" class="right-icon">
+    <span
+      class="right-icon"
+      @click="hasInfoOpened = !hasInfoOpened"
+    >
       <IconInfo />
-    </a>
+
+      <UiTip
+        innerPosition="right"
+        position="bottom"
+        width="calc(100vw - 140px)"
+        maxWidth="220px"
+        :visible="hasInfoOpened"
+      >
+        <div class="info-box">
+          <a
+            v-for="(item, index) in infoItems"
+            :key="index"
+            class="info-item"
+            :href="item.link"
+          >
+            <component :is="item.icon" class="info-icon" />
+            <div class="info-text">{{ item.text }}</div>
+          </a>
+        </div>
+      </UiTip>
+    </span>
     <a href="#" class="right-icon">
       <IconNotify />
     </a>
@@ -93,6 +148,7 @@ export default {
   text-decoration: none;
 }
 .status {
+  position: relative;
   display: flex;
   align-content: center;
   align-items: center;
@@ -122,6 +178,24 @@ export default {
     fill: #919699;
   }
 }
+.status-box {
+  padding: 24px;
+}
+.status-title {
+  font-family: Quicksand;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 28px;
+  letter-spacing: 0.15px;
+  color: #f3aa18;
+}
+.status-text {
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  color: #3E4345;
+  margin-top: 16px;
+}
 .feedback {
   font-size: 12px;
   line-height: 20px;
@@ -142,6 +216,7 @@ export default {
   background-color: transparent;
   transition: background-color 0.2s ease-out;
   cursor: pointer;
+  position: relative;
 
   &:hover {
     background-color: #f1f3f4;
@@ -149,5 +224,34 @@ export default {
 }
 .icon-user {
   border: 1px solid #c6cacc;
+}
+.info-box {
+  padding: 8px 0;
+  display: flex;
+  flex-direction: column;
+}
+.info-item {
+  display: flex;
+  height: 40px;
+  background-color: transparent;
+  align-content: center;
+  align-items: center;
+  transition: background-color 0.2s ease-out, color 0.2s ease-out;
+  color: #000;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(#3d7bf5, 0.1);
+  }
+}
+.info-icon {
+  margin-left: 20px;
+  margin-right: 22px;
+  width: 16px;
+  height: 16px;
+
+  .info-item:hover & {
+    fill: #3d7bf5;
+  }
 }
 </style>
