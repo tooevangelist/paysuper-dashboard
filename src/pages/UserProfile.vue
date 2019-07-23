@@ -136,6 +136,7 @@ export default {
 
 <style lang="scss" scoped>
 .user-profile {
+  padding-bottom: 40px;
 }
 
 .wrapper {
