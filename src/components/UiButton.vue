@@ -87,7 +87,7 @@ export default {
 $blue-button-color: #2f6ecd;
 $orange-button-color: #ff6f6f;
 $purple-button-color: #8077e7;
-$green-button-color: #009d19;
+$green-button-color: #2fa84f;
 $button-font-color: #fff;
 $disabled-button-color: #e1e1e1;
 
