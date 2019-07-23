@@ -1,6 +1,12 @@
 <script>
+import LocaleSwitcher from '@/components/LocaleSwitcher.vue';
+
 export default {
   name: 'PageShallow',
+
+  components: {
+    LocaleSwitcher,
+  },
 };
 </script>
 
@@ -8,7 +14,7 @@ export default {
 <div class="page-shallow">
   <div class="header">
     <h1 class="title">Pay Super</h1>
-    <div class="locale-switcher">EN</div>
+    <LocaleSwitcher />
   </div>
   <main class="content">
     <slot></slot>
@@ -54,12 +60,6 @@ body {
   line-height: 24px;
   color: #000000;
   font-family: "Quicksand", sans-serif;
-}
-
-.locale-switcher {
-  font-size: 14px;
-  line-height: 20px;
-  color: #3e4345;
 }
 
 .content {

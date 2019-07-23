@@ -49,7 +49,7 @@ export default {
           isValid: false,
         },
       ],
-      currentStepIndex: 0,
+      currentStepIndex: 2,
     };
   },
 
@@ -113,6 +113,7 @@ export default {
         <UiButton
           v-if="currentStepIndex === steps.length - 1"
           class="controls__button"
+          color="green"
           :disabled="!isGoNextEnabled"
           @click="isComplete = true"
         >

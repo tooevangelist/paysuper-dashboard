@@ -374,7 +374,7 @@ input {
   &._required {
     &:after {
       content: "*";
-      color: #f00;
+      color: #ea3d2f;
     }
   }
 }
