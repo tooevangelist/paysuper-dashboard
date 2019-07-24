@@ -1,19 +1,39 @@
 <script>
 import LayoutAside from '@/components/LayoutAside.vue';
 import LayoutHeader from '@/components/LayoutHeader.vue';
+import LayoutSubHeader from '@/components/LayoutSubHeader.vue';
 
 export default {
   name: 'Layout',
   components: {
     LayoutAside,
     LayoutHeader,
+    LayoutSubHeader,
+  },
+  data() {
+    return {
+      period: [1534784400000, 1537462800000],
+      projectName: 'CD Projects',
+    };
+  },
+  methods: {
+    periodChange(period) {
+      this.period = period;
+    },
   },
 };
 </script>
 
 <template>
 <div class="template-layout">
-  <LayoutHeader projectName="CD Projects" />
+  <LayoutHeader :projectName="projectName" />
+  <LayoutSubHeader
+    currentStepName="Account Info"
+    :currentStep="1"
+    :period="period"
+    :stepsCount="6"
+    @periodChange="periodChange"
+  />
 
   <main class="main">
     <aside class="aside">
@@ -42,6 +62,11 @@ html {
   line-height: 20px;
   color: #5e6366;
 
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
   a {
     display: inline-block;
     text-decoration: none;
@@ -53,10 +78,11 @@ html {
       color: #3d7bf5;
     }
   }
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
+  input {
+    font-family: "Roboto", sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    color: #000;
   }
   p {
     margin: 0;
@@ -86,7 +112,7 @@ html {
 }
 .aside {
   position: relative;
-  min-width: 240px;
+  min-width: 232px;
   max-width: 320px;
   flex-basis: 20%;
 }
