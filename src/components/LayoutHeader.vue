@@ -1,8 +1,12 @@
 <script>
 import { includes } from 'lodash-es';
+import { directive as clickaway } from 'vue-clickaway';
 
 export default {
   name: 'LayoutHeader',
+  directives: {
+    clickaway,
+  },
   props: {
     projectName: {
       required: true,
@@ -20,15 +24,9 @@ export default {
     return {
       hasStatusOpened: false,
       hasInfoOpened: false,
-      statuses: {
-        test: {
-          title: 'Test Mode',
-          text: 'You can sell products only after the signing of License Agreement and then your account will be “Active”',
-        },
-        active: {
-          title: 'Active',
-          text: '',
-        },
+      statusesTitles: {
+        test: 'Test Mode',
+        active: 'Active',
       },
       infoItems: [
         { link: '#', icon: 'IconSupport', text: 'Support' },
@@ -38,9 +36,12 @@ export default {
       ],
     };
   },
-  computed: {
-    currentStatus() {
-      return this.statuses[this.status] || {};
+  methods: {
+    hideInfoBlock() {
+      this.hasInfoOpened = false;
+    },
+    hideStatusBlock() {
+      this.hasStatusOpened = false;
     },
   },
 };
@@ -58,37 +59,41 @@ export default {
       <div
         :class="['status', `_${status}`, { '_opened': hasStatusOpened }]"
         @click="hasStatusOpened = !hasStatusOpened"
+        v-clickaway="hideStatusBlock"
       >
-        {{ currentStatus.title }}
-        <IconQuestion
-          v-if="status === 'test'"
-          class="icon-question"
-        />
+        {{ statusesTitles[status] }}
+        <template v-if="status === 'test'">
+          <IconQuestion class="icon-question" />
 
-        <UiTip
-          innerPosition="left"
-          position="bottom"
-          width="calc(100vw - 100px)"
-          maxWidth="280px"
-          :visible="hasStatusOpened"
-        >
-          <div class="status-box">
-            <div class="status-title">{{ currentStatus.title }}</div>
-            <div class="status-text">{{ currentStatus.text }}</div>
-          </div>
-        </UiTip>
+          <UiTip
+            innerPosition="left"
+            position="bottom"
+            width="calc(100vw - 100px)"
+            maxWidth="280px"
+            :visible="hasStatusOpened"
+          >
+            <div class="status-box">
+              <div class="status-title">Test Mode</div>
+              <div class="status-text">
+                You can sell products only after the signing of License Agreement and then
+                your account will be “<span class="green-text">Active</span>”.
+              </div>
+            </div>
+          </UiTip>
+        </template>
       </div>
     </div>
   </div>
 
   <div class="right">
-    <a href="#" class="feedback">Leave Feedback About This Page</a>
+    <a href="#" class="feedback">Feedback about this page?</a>
     <a href="#" class="right-icon">
       <IconSettings />
     </a>
     <span
       class="right-icon"
       @click="hasInfoOpened = !hasInfoOpened"
+      v-clickaway="hideInfoBlock"
     >
       <IconInfo />
 
@@ -179,17 +184,14 @@ export default {
   letter-spacing: 0.4px;
   font-size: 12px;
   line-height: 16px;
-  cursor: pointer;
   transition: color 0.2s ease-out;
 
   &._test {
     color: #f3aa18;
+    cursor: pointer;
   }
   &._active {
     color: #2fa84f;
-  }
-  &._opened {
-    color: #919699;
   }
 }
 .icon-question {
@@ -218,6 +220,9 @@ export default {
   letter-spacing: 0.25px;
   color: #3E4345;
   margin-top: 16px;
+}
+.green-text {
+  color: #2fa84f;
 }
 .feedback {
   font-size: 12px;
