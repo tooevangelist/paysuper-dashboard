@@ -28,7 +28,7 @@ export default {
 </template>
 
 <style lang="scss">
-@import url("https://fonts.googleapis.com/css?family=Quicksand:400,500|Roboto&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Quicksand:400,500|Roboto:400,500&display=swap");
 
 body,
 html {
@@ -45,7 +45,7 @@ html {
   a {
     display: inline-block;
     text-decoration: none;
-    color: #78909C;
+    color: #78909c;
     transition: color 0.2s ease-out;
 
     &:hover {
