@@ -17,8 +17,8 @@ export default {
     return {
       circumference,
       circleAttrs: {
-        cx: 21.33,
-        cy: 21.33,
+        cx: 21,
+        cy: 21,
         fill: 'transparent',
         r: 16,
         'stroke-dasharray': circumference,
@@ -74,7 +74,7 @@ export default {
   transform: rotate(-90deg);
 
   &._passed {
-    stroke: #3d7bf5;
+    stroke: #069697;
   }
   &._unpassed {
     stroke: #fff;
@@ -90,7 +90,7 @@ export default {
   justify-content: center;
   align-content: center;
   align-items: center;
-  color: #3d7bf5;
+  color: #069697;
   font-family: Quicksand;
   font-weight: 500;
   font-size: 16px;

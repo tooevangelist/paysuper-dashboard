@@ -1786,7 +1786,7 @@ atob@^2.1.1:
   version "1.1.0"
   resolved "https://codeload.github.com/ProtocolONE/authone-jwt-verifier-node/tar.gz/9074728db24a0da9f6bb77ad6985be8db9fb6066"
   dependencies:
-    axios "^0.19.0"
+    axios "^0.18.0"
     lru-cache "^5.1.1"
     querystring "^0.2.0"
     string-template "^1.0.0"
@@ -11733,6 +11733,11 @@ vue-multiselect@^2.1.4:
   version "2.1.6"
   resolved "https://registry.yarnpkg.com/vue-multiselect/-/vue-multiselect-2.1.6.tgz#5be5d811a224804a15c43a4edbb7485028a89c7f"
   integrity sha512-s7jmZPlm9FeueJg1RwJtnE9KNPtME/7C8uRWSfp9/yEN4M8XcS/d+bddoyVwVnvFyRh9msFo0HWeW0vTL8Qv+w==
+
+vue-perfect-scrollbar@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/vue-perfect-scrollbar/-/vue-perfect-scrollbar-0.1.0.tgz#be12c23d1753a013fa81ceb9872cb5fc0b1b4960"
+  integrity sha512-l/ZEidPDFplXeDtxs+gO3D8efhwqyIEcUtfvfRujCQemcn39ghpSNoizWWZYI6Ro0iz3yP+w7LqNxEBjE+T1qQ==
 
 vue-resize@^0.4.5:
   version "0.4.5"

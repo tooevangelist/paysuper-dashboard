@@ -78,12 +78,12 @@ export default {
   align-items: center;
 }
 .left {
-  min-width: 232px;
+  min-width: 260px;
   max-width: 320px;
   flex-basis: 20%;
-  background-color: #e6efff;
+  background-color: #daf5f2;
   align-self: stretch;
-  padding: 8px 0 8px 16px;
+  padding: 8px 0 8px 7px;
 }
 .step-title {
   color: #000;
@@ -104,5 +104,6 @@ export default {
 .datepicker {
   max-width: 232px;
   margin-right: 16px;
+  margin-left: 12px;
 }
 </style>
