@@ -27,7 +27,7 @@ export default {
 </template>
 
 <style lang="scss">
-@import url("https://fonts.googleapis.com/css?family=Quicksand:400,500|Roboto&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Quicksand:400,500|Roboto:400,500&display=swap");
 
 body {
   font-family: "Roboto", sans-serif;

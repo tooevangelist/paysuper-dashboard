@@ -42,28 +42,24 @@ export default {
 <style lang="scss" scoped>
 .header {
   h1 {
-    font-style: normal;
     font-weight: 900;
     line-height: normal;
     font-size: 28px;
   }
 
   h2 {
-    font-style: normal;
     font-weight: normal;
     font-size: 34px;
     line-height: 42px;
   }
 
   h3 {
-    font-style: normal;
-    font-weight: 900;
-    line-height: normal;
-    font-size: 18px;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 28px;
   }
 
   h4 {
-    font-style: normal;
     font-weight: 900;
     line-height: normal;
     font-size: 16px;
