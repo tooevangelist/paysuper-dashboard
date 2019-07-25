@@ -78,7 +78,10 @@ export default {
 
 <template>
 <div class="template-layout">
-  <LayoutHeader :projectName="projectName" />
+  <LayoutHeader
+    class="header"
+    :projectName="projectName"
+  />
   <LayoutSubHeader
     class="sub-header"
     currentStepName="Account Info"
@@ -90,7 +93,7 @@ export default {
 
   <main class="main">
     <aside class="aside">
-      <UiScrollbarBox>
+      <UiScrollbarBox class="scrollbox">
         <LayoutAside
           :currentItem="currentNavigationItem"
           :items="navigationItems"
@@ -100,7 +103,7 @@ export default {
     </aside>
 
     <section class="content">
-      <UiScrollbarBox>
+      <UiScrollbarBox class="scrollbox">
         <slot />
       </UiScrollbarBox>
     </section>
@@ -115,6 +118,10 @@ body,
 html {
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 .template-layout {
@@ -163,16 +170,21 @@ html {
 .template-layout {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  max-height: 100vh;
+  height: 100vh;
+}
+.header {
+  flex-shrink: 0;
 }
 .sub-header {
   margin-bottom: 8px;
+  flex-shrink: 0;
 }
 .main {
   display: flex;
   justify-content: space-between;
-  padding-bottom: 64px;
+  max-height: 100%;
+  flex-grow: 1;
+  min-height: 0;
 }
 .aside {
   position: relative;
@@ -184,5 +196,9 @@ html {
   position: relative;
   flex-basis: 80%;
   flex-grow: 1;
+}
+.scrollbox {
+  height: 100%;
+  width: 100%;
 }
 </style>
