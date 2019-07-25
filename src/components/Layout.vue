@@ -12,6 +12,58 @@ export default {
   },
   data() {
     return {
+      navigationItems: {
+        dashboard: {
+          additional: 'Homepage for main controls',
+          icon: 'IconDashboard',
+          link: '/dashboard',
+          title: 'Dashboard',
+          isAvailable: true,
+        },
+        projects: {
+          additional: 'Organise your products for sales',
+          icon: 'IconFolder',
+          link: '/projects',
+          title: 'Projects',
+          isAvailable: false,
+        },
+        reports: {
+          additional: 'Your weekly royalty reports',
+          icon: 'IconBlank',
+          link: '/reports',
+          title: 'Reports',
+          isAvailable: false,
+        },
+        payouts: {
+          additional: 'Need license agreement',
+          icon: 'IconCash',
+          link: '/payouts',
+          title: 'Payouts',
+          isAvailable: false,
+        },
+        transaction: {
+          additional: 'Full list of customer transactions',
+          icon: 'IconCoin',
+          link: '/transaction',
+          title: 'Transaction Search',
+          isAvailable: false,
+        },
+        intagrations: {
+          additional: 'Technical integrations',
+          icon: 'IconRepeat',
+          link: '/intagrations',
+          title: 'Intagrations',
+          isAvailable: false,
+        },
+        customers: {
+          additional: 'Need license agreement',
+          icon: 'IconExcited',
+          link: '/customers',
+          title: 'Customers',
+          isAvailable: false,
+        },
+      },
+      currentNavigationItem: 'dashboard',
       period: [1534784400000, 1537462800000],
       projectName: 'CD Projects',
     };
@@ -26,10 +78,14 @@ export default {
 
 <template>
 <div class="template-layout">
-  <LayoutHeader :projectName="projectName" />
+  <LayoutHeader
+    class="header"
+    :projectName="projectName"
+  />
   <LayoutSubHeader
+    class="sub-header"
     currentStepName="Account Info"
-    :currentStep="1"
+    :currentStep="4"
     :period="period"
     :stepsCount="6"
     @periodChange="periodChange"
@@ -37,11 +93,19 @@ export default {
 
   <main class="main">
     <aside class="aside">
-      <LayoutAside />
+      <UiScrollbarBox class="scrollbox">
+        <LayoutAside
+          :currentItem="currentNavigationItem"
+          :items="navigationItems"
+          @changeNavigation="currentNavigationItem = $event"
+        />
+      </UiScrollbarBox>
     </aside>
 
     <section class="content">
-      <slot />
+      <UiScrollbarBox class="scrollbox">
+        <slot />
+      </UiScrollbarBox>
     </section>
   </main>
 </div>
@@ -54,6 +118,10 @@ body,
 html {
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 .template-layout {
@@ -102,17 +170,25 @@ html {
 .template-layout {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  max-height: 100vh;
+  height: 100vh;
+}
+.header {
+  flex-shrink: 0;
+}
+.sub-header {
+  margin-bottom: 8px;
+  flex-shrink: 0;
 }
 .main {
   display: flex;
   justify-content: space-between;
-  padding-bottom: 64px;
+  max-height: 100%;
+  flex-grow: 1;
+  min-height: 0;
 }
 .aside {
   position: relative;
-  min-width: 232px;
+  min-width: 260px;
   max-width: 320px;
   flex-basis: 20%;
 }
@@ -120,5 +196,9 @@ html {
   position: relative;
   flex-basis: 80%;
   flex-grow: 1;
+}
+.scrollbox {
+  height: 100%;
+  width: 100%;
 }
 </style>
