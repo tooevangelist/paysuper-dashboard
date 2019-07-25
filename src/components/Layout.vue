@@ -94,6 +94,7 @@ export default {
         <LayoutAside
           :currentItem="currentNavigationItem"
           :items="navigationItems"
+          @changeNavigation="currentNavigationItem = $event"
         />
       </UiScrollbarBox>
     </aside>
