@@ -48,6 +48,10 @@ export default {
   padding: 8px 12px;
   transition: background-color 0.2s ease-out;
 
+  & ~ & {
+    margin-top: 8px;
+  }
+
   &:hover,
   &._current:hover {
     background-color: #e6efff;
