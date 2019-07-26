@@ -1,9 +1,11 @@
 <script>
+import AccountInfo from '@/components/AccountInfo.vue';
 import SmartListItem from '@/components/SmartListItem.vue';
 
 export default {
   name: 'Company',
   components: {
+    AccountInfo,
     SmartListItem,
   },
   data() {
@@ -13,6 +15,7 @@ export default {
           title: 'Account Info',
           notice: 'Incomplete',
           noticeStatus: 'warning',
+          componentName: 'AccountInfo',
         },
         {
           title: 'Contacts',
@@ -50,11 +53,14 @@ export default {
   </div>
 
   <SmartListItem
-    v-for="(step, index) in steps"
-    :key="index"
     class="item"
+    v-for="(step, index) in steps"
     v-bind="step"
-  />
+    :key="index"
+    :expandable="true"
+  >
+    <component v-if="step.componentName" :is="step.componentName" />
+  </SmartListItem>
 </div>
 </template>
 
@@ -75,7 +81,7 @@ export default {
   line-height: 20px;
   letter-spacing: 0.25px;
   color: #5e6366;
-  max-width: 566px;
+  max-width: 548px;
   margin-bottom: 32px;
 }
 .item {

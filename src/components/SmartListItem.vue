@@ -20,7 +20,6 @@ export default {
         return includes(['default', 'waiting', 'complete', 'locked'], value);
       },
     },
-
     noticeStatus: {
       type: String,
       default: 'default',
@@ -28,17 +27,14 @@ export default {
         return includes(['default', 'waiting', 'warning'], value);
       },
     },
-
     expandable: {
       type: Boolean,
       default: false,
     },
-
     isExpanded: {
       type: Boolean,
       default: false,
     },
-
     link: {
       type: [Object, String],
     },
@@ -128,7 +124,7 @@ export default {
     </span>
   </div>
   <div class="body" v-if="isExpandedInner">
-    <slot name="body"></slot>
+    <slot />
   </div>
 </component>
 </template>
@@ -138,26 +134,23 @@ export default {
   border-radius: 4px;
   display: block;
   border: 1px solid transparent;
-  padding: 7px;
+  transition: background-color 0.2s ease-out, border-color 0.2s ease-out;
 
   &._status-default {
-    background: #fff;
+    background-color: #fff;
     border-color: #e3e5e6;
-    cursor: pointer;
   }
 
   &._status-waiting {
-    background: #fcf3d7;
-    cursor: progress;
+    background-color: #fcf3d7;
   }
 
   &._status-complete {
-    background: #daf5f2;
+    background-color: #daf5f2;
   }
 
   &._status-locked {
-    background: #f1f3f4;
-    cursor: not-allowed;
+    background-color: #f1f3f4;
   }
 }
 
@@ -165,9 +158,16 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 7px;
 
   .smart-list-item._status-default._clickable & {
     cursor: pointer;
+  }
+  .smart-list-item._status-waiting._clickable & {
+    cursor: progress;
+  }
+  .smart-list-item._status-locked._clickable & {
+    cursor: not-allowed;
   }
 }
 
@@ -178,7 +178,7 @@ export default {
   height: 100%;
   display: flex;
   align-items: center;
-  transition: color 0.1s ease;
+  transition: color 0.2s ease-out;
 
   .smart-list-item._status-default & {
     color: #000000;
@@ -211,7 +211,7 @@ export default {
 }
 
 .icon {
-  transition: transform 0.15s ease;
+  transition: transform 0.2s ease-out;
 
   .smart-list-item._expanded & {
     fill: #c6cacc;
@@ -222,7 +222,9 @@ export default {
 .notice {
   padding-right: 28px;
   padding-left: 12px;
-  transition: color 0.1s ease;
+  font-size: 12px;
+  line-height: 16px;
+  transition: color 0.2s ease-out;
 
   .smart-list-item._status-default & {
     color: #3d7bf5;
@@ -253,7 +255,7 @@ export default {
 }
 
 .body {
-  padding: 8px 24px 24px 32px;
+  padding: 8px 32px 24px;
   font-size: 14px;
   line-height: 20px;
   color: #3e4345;
