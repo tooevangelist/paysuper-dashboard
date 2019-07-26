@@ -178,11 +178,9 @@ export default {
       this.blur();
     },
     focus() {
-      console.log(11111, '111', 111);
       this.focused = true;
     },
     blur() {
-      console.log(11111, '222', 222);
       this.focused = false;
     },
   },
