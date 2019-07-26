@@ -30,17 +30,17 @@ export default function createUserStore({ config, notifications }) {
     actions: {
       async initState({ dispatch }) {
         try {
-          await dispatch('refreshToken');
           await dispatch('initUserMerchantData');
         } catch (error) {
+          await dispatch('refreshToken');
           console.warn(error);
-          await dispatch('logout');
         }
       },
 
-      async initUserMerchantData({ dispatch }) {
+      async initUserMerchantData({ commit, dispatch }) {
         try {
           await dispatch('Merchant/fetchMerchant');
+          commit('isAuthorised', true);
         } catch (error) {
           if (error === NOT_FOUND_ERROR) {
             await dispatch('Merchant/createMerchant', {
@@ -51,6 +51,8 @@ export default function createUserStore({ config, notifications }) {
               banking: {},
             });
           }
+
+          throw error;
         }
       },
 
@@ -60,7 +62,7 @@ export default function createUserStore({ config, notifications }) {
        * @param token
        */
       setAccessToken({ commit }, token) {
-        // localStorage.setItem('token', token);
+        localStorage.setItem('token', token);
         commit('isAuthorised', true);
         commit('accessToken', token);
       },
@@ -73,11 +75,16 @@ export default function createUserStore({ config, notifications }) {
        * @returns {Promise.<T>|Promise<any>|Promise}
        */
       async refreshToken({ dispatch }) {
-        const response = await axios.get(`${config.ownBackendUrl}/auth1/refresh`, {
-          // this method requires only cookies for authrization
-          withCredentials: true,
-        });
-        await dispatch('setAccessToken', response.data.access_token);
+        try {
+          const response = await axios.get(`${config.ownBackendUrl}/auth1/refresh`, {
+            // this method requires only cookies for authrization
+            withCredentials: true,
+          });
+          await dispatch('setAccessToken', response.data.access_token);
+        } catch (error) {
+          console.warn(error);
+          await dispatch('logout');
+        }
       },
 
       async logout({ commit }) {

@@ -1,7 +1,7 @@
-import { cloneDeep, isEqual } from 'lodash-es';
+import { get, cloneDeep, isEqual } from 'lodash-es';
 import axios from 'axios';
 import qs from 'qs';
-import { NOT_FOUND_ERROR } from '@/errors';
+import { NOT_FOUND_ERROR, UNAUTHORIZED } from '@/errors';
 import mergeApiValuesWithDefaults from '@/helpers/mergeApiValuesWithDefaults';
 
 // const merchantStatues = {
@@ -144,10 +144,13 @@ export default function createMerchantStore({ config }) {
           });
           commit('merchant', mapDataApiToForm(response.data));
         } catch (error) {
-          if (error.response && error.response.status === 404) {
+          const errorCode = get(error, 'response.status');
+          if (errorCode === 404) {
             throw NOT_FOUND_ERROR;
+          } else if (errorCode === 401) {
+            throw UNAUTHORIZED;
           } else {
-            console.error(error);
+            throw error;
           }
         }
       },
