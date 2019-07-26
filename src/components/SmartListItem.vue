@@ -138,27 +138,30 @@ export default {
   border-radius: 4px;
   display: block;
   border: 1px solid transparent;
+  padding: 7px;
 
   &._status-default {
     background: #fff;
     border-color: #e3e5e6;
+    cursor: pointer;
   }
 
   &._status-waiting {
     background: #fcf3d7;
+    cursor: progress;
   }
 
   &._status-complete {
-    background: #dcf7e3;
+    background: #daf5f2;
   }
 
   &._status-locked {
     background: #f1f3f4;
+    cursor: not-allowed;
   }
 }
 
 .head {
-  height: 38px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -171,7 +174,7 @@ export default {
 .title {
   font-weight: 500;
   font-size: 14px;
-  line-height: 22px;
+  line-height: 24px;
   height: 100%;
   display: flex;
   align-items: center;
@@ -198,11 +201,13 @@ export default {
 }
 
 .icon-holder {
-  width: 32px;
-  height: 100%;
+  width: 24px;
+  height: 24px;
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-right: 6px;
+  align-self: flex-start;
 }
 
 .icon {
@@ -214,12 +219,9 @@ export default {
   }
 }
 
-.text {
-  margin-top: 1px;
-}
-
 .notice {
-  padding-right: 35px;
+  padding-right: 28px;
+  padding-left: 12px;
   transition: color 0.1s ease;
 
   .smart-list-item._status-default & {

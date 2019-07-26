@@ -86,7 +86,7 @@ const routes = [
   {
     path: '/company/',
     component: () => import('@/pages/Company.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
+    meta: { layout: 'Layout' },
     name: 'company',
   },
   {

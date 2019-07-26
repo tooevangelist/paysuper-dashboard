@@ -11,9 +11,7 @@ export default {
 </script>
 
 <template>
-<div>
-  <AgreementProgressWidget style="margin-top: 30px;" />
-</div>
+<AgreementProgressWidget />
 </template>
 
 <style lang="scss" scoped>
