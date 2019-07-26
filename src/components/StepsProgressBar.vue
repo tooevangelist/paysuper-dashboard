@@ -21,7 +21,7 @@ export default {
 
   computed: {
     progressBarWidth() {
-      return `${100 / this.stepsCount * this.currentStep}%`;
+      return `${97.5 / this.stepsCount * this.currentStep}%`;
     },
   },
 };

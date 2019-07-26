@@ -84,12 +84,13 @@ export default {
 
 <style scoped lang="scss">
 /** @TODO - move to gui consts, fix color and typographics consts */
-$blue-button-color: #2f6ecd;
+$blue-button-color: #3d7bf5;
 $orange-button-color: #ff6f6f;
 $purple-button-color: #8077e7;
 $green-button-color: #2fa84f;
 $button-font-color: #fff;
 $disabled-button-color: #e1e1e1;
+$disabled-text-color: #919699;
 
 $primary-button-size: 14px;
 
@@ -112,29 +113,21 @@ $primary-button-size: 14px;
   text-align: center;
   transition: background-color 0.2s ease-out, box-shadow 0.2s ease-out;
 
-  &:before {
+  &:not(._disabled):not(._transparent):before {
     bottom: 1px;
     content: "";
     left: 1px;
     position: absolute;
     right: 1px;
     top: 3px;
-    transition: opacity 0.3s;
     pointer-events: none;
     border-radius: 4px;
-    opacity: 0;
-  }
-
-  &:before {
-    box-shadow: 0 4px 16px rgba($background, 0.85);
+    box-shadow: 0px 2px 4px rgba($background, 0.24),
+      0px 4px 8px rgba($background, 0.16);
   }
 
   &:hover {
     background-color: rgba($background, 0.85);
-
-    &:before {
-      opacity: 1;
-    }
   }
 
   &:active {
@@ -149,6 +142,7 @@ $primary-button-size: 14px;
   &._disabled {
     background-color: $disabled-button-color;
     pointer-events: none;
+    color: $disabled-text-color;
   }
 
   &._rectangle {
