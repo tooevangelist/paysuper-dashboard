@@ -212,15 +212,6 @@ $left-indent: 12px;
   position: relative;
   width: 100%;
 
-  &:after {
-    content: "";
-    position: absolute;
-    right: 17px;
-    top: 38px;
-    border: 5px solid transparent;
-    border-top: 5px solid $focus-input-color;
-  }
-
   &._focused,
   &:not(._focused):not(._empty) {
     .label {
@@ -249,13 +240,13 @@ $left-indent: 12px;
 
     .wrapper {
       border-color: $focus-input-color;
-    }
 
-    &:after {
-      transform: rotate(180deg);
-      transform-origin: top center;
-      border-top-color: $selected-color;
-      margin-top: 5px;
+      &:after {
+        transform: rotate(180deg);
+        transform-origin: top center;
+        border-top-color: $selected-color;
+        margin-top: 5px;
+      }
     }
   }
 
@@ -277,6 +268,15 @@ $left-indent: 12px;
 .wrapper {
   cursor: pointer;
   border-bottom: 1px solid #e5e5e5;
+
+  &:after {
+    content: "";
+    position: absolute;
+    right: 17px;
+    top: 38px;
+    border: 5px solid transparent;
+    border-top: 5px solid $focus-input-color;
+  }
 }
 .selected {
   display: block;
