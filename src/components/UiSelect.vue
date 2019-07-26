@@ -56,10 +56,6 @@
         >
       </label>
     </div>
-    <div
-      v-if="optionsView.length > 5"
-      class="overlay"
-    />
   </div>
 </div>
 </template>
@@ -198,7 +194,8 @@ $primary-input-color: #333;
 $secondary-input-color: #b1b1b1;
 $focus-input-color: #3787ff;
 $error-input-color: #ff6f6f;
-$hover-option-color: #deebfa;
+$hover-option-color: rgba($focus-input-color, 0.1);
+$selected-text-color: #c6cacc;
 
 $primary-input-size: 16px;
 $secondary-input-size: 14px;
@@ -218,60 +215,49 @@ $left-indent: 12px;
   &:after {
     content: "";
     position: absolute;
-    right: 0;
-    top: 40px;
-    border: 4px solid transparent;
-    border-top: 4px solid $secondary-input-color;
+    right: 17px;
+    top: 38px;
+    border: 5px solid transparent;
+    border-top: 5px solid $focus-input-color;
   }
 
-  &:not(._empty) {
+  &._focused,
+  &:not(._focused):not(._empty) {
     .label {
-      pointer-events: auto;
       width: 50%;
       transform: translateY(-24px) scale(0.75, 0.75);
-      border-color: transparent;
-      margin-left: $left-indent;
+      color: $secondary-input-color;
       padding-left: 0;
+      margin-left: $left-indent;
     }
+  }
 
-    .selected {
-      transform: scaleY(1);
-    }
-
-    &._focused {
-      &:after {
-        border-top-color: $focus-input-color;
-      }
-
-      .label {
-        pointer-events: none;
-        width: 100%;
-        transform: translateY(0) scale(1, 1);
-      }
-
-      .selected {
-        transform: scaleY(0);
-      }
-    }
+  &:not(._empty) .selected {
+    transform: scaleY(1);
   }
 
   &._focused {
-    &:after {
-      border-top-color: $focus-input-color;
+    pointer-events: auto;
+
+    .box {
+      transform: scaleY(1);
     }
 
     .label {
-      border-color: transparent;
       color: $focus-input-color;
     }
 
-    & > .box {
-      transform: scaleY(1);
+    .wrapper {
+      border-color: $focus-input-color;
     }
   }
 
   &._error {
-    .label {
+    &._focused .label {
+      color: $error-input-color;
+    }
+
+    .wrapper {
       border-color: $error-input-color;
     }
   }
@@ -283,6 +269,7 @@ $left-indent: 12px;
 }
 .wrapper {
   cursor: pointer;
+  border-bottom: 1px solid #e5e5e5;
 }
 .selected {
   display: block;
@@ -294,44 +281,30 @@ $left-indent: 12px;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  border-bottom: 1px solid #e5e5e5;
   padding-left: $left-indent;
 }
 .box {
   background-color: $input-background-color;
   box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.1);
-  left: -4px;
+  left: 0px;
   position: absolute;
   z-index: 10;
   text-overflow: ellipsis;
-  top: 56px;
+  top: 64px;
   transform: scaleY(0);
   transform-origin: top;
   transition: transform 0.2s ease-out;
   white-space: nowrap;
-  width: calc(100% + 32px);
+  width: 100%;
+  border-radius: 4px;
 }
 .options {
   background-color: $input-background-color;
-  max-height: 220px;
+  max-height: 200px;
   overflow-x: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
-}
-.overlay {
-  background-image: linear-gradient(
-    0deg,
-    $input-background-color 0%,
-    rgba($input-background-color, 0) 100%
-  );
-  bottom: 0;
-  pointer-events: none;
-  height: 40px;
-  left: 0;
-  min-height: 40px;
-  position: absolute;
-  right: 0;
 }
 .option {
   cursor: pointer;
@@ -341,9 +314,14 @@ $left-indent: 12px;
   padding: 0 16px;
   margin: 0;
 
-  &:hover,
-  &._current {
+  &:hover:not(._current) {
     background-color: $hover-option-color;
+    color: #3d7bf5;
+  }
+
+  &._current {
+    color: $selected-text-color;
+    cursor: default;
   }
 
   &._empty {
@@ -375,7 +353,6 @@ $left-indent: 12px;
   transform-origin: left;
   transition: transform 0.2s ease-out, color 0.2s linear, width 0.1s ease-out;
   width: 100%;
-  border-bottom: 1px solid #e5e5e5;
   height: 32px;
   padding-left: $left-indent;
 

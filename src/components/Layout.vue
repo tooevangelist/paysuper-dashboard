@@ -68,6 +68,14 @@ export default {
       projectName: 'CD Projects',
     };
   },
+  beforeMount() {
+    document.body.classList.add('layout-body');
+    document.body.parentNode.classList.add('layout-html');
+  },
+  destroyed() {
+    document.body.classList.remove('layout-body');
+    document.body.parentNode.classList.remove('layout-html');
+  },
   methods: {
     periodChange(period) {
       this.period = period;
@@ -113,9 +121,15 @@ export default {
 
 <style lang="scss">
 @import url("https://fonts.googleapis.com/css?family=Quicksand:400,500|Roboto:400,500&display=swap");
+.layout-body {
+  margin: 0;
 
-body,
-html {
+  * {
+    box-sizing: border-box;
+  }
+}
+.layout-body,
+.layout-html {
   display: flex;
   flex-direction: column;
   height: 100vh;

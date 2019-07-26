@@ -97,6 +97,16 @@ export default {
     },
   },
 
+  beforeMount() {
+    document.body.classList.add('page-body');
+    document.body.parentNode.classList.add('page-html');
+  },
+
+  destroyed() {
+    document.body.classList.remove('page-body');
+    document.body.parentNode.classList.remove('page-html');
+  },
+
   methods: {
     ...mapActions('User', ['logout']),
     ...mapActions(['setIsLoading']),
@@ -137,7 +147,7 @@ export default {
 <style lang="scss">
 @import url("//static.protocol.one/common/fonts/Lato.css");
 @import "@/assets/scss/_custom.scss";
-body {
+.page-body {
   margin: 0;
   font-family: Lato, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;
@@ -147,8 +157,8 @@ body {
     box-sizing: border-box;
   }
 }
-body,
-html {
+.page-body,
+.page-html {
   display: flex;
   flex-direction: column;
 }
