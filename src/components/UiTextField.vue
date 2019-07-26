@@ -107,7 +107,7 @@ export default {
 /** @TODO - move to gui for typographics */
 $input-background-color: #fff;
 $primary-input-color: #333;
-$secondary-input-color: #b1b1b1;
+$secondary-input-color: #5e6366;
 $focus-input-color: #3787ff;
 $error-input-color: #ff6f6f;
 

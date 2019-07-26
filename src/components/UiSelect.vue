@@ -191,11 +191,11 @@ export default {
 /** @TODO - move to gui for typographics */
 $input-background-color: #fff;
 $primary-input-color: #333;
-$secondary-input-color: #b1b1b1;
+$secondary-input-color: #5e6366;
 $focus-input-color: #3787ff;
 $error-input-color: #ff6f6f;
 $hover-option-color: rgba($focus-input-color, 0.1);
-$selected-text-color: #c6cacc;
+$selected-color: #c6cacc;
 
 $primary-input-size: 16px;
 $secondary-input-size: 14px;
@@ -249,6 +249,13 @@ $left-indent: 12px;
 
     .wrapper {
       border-color: $focus-input-color;
+    }
+
+    &:after {
+      transform: rotate(180deg);
+      transform-origin: top center;
+      border-top-color: $selected-color;
+      margin-top: 5px;
     }
   }
 
@@ -320,7 +327,7 @@ $left-indent: 12px;
   }
 
   &._current {
-    color: $selected-text-color;
+    color: $selected-color;
     cursor: default;
   }
 

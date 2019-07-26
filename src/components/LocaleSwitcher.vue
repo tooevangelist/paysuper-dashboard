@@ -70,7 +70,8 @@ export default {
 <style scoped lang="scss">
 $normal-text-color: #3e4345;
 $selected-text-color: #c6cacc;
-$hover-background-color: #f7f9fa;
+$hover-text-color: #3d7bf5;
+$hover-background-color: rgba($hover-text-color, 0.1);
 
 .locale-switcher {
   position: relative;
@@ -132,6 +133,7 @@ $hover-background-color: #f7f9fa;
 
   &:hover:not(._selected) {
     background: $hover-background-color;
+    color: $hover-text-color;
   }
 
   &._selected {
