@@ -1,4 +1,6 @@
 <script>
+import { mapState } from 'vuex';
+
 export default {
   name: 'AccountInfo',
   data() {
@@ -15,19 +17,23 @@ export default {
     };
   },
   computed: {
+    ...mapState('Dictionaries', ['countries']),
     isFieldsValid() {
       if (
-        !legalName ||
-        !website ||
-        !country ||
-        !city ||
-        !zip ||
-        !address1
+        !this.legalName ||
+        !this.website ||
+        !this.country ||
+        !this.city ||
+        !this.zip ||
+        !this.address1
       ) {
         return false;
       }
 
       return true;
+    },
+    countriesItems() {
+      return this.countries.map(country => ({ value: country.name.en, label: country.name.en }));
     },
   },
   methods: {
@@ -76,8 +82,9 @@ export default {
       it must be corresponded with your official registrational data.
     </div>
 
-    <UiTextField
+    <UiSelect
       label="Country"
+      :options="countriesItems"
       :required="true"
       :value="country"
       @input="country = $event"
@@ -87,8 +94,9 @@ export default {
       :value="region"
       @input="region = $event"
     />
-    <UiTextField
+    <UiSelect
       label="City"
+      :options="[{ value: 'Moscow', label: 'Moscow' }]"
       :required="true"
       :value="city"
       @input="city = $event"
@@ -146,5 +154,9 @@ export default {
   color: #5e6366;
   margin-bottom: 20px;
   max-width: 548px;
+}
+.submit {
+  width: 180px;
+  align-self: flex-end;
 }
 </style>

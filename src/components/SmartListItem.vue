@@ -255,7 +255,7 @@ export default {
 }
 
 .body {
-  padding: 8px 32px 24px;
+  padding: 8px 32px 32px;
   font-size: 14px;
   line-height: 20px;
   color: #3e4345;
