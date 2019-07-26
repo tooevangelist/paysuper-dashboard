@@ -1,6 +1,16 @@
 <script>
 export default {
   name: 'PageNoLayout',
+
+  beforeMount() {
+    document.body.classList.add('page-no-layout-body');
+    document.body.parentNode.classList.add('page-no-layout-html');
+  },
+
+  destroyed() {
+    document.body.classList.remove('page-no-layout-body');
+    document.body.parentNode.classList.remove('page-no-layout-html');
+  },
 };
 </script>
 
@@ -13,7 +23,7 @@ export default {
 <style lang="scss">
 @import url("//static.protocol.one/common/fonts/Lato.css");
 @import "@/assets/scss/_custom.scss";
-body {
+.page-no-layout-body {
   margin: 0;
   font-family: Lato, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;
@@ -23,8 +33,8 @@ body {
     box-sizing: border-box;
   }
 }
-body,
-html {
+.page-no-layout-body,
+.page-no-layout-html {
   display: flex;
   flex-direction: column;
 }

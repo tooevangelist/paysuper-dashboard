@@ -7,6 +7,16 @@ export default {
   components: {
     LocaleSwitcher,
   },
+
+  beforeMount() {
+    document.body.classList.add('page-shallow-body');
+    document.body.parentNode.classList.add('page-shallow-html');
+  },
+
+  destroyed() {
+    document.body.classList.remove('page-shallow-body');
+    document.body.parentNode.classList.remove('page-shallow-html');
+  },
 };
 </script>
 
@@ -29,15 +39,21 @@ export default {
 <style lang="scss">
 @import url("https://fonts.googleapis.com/css?family=Quicksand:400,500|Roboto:400,500&display=swap");
 
-body {
+.page-shallow-body,
+.page-shallow-html {
+  display: flex;
+  flex-direction: column;
+}
+
+.page-shallow-body {
   font-family: "Roboto", sans-serif;
   font-size: 16px;
   line-height: 24px;
-}
-body,
-html {
-  display: flex;
-  flex-direction: column;
+  margin: 0;
+
+  * {
+    box-sizing: border-box;
+  }
 }
 </style>
 
@@ -71,7 +87,8 @@ html {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-bottom: 25px;
+  padding: 45px 0 25px;
+  flex-grow: 1;
 }
 
 .footer {
