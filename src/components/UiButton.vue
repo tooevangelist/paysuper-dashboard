@@ -89,7 +89,7 @@ $orange-button-color: #ff6f6f;
 $purple-button-color: #8077e7;
 $green-button-color: #2fa84f;
 $button-font-color: #fff;
-$disabled-button-color: #e1e1e1;
+$disabled-button-color: #f1f3f4;
 $disabled-text-color: #919699;
 
 $primary-button-size: 14px;
