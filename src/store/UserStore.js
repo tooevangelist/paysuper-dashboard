@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { get } from 'lodash-es';
 import MerchantStore from '@/store/MerchantStore';
-import { NOT_FOUND_ERROR } from '@/errors';
+import { NOT_FOUND_ERROR, UNAUTHORIZED } from '@/errors';
 // import router from '@/router';
 
 export default function createUserStore({ config, notifications }) {
@@ -33,7 +34,9 @@ export default function createUserStore({ config, notifications }) {
           await dispatch('initUserMerchantData');
         } catch (error) {
           await dispatch('refreshToken');
-          console.warn(error);
+          if (error !== UNAUTHORIZED) {
+            console.warn(error);
+          }
         }
       },
 
@@ -82,7 +85,9 @@ export default function createUserStore({ config, notifications }) {
           });
           await dispatch('setAccessToken', response.data.access_token);
         } catch (error) {
-          console.warn(error);
+          if (get(error, 'response.data.error.message') !== 'User not logged') {
+            console.warn(error);
+          }
           await dispatch('logout');
         }
       },
