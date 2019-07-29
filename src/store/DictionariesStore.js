@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { times } from 'lodash-es';
+import { sortBy } from 'lodash-es';
+import i18n from '@/plugins/i18n';
 
 export default function createDictionariesStore({ config }) {
   return {
@@ -11,6 +12,15 @@ export default function createDictionariesStore({ config }) {
     }),
 
     getters: {
+      countries(state) {
+        const countries = state.countries
+          .filter(item => item.payments_allowed)
+          .map(item => ({
+            label: i18n.t(`countries.${item.iso_code_a2}`),
+            value: item.iso_code_a2,
+          }));
+        return sortBy(countries, 'label');
+      },
       currenciesInt(state) {
         return state.currencies.map(item => ({ label: item.name.en, value: item.code_int }));
       },
@@ -61,43 +71,19 @@ export default function createDictionariesStore({ config }) {
           }).catch(() => { });
       },
 
-      getCountries(ctx, { limit = 100, offset = 0 }) {
-        const url = `${config.apiUrl}/api/v1/country?limit=${limit}&offset=${offset}`;
+      getCountries() {
+        const url = `${config.apiUrl}/api/v1/country`;
 
         return axios.get(url)
           .then(response => response.data)
           .catch(() => ({
-            count: 0,
             items: null,
           }));
       },
 
       async fetchCountries({ commit, dispatch }) {
-        const countries = [];
-        const limit = 100;
-        const response = await dispatch('getCountries', { limit });
-        if (!response.items) {
-          return;
-        }
-        countries.push(...response.items);
-
-        if (response.count > response.items.length) {
-          const requestsCount = Math.floor(response.count / limit);
-
-          await Promise.all(
-            times(requestsCount).map(async (value, index) => {
-              const responseItem = await dispatch(
-                'getCountries', { limit, offset: (index + 1) * limit },
-              );
-
-              if (responseItem.items) {
-                countries.push(...responseItem.items);
-              }
-            }),
-          );
-        }
-
-        commit('countries', countries);
+        const response = await dispatch('getCountries');
+        commit('countries', response.countries);
       },
     },
   };

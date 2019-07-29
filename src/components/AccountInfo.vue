@@ -1,4 +1,5 @@
 <script>
+import { mapGetters } from 'vuex';
 import { required } from 'vuelidate/lib/validators';
 
 export default {
@@ -25,6 +26,7 @@ export default {
     address1: { required },
   },
   computed: {
+    ...mapGetters('Dictionaries', ['countries']),
     // Stub for cities
     cities() {
       return [
@@ -34,17 +36,6 @@ export default {
         { label: 'Omsk', value: 'omsk' },
         { label: 'Vladivostok', value: 'vladivostok' },
         { label: 'Chelyabinsk', value: 'chelyabinsk' },
-      ];
-    },
-    // Stub for countries
-    countries() {
-      return [
-        { label: 'Russia', value: 'russia' },
-        { label: 'USA', value: 'usa' },
-        { label: 'Germany', value: 'germany' },
-        { label: 'France', value: 'france' },
-        { label: 'UK', value: 'uk' },
-        { label: 'China', value: 'china' },
       ];
     },
   },
