@@ -1,8 +1,8 @@
 import { mapValues, merge } from 'lodash-es';
 
-function replaceDataEmptyValuesWithDefaults(data, defaultData) {
-  return mapValues(data, (value, key) => {
-    const defaultValue = defaultData[key];
+function replaceDataEmptyValuesWithDefaults(defaultData, data) {
+  return mapValues(defaultData, (value, key) => {
+    const defaultValue = data[key];
     if (value) {
       if (typeof value === 'object' && !Array.isArray(value) && defaultValue) {
         return replaceDataEmptyValuesWithDefaults(value, defaultValue);
@@ -17,8 +17,8 @@ function replaceDataEmptyValuesWithDefaults(data, defaultData) {
   });
 }
 
-export default function mergeApiValuesWithDefaults(defaultData, data) {
-  const newData = merge({}, defaultData, data);
+export default function mergeApiValuesWithDefaults(data, defaultData) {
+  const newData = merge({}, data, defaultData);
 
-  return replaceDataEmptyValuesWithDefaults(newData, defaultData);
+  return replaceDataEmptyValuesWithDefaults(newData, data);
 }
