@@ -123,7 +123,7 @@ export default {
       <slot name="notice"></slot>
     </span>
   </div>
-  <div class="body" v-if="isExpandedInner">
+  <div class="body" v-show="isExpandedInner">
     <slot />
   </div>
 </component>
@@ -151,6 +151,11 @@ export default {
 
   &._status-locked {
     background-color: #f1f3f4;
+  }
+
+  &._expanded {
+    border-color: transparent;
+    box-shadow: 0px 6px 12px rgba(8, 35, 48, 0.14), 0px 16px 24px rgba(8, 35, 48, 0.08);
   }
 }
 

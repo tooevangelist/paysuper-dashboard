@@ -64,12 +64,14 @@ export default {
       label="Legal name"
       :value="legalName"
       @input="legalName = $event"
+      @blur="$v.legalName.$touch()"
     />
     <UiTextField
       v-bind="$getValidatedFieldProps('website')"
       label="Website"
       :value="website"
       @input="website = $event"
+      @blur="$v.website.$touch()"
     />
     <UiTextField
       label="Operating name"
@@ -92,6 +94,7 @@ export default {
       :options="countries"
       :value="country"
       @input="country = $event"
+      @blur="$v.country.$touch()"
     />
     <UiTextField
       label="State / Province / Region"
@@ -104,18 +107,21 @@ export default {
       :options="cities"
       :value="city"
       @input="city = $event"
+      @blur="$v.city.$touch()"
     />
     <UiTextField
       v-bind="$getValidatedFieldProps('zip')"
       label="Zip Code"
       :value="zip"
       @input="zip = $event"
+      @blur="$v.zip.$touch()"
     />
     <UiTextField
       v-bind="$getValidatedFieldProps('address1')"
       label="Address 1"
       :value="address1"
       @input="address1 = $event"
+      @blur="$v.address1.$touch()"
     />
     <UiTextField
       label="Address 2"

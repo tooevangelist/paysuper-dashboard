@@ -58,18 +58,21 @@ export default {
       label="First name"
       :value="agentFirstName"
       @input="agentFirstName = $event"
+      @blur="$v.agentFirstName.$touch()"
     />
     <UiTextField
       v-bind="$getValidatedFieldProps('agentLastName')"
       label="Last name"
       :value="agentLastName"
       @input="agentLastName = $event"
+      @blur="$v.agentLastName.$touch()"
     />
     <UiTextField
       v-bind="$getValidatedFieldProps('agentEmail')"
       label="Email"
       :value="agentEmail"
       @input="agentEmail = $event"
+      @blur="$v.agentEmail.$touch()"
     />
     <UiTextField
       label="Patronymic"
@@ -81,6 +84,7 @@ export default {
       label="Phone"
       :value="agentPhone"
       @input="agentPhone = $event"
+      @blur="$v.agentPhone.$touch()"
     />
   </div>
 
@@ -96,24 +100,28 @@ export default {
       label="First name"
       :value="techFirstName"
       @input="techFirstName = $event"
+      @blur="$v.techFirstName.$touch()"
     />
     <UiTextField
       v-bind="$getValidatedFieldProps('techLastName')"
       label="Last name"
       :value="techLastName"
       @input="techLastName = $event"
+      @blur="$v.techLastName.$touch()"
     />
     <UiTextField
       v-bind="$getValidatedFieldProps('techEmail')"
       label="Email"
       :value="techEmail"
       @input="techEmail = $event"
+      @blur="$v.techEmail.$touch()"
     />
     <UiTextField
       v-bind="$getValidatedFieldProps('techPhone')"
       label="Phone"
       :value="techPhone"
       @input="techPhone = $event"
+      @blur="$v.techPhone.$touch()"
     />
   </div>
 

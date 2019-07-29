@@ -1,5 +1,6 @@
 <script>
 import AccountInfo from '@/components/AccountInfo.vue';
+import BankingInfo from '@/components/BankingInfo.vue';
 import Contacts from '@/components/Contacts.vue';
 import SmartListItem from '@/components/SmartListItem.vue';
 
@@ -7,6 +8,7 @@ export default {
   name: 'Company',
   components: {
     AccountInfo,
+    BankingInfo,
     Contacts,
     SmartListItem,
   },
