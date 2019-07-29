@@ -80,13 +80,13 @@ const routes = [
   {
     path: '/dashboard/',
     component: () => import('@/pages/Dashboard.vue'),
-    meta: { layout: 'Layout' },
+    meta: { layout: 'Layout', isAuthRequired: true },
     name: 'dashboard',
   },
   {
     path: '/company/',
     component: () => import('@/pages/Company.vue'),
-    meta: { layout: 'Layout' },
+    meta: { layout: 'Layout', isAuthRequired: true },
     name: 'company',
   },
   {
