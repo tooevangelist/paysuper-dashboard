@@ -1,5 +1,5 @@
 <script>
-import { mapState } from 'vuex';
+import { required } from 'vuelidate/lib/validators';
 
 export default {
   name: 'AccountInfo',
@@ -16,29 +16,42 @@ export default {
       address2: '',
     };
   },
+  validations: {
+    legalName: { required },
+    website: { required },
+    country: { required },
+    zip: { required },
+    city: { required },
+    address1: { required },
+  },
   computed: {
-    ...mapState('Dictionaries', ['countries']),
-    isFieldsValid() {
-      if (
-        !this.legalName ||
-        !this.website ||
-        !this.country ||
-        !this.city ||
-        !this.zip ||
-        !this.address1
-      ) {
-        return false;
-      }
-
-      return true;
+    // Stub for cities
+    cities() {
+      return [
+        { label: 'Moscow', value: 'moscow' },
+        { label: 'Novosibirsk', value: 'novosibirsk' },
+        { label: 'Samara', value: 'samara' },
+        { label: 'Omsk', value: 'omsk' },
+        { label: 'Vladivostok', value: 'vladivostok' },
+        { label: 'Chelyabinsk', value: 'chelyabinsk' },
+      ];
     },
-    countriesItems() {
-      return this.countries.map(country => ({ value: country.name.en, label: country.name.en }));
+    // Stub for countries
+    countries() {
+      return [
+        { label: 'Russia', value: 'russia' },
+        { label: 'USA', value: 'usa' },
+        { label: 'Germany', value: 'germany' },
+        { label: 'France', value: 'france' },
+        { label: 'UK', value: 'uk' },
+        { label: 'China', value: 'china' },
+      ];
     },
   },
   methods: {
     submit() {
-      if (this.isFieldsValid) {
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
         this.$emit('accountInfoSubmit');
       }
     },
@@ -56,14 +69,14 @@ export default {
     </div>
 
     <UiTextField
+      v-bind="$getValidatedFieldProps('legalName')"
       label="Legal name"
-      :required="true"
       :value="legalName"
       @input="legalName = $event"
     />
     <UiTextField
+      v-bind="$getValidatedFieldProps('website')"
       label="Website"
-      :required="true"
       :value="website"
       @input="website = $event"
     />
@@ -83,9 +96,9 @@ export default {
     </div>
 
     <UiSelect
+      v-bind="$getValidatedFieldProps('country')"
       label="Country"
-      :options="countriesItems"
-      :required="true"
+      :options="countries"
       :value="country"
       @input="country = $event"
     />
@@ -95,21 +108,21 @@ export default {
       @input="region = $event"
     />
     <UiSelect
+      v-bind="$getValidatedFieldProps('city')"
       label="City"
-      :options="[{ value: 'Moscow', label: 'Moscow' }]"
-      :required="true"
+      :options="cities"
       :value="city"
       @input="city = $event"
     />
     <UiTextField
+      v-bind="$getValidatedFieldProps('zip')"
       label="Zip Code"
-      :required="true"
       :value="zip"
       @input="zip = $event"
     />
     <UiTextField
+      v-bind="$getValidatedFieldProps('address1')"
       label="Address 1"
-      :required="true"
       :value="address1"
       @input="address1 = $event"
     />
@@ -122,7 +135,6 @@ export default {
 
   <UiButton
     class="submit"
-    :disabled="!isFieldsValid"
     @click="submit"
   >
     SUBMIT INFO

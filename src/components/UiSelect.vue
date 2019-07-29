@@ -35,26 +35,28 @@
   </span>
   <div class="box">
     <div class="options">
-      <label
-        v-for="option in optionsView"
-        :key="option.value"
-        class="option"
-        :class="{
-          '_empty': option.value === '',
-          '_current': selectValue === option.value
-        }"
-      >
-        {{ option.label }}
-        <input
-          v-model="selectValue"
-          class="input"
-          name="selectValue"
-          type="radio"
-          :required="required"
-          :value="option.value"
-          @change="emitChange"
+      <UiScrollbarBox class="scrollbox">
+        <label
+          v-for="option in optionsView"
+          :key="option.value"
+          class="option"
+          :class="{
+            '_empty': option.value === '',
+            '_current': selectValue === option.value
+          }"
         >
-      </label>
+          {{ option.label }}
+          <input
+            v-model="selectValue"
+            class="input"
+            name="selectValue"
+            type="radio"
+            :required="required"
+            :value="option.value"
+            @change="emitChange"
+          >
+        </label>
+      </UiScrollbarBox>
     </div>
   </div>
 </div>
@@ -307,11 +309,14 @@ $left-indent: 12px;
 }
 .options {
   background-color: $input-background-color;
-  max-height: 200px;
-  overflow-x: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow: hidden;
   width: 100%;
+  border-radius: 4px;
+}
+.scrollbox {
+  width: 100%;
+  height: 100%;
+  max-height: 200px;
 }
 .option {
   cursor: pointer;
@@ -320,6 +325,9 @@ $left-indent: 12px;
   line-height: 40px;
   padding: 0 16px;
   margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
   &:hover:not(._current) {
     background-color: $hover-option-color;
@@ -340,7 +348,6 @@ $left-indent: 12px;
   visibility: hidden;
   width: 0px;
 }
-
 .additional,
 .label {
   display: block;
