@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { get } from 'lodash-es';
 import MerchantStore from '@/store/MerchantStore';
-import { NOT_FOUND_ERROR } from '@/errors';
+import { NOT_FOUND_ERROR, UNAUTHORIZED } from '@/errors';
 // import router from '@/router';
 
 export default function createUserStore({ config, notifications }) {
@@ -30,17 +31,19 @@ export default function createUserStore({ config, notifications }) {
     actions: {
       async initState({ dispatch }) {
         try {
-          await dispatch('refreshToken');
           await dispatch('initUserMerchantData');
         } catch (error) {
-          console.warn(error);
-          await dispatch('logout');
+          await dispatch('refreshToken');
+          if (error !== UNAUTHORIZED) {
+            console.warn(error);
+          }
         }
       },
 
-      async initUserMerchantData({ dispatch }) {
+      async initUserMerchantData({ commit, dispatch }) {
         try {
           await dispatch('Merchant/fetchMerchant');
+          commit('isAuthorised', true);
         } catch (error) {
           if (error === NOT_FOUND_ERROR) {
             await dispatch('Merchant/createMerchant', {
@@ -51,6 +54,8 @@ export default function createUserStore({ config, notifications }) {
               banking: {},
             });
           }
+
+          throw error;
         }
       },
 
@@ -60,7 +65,7 @@ export default function createUserStore({ config, notifications }) {
        * @param token
        */
       setAccessToken({ commit }, token) {
-        // localStorage.setItem('token', token);
+        localStorage.setItem('token', token);
         commit('isAuthorised', true);
         commit('accessToken', token);
       },
@@ -73,11 +78,18 @@ export default function createUserStore({ config, notifications }) {
        * @returns {Promise.<T>|Promise<any>|Promise}
        */
       async refreshToken({ dispatch }) {
-        const response = await axios.get(`${config.ownBackendUrl}/auth1/refresh`, {
-          // this method requires only cookies for authrization
-          withCredentials: true,
-        });
-        await dispatch('setAccessToken', response.data.access_token);
+        try {
+          const response = await axios.get(`${config.ownBackendUrl}/auth1/refresh`, {
+            // this method requires only cookies for authrization
+            withCredentials: true,
+          });
+          await dispatch('setAccessToken', response.data.access_token);
+        } catch (error) {
+          if (get(error, 'response.data.error.message') !== 'User not logged') {
+            console.warn(error);
+          }
+          await dispatch('logout');
+        }
       },
 
       async logout({ commit }) {
