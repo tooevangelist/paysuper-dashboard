@@ -20,6 +20,15 @@ export default {
     bankName: { required },
     bankAddress: { required },
   },
+  computed: {
+    currencies() {
+      return [
+        { label: 'RUB', value: 'RUB' },
+        { label: 'USD', value: 'USD' },
+        { label: 'GBR', value: 'GBR' },
+      ];
+    },
+  },
   methods: {
     submit() {
       this.$v.$touch();
@@ -47,9 +56,10 @@ export default {
       @input="swift = $event"
       @blur="$v.swift.$touch()"
     />
-    <UiTextField
+    <UiSelect
       v-bind="$getValidatedFieldProps('currency')"
       label="Account Currency"
+      :options="currencies"
       :value="currency"
       @input="currency = $event"
       @blur="$v.currency.$touch()"
