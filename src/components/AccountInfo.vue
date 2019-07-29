@@ -135,6 +135,7 @@ export default {
 
   <UiButton
     class="submit"
+    :disabled="$v.$invalid"
     @click="submit"
   >
     SUBMIT INFO
