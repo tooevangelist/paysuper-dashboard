@@ -1,11 +1,13 @@
 <script>
 import AccountInfo from '@/components/AccountInfo.vue';
+import Contacts from '@/components/Contacts.vue';
 import SmartListItem from '@/components/SmartListItem.vue';
 
 export default {
   name: 'Company',
   components: {
     AccountInfo,
+    Contacts,
     SmartListItem,
   },
   data() {
@@ -21,11 +23,13 @@ export default {
           title: 'Contacts',
           notice: 'Incomplete',
           noticeStatus: 'warning',
+          componentName: 'Contacts',
         },
         {
           title: 'Banking Info',
           notice: 'Incomplete',
           noticeStatus: 'warning',
+          componentName: 'BankingInfo',
         },
         {
           title: 'Payment Methods',

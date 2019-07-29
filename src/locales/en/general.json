@@ -1,13 +1,14 @@
 {
   "errorMessages": {
-    "required": "Enter a value",
     "between": "Enter value from %min% to %max%",
     "email": "Enter correct email",
-    "minLength": "The value is too short",
     "maxLength": "The value is too long",
-    "wrongFormatType": "Wrong value format type",
+    "minLength": "The value is too short",
+    "onlyRusAndLat": "Only latin and russian letters are allowed",
+    "phone": "Enter correct phone",
+    "required": "Enter a value",
     "url": "Enter correct URL",
-    "onlyRusAndLat": "Only latin and russian letters are allowed"
+    "wrongFormatType": "Wrong value format type"
   },
   "orderID": "Order #",
   "account": "Account",
