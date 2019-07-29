@@ -183,7 +183,10 @@ export default {
       this.focused = true;
     },
     blur() {
-      this.focused = false;
+      if (this.focused) {
+        this.$emit('blur');
+        this.focused = false;
+      }
     },
   },
 };
@@ -259,6 +262,10 @@ $left-indent: 12px;
 
     .wrapper {
       border-color: $error-input-color;
+
+      &:after {
+        border-top-color: $error-input-color;
+      }
     }
   }
 
