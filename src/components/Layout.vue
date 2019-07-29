@@ -112,7 +112,9 @@ export default {
 
     <section class="content">
       <UiScrollbarBox class="scrollbox">
-        <slot />
+        <div class="scrollbox-inner">
+          <slot />
+        </div>
       </UiScrollbarBox>
     </section>
   </main>
@@ -210,9 +212,31 @@ export default {
   position: relative;
   flex-basis: 80%;
   flex-grow: 1;
+
+  &::after {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 28px;
+    width: calc(100% - 15px);
+    content: '';
+    background-image: linear-gradient(
+      180deg,
+      rgba(#fff, 1) 0%,
+      rgba(#fff, 0.95) 20%,
+      rgba(#fff, 0.85) 40%,
+      rgba(#fff, 0.65) 60%,
+      rgba(#fff, 0) 100%
+    );
+    pointer-events: none;
+  }
 }
 .scrollbox {
   height: 100%;
   width: 100%;
+}
+.scrollbox-inner {
+  margin: 28px 6vw;
+  max-width: 920px;
 }
 </style>

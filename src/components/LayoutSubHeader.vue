@@ -29,7 +29,10 @@ export default {
 
 <template>
 <div class="layout-sub-header">
-  <div class="left">
+  <RouterLink
+    class="left"
+    to="/company"
+  >
     <UiProgressRing
       :currentStep="currentStep"
       :stepsCount="stepsCount"
@@ -38,7 +41,7 @@ export default {
       Complete “<span class="step-name">{{ currentStepName }}</span>”
       <span class="step-progress">{{ currentStep }}/{{ stepsCount }} steps</span>
     </div>
-  </div>
+  </RouterLink>
 
   <div class="right">
     <v-datepicker

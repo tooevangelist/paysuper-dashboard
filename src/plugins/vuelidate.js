@@ -32,7 +32,16 @@ function $isFieldInvalid(fieldPath) {
   return Boolean(field.$invalid && field.$dirty);
 }
 
+function $getValidatedFieldProps(fieldPath) {
+  return {
+    required: true,
+    hasError: this.$isFieldInvalid(fieldPath),
+    errorText: this.$getFieldErrorMessages(fieldPath),
+  };
+}
+
 extend(Vue.prototype, {
   $getFieldErrorMessages,
+  $getValidatedFieldProps,
   $isFieldInvalid,
 });
