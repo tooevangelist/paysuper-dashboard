@@ -55,12 +55,6 @@ export default {
     };
   },
 
-  watch: {
-    '$v.$invalid': function isInvalid(value) {
-      this.$emit('valid', !value);
-    },
-  },
-
   validations: {
     profile: {
       personal: {
@@ -81,8 +75,15 @@ export default {
     },
   },
 
+  watch: {
+    '$v.$invalid': function isInvalid(value) {
+      this.$emit('valid', !value);
+    },
+  },
+
   mounted() {
     this.$v.$touch();
+    this.$emit('valid', !this.$v.$invalid);
   },
 };
 </script>

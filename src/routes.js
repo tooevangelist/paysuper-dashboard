@@ -145,7 +145,7 @@ const routes = [
   {
     path: '/profile/',
     component: () => import('@/pages/UserProfile.vue'),
-    meta: { layout: 'PageShallow' },
+    meta: { layout: 'PageShallow', isAuthRequired: true },
   },
   {
     path: '/sign-up/',

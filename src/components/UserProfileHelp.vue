@@ -34,12 +34,6 @@ export default {
     };
   },
 
-  watch: {
-    '$v.$invalid': function isInvalid(value) {
-      this.$emit('valid', !value);
-    },
-  },
-
   validations() {
     const isAnyHelpChecked = () => filter(this.profile.help, item => item).length;
     return {
@@ -52,6 +46,16 @@ export default {
         },
       },
     };
+  },
+
+  watch: {
+    '$v.$invalid': function isInvalid(value) {
+      this.$emit('valid', !value);
+    },
+  },
+
+  mounted() {
+    this.$emit('valid', !this.$v.$invalid);
   },
 };
 </script>

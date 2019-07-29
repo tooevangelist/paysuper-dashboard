@@ -60,19 +60,19 @@ export default {
       activityKindOptions: [
         {
           label: 'Develop and publish your games',
-          value: 'Develop and publish your games',
+          value: 'develop_and_publish_your_games',
         },
         {
           label: 'Publish games of other companies',
-          value: 'Publish games of other companies',
+          value: 'publish_games_of_other_companies',
         },
         {
           label: 'Publish your games through other publishers',
-          value: 'Publish your games through other publishers',
+          value: 'publish_your_games_through_other_publishers',
         },
         {
           label: 'Other',
-          value: 'Other',
+          value: 'other',
         },
       ],
       monetizationOptions: [
@@ -165,12 +165,6 @@ export default {
     },
   },
 
-  watch: {
-    '$v.$invalid': function isInvalid(value) {
-      this.$emit('valid', !value);
-    },
-  },
-
   validations() {
     const isAnyMonetizationChecked = () => filter(
       this.profile.company.monetization,
@@ -220,8 +214,15 @@ export default {
     };
   },
 
+  watch: {
+    '$v.$invalid': function isInvalid(value) {
+      this.$emit('valid', !value);
+    },
+  },
+
   mounted() {
     this.$v.$touch();
+    this.$emit('valid', !this.$v.$invalid);
   },
 };
 </script>

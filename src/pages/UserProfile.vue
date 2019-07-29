@@ -1,14 +1,18 @@
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
+import { findKey, size } from 'lodash-es';
 import UserProfileStore from '@/store/UserProfileStore';
 import UserProfilePerson from '@/components/UserProfilePerson.vue';
 import UserProfileHelp from '@/components/UserProfileHelp.vue';
 import UserProfileCompany from '@/components/UserProfileCompany.vue';
 import StepsProgressBar from '@/components/StepsProgressBar.vue';
 import ConfirmYourEmail from '@/components/ConfirmYourEmail.vue';
+import Notifications from '@/mixins/Notifications';
 
 export default {
   name: 'PageUserProfile',
+
+  mixins: [Notifications],
 
   components: {
     UserProfilePerson,
@@ -28,56 +32,85 @@ export default {
 
   data() {
     return {
-      isComplete: false,
-      steps: [
-        {
+      steps: {
+        personal: {
           name: 'About yourself',
           component: 'UserProfilePerson',
-          code: 'person',
+          position: 1,
           isValid: false,
+          dataSectionName: 'personal',
         },
-        {
+        help: {
           name: 'How we can help',
           component: 'UserProfileHelp',
-          code: 'help',
+          position: 2,
           isValid: false,
+          dataSectionName: 'help',
         },
-        {
+        company: {
           name: 'About your company and games',
           component: 'UserProfileCompany',
-          code: 'company',
+          position: 3,
           isValid: false,
+          dataSectionName: 'company',
         },
-      ],
-      currentStepIndex: 0,
+      },
     };
   },
 
   computed: {
-    ...mapState('UserProfile', ['profile']),
+    ...mapState('UserProfile', ['profile', 'currentStepCode']),
+
+    isConfirmEmailStep() {
+      return this.currentStepCode === 'confirmEmail';
+    },
+
     currentStep() {
-      return this.steps[this.currentStepIndex];
+      return this.steps[this.currentStepCode];
+    },
+
+    isFinalStep() {
+      if (!this.currentStep) {
+        return false;
+      }
+      return this.currentStep.position === size(this.steps);
     },
 
     isGoNextEnabled() {
+      if (!this.currentStep) {
+        return false;
+      }
       return this.currentStep.isValid;
     },
   },
 
   methods: {
+    ...mapActions('UserProfile', ['updateProfile', 'setCurrentStepCode']),
+
     handleStepComplete(value) {
       this.currentStep.isValid = value;
     },
 
-    goNext() {
-      if (this.currentStepIndex < this.steps.length - 1) {
-        this.currentStepIndex += 1;
+    async goNext() {
+      const nextStepCode = findKey(this.steps, { position: this.currentStep.position + 1 })
+        || 'confirmEmail';
+      const { dataSectionName } = this.currentStep;
+      try {
+        await this.updateProfile({
+          [dataSectionName]: this.profile[dataSectionName],
+          ...(nextStepCode ? { last_step: nextStepCode } : {}),
+        });
+
+        this.setCurrentStepCode(nextStepCode);
+      } catch (error) {
+        this.$_Notifications_showErrorMessage(error.message);
       }
     },
 
     goBack() {
-      if (this.currentStepIndex !== 0) {
-        this.currentStepIndex -= 1;
+      const prevStepCode = findKey(this.steps, { position: this.currentStep.position - 1 });
+      if (prevStepCode) {
+        this.setCurrentStepCode(prevStepCode);
       }
     },
   },
@@ -87,12 +120,12 @@ export default {
 <template>
 <div class="user-profile">
   <div class="wrapper">
-    <ConfirmYourEmail v-if="isComplete" />
-    <template v-if="!isComplete">
+    <ConfirmYourEmail v-if="isConfirmEmailStep" />
+    <template v-if="!isConfirmEmailStep">
       <StepsProgressBar
         class="progress-bar"
         :stepsCount="3"
-        :currentStep="currentStepIndex + 1"
+        :currentStep="currentStep.position"
         :currentStepName="currentStep.name"
       />
       <component
@@ -103,7 +136,7 @@ export default {
 
       <div class="controls">
         <UiButton
-          v-if="currentStepIndex > 0"
+          v-if="currentStep.position > 1"
           class="controls__button"
           :isTransparent="true"
           @click="goBack"
@@ -111,11 +144,11 @@ export default {
           BACK
         </UiButton>
         <UiButton
-          v-if="currentStepIndex === steps.length - 1"
+          v-if="isFinalStep"
           class="controls__button"
           color="green"
           :disabled="!isGoNextEnabled"
-          @click="isComplete = true"
+          @click="goNext"
         >
           DONE
         </UiButton>
