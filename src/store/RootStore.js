@@ -12,7 +12,10 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     user: {},
-    config: {},
+    config: {
+      ownBackendUrl: '',
+      apiUrl: 'https://p1payapi.tst.protocol.one',
+    },
     isLoading: false,
     pageError: null,
   },
