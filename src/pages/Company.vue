@@ -2,6 +2,8 @@
 import AccountInfo from '@/components/AccountInfo.vue';
 import BankingInfo from '@/components/BankingInfo.vue';
 import Contacts from '@/components/Contacts.vue';
+import LicenseAgreement from '@/components/LicenseAgreement.vue';
+import PaymentMethods from '@/components/PaymentMethods.vue';
 import SmartListItem from '@/components/SmartListItem.vue';
 
 export default {
@@ -10,6 +12,8 @@ export default {
     AccountInfo,
     BankingInfo,
     Contacts,
+    LicenseAgreement,
+    PaymentMethods,
     SmartListItem,
   },
   data() {
@@ -35,13 +39,15 @@ export default {
         },
         {
           title: 'Payment Methods',
-          status: 'locked',
           notice: 'After Previous Steps',
+          noticeStatus: 'warning',
+          componentName: 'PaymentMethods',
         },
         {
           title: 'License Agreement',
-          status: 'locked',
           notice: 'After Previous Steps',
+          noticeStatus: 'warning',
+          componentName: 'LicenseAgreement',
         },
       ],
     };

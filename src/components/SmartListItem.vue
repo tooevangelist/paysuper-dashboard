@@ -163,7 +163,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 7px;
+  padding: 7px 4px;
 
   .smart-list-item._status-default._clickable & {
     cursor: pointer;
@@ -211,7 +211,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-right: 6px;
+  margin-right: 4px;
   align-self: flex-start;
 }
 
