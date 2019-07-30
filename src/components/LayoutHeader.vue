@@ -75,8 +75,8 @@ export default {
             <div class="status-box">
               <div class="status-title">Test Mode</div>
               <div class="status-text">
-                You can sell products only after the signing of License Agreement and then
-                your account will be “<span class="green-text">Active</span>”.
+                You can start your sales only after License Agreement will be signed by both
+                our sides and your account become “<span class="green-text">Active</span>”.
               </div>
             </div>
           </UiTip>
@@ -223,7 +223,7 @@ export default {
   margin-top: 16px;
 }
 .green-text {
-  color: #2fa84f;
+  color: #069697;
 }
 .feedback {
   font-size: 12px;
