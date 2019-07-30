@@ -1,7 +1,9 @@
 
 import axios from 'axios';
 import { get } from 'lodash-es';
+import Centrifuge from 'centrifuge';
 import mergeApiValuesWithDefaults from '@/helpers/mergeApiValuesWithDefaults';
+import router from '@/router';
 
 function getDefaultProfileData() {
   return {
@@ -52,7 +54,9 @@ export default function createUserStore() {
 
     mutations: {
       profile(state, value) {
-        state.profile = value;
+        const defaultProfile = getDefaultProfileData();
+        const profile = mergeApiValuesWithDefaults(defaultProfile, value);
+        state.profile = profile;
       },
       currentStepCode(state, value) {
         state.currentStepCode = value;
@@ -64,34 +68,37 @@ export default function createUserStore() {
         return dispatch('fetchProfile');
       },
 
-      async fetchProfile({ rootState, commit }) {
-        const defaultProfile = getDefaultProfileData();
+      async fetchProfile({ dispatch, commit, rootState }) {
         try {
-          const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/user/profile`, {
+          const { data } = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/user/profile`, {
             headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
           });
-          const profile = mergeApiValuesWithDefaults(defaultProfile, response.data);
-          if (profile.last_step) {
-            commit('currentStepCode', profile.last_step);
+          if (data.email.confirmed) {
+            dispatch('redirectToDashboard');
+            return;
           }
-          commit('profile', profile);
+          commit('profile', data);
+          if (data.last_step) {
+            commit('currentStepCode', data.last_step);
+          }
         } catch (error) {
           if (get(error, 'response.status') !== 404) {
             console.error(error);
           }
-          commit('profile', defaultProfile);
+          commit('profile', {});
         }
       },
 
-      async updateProfile({ rootState }, props) {
+      async updateProfile({ rootState, commit }, props) {
         try {
-          await axios.patch(
+          const { data } = await axios.patch(
             `${rootState.config.apiUrl}/admin/api/v1/user/profile`,
             props,
             {
               headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
             },
           );
+          commit('profile', data);
         } catch (error) {
           console.error(error);
           throw new Error(
@@ -102,6 +109,21 @@ export default function createUserStore() {
 
       setCurrentStepCode({ commit }, value) {
         commit('currentStepCode', value);
+      },
+
+      initWaitingForEmailConfirm({ state, dispatch, rootState }) {
+        const centrifuge = new Centrifuge(rootState.config.websocketUrl);
+        centrifuge.setToken(state.profile.centrifugo_token);
+        centrifuge.subscribe(`paysuper:user#${state.profile.id}`, ({ data }) => {
+          if (data.code === 'op000005') {
+            dispatch('redirectToDashboard');
+          }
+        });
+        centrifuge.connect();
+      },
+
+      redirectToDashboard() {
+        router.push({ path: '/dashboard' });
       },
     },
 

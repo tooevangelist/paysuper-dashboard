@@ -152,6 +152,10 @@ const routes = [
     component: () => import('@/pages/SignUp.vue'),
     meta: { layout: 'PageShallow' },
   },
+  {
+    path: '/confirm_email/',
+    component: () => import('@/pages/ConfirmEmail.vue'),
+  },
 
   {
     path: '*',

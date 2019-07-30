@@ -9,10 +9,11 @@
 const errorTexts = {
   404: 'Page not found',
   500: 'Server error',
+  520: 'Unknown error',
 };
 
 export default {
-  name: 'Page404',
+  name: 'ErrorPage',
 
   props: {
     errorCode: {
