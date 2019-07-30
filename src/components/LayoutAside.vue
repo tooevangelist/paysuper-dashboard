@@ -58,7 +58,7 @@ export default {
   }
 
   &._current {
-    background-color: #f1f3f4;
+    background-color: #f7f9fa;
   }
   &._not-available {
     pointer-events: none;

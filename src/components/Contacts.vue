@@ -161,7 +161,8 @@ export default {
   max-width: 548px;
 }
 .submit {
-  width: 180px;
+  min-width: 180px;
   align-self: flex-end;
+  letter-spacing: 0.75px;
 }
 </style>
