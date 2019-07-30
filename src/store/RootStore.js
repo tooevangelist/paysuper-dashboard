@@ -35,7 +35,7 @@ export default new Vuex.Store({
   },
   actions: {
     async initState({ dispatch }) {
-      await dispatch('fetchConfig');
+      // await dispatch('fetchConfig');
       await Promise.all([
         dispatch('User/initState'),
         dispatch('Dictionaries/initState'),
