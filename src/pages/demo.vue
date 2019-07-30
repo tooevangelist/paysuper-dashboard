@@ -9,17 +9,20 @@ export default {
     document.head.appendChild(recaptchaScript);
   },
   methods: {
-    buy(amount, currency) {
-      const { PaySuper } = window;
-      this.$nextTick(() => {
-        const paySuper = new PaySuper({
-          projectID: process.env.VUE_APP_P1PAYAPI_PROJECT_IDENTIFIER,
-          region: 'US',
-          // account: 'dmitriy.sinichkin@protocol.one',
-        });
-        paySuper.setCurrency(currency).setAmount(amount).renderModal();
-      });
+    buy() {
+
     },
+    // buy(amount, currency) {
+    //   const { PaySuper } = window;
+    //   this.$nextTick(() => {
+    //     const paySuper = new PaySuper({
+    //       projectID: process.env.VUE_APP_P1PAYAPI_PROJECT_IDENTIFIER,
+    //       region: 'US',
+    //       // account: 'dmitriy.sinichkin@protocol.one',
+    //     });
+    //     paySuper.setCurrency(currency).setAmount(amount).renderModal();
+    //   });
+    // },
   },
 };
 </script>

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export default function createUserStore({ config }) {
+export default function createUserStore() {
   return {
     state: () => ({
       payout: null,
@@ -17,7 +17,7 @@ export default function createUserStore({ config }) {
       initState() { },
 
       async fetchPayout({ commit, rootState }, { from, to }) {
-        const url = `${config.apiUrl}/api/v1/s/order/accounting_payment?from=${from}&to=${to}`;
+        const url = `${rootState.config.apiUrl}/api/v1/s/order/accounting_payment?from=${from}&to=${to}`;
 
         const response = await axios.get(
           url,

@@ -6,7 +6,7 @@ import merchantHistoryScheme from '@/schemes/merchantHistoryScheme';
 
 const searchBuilder = new SearchBuilder(merchantHistoryScheme);
 
-export default function createMerchantHistoryStore({ config }) {
+export default function createMerchantHistoryStore() {
   return {
     state: () => ({
       merchantId: null,
@@ -65,7 +65,7 @@ export default function createMerchantHistoryStore({ config }) {
           ...state.apiQuery,
           is_system: true,
         }, { arrayFormat: 'brackets' });
-        const url = `${config.apiUrl}/admin/api/v1/merchants/${state.merchantId}/notifications?${query}`;
+        const url = `${rootState.config.apiUrl}/admin/api/v1/merchants/${state.merchantId}/notifications?${query}`;
 
         const response = await axios.get(url, {
           headers: { Authorization: `Bearer ${rootState.User.accessToken}` },

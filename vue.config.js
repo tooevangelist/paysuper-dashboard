@@ -1,4 +1,6 @@
+const _ = require('lodash');
 const aliasesConfig = require('./aliases.config');
+const webappConfigScheme = require('./backend/config/webappConfigScheme.js');
 
 module.exports = {
   css: {
@@ -41,5 +43,15 @@ module.exports = {
 
   devServer: {
     port: 3030,
+
+    before(app) {
+      app.get('/conf', (req, res) => {
+        const result = _.mapValues(
+          webappConfigScheme, item => process.env[item.name] || item.default,
+        );
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(result));
+      });
+    },
   },
 };

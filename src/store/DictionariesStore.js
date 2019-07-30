@@ -2,7 +2,7 @@ import axios from 'axios';
 import { sortBy } from 'lodash-es';
 import i18n from '@/plugins/i18n';
 
-export default function createDictionariesStore({ config }) {
+export default function createDictionariesStore() {
   return {
     namespaced: true,
 
@@ -54,8 +54,8 @@ export default function createDictionariesStore({ config }) {
           dispatch('fetchCountries'),
         ]);
       },
-      fetchCurrencies({ commit }, search = '') {
-        let url = `${config.apiUrl}/api/v1/currency`;
+      fetchCurrencies({ commit, rootState }, search = '') {
+        let url = `${rootState.config.apiUrl}/api/v1/currency`;
 
         if (search.length > 0) {
           url += `?name=${search}`;
@@ -71,8 +71,8 @@ export default function createDictionariesStore({ config }) {
           }).catch(() => { });
       },
 
-      getCountries() {
-        const url = `${config.apiUrl}/api/v1/country`;
+      getCountries({ rootState }) {
+        const url = `${rootState.config.apiUrl}/api/v1/country`;
 
         return axios.get(url)
           .then(response => response.data)

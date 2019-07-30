@@ -4,7 +4,7 @@ function mapDataApiToForm(data) {
   return data;
 }
 
-export default function createProductStore({ config }) {
+export default function createProductStore() {
   return {
     state: () => ({
       projectId: null,
@@ -59,7 +59,7 @@ export default function createProductStore({ config }) {
         state, commit, rootState,
       }) {
         const response = await axios.post(
-          `${config.apiUrl}/admin/api/v1/products/${state.productId}`,
+          `${rootState.config.apiUrl}/admin/api/v1/products/${state.productId}`,
           state.product,
           {
             headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
@@ -72,7 +72,7 @@ export default function createProductStore({ config }) {
         state, commit, rootState,
       }) {
         const response = await axios.get(
-          `${config.apiUrl}/admin/api/v1/products/${state.productId}`,
+          `${rootState.config.apiUrl}/admin/api/v1/products/${state.productId}`,
           {
             headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
           },
@@ -84,7 +84,7 @@ export default function createProductStore({ config }) {
         state, commit, rootState,
       }) {
         const response = await axios.put(
-          `${config.apiUrl}/admin/api/v1/products/${state.productId}`,
+          `${rootState.config.apiUrl}/admin/api/v1/products/${state.productId}`,
           state.product,
           {
             headers: { Authorization: `Bearer ${rootState.User.accessToken}` },

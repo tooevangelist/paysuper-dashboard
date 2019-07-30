@@ -9,7 +9,7 @@ function mapDataApiToForm(data) {
   return data;
 }
 
-export default function createProjectStore({ config, notifications }) {
+export default function createProjectStore({ notifications }) {
   return {
     state: () => ({
       project: null,
@@ -79,7 +79,7 @@ export default function createProjectStore({ config, notifications }) {
       },
 
       async fetchProject({ commit, rootState }, id) {
-        const response = await axios.get(`${config.apiUrl}/admin/api/v1/projects/${id}`, {
+        const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/projects/${id}`, {
           headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
         });
         commit('project', mapDataApiToForm(response.data.item));
@@ -90,7 +90,7 @@ export default function createProjectStore({ config, notifications }) {
           project_id: projectId,
         };
 
-        let url = `${config.apiUrl}/admin/api/v1/products`;
+        let url = `${rootState.config.apiUrl}/admin/api/v1/products`;
         url += `?${qs.stringify(params)}`;
         const response = await axios.get(url, {
           headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
@@ -101,7 +101,7 @@ export default function createProjectStore({ config, notifications }) {
 
       async createProject({ state, commit, rootState }) {
         const response = await axios.post(
-          `${config.apiUrl}/admin/api/v1/projects`,
+          `${rootState.config.apiUrl}/admin/api/v1/projects`,
           mapDataFormToApi({
             merchant_id: rootState.User.Merchant.merchant.id,
             ...state.project,
@@ -118,7 +118,7 @@ export default function createProjectStore({ config, notifications }) {
         dispatch('setIsLoading', true, { root: true });
         try {
           await axios.patch(
-            `${config.apiUrl}/admin/api/v1/projects/${state.project.id}`,
+            `${rootState.config.apiUrl}/admin/api/v1/projects/${state.project.id}`,
             mapDataFormToApi(state.project),
             {
               headers: { Authorization: `Bearer ${rootState.User.accessToken}` },

@@ -4,7 +4,7 @@ function mapDataApiToForm(data) {
   return data;
 }
 
-export default function createPaymentMethodStore({ config }) {
+export default function createPaymentMethodStore() {
   return {
     state: () => ({
       merchantId: null,
@@ -35,7 +35,7 @@ export default function createPaymentMethodStore({ config }) {
         state, commit, dispatch, rootState,
       }) {
         return axios.get(
-          `${config.apiUrl}/admin/api/v1/merchants/${state.merchantId}/methods/${state.paymentMethodId}`,
+          `${rootState.config.apiUrl}/admin/api/v1/merchants/${state.merchantId}/methods/${state.paymentMethodId}`,
           {
             headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
           },
@@ -50,7 +50,7 @@ export default function createPaymentMethodStore({ config }) {
         state, commit, rootState,
       }) {
         const response = await axios.put(
-          `${config.apiUrl}/admin/api/v1/merchants/${state.merchantId}/methods/${state.paymentMethodId}`,
+          `${rootState.config.apiUrl}/admin/api/v1/merchants/${state.merchantId}/methods/${state.paymentMethodId}`,
           state.paymentMethod,
           {
             headers: { Authorization: `Bearer ${rootState.User.accessToken}` },

@@ -1,6 +1,7 @@
 const Router = require('koa-router');
 
 const config = require('../../config/config');
+const webappConfig = require('../../config/webappConfig');
 
 const auth1Middleware = require('./auth1.oauth2');
 
@@ -15,12 +16,15 @@ router
     ctx.body = {};
     next();
   })
+  .get('/conf', (ctx, next) => {
+    ctx.body = webappConfig;
+    next();
+  })
 
   .get(`${auth1RoutesNamespace}/login`, auth1Middleware.login)
   .get(`${auth1RoutesNamespace}/callback`, auth1Middleware.authorize)
   .get(`${auth1RoutesNamespace}/refresh`, auth1Middleware.refresh)
   .get(`${auth1RoutesNamespace}/logout`, auth1Middleware.logout);
-
 
 module.exports.routes = function () {
   return router.routes();
