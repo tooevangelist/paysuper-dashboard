@@ -6,7 +6,7 @@ import merchantsListScheme from '@/schemes/merchantsListScheme';
 
 const searchBuilder = new SearchBuilder(merchantsListScheme);
 
-export default function createMerchantListStore({ config }) {
+export default function createMerchantListStore() {
   return {
     state: () => ({
       merchants: {
@@ -65,7 +65,7 @@ export default function createMerchantListStore({ config }) {
           ...state.apiQuery,
           ...state.apiQueryExtention,
         }, { arrayFormat: 'brackets' });
-        const url = `${config.apiUrl}/admin/api/v1/merchants?${query}`;
+        const url = `${rootState.config.apiUrl}/admin/api/v1/merchants?${query}`;
 
         const response = await axios.get(url, {
           headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
@@ -100,7 +100,7 @@ export default function createMerchantListStore({ config }) {
 
       async sendNotification({ rootState }, { merchantId, notification }) {
         await axios.post(
-          `${config.apiUrl}/admin/api/v1/merchants/${merchantId}/notifications`,
+          `${rootState.config.apiUrl}/admin/api/v1/merchants/${merchantId}/notifications`,
           notification,
           {
             headers: { Authorization: `Bearer ${rootState.User.accessToken}` },

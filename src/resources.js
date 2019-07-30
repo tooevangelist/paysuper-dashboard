@@ -1,7 +1,5 @@
 import Vue from 'vue';
 import { extend } from 'lodash-es';
-import config from './config';
-
 
 function showToasted(type, message, opts = {}) {
   let options = {
@@ -33,7 +31,6 @@ function getErrorMessage(e) {
 }
 
 export default {
-  config,
   notifications: {
     showSuccessMessage(message, opts = {}) {
       showToasted('success', message, opts);

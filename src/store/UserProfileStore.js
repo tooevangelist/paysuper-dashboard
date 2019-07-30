@@ -43,7 +43,7 @@ function getDefaultProfileData() {
   };
 }
 
-export default function createUserStore({ config }) {
+export default function createUserStore() {
   return {
     state: {
       profile: null,
@@ -67,7 +67,7 @@ export default function createUserStore({ config }) {
       async fetchProfile({ rootState, commit }) {
         const defaultProfile = getDefaultProfileData();
         try {
-          const response = await axios.get(`${config.apiUrl}/admin/api/v1/user/profile`, {
+          const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/user/profile`, {
             headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
           });
           const profile = mergeApiValuesWithDefaults(defaultProfile, response.data);
@@ -86,7 +86,7 @@ export default function createUserStore({ config }) {
       async updateProfile({ rootState }, props) {
         try {
           await axios.patch(
-            `${config.apiUrl}/admin/api/v1/user/profile`,
+            `${rootState.config.apiUrl}/admin/api/v1/user/profile`,
             props,
             {
               headers: { Authorization: `Bearer ${rootState.User.accessToken}` },

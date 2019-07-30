@@ -4,13 +4,13 @@ import MerchantStore from '@/store/MerchantStore';
 import { NOT_FOUND_ERROR, UNAUTHORIZED } from '@/errors';
 // import router from '@/router';
 
-export default function createUserStore({ config, notifications }) {
+export default function createUserStore({ notifications }) {
   const accessToken = localStorage.getItem('token') || '';
   return {
     state: {
       accessToken,
       isAuthorised: false,
-      authIframeSrc: `${config.ownBackendUrl}/auth1/login`,
+      authIframeSrc: '',
       isAdmin: false,
     },
 
@@ -18,18 +18,21 @@ export default function createUserStore({ config, notifications }) {
       accessToken(state, value) {
         state.accessToken = value;
       },
-
       isAuthorised(state, value) {
         state.isAuthorised = value;
       },
-
+      authIframeSrc(state, value) {
+        state.authIframeSrc = value;
+      },
       isAdmin(state, value) {
         state.isAdmin = value;
       },
     },
 
     actions: {
-      async initState({ dispatch }) {
+      async initState({ commit, dispatch, rootState }) {
+        commit('authIframeSrc', `${rootState.config.ownBackendUrl}/auth1/login`);
+
         try {
           await dispatch('initUserMerchantData');
         } catch (error) {
@@ -77,9 +80,9 @@ export default function createUserStore({ config, notifications }) {
        * @param dispatch
        * @returns {Promise.<T>|Promise<any>|Promise}
        */
-      async refreshToken({ dispatch }) {
+      async refreshToken({ dispatch, rootState }) {
         try {
-          const response = await axios.get(`${config.ownBackendUrl}/auth1/refresh`, {
+          const response = await axios.get(`${rootState.config.ownBackendUrl}/auth1/refresh`, {
             // this method requires only cookies for authrization
             withCredentials: true,
           });
@@ -92,9 +95,9 @@ export default function createUserStore({ config, notifications }) {
         }
       },
 
-      async logout({ commit }) {
+      async logout({ commit, rootState }) {
         try {
-          await axios.get(`${config.ownBackendUrl}/auth1/logout`, {
+          await axios.get(`${rootState.config.ownBackendUrl}/auth1/logout`, {
             withCredentials: true,
           });
           // eslint-disable-next-line
@@ -109,7 +112,7 @@ export default function createUserStore({ config, notifications }) {
     namespaced: true,
 
     modules: {
-      Merchant: MerchantStore({ config, notifications }),
+      Merchant: MerchantStore({ notifications }),
     },
   };
 }

@@ -7,7 +7,7 @@ import transactionsListScheme from '@/schemes/transactionsListScheme';
 
 const searchBuilder = new SearchBuilder(transactionsListScheme);
 
-export default function createTransactionsSearchStore({ config }) {
+export default function createTransactionsSearchStore() {
   return {
     namespaced: true,
 
@@ -106,7 +106,7 @@ export default function createTransactionsSearchStore({ config }) {
       async searchTransactions({
         state, commit, dispatch, rootState,
       }) {
-        let url = `${config.apiUrl}/admin/api/v1/order`;
+        let url = `${rootState.config.apiUrl}/admin/api/v1/order`;
 
         const params = {
           ...state.apiQuery,
@@ -137,7 +137,7 @@ export default function createTransactionsSearchStore({ config }) {
       },
 
       async fetchPaymentMethods({ commit, rootState }) {
-        const url = `${config.apiUrl}/api/v1/s/payment_method/merchant`;
+        const url = `${rootState.config.apiUrl}/api/v1/s/payment_method/merchant`;
 
         await axios.get(
           url,
@@ -159,7 +159,7 @@ export default function createTransactionsSearchStore({ config }) {
         const query = qs.stringify({
           merchant_id: rootState.User.Merchant.merchant.id,
         });
-        return axios.get(`${config.apiUrl}/admin/api/v1/projects?${query}`, {
+        return axios.get(`${rootState.config.apiUrl}/admin/api/v1/projects?${query}`, {
           headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
         }).then((response) => {
           commit('projects', response.data.items);

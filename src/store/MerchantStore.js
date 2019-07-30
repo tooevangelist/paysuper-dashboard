@@ -77,7 +77,7 @@ function getDefaultAgreementDocument() {
   };
 }
 
-export default function createMerchantStore({ config }) {
+export default function createMerchantStore() {
   return {
     state: () => ({
       merchant: null,
@@ -118,7 +118,7 @@ export default function createMerchantStore({ config }) {
       async createMerchant({ commit, rootState }, merchant) {
         try {
           const response = await axios.post(
-            `${config.apiUrl}/admin/api/v1/merchants`,
+            `${rootState.config.apiUrl}/admin/api/v1/merchants`,
             merchant,
             {
               headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
@@ -131,7 +131,7 @@ export default function createMerchantStore({ config }) {
       },
 
       async fetchMerchantById({ commit, rootState }, id) {
-        const response = await axios.get(`${config.apiUrl}/admin/api/v1/merchants/${id}`, {
+        const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/merchants/${id}`, {
           headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
         });
         commit('merchant', mapDataApiToForm(response.data));
@@ -139,7 +139,7 @@ export default function createMerchantStore({ config }) {
 
       async fetchMerchant({ commit, rootState }) {
         try {
-          const response = await axios.get(`${config.apiUrl}/admin/api/v1/merchants/user`, {
+          const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/merchants/user`, {
             headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
           });
           commit('merchant', mapDataApiToForm(response.data));
@@ -161,7 +161,7 @@ export default function createMerchantStore({ config }) {
         const query = qs.stringify({
           sort: state.paymentMethodsSort,
         }, { arrayFormat: 'brackets' });
-        const url = `${config.apiUrl}/admin/api/v1/merchants/${merchantId}/methods?${query}`;
+        const url = `${rootState.config.apiUrl}/admin/api/v1/merchants/${merchantId}/methods?${query}`;
 
         try {
           const response = await axios.get(
@@ -178,7 +178,7 @@ export default function createMerchantStore({ config }) {
 
       async updateMerchant({ state, commit, rootState }) {
         const response = await axios.put(
-          `${config.apiUrl}/admin/api/v1/merchants`,
+          `${rootState.config.apiUrl}/admin/api/v1/merchants`,
           state.merchant,
           {
             headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
@@ -189,7 +189,7 @@ export default function createMerchantStore({ config }) {
 
       async patchMerchant({ state, commit, rootState }, props) {
         const response = await axios.patch(
-          `${config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}`,
+          `${rootState.config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}`,
           props,
           {
             headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
@@ -246,7 +246,7 @@ export default function createMerchantStore({ config }) {
 
       async changeMerchantStatus({ state, commit, rootState }, { status, message = '' }) {
         const response = await axios.put(
-          `${config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}/change-status`,
+          `${rootState.config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}/change-status`,
           {
             status,
             message,
@@ -266,7 +266,7 @@ export default function createMerchantStore({ config }) {
 
         try {
           const response = await axios.get(
-            `${config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}/agreement`,
+            `${rootState.config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}/agreement`,
             {
               headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
             },
@@ -280,7 +280,7 @@ export default function createMerchantStore({ config }) {
 
       async sendNotification({ state, rootState }, notification) {
         await axios.post(
-          `${config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}/notifications`,
+          `${rootState.config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}/notifications`,
           notification,
           {
             headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
