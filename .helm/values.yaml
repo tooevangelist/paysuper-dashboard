@@ -9,6 +9,7 @@ ingress:
   hostname: paysupermgmt.tst.protocol.one
   pathBackend: 
    - /auth1/
+   - /conf/
   pathFrontend: 
    - /
 

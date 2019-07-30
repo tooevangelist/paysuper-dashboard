@@ -12,10 +12,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     user: {},
-    config: {
-      ownBackendUrl: '',
-      apiUrl: 'https://p1payapi.tst.protocol.one',
-    },
+    config: {},
     isLoading: false,
     pageError: null,
   },
@@ -35,7 +32,7 @@ export default new Vuex.Store({
   },
   actions: {
     async initState({ dispatch }) {
-      // await dispatch('fetchConfig');
+      await dispatch('fetchConfig');
       await Promise.all([
         dispatch('User/initState'),
         dispatch('Dictionaries/initState'),
