@@ -1,15 +1,20 @@
 <script>
 import { includes } from 'lodash-es';
+import { mapActions } from 'vuex';
 import { directive as clickaway } from 'vue-clickaway';
 import Notifications from '@/components/Notifications.vue';
+import LeaveFeedbackPopup from '@/components/LeaveFeedbackPopup.vue';
+import NotificationsMixin from '@/mixins/Notifications';
 
 export default {
   name: 'LayoutHeader',
+  mixins: [NotificationsMixin],
   directives: {
     clickaway,
   },
   components: {
     Notifications,
+    LeaveFeedbackPopup,
   },
   props: {
     projectName: {
@@ -29,15 +34,25 @@ export default {
       hasStatusOpened: false,
       hasInfoOpened: false,
       hasNotificationsOpened: false,
+      isLeaveFeedbackOpened: false,
+      isLeaveFeedbackSuccess: false,
       statusesTitles: {
         test: 'Test Mode',
         active: 'Active',
       },
       infoItems: [
-        { link: '#', icon: 'IconSupport', text: 'Support' },
-        { link: '#', icon: 'IconQuestion', text: 'FAQ' },
-        { link: '#', icon: 'IconDocumentation', text: 'Documentation' },
-        { link: '#', icon: 'IconPen', text: 'Leave Feedback' },
+        {
+          id: 'support', link: '#', icon: 'IconSupport', text: 'Support',
+        },
+        {
+          id: 'faq', link: '#', icon: 'IconQuestion', text: 'FAQ',
+        },
+        {
+          id: 'documentation', link: '#', icon: 'IconDocumentation', text: 'Documentation',
+        },
+        {
+          id: 'leaveFeedback', link: '#', icon: 'IconPen', text: 'Leave Feedback',
+        },
       ],
       notifications: [
         {
@@ -64,6 +79,7 @@ export default {
     };
   },
   methods: {
+    ...mapActions('LeaveFeedback', ['postFeedback']),
     hideInfoBlock() {
       this.hasInfoOpened = false;
     },
@@ -72,6 +88,23 @@ export default {
     },
     hideStatusBlock() {
       this.hasStatusOpened = false;
+    },
+    notifyToggle() {
+      this.hasNotificationsOpened = !this.hasNotificationsOpened;
+    },
+    handleInfoBoxItemClick(item) {
+      if (item.id === 'leaveFeedback') {
+        this.isLeaveFeedbackOpened = true;
+      }
+    },
+    async sendFeedback(value) {
+      try {
+        await this.postFeedback(value);
+        this.isLeaveFeedbackSuccess = true;
+        this.isLeaveFeedbackOpened = false;
+      } catch (error) {
+        this.$_Notifications_showErrorMessage(error.message);
+      }
     },
   },
 };
@@ -116,7 +149,27 @@ export default {
   </div>
 
   <div class="right">
-    <a href="#" class="feedback">Feedback about this page?</a>
+    <div style="position: relative">
+      <a
+        class="feedback"
+        href="#"
+        @click="isLeaveFeedbackOpened = !isLeaveFeedbackOpened"
+      >Feedback about this page?</a>
+      <UiTip
+        innerPosition="right"
+        position="bottom"
+        width="330px"
+        :visible="isLeaveFeedbackOpened"
+        :closeDelay="isLeaveFeedbackSuccess ? 1500 : 0"
+        :stayOpenedOnHover="isLeaveFeedbackSuccess ? true : false"
+      >
+        <LeaveFeedbackPopup
+          :isSuccess="isLeaveFeedbackSuccess"
+          @send="sendFeedback"
+          @close="isLeaveFeedbackOpened = false"
+        />
+      </UiTip>
+    </div>
     <a href="#" class="right-icon">
       <IconSettings />
     </a>
@@ -134,6 +187,8 @@ export default {
         width="calc(100vw - 140px)"
         maxWidth="220px"
         :visible="hasInfoOpened"
+        :closeDelay="0"
+        :stayOpenedOnHover="false"
       >
         <div class="info-box">
           <a
@@ -141,6 +196,7 @@ export default {
             :key="index"
             class="info-item"
             :href="item.link"
+            @click="handleInfoBoxItemClick(item)"
           >
             <component :is="item.icon" class="info-icon" />
             <div class="info-text">{{ item.text }}</div>
@@ -194,7 +250,8 @@ export default {
   width: 100%;
   padding: 4px 16px;
   background: #fff;
-  box-shadow: 0px 1px 2px rgba(8, 35, 48, 0.24), 0px 2px 6px rgba(8, 35, 48, 0.16);
+  box-shadow: 0px 1px 2px rgba(8, 35, 48, 0.24),
+    0px 2px 6px rgba(8, 35, 48, 0.16);
   flex-wrap: wrap;
   align-content: stretch;
   z-index: 20;
@@ -272,7 +329,7 @@ export default {
   font-size: 14px;
   line-height: 20px;
   letter-spacing: 0.25px;
-  color: #3E4345;
+  color: #3e4345;
   margin-top: 16px;
 }
 .filled-text {

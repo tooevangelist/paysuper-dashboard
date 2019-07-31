@@ -89,6 +89,7 @@ $orange-button-color: #ff6f6f;
 $purple-button-color: #8077e7;
 $green-button-color: #2fa84f;
 $button-font-color: #fff;
+$gray-button-color: #919699;
 $disabled-button-color: #f1f3f4;
 $disabled-text-color: #919699;
 
@@ -152,7 +153,7 @@ $primary-button-size: 14px;
   &._transparent {
     background-color: transparent;
     color: $background;
-    box-shadow: inset 0px 0px 0px 1px #3d7bf5;
+    box-shadow: inset 0px 0px 0px 1px $background;
   }
 }
 
@@ -170,7 +171,7 @@ $primary-button-size: 14px;
     @include base-button($green-button-color);
   }
   &._gray {
-    @include base-button($disabled-button-color);
+    @include base-button($gray-button-color);
   }
 }
 </style>

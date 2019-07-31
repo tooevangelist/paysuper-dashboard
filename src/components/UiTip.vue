@@ -37,6 +37,14 @@ export default {
       default: false,
       type: Boolean,
     },
+    closeDelay: {
+      default: 300,
+      type: Number,
+    },
+    stayOpenedOnHover: {
+      default: true,
+      type: Boolean,
+    },
   },
   data() {
     return {
@@ -55,7 +63,7 @@ export default {
 
         clearTimeout(this.timeoutId);
         this.timeoutId = 0;
-      }, 300);
+      }, this.closeDelay);
     },
     show() {
       this.innerVisible = true;
@@ -85,7 +93,8 @@ export default {
     $style.container,
     $style[`_${position}`],
     $style[`_inner-${innerPosition}`],
-    { [$style._shown]: visible || innerVisible }
+    { [$style._shown]: visible || innerVisible },
+    { [$style['_opened-on-hover']]: stayOpenedOnHover }
   ]"
   :style="{
     height: height || undefined,
@@ -112,8 +121,9 @@ export default {
   transition: all 0.2s ease-out;
   z-index: 20;
   background-color: #fff;
-  border: 1px solid #F1F3F4;
-  box-shadow: 0px 8px 16px rgba(8, 35, 48, 0.1), 0px 24px 32px rgba(8, 35, 48, 0.06);
+  border: 1px solid #f1f3f4;
+  box-shadow: 0px 8px 16px rgba(8, 35, 48, 0.1),
+    0px 24px 32px rgba(8, 35, 48, 0.06);
   cursor: auto;
 
   @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
@@ -151,7 +161,7 @@ export default {
   }
 
   &._shown,
-  &:hover {
+  &._opened-on-hover:hover {
     pointer-events: auto;
     opacity: 1;
     transform: translate3d(0, 0, 0);
