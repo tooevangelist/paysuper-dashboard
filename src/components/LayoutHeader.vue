@@ -74,7 +74,7 @@ export default {
       this.hasStatusOpened = false;
     },
     notifyToggle() {
-      this.hasNotificationsOpened = !this.hasNotificationsOpened
+      this.hasNotificationsOpened = !this.hasNotificationsOpened;
     },
   },
 };
