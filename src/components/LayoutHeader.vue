@@ -73,9 +73,6 @@ export default {
     hideStatusBlock() {
       this.hasStatusOpened = false;
     },
-    notifyToggle() {
-      this.hasNotificationsOpened = !this.hasNotificationsOpened;
-    },
   },
 };
 </script>
@@ -155,11 +152,10 @@ export default {
     <div
       :class="['right-icon', { '_active': hasNotificationsOpened }]"
       v-clickaway="hideNotificationsBlock"
-      @click.self="notifyToggle"
     >
       <div
         class="notify-icon"
-        @click.native="notifyToggle"
+        @click="hasNotificationsOpened = !hasNotificationsOpened"
       >
         <IconNotify />
         <div
