@@ -64,6 +64,8 @@ export default {
       Here you can initiate a License Agreement signing procedure.
       Please double-check your Company info and Payment Methods above,
       since it will be mentioned in this document.
+      For e-signing we use “Hellosign” service,
+      which provides legally binding electronic signatures.
     </div>
 
     <div class="container">
