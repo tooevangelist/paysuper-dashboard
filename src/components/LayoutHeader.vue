@@ -157,7 +157,18 @@ export default {
       v-clickaway="hideNotificationsBlock"
       @click.self="notifyToggle"
     >
-      <IconNotify @click.native="notifyToggle" />
+      <div
+        class="notify-icon"
+        @click.native="notifyToggle"
+      >
+        <IconNotify />
+        <div
+          v-if="notifications.length"
+          class="notify-count"
+        >
+          {{ notifications.length }}
+        </div>
+      </div>
 
       <UiTip
         innerPosition="right"
@@ -280,12 +291,11 @@ export default {
 }
 .right-icon {
   width: 40px;
-  min-width: 40px;
   height: 40px;
   display: flex;
-  align-content: center;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   border-radius: 50%;
   margin-left: 16px;
   background-color: transparent;
@@ -329,5 +339,29 @@ export default {
   .info-item:hover & {
     fill: #3d7bf5;
   }
+}
+.notify-icon {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+.notify-count {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: -4px;
+  right: -2px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #fff;
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+  background-color: #3d7bf5;
 }
 </style>
