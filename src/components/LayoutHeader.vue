@@ -1,11 +1,15 @@
 <script>
 import { includes } from 'lodash-es';
 import { directive as clickaway } from 'vue-clickaway';
+import Notifications from '@/components/Notifications.vue';
 
 export default {
   name: 'LayoutHeader',
   directives: {
     clickaway,
+  },
+  components: {
+    Notifications,
   },
   props: {
     projectName: {
@@ -24,6 +28,7 @@ export default {
     return {
       hasStatusOpened: false,
       hasInfoOpened: false,
+      hasNotificationsOpened: false,
       statusesTitles: {
         test: 'Test Mode',
         active: 'Active',
@@ -34,14 +39,42 @@ export default {
         { link: '#', icon: 'IconDocumentation', text: 'Documentation' },
         { link: '#', icon: 'IconPen', text: 'Leave Feedback' },
       ],
+      notifications: [
+        {
+          id: 1,
+          image: '',
+          sender: 'Pay Super',
+          text: `
+            We've got your license agreement signing request.
+            If we will need your further assistance, proceeding this request,
+            our onboarding manager will contact you directly.
+          `,
+          timestamp: 1564549028934,
+        },
+        {
+          id: 2,
+          image: '',
+          sender: 'Pay Super',
+          text: `
+            Your license agreement signing request is confirmed and document is signed by Pay Super
+          `,
+          timestamp: 1564549028934,
+        },
+      ],
     };
   },
   methods: {
     hideInfoBlock() {
       this.hasInfoOpened = false;
     },
+    hideNotificationsBlock() {
+      this.hasNotificationsOpened = false;
+    },
     hideStatusBlock() {
       this.hasStatusOpened = false;
+    },
+    notifyToggle() {
+      this.hasNotificationsOpened = !this.hasNotificationsOpened;
     },
   },
 };
@@ -58,8 +91,8 @@ export default {
       <a href="#" class="name">{{ projectName }}</a>
       <div
         :class="['status', `_${status}`, { '_opened': hasStatusOpened }]"
-        @click="hasStatusOpened = !hasStatusOpened"
         v-clickaway="hideStatusBlock"
+        @click="hasStatusOpened = !hasStatusOpened"
       >
         {{ statusesTitles[status] }}
         <template v-if="status === 'test'">
@@ -76,7 +109,7 @@ export default {
               <div class="status-title">Test Mode</div>
               <div class="status-text">
                 You can start your sales only after License Agreement will be signed by both
-                our sides and your account become “<span class="green-text">Active</span>”.
+                our sides and your account become “<span class="filled-text">Active</span>”.
               </div>
             </div>
           </UiTip>
@@ -90,10 +123,11 @@ export default {
     <a href="#" class="right-icon">
       <IconSettings />
     </a>
-    <span
-      class="right-icon"
-      @click="hasInfoOpened = !hasInfoOpened"
+
+    <div
+      :class="['right-icon', { '_active': hasInfoOpened }]"
       v-clickaway="hideInfoBlock"
+      @click="hasInfoOpened = !hasInfoOpened"
     >
       <IconInfo />
 
@@ -116,10 +150,37 @@ export default {
           </a>
         </div>
       </UiTip>
-    </span>
-    <a href="#" class="right-icon">
-      <IconNotify />
-    </a>
+    </div>
+
+    <div
+      :class="['right-icon', { '_active': hasNotificationsOpened }]"
+      v-clickaway="hideNotificationsBlock"
+      @click.self="notifyToggle"
+    >
+      <div
+        class="notify-icon"
+        @click.native="notifyToggle"
+      >
+        <IconNotify />
+        <div
+          v-if="notifications.length"
+          class="notify-count"
+        >
+          {{ notifications.length }}
+        </div>
+      </div>
+
+      <UiTip
+        innerPosition="right"
+        position="bottom"
+        width="calc(100vw - 140px)"
+        maxWidth="400px"
+        :visible="hasNotificationsOpened"
+      >
+        <Notifications :items="notifications" />
+      </UiTip>
+    </div>
+
     <a href="#" class="right-icon icon-user">
       <IconUser />
     </a>
@@ -199,10 +260,6 @@ export default {
   fill: #f3aa18;
   margin-left: 6px;
   transition: fill 0.2s ease-out;
-
-  .status._opened & {
-    fill: #919699;
-  }
 }
 .status-box {
   padding: 24px;
@@ -222,7 +279,7 @@ export default {
   color: #3E4345;
   margin-top: 16px;
 }
-.green-text {
+.filled-text {
   color: #069697;
 }
 .feedback {
@@ -234,12 +291,11 @@ export default {
 }
 .right-icon {
   width: 40px;
-  min-width: 40px;
   height: 40px;
   display: flex;
-  align-content: center;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   border-radius: 50%;
   margin-left: 16px;
   background-color: transparent;
@@ -247,6 +303,7 @@ export default {
   cursor: pointer;
   position: relative;
 
+  &._active,
   &:hover {
     background-color: #f1f3f4;
   }
@@ -282,5 +339,29 @@ export default {
   .info-item:hover & {
     fill: #3d7bf5;
   }
+}
+.notify-icon {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+.notify-count {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: -4px;
+  right: -2px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #fff;
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+  background-color: #3d7bf5;
 }
 </style>
