@@ -94,8 +94,19 @@ export default {
     },
     handleInfoBoxItemClick(item) {
       if (item.id === 'leaveFeedback') {
-        this.isLeaveFeedbackOpened = true;
+        this.toggleLeaveFeedback();
       }
+    },
+    toggleLeaveFeedback() {
+      this.isLeaveFeedbackOpened = !this.isLeaveFeedbackOpened;
+      if (this.isLeaveFeedbackSuccess) {
+        this.$nextTick(() => {
+          this.isLeaveFeedbackOpened = false;
+        });
+      }
+    },
+    hideLeaveFeedback() {
+      this.isLeaveFeedbackOpened = false;
     },
     async sendFeedback(value) {
       try {
@@ -153,7 +164,7 @@ export default {
       <a
         class="feedback"
         href="#"
-        @click="isLeaveFeedbackOpened = !isLeaveFeedbackOpened"
+        @click="toggleLeaveFeedback"
       >Feedback about this page?</a>
       <UiTip
         innerPosition="right"
@@ -167,7 +178,7 @@ export default {
           :isVisible="isLeaveFeedbackOpened"
           :isSuccess="isLeaveFeedbackSuccess"
           @send="sendFeedback"
-          @close="isLeaveFeedbackOpened = false"
+          @close="hideLeaveFeedback"
         />
       </UiTip>
     </div>

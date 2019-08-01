@@ -95,6 +95,7 @@ export default {
 .content {
   max-height: 100px;
   margin-bottom: 24px;
+  margin-right: -20px;
 }
 
 .textarea {
