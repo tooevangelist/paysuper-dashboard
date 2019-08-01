@@ -84,8 +84,14 @@ export default {
     },
   },
 
+  mounted() {
+    if (this.currentStepCode === 'confirmEmail') {
+      this.initWaitingForEmailConfirm();
+    }
+  },
+
   methods: {
-    ...mapActions('UserProfile', ['updateProfile', 'setCurrentStepCode']),
+    ...mapActions('UserProfile', ['updateProfile', 'setCurrentStepCode', 'initWaitingForEmailConfirm']),
 
     handleStepComplete(value) {
       this.currentStep.isValid = value;
@@ -102,6 +108,10 @@ export default {
         });
 
         this.setCurrentStepCode(nextStepCode);
+
+        if (nextStepCode === 'confirmEmail') {
+          this.initWaitingForEmailConfirm();
+        }
       } catch (error) {
         this.$_Notifications_showErrorMessage(error.message);
       }

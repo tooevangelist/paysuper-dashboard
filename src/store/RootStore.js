@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
-import { includes } from 'lodash-es';
+import { includes, get } from 'lodash-es';
 
 import DictionariesStore from './DictionariesStore';
 import UserStore from './UserStore';
@@ -59,10 +59,17 @@ export default new Vuex.Store({
     setPageError({ commit }, error) {
       if (!error) {
         commit('pageError', null);
-      } else if (error.response && includes([404, 500], error.response.status)) {
-        commit('pageError', error.response.status);
+        return;
+      }
+
+      const awailableCodes = [404, 500, 520];
+      const errorCode = get(error, 'response.status');
+      if (includes(awailableCodes, error)) {
+        commit('pageError', error);
+      } else if (includes(awailableCodes, errorCode)) {
+        commit('pageError', errorCode);
       } else {
-        console.error(error);
+        commit('pageError', 520);
       }
     },
   },

@@ -1,6 +1,6 @@
 <script>
 import { filter } from 'lodash-es';
-import { required, maxLength } from 'vuelidate/lib/validators';
+import { required, maxLength, url } from 'vuelidate/lib/validators';
 import { onlyRusAndLat } from '@/helpers/customValidators';
 
 
@@ -185,6 +185,7 @@ export default {
           },
           website: {
             required,
+            url,
           },
           annual_income: {
             required,
@@ -254,6 +255,10 @@ export default {
       label="Website"
       v-model="profile.company.website"
       :required="true"
+      :hasError="$isFieldInvalid('profile.company.website')"
+      :errorText="$getFieldErrorMessages(
+        'profile.company.website', ['url']
+      )"
     />
     <UiSelect
       label="Annual income"
