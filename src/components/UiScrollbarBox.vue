@@ -21,6 +21,12 @@ export default {
       swicher: false,
     };
   },
+
+  methods: {
+    update() {
+      this.$refs.scrollbar.update();
+    },
+  },
 };
 </script>
 
@@ -28,6 +34,7 @@ export default {
 <VuePerfectScrollbar
   class="ui-scrollbar-box"
   :settings="innerSettings"
+  ref="scrollbar"
 >
   <slot></slot>
 </VuePerfectScrollbar>
