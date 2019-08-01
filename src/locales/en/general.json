@@ -8,7 +8,7 @@
     "onlyRusAndLatAndNum": "Only latin, russian and number symbols are allowed",
     "phone": "Enter correct phone",
     "required": "Enter a value",
-    "url": "Enter correct URL",
+    "url": "Enter correct URL: it should begin with \"http(s)://\"",
     "wrongFormatType": "Wrong value format type"
   },
   "orderID": "Order #",
