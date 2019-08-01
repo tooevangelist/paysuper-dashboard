@@ -54,6 +54,7 @@ export default {
         rows="1"
         v-model="message"
         @input="handleTextareaInput"
+        maxlength="500"
       />
     </UiScrollbarBox>
     <div class="controls">
@@ -62,7 +63,10 @@ export default {
         :isTransparent="true"
         @click="$emit('close')"
       >CLOSE</UiButton>
-      <UiButton @click="$emit('send', message)">SEND</UiButton>
+      <UiButton
+        :disabled="message.length < 1"
+        @click="$emit('send', message)"
+      >SEND</UiButton>
     </div>
   </template>
 </div>
