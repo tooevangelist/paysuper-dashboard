@@ -5,21 +5,33 @@ import { debounce } from 'lodash-es';
 export default {
   name: 'LeaveFeedbackPopup',
 
+  components: {
+    TextareaAutosize,
+  },
+
   props: {
     isSuccess: {
       type: Boolean,
       default: false,
     },
-  },
-
-  components: {
-    TextareaAutosize,
+    isVisible: {
+      default: false,
+      type: Boolean,
+    },
   },
 
   data() {
     return {
       message: '',
     };
+  },
+
+  watch: {
+    isVisible(value) {
+      if (!this.isSuccess && value) {
+        this.$refs.textarea.$el.focus();
+      }
+    },
   },
 
   methods: {
@@ -52,9 +64,10 @@ export default {
       <TextareaAutosize
         class="textarea"
         rows="1"
+        maxlength="500"
+        ref="textarea"
         v-model="message"
         @input="handleTextareaInput"
-        maxlength="500"
       />
     </UiScrollbarBox>
     <div class="controls">
