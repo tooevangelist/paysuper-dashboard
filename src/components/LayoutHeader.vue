@@ -164,6 +164,7 @@ export default {
         :stayOpenedOnHover="isLeaveFeedbackSuccess ? true : false"
       >
         <LeaveFeedbackPopup
+          :isVisible="isLeaveFeedbackOpened"
           :isSuccess="isLeaveFeedbackSuccess"
           @send="sendFeedback"
           @close="isLeaveFeedbackOpened = false"
