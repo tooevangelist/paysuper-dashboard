@@ -5,6 +5,7 @@
     "maxLength": "The value is too long",
     "minLength": "The value is too short",
     "onlyRusAndLat": "Only latin and russian letters are allowed",
+    "onlyRusAndLatAndNum": "Only latin, russian and number symbols are allowed",
     "phone": "Enter correct phone",
     "required": "Enter a value",
     "url": "Enter correct URL",

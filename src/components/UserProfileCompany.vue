@@ -1,7 +1,7 @@
 <script>
 import { filter } from 'lodash-es';
 import { required, maxLength, url } from 'vuelidate/lib/validators';
-import { onlyRusAndLat } from '@/helpers/customValidators';
+import { onlyRusAndLatAndNum } from '@/helpers/customValidators';
 
 
 export default {
@@ -181,7 +181,7 @@ export default {
           company_name: {
             required,
             maxLength: maxLength(60),
-            onlyRusAndLat,
+            onlyRusAndLatAndNum,
           },
           website: {
             required,
@@ -222,7 +222,6 @@ export default {
   },
 
   mounted() {
-    this.$v.$touch();
     this.$emit('valid', !this.$v.$invalid);
   },
 };
@@ -248,8 +247,9 @@ export default {
       :required="true"
       :hasError="$isFieldInvalid('profile.company.company_name')"
       :errorText="$getFieldErrorMessages(
-        'profile.company.company_name', ['maxLength', 'onlyRusAndLat']
+        'profile.company.company_name', ['maxLength', 'onlyRusAndLatAndNum']
       )"
+      @focus="$v.profile.company.company_name.$touch()"
     />
     <UiTextField
       label="Website"
@@ -259,6 +259,7 @@ export default {
       :errorText="$getFieldErrorMessages(
         'profile.company.website', ['url']
       )"
+      @blur="$v.profile.company.website.$touch()"
     />
     <UiSelect
       label="Annual income"
