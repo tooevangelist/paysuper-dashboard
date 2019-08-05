@@ -19,6 +19,10 @@ export default {
       default: '',
       type: String,
     },
+    hasCaret: {
+      default: false,
+      type: Boolean,
+    },
     innerPosition: {
       default: 'left',
       type: String,
@@ -93,6 +97,7 @@ export default {
     $style.container,
     $style[`_${position}`],
     $style[`_inner-${innerPosition}`],
+    { [$style._caret]: hasCaret },
     { [$style._shown]: visible || innerVisible },
     { [$style['_opened-on-hover']]: stayOpenedOnHover }
   ]"
@@ -130,12 +135,20 @@ export default {
     cursor: default;
   }
 
+  &._caret::after {
+    display: block;
+  }
+
   &._bottom {
     transform: translate3d(0, 20px, 0);
     top: calc(100% + 20px);
 
     &._inner-center {
       transform: translate3d(-50%, 20px, 0);
+    }
+
+    &::after {
+      top: -11px;
     }
   }
 
@@ -146,18 +159,37 @@ export default {
     &._inner-center {
       transform: translate3d(-50%, -20px, 0);
     }
+
+    &::after {
+      bottom: -11px;
+    }
   }
 
   &._inner-left {
     left: 0;
+
+    &::after {
+      left: 20px;
+    }
   }
 
   &._inner-right {
     right: 0;
+
+    &::after {
+      right: 20px;
+    }
   }
 
   &._inner-center {
     left: 50%;
+
+    &::after {
+      left: 0;
+      right: 0;
+      margin-left: auto;
+      margin-right: auto;
+    }
   }
 
   &._shown,
@@ -169,6 +201,15 @@ export default {
     &._inner-center {
       transform: translate3d(-50%, 0, 0);
     }
+  }
+
+  &::after {
+    content: '';
+    display: none;
+    width: 0;
+    height: 0;
+    position: absolute;
+    border: 6px solid transparent;
   }
 }
 </style>
