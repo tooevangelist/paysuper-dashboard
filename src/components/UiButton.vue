@@ -18,7 +18,7 @@ export default {
       default: 'blue',
       type: String,
       validator(value) {
-        return includes(['blue', 'orange', 'purple', 'green', 'gray'], value);
+        return includes(['blue', 'orange', 'purple', 'green', 'gray', 'light-gray'], value);
       },
     },
     disabled: {
@@ -90,8 +90,10 @@ $purple-button-color: #8077e7;
 $green-button-color: #2fa84f;
 $button-font-color: #fff;
 $gray-button-color: #919699;
+$light-gray-button-color: #f7f9fA;
+$light-gray-font-color: #919699;
 $disabled-button-color: #f1f3f4;
-$disabled-text-color: #919699;
+$disabled-font-color: #919699;
 
 $primary-button-size: 14px;
 
@@ -105,11 +107,10 @@ $primary-button-size: 14px;
   font-size: $primary-button-size;
   font-family: inherit;
   font-weight: 500;
-  height: 40px;
-  line-height: 40px;
+  line-height: 24px;
   max-width: 100%;
   outline: none;
-  padding: 0 24px;
+  padding: 8px 24px;
   position: relative;
   text-align: center;
   transition: background-color 0.2s ease-out, box-shadow 0.2s ease-out;
@@ -143,7 +144,7 @@ $primary-button-size: 14px;
   &._disabled {
     background-color: $disabled-button-color;
     pointer-events: none;
-    color: $disabled-text-color;
+    color: $disabled-font-color;
   }
 
   &._rectangle {
@@ -172,6 +173,9 @@ $primary-button-size: 14px;
   }
   &._gray {
     @include base-button($gray-button-color);
+  }
+  &._light-gray {
+    @include base-button($light-gray-button-color, $light-gray-font-color);
   }
 }
 </style>
