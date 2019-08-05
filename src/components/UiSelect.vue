@@ -109,7 +109,7 @@ export default {
       type: Boolean,
     },
     placeholder: {
-      default: 'Not selected',
+      default: '',
       type: String,
     },
     errorText: {
@@ -228,10 +228,6 @@ $left-indent: 12px;
     }
   }
 
-  &:not(._empty) .selected {
-    transform: scaleY(1);
-  }
-
   &._focused {
     pointer-events: auto;
 
@@ -276,7 +272,6 @@ $left-indent: 12px;
 }
 .wrapper {
   cursor: pointer;
-  border-bottom: 1px solid #e5e5e5;
 
   &:after {
     content: "";
@@ -291,13 +286,13 @@ $left-indent: 12px;
   display: block;
   height: 32px;
   line-height: 32px;
-  transform: scaleY(0);
   transform-origin: bottom;
   transition: transform 0.2s ease-out;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
   padding-left: $left-indent;
+  border-bottom: 1px solid #e5e5e5;
 }
 .box {
   background-color: $input-background-color;
