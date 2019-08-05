@@ -240,14 +240,15 @@ $left-indent: 12px;
     }
 
     .wrapper {
-      border-color: $focus-input-color;
-
       &:after {
         transform: rotate(180deg);
         transform-origin: top center;
         border-top-color: $selected-color;
         margin-top: 5px;
       }
+    }
+    .selected {
+      border-color: $focus-input-color;
     }
   }
 
@@ -257,11 +258,12 @@ $left-indent: 12px;
     }
 
     .wrapper {
-      border-color: $error-input-color;
-
       &:after {
         border-top-color: $error-input-color;
       }
+    }
+    .selected {
+      border-color: $error-input-color;
     }
   }
 
