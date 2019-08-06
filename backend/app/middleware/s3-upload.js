@@ -1,7 +1,6 @@
 const aws = require('aws-sdk');
 const fs = require('fs');
 const _ = require('lodash');
-const md5 = require('md5');
 const uuid = require('uuid');
 const envUtils = require('../utils/env');
 
