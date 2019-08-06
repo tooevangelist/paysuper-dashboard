@@ -4,6 +4,7 @@ const config = require('../../config/config');
 const webappConfig = require('../../config/webappConfig');
 
 const auth1Middleware = require('./auth1.oauth2');
+const { uploadFile } = require('./s3-upload');
 
 const router = new Router({
   prefix: config.routesPrefix,
@@ -19,6 +20,11 @@ router
   .get('/conf', (ctx, next) => {
     ctx.body = webappConfig;
     next();
+  })
+  .post('/upload_file', async (ctx) => {
+    const { file } = ctx.request.files;
+    const result = await uploadFile(file);
+    ctx.body = result;
   })
 
   .get(`${auth1RoutesNamespace}/login`, auth1Middleware.login)
