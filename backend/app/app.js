@@ -7,6 +7,7 @@ const Sentry = require('@sentry/node');
 const session = require('koa-session2');
 const { KoaReqLogger } = require('koa-req-logger');
 const cacheControl = require('koa-cache-control');
+const koaBody = require('koa-body');
 
 const config = require('../config/config');
 
@@ -58,7 +59,7 @@ if (config.redisPort && config.redisHost) {
 app.use(session(sessionParams));
 
 // CORS setup
-const corsRoutes = ['/auth1/refresh', '/auth1/logout'];
+const corsRoutes = ['/auth1/refresh', '/auth1/logout', '/upload_file'];
 app.use(cors({
   origin(ctx) {
     if (!corsRoutes.includes(ctx.url)) {
@@ -88,6 +89,7 @@ app.use(async (ctx, next) => {
   }
 });
 
+app.use(koaBody({ multipart: true }));
 app.use(router.routes());
 app.use(router.allowedMethods());
 
