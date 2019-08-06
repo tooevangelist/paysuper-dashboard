@@ -21,7 +21,7 @@
   </div>
   <span
     v-if="isVisibleError"
-    class="error"
+    :class="['error', `_${errorColor}`]"
     :title="errorText"
   >
     {{ errorText }}
@@ -64,7 +64,7 @@
 
 <script>
 import { directive as clickaway } from 'vue-clickaway';
-import { find } from 'lodash-es';
+import { find, includes } from 'lodash-es';
 
 export default {
   directives: {
@@ -119,6 +119,13 @@ export default {
     hasError: {
       default: false,
       type: Boolean,
+    },
+    errorColor: {
+      default: 'red',
+      type: String,
+      validator(value) {
+        return includes(['red', 'black'], value);
+      },
     },
   },
   data() {
@@ -203,7 +210,7 @@ $hover-option-color: rgba($focus-input-color, 0.1);
 $selected-color: #c6cacc;
 
 $primary-input-size: 16px;
-$secondary-input-size: 14px;
+$secondary-input-size: 12px;
 $left-indent: 12px;
 
 .select-field {
@@ -388,11 +395,18 @@ $left-indent: 12px;
   top: 0;
 }
 .error {
-  bottom: 0;
   left: $left-indent;
-  color: $error-input-color;
   display: block;
   font-size: $secondary-input-size;
   position: absolute;
+  padding-top: 4px;
+
+  &._red {
+    color: $error-input-color;
+  }
+
+  &._black {
+    color: #333;
+  }
 }
 </style>

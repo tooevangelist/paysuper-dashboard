@@ -421,7 +421,17 @@ export default {
     },
     isHomeDefaultCurrency() {
       const region = this.regions[this.homeRegion];
-      return region ? region.defaultCurrency === this.currency : false;
+      return region && this.currency ? region.defaultCurrency === this.currency : true;
+    },
+    isOneLineCountries() {
+      return this.prepareCountries.length < 44;
+    },
+    currencyErrorText() {
+      return this.isHomeDefaultCurrency
+        ? this.$getFieldErrorMessages('currency')
+        : `Due to currency conversion you will be charged for additional 1% fee,
+          because your chosen payout currency does not correspond
+          with chosen region’s default payout currency.`;
     },
   },
   methods: {
@@ -461,11 +471,11 @@ export default {
       >
         <IconQuestion class="question" />
         <UiTip
-          class="tip"
+          :class="['tip', { '_nowrap': isOneLineCountries }]"
           innerPosition="left"
           position="top"
-          width="calc(100vw - 320px)"
           maxWidth="280px"
+          :width="isOneLineCountries ? 'auto' : 'calc(100vw - 320px)'"
           :hasCaret="true"
           :visible="hasCountriesOpened"
         >
@@ -480,28 +490,20 @@ export default {
         label="Payout Currency"
         :options="currencies"
         :value="currency"
+        :errorText="currencyErrorText"
+        :hasError="$isFieldInvalid('currency') || !isHomeDefaultCurrency"
+        :errorColor="isHomeDefaultCurrency ? 'red' : 'black'"
         @input="currency = $event"
         @blur="$v.currency.$touch()"
       />
-      <div
-        v-if="!isHomeDefaultCurrency"
-        class="note"
-      >
-        <IconInfo class="icon-info" />
-        <div class="note-text">
-          Due to currency conversion you will be charged for additional 1% fee,
-          because your chosen payout currency does not correspond
-          with chosen region’s default payout currency.
-        </div>
-      </div>
     </div>
   </div>
 
   <div class="section">
     <div class="title">Channel costs</div>
     <div class="info">
-      Here you can find how your chosen pair Home Region and
-      Payout Currency affects on different payment methods fees.
+      Here you can find how your chosen pair <span class="bolder">Home Region</span> and
+      <span class="bolder">Payout Currency</span> affects on different payment methods fees.
     </div>
 
     <div class="select">
@@ -550,25 +552,25 @@ export default {
 
     <UiTable>
       <UiTableRow :isHead="true">
-        <UiTableCell class="first-col"></UiTableCell>
-        <UiTableCell align="left">Payment Method</UiTableCell>
-        <UiTableCell>Method fee, %</UiTableCell>
-        <UiTableCell>Fixed fee</UiTableCell>
-        <UiTableCell>Overall fee, %</UiTableCell>
-        <UiTableCell>PS general fixed fee</UiTableCell>
+        <UiTableCell class="cell _first"></UiTableCell>
+        <UiTableCell class="cell _second" align="left">Payment Method</UiTableCell>
+        <UiTableCell class="cell _channel">Method fee, %</UiTableCell>
+        <UiTableCell class="cell _channel">Fixed fee</UiTableCell>
+        <UiTableCell class="cell _channel">Overall fee, %</UiTableCell>
+        <UiTableCell class="cell _channel">PS general fixed fee</UiTableCell>
       </UiTableRow>
       <UiTableRow
         v-for="(data, index) in channelCosts"
         :key="index"
       >
-        <UiTableCell class="first-col">
+        <UiTableCell class="cell _first">
           <component :is="data.icon" class="method-icon" />
         </UiTableCell>
-        <UiTableCell align="left">{{ data.method }}</UiTableCell>
-        <UiTableCell>{{ data.methodFee }}</UiTableCell>
-        <UiTableCell>{{ data.fixedFee }}</UiTableCell>
-        <UiTableCell>{{ data.overallFee }}</UiTableCell>
-        <UiTableCell>{{ data.psGeneralFixedFee }}</UiTableCell>
+        <UiTableCell class="cell _second" align="left">{{ data.method }}</UiTableCell>
+        <UiTableCell class="cell _channel">{{ data.methodFee }}</UiTableCell>
+        <UiTableCell class="cell _channel">{{ data.fixedFee }}</UiTableCell>
+        <UiTableCell class="cell _channel">{{ data.overallFee }}</UiTableCell>
+        <UiTableCell class="cell _channel">{{ data.psGeneralFixedFee }}</UiTableCell>
       </UiTableRow>
     </UiTable>
   </div>
@@ -618,23 +620,23 @@ export default {
 
     <UiTable>
       <UiTableRow :isHead="true">
-        <UiTableCell class="first-col"></UiTableCell>
-        <UiTableCell align="left">Payment Method</UiTableCell>
-        <UiTableCell>Refund fee, %</UiTableCell>
-        <UiTableCell>Refund fixed fee</UiTableCell>
-        <UiTableCell>Refund fee payout party</UiTableCell>
+        <UiTableCell class="cell _first"></UiTableCell>
+        <UiTableCell class="cell _second" align="left">Payment Method</UiTableCell>
+        <UiTableCell class="cell _refund">Refund fee, %</UiTableCell>
+        <UiTableCell class="cell _refund">Refund fixed fee</UiTableCell>
+        <UiTableCell class="cell _refund">Refund fee payout party</UiTableCell>
       </UiTableRow>
       <UiTableRow
         v-for="(data, index) in refundCosts"
         :key="index"
       >
-        <UiTableCell class="first-col">
+        <UiTableCell class="cell _first">
           <component :is="data.icon" class="method-icon" />
         </UiTableCell>
-        <UiTableCell align="left">{{ data.method }}</UiTableCell>
-        <UiTableCell>{{ data.refundFee }}</UiTableCell>
-        <UiTableCell>{{ data.refundFixedFee }}</UiTableCell>
-        <UiTableCell>{{ data.payoutParty }}</UiTableCell>
+        <UiTableCell class="cell _second" align="left">{{ data.method }}</UiTableCell>
+        <UiTableCell class="cell _refund">{{ data.refundFee }}</UiTableCell>
+        <UiTableCell class="cell _refund">{{ data.refundFixedFee }}</UiTableCell>
+        <UiTableCell class="cell _refund">{{ data.payoutParty }}</UiTableCell>
       </UiTableRow>
     </UiTable>
   </div>
@@ -648,16 +650,16 @@ export default {
 
     <UiTable>
       <UiTableRow :isHead="true">
-        <UiTableCell class="first-col"></UiTableCell>
-        <UiTableCell align="left">Payment Method</UiTableCell>
-        <UiTableCell>Chargeback fee, fix</UiTableCell>
-        <UiTableCell>Chargeback fee payout party</UiTableCell>
+        <UiTableCell class="cell _first"></UiTableCell>
+        <UiTableCell class="cell _second" align="left">Payment Method</UiTableCell>
+        <UiTableCell class="cell _merch">Chargeback fee, fix</UiTableCell>
+        <UiTableCell class="cell _merch">Chargeback fee payout party</UiTableCell>
       </UiTableRow>
       <UiTableRow>
-        <UiTableCell class="first-col"></UiTableCell>
-        <UiTableCell align="left">All Methods</UiTableCell>
-        <UiTableCell>$25,00</UiTableCell>
-        <UiTableCell>Merchant</UiTableCell>
+        <UiTableCell class="cell _first"></UiTableCell>
+        <UiTableCell class="cell _second" align="left">All Methods</UiTableCell>
+        <UiTableCell class="cell _merch">$25,00</UiTableCell>
+        <UiTableCell class="cell _merch">Merchant</UiTableCell>
       </UiTableRow>
     </UiTable>
   </div>
@@ -670,16 +672,16 @@ export default {
 
     <UiTable>
       <UiTableRow :isHead="true">
-        <UiTableCell class="first-col"></UiTableCell>
-        <UiTableCell align="left">Payment Method</UiTableCell>
-        <UiTableCell>Payout fee, fix</UiTableCell>
-        <UiTableCell>Fee payout party</UiTableCell>
+        <UiTableCell class="cell _first"></UiTableCell>
+        <UiTableCell class="cell _second" align="left">Payment Method</UiTableCell>
+        <UiTableCell class="cell _merch">Payout fee, fix</UiTableCell>
+        <UiTableCell class="cell _merch">Fee payout party</UiTableCell>
       </UiTableRow>
       <UiTableRow>
-        <UiTableCell class="first-col"></UiTableCell>
-        <UiTableCell align="left">All Methods</UiTableCell>
-        <UiTableCell>$25,00</UiTableCell>
-        <UiTableCell>Merchant</UiTableCell>
+        <UiTableCell class="cell _first"></UiTableCell>
+        <UiTableCell class="cell _second" align="left">All Methods</UiTableCell>
+        <UiTableCell class="cell _merch">$25,00</UiTableCell>
+        <UiTableCell class="cell _merch">Merchant</UiTableCell>
       </UiTableRow>
     </UiTable>
   </div>
@@ -747,6 +749,10 @@ export default {
   letter-spacing: 0.4px;
   margin-left: -21px;
 
+  &._nowrap {
+    white-space: nowrap;
+  }
+
   &::after {
     border-top-color: #000;
   }
@@ -793,8 +799,22 @@ export default {
 .bolder {
   font-weight: 500;
 }
-.first-col {
-  width: 40px;
+.cell {
+  &._first {
+    width: 40px;
+  }
+  &._second {
+    width: 120px;
+  }
+  &._channel {
+    width: 19.5%;
+  }
+  &._refund {
+    width: 26%;
+  }
+  &._merch {
+    width: 39%;
+  }
 }
 .submit {
   min-width: 180px;
