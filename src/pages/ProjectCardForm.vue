@@ -57,7 +57,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['setIsLoading']),
+    ...mapActions(['setIsLoading', 'uploadImage']),
     ...mapActions('Project', [
       'initState',
       'createProject',
@@ -118,6 +118,7 @@ export default {
       ref="projectForm"
       :project="project"
       :currentStep="currentStep"
+      :uploadImage="uploadImage"
       @stepChanged="handleSectionChange"
     />
   </div>

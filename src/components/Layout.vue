@@ -1,7 +1,11 @@
 <script>
+import { mapState } from 'vuex';
+import { includes, findIndex } from 'lodash-es';
+import Loading from 'vue-loading-overlay';
 import LayoutAside from '@/components/LayoutAside.vue';
 import LayoutHeader from '@/components/LayoutHeader.vue';
 import LayoutSubHeader from '@/components/LayoutSubHeader.vue';
+import 'vue-loading-overlay/dist/vue-loading.css';
 
 export default {
   name: 'Layout',
@@ -9,64 +13,72 @@ export default {
     LayoutAside,
     LayoutHeader,
     LayoutSubHeader,
+    Loading,
   },
   data() {
     return {
-      navigationItems: {
-        dashboard: {
+      navigationItems: [
+        {
           additional: 'Homepage for main controls',
           icon: 'IconDashboard',
           link: '/dashboard',
           title: 'Dashboard',
+          routeNames: ['Dashboard'],
           isAvailable: true,
         },
-        projects: {
+        {
           additional: 'Organise your products for sales',
           icon: 'IconFolder',
           link: '/projects',
           title: 'Projects',
-          isAvailable: false,
+          routeNames: ['ProjectsList'],
+          isAvailable: true,
         },
-        reports: {
+        {
           additional: 'Your weekly royalty reports',
           icon: 'IconBlank',
           link: '/reports',
           title: 'Reports',
           isAvailable: false,
         },
-        payouts: {
+        {
           additional: 'Need license agreement',
           icon: 'IconCash',
           link: '/payouts',
           title: 'Payouts',
           isAvailable: false,
         },
-        transaction: {
+        {
           additional: 'Full list of customer transactions',
           icon: 'IconCoin',
           link: '/transaction',
           title: 'Transaction Search',
           isAvailable: false,
         },
-        intagrations: {
+        {
           additional: 'Technical integrations',
           icon: 'IconRepeat',
           link: '/intagrations',
           title: 'Intagrations',
           isAvailable: false,
         },
-        customers: {
+        {
           additional: 'Need license agreement',
           icon: 'IconExcited',
           link: '/customers',
           title: 'Customers',
           isAvailable: false,
         },
-      },
-      currentNavigationItem: 'dashboard',
+      ],
       period: [1534784400000, 1537462800000],
       projectName: 'CD Projects',
     };
+  },
+  computed: {
+    ...mapState(['isLoading']),
+    currentNavigationItem() {
+      return findIndex(this.navigationItems, item => includes(item.routeNames, this.$route.name));
+    },
   },
   beforeMount() {
     document.body.classList.add('layout-body');
@@ -105,7 +117,6 @@ export default {
         <LayoutAside
           :currentItem="currentNavigationItem"
           :items="navigationItems"
-          @changeNavigation="currentNavigationItem = $event"
         />
       </UiScrollbarBox>
     </aside>
@@ -118,6 +129,11 @@ export default {
       </UiScrollbarBox>
     </section>
   </main>
+  <Loading
+    :active="isLoading"
+    :is-full-page="true"
+    :opacity="0.2"
+  ></Loading>
 </div>
 </template>
 
@@ -219,7 +235,7 @@ export default {
     top: 0;
     height: 28px;
     width: calc(100% - 15px);
-    content: '';
+    content: "";
     background-image: linear-gradient(
       180deg,
       rgba(#fff, 1) 0%,

@@ -41,6 +41,9 @@ export default {
 
 <style lang="scss" scoped>
 .header {
+  color: #000000;
+  transition: color 0.15s ease;
+
   h1 {
     font-weight: 900;
     line-height: normal;
@@ -72,7 +75,6 @@ export default {
 
 .tag {
   font-family: Quicksand;
-  color: #000000;
   margin: 0;
   display: flex;
   align-items: center;

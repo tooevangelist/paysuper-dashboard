@@ -27,6 +27,10 @@ export default {
       type: String,
       required: true,
     },
+    uploadImage: {
+      type: Function,
+      required: true,
+    },
   },
 
   data() {
@@ -106,6 +110,7 @@ export default {
       <ProjectFormSettings
         v-show="currentStepInner === 'settings'"
         :project="project"
+        :uploadImage="uploadImage"
         ref="formSettings"
         @validationResult="setStepStatus('settings', $event)"
       />

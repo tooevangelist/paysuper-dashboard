@@ -36,16 +36,3 @@ export function UploadImage(file, opts, fileReady) {
     })
     .then(res => fileReady([res.data]));
 }
-
-export function UploadVideo(file, fileReady) {
-  const formData = new FormData();
-  formData.append('file', file, file.name);
-  axios
-    .post(`${config.imaginary_api}/video`, formData, {
-      params: {},
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
-    .then(res => fileReady([res.data]));
-}

@@ -1,125 +1,230 @@
 <script>
-import { mapState, mapActions } from 'vuex';
-import {
-  Button,
-  UiTable,
-  UiTableCell,
-  UiTableRow,
-  PageHeader,
-} from '@protocol-one/ui-kit';
-import ProjectListPanelItem from '@/components/ProjectListPanelItem.vue';
-import StatusIcon from '@/components/StatusIcon.vue';
-import NoResults from '@/components/NoResults.vue';
+import { debounce } from 'lodash-es';
+import { mapState, mapGetters, mapActions } from 'vuex';
+import Notifications from '@/mixins/Notifications';
 import ProjectsListStore from '@/store/ProjectsListStore';
+import ProjectPanelItem from '@/components/ProjectPanelItem.vue';
+import NoResults from '@/components/NoResults.vue';
+import NewProjectModal from '@/components/NewProjectModal.vue';
+import DeactivateProjectModal from '@/components/DeactivateProjectModal.vue';
+import FilterSearchInput from '@/components/FilterSearchInput.vue';
+import FilterSelect from '@/components/FilterSelect.vue';
 
 export default {
+  name: 'ProjectsListPage',
+  mixins: [Notifications],
   components: {
-    Button,
-    ProjectListPanelItem,
-    UiTable,
-    UiTableCell,
-    UiTableRow,
-    PageHeader,
-    StatusIcon,
+    ProjectPanelItem,
     NoResults,
+    NewProjectModal,
+    DeactivateProjectModal,
+    FilterSearchInput,
+    FilterSelect,
   },
-  asyncData({ registerStoreModule }) {
-    return registerStoreModule('ProjectsListing', ProjectsListStore);
+  async asyncData({ store, registerStoreModule, route }) {
+    try {
+      await registerStoreModule('ProjectsListing', ProjectsListStore, {
+        query: route.query,
+      });
+    } catch (error) {
+      store.dispatch('setPageError', error);
+    }
   },
   data() {
     return {
-      viewType: 'panels',
+      filters: {},
+      isSearchRouting: false,
+      isDeactivationModalOpened: false,
+      isNewProjectModalOpened: false,
+      projectIdForAction: null,
+
+      statusFilterOptions: [
+        { label: 'All projects', value: '' },
+        { label: 'Only active', value: 'active' },
+        { label: 'Only inactive', value: 'inactive' },
+      ],
     };
   },
   computed: {
-    ...mapState('ProjectsListing', ['projects']),
+    ...mapState('ProjectsListing', ['projects', 'query']),
+    ...mapGetters('ProjectsListing', ['getFilterValues']),
+
+    handleQuickSearchInput() {
+      return debounce(() => {
+        this.searchProjects();
+      }, 500);
+    },
+
+    isFiltersNotEmpty() {
+      return Boolean(this.filters.quickFilter || this.filters.status);
+    },
+  },
+
+  beforeRouteUpdate(to, from, next) {
+    if (!this.isSearchRouting) {
+      this.initQuery(to.query);
+      this.updateFiltersFromQuery();
+    }
+    this.isSearchRouting = false;
+    next();
+  },
+
+  created() {
+    this.updateFiltersFromQuery();
   },
 
   methods: {
-    ...mapActions('ProjectsListing', ['removeProject']),
+    ...mapActions(['setIsLoading', 'uploadImage']),
+    ...mapActions('ProjectsListing', [
+      'deactivateProject', 'activateProject', 'fetchProjects',
+      'submitFilters', 'initQuery',
+    ]),
+
+    updateFiltersFromQuery() {
+      this.filters = this.getFilterValues(['quickFilter', 'status']);
+    },
+
+    async searchProjects() {
+      this.submitFilters(this.filters);
+      this.navigate();
+      await this.fetchProjects();
+    },
+
+    navigate() {
+      this.isSearchRouting = true;
+      this.$router.push({
+        path: this.$route.path,
+        query: this.query,
+      });
+    },
+
+    openDeactivateDialog(projectId) {
+      this.isDeactivationModalOpened = true;
+      this.projectIdForAction = projectId;
+    },
+
+    async tryToDeactivateProject() {
+      this.setIsLoading(true);
+      try {
+        await this.deactivateProject(this.projectIdForAction);
+        await this.fetchProjects();
+        this.$_Notifications_showSuccessMessage('Project has been disactivated');
+      } catch (error) {
+        this.$_Notifications_showErrorMessage(error);
+      }
+      this.setIsLoading(false);
+      this.isDeactivationModalOpened = false;
+    },
+
+    async handleProjectActivate(projectId) {
+      this.setIsLoading(true);
+      try {
+        await this.activateProject(projectId);
+        await this.fetchProjects();
+        this.$_Notifications_showSuccessMessage('Project has been activated');
+      } catch (error) {
+        this.$_Notifications_showErrorMessage(error);
+      }
+      this.setIsLoading(false);
+    },
   },
 };
 </script>
 
 <template>
-  <div>
-    <PageHeader title="Projects">
-      <template slot="right">
-        <div>
-          <a href="#" @click="viewType = 'panels'">panels</a>
-          /
-          <a href="#" @click="viewType = 'table'">table</a>
-          &nbsp;
-        </div>
-        <router-link
-          to="/projects/new"
-        >
-          <Button>Create project</Button>
-        </router-link>
-      </template>
-    </PageHeader>
-
-    <div class="content-wrapper" v-if="viewType === 'panels'">
-      <div class="content-list">
-        <ProjectListPanelItem
-          v-for="project in projects.items"
-          :key="project.id"
-          :id="project.id"
-          :title="project.name.en"
-          :status="project.is_active ? 'complete' : 'initial'"
-          @remove="removeProject"
-        />
-        <ProjectListPanelItem
-          v-if="!projects.items"
-          title="Create your first project now"
-          :isNew="true"
-        />
-      </div>
+<div>
+  <UiHeader level="2" :hasMargin="true">Projects</UiHeader>
+  <p class="description">
+    There is your full list of projects here. Setup every parameter, add products,
+    proceed with technical S2S integration to activate every project sales.
+  </p>
+  <div class="controls">
+    <UiButton
+      :noSidePaddings="true"
+      @click="isNewProjectModalOpened = true"
+    >
+      <IconPlus slot="iconBefore" />
+      CREATE PROJECT
+    </UiButton>
+    <div class="filters">
+      <FilterSearchInput
+        v-model="filters.quickFilter"
+        @input="handleQuickSearchInput"
+      />
+      <FilterSelect
+        :options="statusFilterOptions"
+        v-model="filters.status"
+        @input="searchProjects"
+      />
     </div>
-
-    <template v-if="viewType === 'table'">
-      <ui-table>
-        <ui-table-row :isHead="true">
-          <ui-table-cell>Name</ui-table-cell>
-          <ui-table-cell>Product ID</ui-table-cell>
-          <ui-table-cell>Status</ui-table-cell>
-          <ui-table-cell>Creation date</ui-table-cell>
-        </ui-table-row>
-        <ui-table-row
-          v-for="project in projects.items"
-          :key="project.id"
-          :link="{
-            url: `/projects/${project.id}`,
-            router: true
-          }"
-        >
-          <ui-table-cell>{{project.name}}</ui-table-cell>
-          <ui-table-cell>{{project.id}}</ui-table-cell>
-          <ui-table-cell>
-            <StatusIcon :status="project.is_active ? 'complete' : 'initial'" />
-          </ui-table-cell>
-          <ui-table-cell>{{project.created_at}}</ui-table-cell>
-        </ui-table-row>
-      </ui-table>
-      <NoResults v-if="!projects.items" />
-    </template>
-    <pre>{{projects.items}}</pre>
-
   </div>
+  <!-- <input ref="file" type="file" @input="upload"> -->
+  <div class="content">
+    <ProjectPanelItem
+      class="panel-item"
+      v-for="project in projects.items"
+      :key="project.id"
+      :project="project"
+      @deactivate="openDeactivateDialog"
+      @activate="handleProjectActivate"
+    />
+    <NoResults
+      v-if="!projects.items"
+      :type="isFiltersNotEmpty ? 'no-results' : 'add-new'"
+    >
+      <span v-if="!isFiltersNotEmpty">You don’t have any projects yet</span>
+    </NoResults>
+  </div>
+
+  <DeactivateProjectModal
+    v-show="isDeactivationModalOpened"
+    @close="isDeactivationModalOpened = false"
+    @deactivate="tryToDeactivateProject"
+  />
+
+  <NewProjectModal
+    v-show="isNewProjectModalOpened"
+    :uploadImage="uploadImage"
+    @close="isNewProjectModalOpened = false"
+  />
+
+</div>
 </template>
 
 <style lang="scss" scoped>
-.content-wrapper {
-  padding: 16px 32px;
+.description {
+  max-width: 566px;
+  margin-bottom: 24px;
 }
-.content-list {
+
+.controls {
+  margin-bottom: 40px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid #e3e5e6;
+  display: flex;
+  justify-content: space-between;
+}
+
+.filters {
+  display: flex;
+
+  & > * {
+    margin-left: 8px;
+  }
+}
+
+.content {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+}
 
-  & > * {
-    margin-bottom: 30px;
-    margin-right: 30px;
+.panel-item {
+  width: 31%;
+  margin-bottom: 24px;
+
+  &:not(:nth-child(3n)) {
+    margin-right: 24px;
   }
 }
 </style>
