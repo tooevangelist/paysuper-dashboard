@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Centrifuge from 'centrifuge';
 import HelloSign from 'hellosign-embedded';
 
 export default function createLicenseAgreementStore() {
@@ -20,6 +21,9 @@ export default function createLicenseAgreementStore() {
       isSigendYou(state, data) {
         state.isSigendYou = data;
       },
+      isSigendPS(state, data) {
+        state.isSigendPS = data;
+      },
       helloSign(state, data) {
         state.helloSign = data;
       },
@@ -34,9 +38,9 @@ export default function createLicenseAgreementStore() {
 
           const helloSign = new HelloSign({ clientId: state.signature.client_id });
 
-          helloSign.on('sign', (data) => {
-            console.error(data);
+          helloSign.on('sign', () => {
             commit('isSigendYou', true);
+            dispatch('initWaitingForDocumentSigned');
           });
 
           commit('helloSign', helloSign);
@@ -55,10 +59,25 @@ export default function createLicenseAgreementStore() {
 
         commit('signature', response.data);
       },
-      async openLicense({ state }) {
+      openLicense({ state }) {
         state.helloSign.open(state.signature.signing_url, {
           redirectTo: state.signature.signing_redirect_url,
         });
+      },
+      initWaitingForDocumentSigned({ commit, state, rootState }) {
+        const centrifuge = new Centrifuge(rootState.config.websocketUrl);
+        centrifuge.setToken(state.profile.centrifugo_token);
+        centrifuge.subscribe(`paysuper:merchant#${rootState.Merchant.merchant.id}`, ({ data }) => {
+          if (data.isReject) {
+            commit('isReject', true);
+            commit('isSigendYou', false);
+            commit('isSigendPS', false);
+            return;
+          }
+
+          commit('isSigendPS', true);
+        });
+        centrifuge.connect();
       },
     },
   };
