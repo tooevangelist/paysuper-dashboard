@@ -543,6 +543,7 @@ export default {
         v-for="(region, index) in prepareRegions"
         :key="index"
         class="tabs-btn"
+        :isRounded="true"
         :color="channelCostsRegion === region.value ? 'blue' : 'light-gray'"
         @click="channelCostsRegion = region.value"
       >
@@ -611,6 +612,7 @@ export default {
         v-for="(region, index) in prepareRegions"
         :key="index"
         class="tabs-btn"
+        :isRounded="true"
         :color="refundCostsRegion === region.value ? 'blue' : 'light-gray'"
         @click="refundCostsRegion = region.value"
       >

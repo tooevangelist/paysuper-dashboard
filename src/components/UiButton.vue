@@ -25,6 +25,10 @@ export default {
       default: false,
       type: Boolean,
     },
+    isRounded: {
+      default: false,
+      type: Boolean,
+    },
     isTransparent: {
       default: false,
       type: Boolean,
@@ -44,7 +48,7 @@ export default {
       default: 'button',
       type: String,
       validator(value) {
-        return includes(['button', 'submit', 'reset', 'rectangle'], value);
+        return includes(['button', 'submit', 'reset'], value);
       },
     },
   },
@@ -61,6 +65,7 @@ export default {
          */
         'base-button',
         this.disabled ? '_disabled' : '',
+        this.isRounded ? '_rounded' : '',
         this.isTransparent ? '_transparent' : '',
         ...[this.color, this.size, this.type].map(value => `_${value}`),
       ];
@@ -91,7 +96,7 @@ $green-button-color: #2fa84f;
 $button-font-color: #fff;
 $gray-button-color: #919699;
 $light-gray-button-color: #f7f9fA;
-$light-gray-font-color: #919699;
+$light-gray-font-color: #333;
 $disabled-button-color: #f1f3f4;
 $disabled-font-color: #919699;
 
@@ -105,7 +110,7 @@ $primary-button-size: 14px;
   cursor: pointer;
   display: inline-block;
   font-size: $primary-button-size;
-  font-family: inherit;
+  font-family: Roboto;
   font-weight: 500;
   line-height: 24px;
   max-width: 100%;
@@ -147,8 +152,12 @@ $primary-button-size: 14px;
     color: $disabled-font-color;
   }
 
-  &._rectangle {
-    border-radius: 4px;
+  &._rounded {
+    border-radius: 20px;
+
+    &:not(._disabled):not(._transparent):before {
+      border-radius: 20px;
+    }
   }
 
   &._transparent {
