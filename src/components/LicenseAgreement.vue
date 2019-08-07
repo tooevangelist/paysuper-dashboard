@@ -1,18 +1,11 @@
 <script>
+import { mapActions, mapState } from 'vuex';
+
 export default {
   name: 'LicenseAgreement',
-  data() {
-    return {
-      isSigendYou: false,
-      isSigendPS: false,
-      isReject: false,
-      file: {
-        name: 'License Agreement.pdf',
-        link: '#',
-      },
-    };
-  },
   computed: {
+    ...mapState('LicenseAgreement', ['isSigendYou', 'isSigendPS', 'isReject', 'file']),
+
     isCheckingAgreement() {
       return this.isSigendYou && !this.isSigendPS;
     },
@@ -49,10 +42,11 @@ export default {
       return 'Done';
     },
   },
+  mounted() {
+    this.initState();
+  },
   methods: {
-    openLicense() {
-      // open hellosign
-    },
+    ...mapActions('LicenseAgreement', ['initState', 'openLicense']),
   },
 };
 </script>

@@ -265,6 +265,10 @@ export default function createMerchantStore() {
         }
 
         try {
+          const hellosignResponse = await axios.get(
+            `${rootState.config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}/agreement/signature`,
+            { headers: { Authorization: `Bearer ${rootState.User.accessToken}` } },
+          );
           const response = await axios.get(
             `${rootState.config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}/agreement`,
             {
@@ -273,6 +277,7 @@ export default function createMerchantStore() {
           );
 
           commit('agreementDocument', response.data);
+          console.error(hellosignResponse);
         } catch (error) {
           console.warn(error);
         }

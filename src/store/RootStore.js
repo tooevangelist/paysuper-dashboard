@@ -4,8 +4,9 @@ import axios from 'axios';
 import { includes, get } from 'lodash-es';
 
 import DictionariesStore from './DictionariesStore';
-import UserStore from './UserStore';
 import LeaveFeedbackStore from './LeaveFeedbackStore';
+import LicenseAgreementStore from './LicenseAgreementStore';
+import UserStore from './UserStore';
 import resources from '@/resources';
 
 Vue.use(Vuex);
@@ -35,8 +36,8 @@ export default new Vuex.Store({
     async initState({ dispatch }) {
       await dispatch('fetchConfig');
       await Promise.all([
-        dispatch('User/initState'),
         dispatch('Dictionaries/initState'),
+        dispatch('User/initState'),
       ]);
     },
 
@@ -87,7 +88,8 @@ export default new Vuex.Store({
 
   modules: {
     Dictionaries: DictionariesStore(resources),
-    User: UserStore(resources),
     LeaveFeedback: LeaveFeedbackStore(resources),
+    LicenseAgreement: LicenseAgreementStore(resources),
+    User: UserStore(resources),
   },
 });
