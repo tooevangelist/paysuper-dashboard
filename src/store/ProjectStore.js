@@ -7,7 +7,7 @@ function mapDataFormToApi(data) {
   return {
     ...rest,
     // create_invoice_allowed_urls: create_order_allowed_urls || '',
-    notify_emails: data.notify_emails ? data.notify_emails : [],
+    notify_emails: data.notify_emails || [],
   };
   // const {
   //   image,
