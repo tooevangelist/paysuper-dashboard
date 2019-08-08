@@ -85,9 +85,11 @@ export default {
     },
 
     async searchProjects() {
+      this.setIsLoading(true);
       this.submitFilters(this.filters);
       this.navigate();
       await this.fetchProjects();
+      this.setIsLoading(false);
     },
 
     navigate() {
