@@ -43,6 +43,7 @@ module.exports = {
 
   devServer: {
     port: 3030,
+    https: true,
 
     before(app) {
       app.get('/conf', (req, res) => {

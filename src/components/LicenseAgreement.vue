@@ -4,7 +4,7 @@ import { mapActions, mapState } from 'vuex';
 export default {
   name: 'LicenseAgreement',
   computed: {
-    ...mapState('LicenseAgreement', ['isSigendYou', 'isSigendPS', 'isReject', 'file']),
+    ...mapState('LicenseAgreement', ['isSigendYou', 'isSigendPS', 'isReject', 'file', 'signature']),
 
     isCheckingAgreement() {
       return this.isSigendYou && !this.isSigendPS;
@@ -104,7 +104,7 @@ export default {
   </div>
 
   <UiButton
-    v-if="!isSigendYou || !isSigendPS"
+    v-if="(!isSigendYou || !isSigendPS) && signature"
     class="submit"
     :disabled="isSigendYou"
     @click="openLicense"
