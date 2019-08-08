@@ -17,10 +17,16 @@ function getCleanQuery(query) {
 
 export default class SearchBulder {
   constructor(scheme) {
-    this.scheme = merge(
-      { groupHandlers: {} },
-      scheme,
-    );
+    const { mixins, ...restOfScheme } = scheme;
+    this.scheme = { groupHandlers: {} };
+
+    if (mixins) {
+      mixins.forEach((item) => {
+        merge(this.scheme, item);
+      });
+    }
+
+    merge(this.scheme, restOfScheme);
   }
 
   getFilterValues({ filterNames = null, query = {}, dictionaries = {} } = {}) {

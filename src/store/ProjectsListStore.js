@@ -1,6 +1,6 @@
 import axios from 'axios';
 import qs from 'qs';
-import SearchBuilder from '@/tools/SearchBuilder';
+import SearchBuilder from '@/tools/SearchBuilder/SearchBuilder';
 import projectsListScheme from '@/schemes/projectsListScheme';
 
 const searchBuilder = new SearchBuilder(projectsListScheme);

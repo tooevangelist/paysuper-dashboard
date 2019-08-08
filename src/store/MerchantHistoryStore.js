@@ -1,7 +1,7 @@
 import axios from 'axios';
 import qs from 'qs';
 import { isEmpty } from 'lodash-es';
-import SearchBuilder from '@/tools/SearchBuilder';
+import SearchBuilder from '@/tools/SearchBuilder/SearchBuilder';
 import merchantHistoryScheme from '@/schemes/merchantHistoryScheme';
 
 const searchBuilder = new SearchBuilder(merchantHistoryScheme);

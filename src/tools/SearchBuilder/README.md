@@ -4,7 +4,7 @@
 ### Store
 ```
 import qs from 'qs';
-import SearchBuilder from '@/tools/SearchBuilder';
+import SearchBuilder from '@/tools/SearchBuilder/SearchBuilder';
 import abcScheme from '@/schemes/abcScheme';
 const searchBuilder = new SearchBuilder(abcScheme);
 
