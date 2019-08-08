@@ -3,12 +3,12 @@ export default {
   name: 'LayoutAside',
   props: {
     currentItem: {
-      default: 'dashboard',
-      type: String,
+      default: 0,
+      type: Number,
     },
     items: {
-      default: () => ({}),
-      type: Object,
+      required: true,
+      type: Array,
     },
   },
 };
@@ -17,11 +17,10 @@ export default {
 <template>
 <div class="layout-aside">
   <RouterLink
-    v-for="(item, key) in items"
-    :key="key"
-    :class="['item', { '_not-available': !item.isAvailable, '_current': currentItem === key }]"
+    v-for="(item, index) in items"
+    :key="index"
+    :class="['item', { '_not-available': !item.isAvailable, '_current': currentItem === index }]"
     :to="item.link"
-    @click="$emit('changeNavigation', key)"
   >
     <div class="icon">
       <component :is="item.icon" />

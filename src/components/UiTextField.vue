@@ -106,7 +106,7 @@ export default {
 <style scoped lang="scss">
 /** @TODO - move to gui for typographics */
 $input-background-color: #fff;
-$primary-input-color: #333;
+$primary-input-color: #000000;
 $secondary-input-color: #5e6366;
 $focus-input-color: #3787ff;
 $error-input-color: #ff6f6f;

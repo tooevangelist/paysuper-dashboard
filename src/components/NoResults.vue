@@ -1,37 +1,58 @@
+<script>
+import { includes } from 'lodash-es';
+
+export default {
+  name: 'NoResults',
+
+  props: {
+    type: {
+      type: String,
+      default: 'no-results',
+      validator(value) {
+        return includes(['no-results', 'add-new'], value);
+      },
+    },
+  },
+};
+</script>
+
 <template>
-  <div class="no-results">
-    <div class="computer-icon">
-      <svg width="130" height="92" viewBox="0 0 130 92" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- eslint-disable-next-line -->
-        <path d="M76.5586 60.376H53.4472C52.6475 60.376 52.002 61.02 52.002 61.8143C52.002 62.6086 52.6475 63.2526 53.4472 63.2526H76.5586C77.3582 63.2526 78.0038 62.6086 78.0038 61.8143C78.0038 61.02 77.3582 60.376 76.5586 60.376Z" fill="#B1B1B1"/>
-        <!-- eslint-disable-next-line -->
-        <path d="M50.5588 50.0825C52.1544 50.0825 53.4478 48.152 53.4478 45.7707C53.4478 43.3893 52.1544 41.4589 50.5588 41.4589C48.9633 41.4589 47.6699 43.3893 47.6699 45.7707C47.6699 48.152 48.9633 50.0825 50.5588 50.0825Z" fill="#B1B1B1"/>
-        <!-- eslint-disable-next-line -->
-        <path d="M79.4485 50.0825C81.044 50.0825 82.3374 48.152 82.3374 45.7707C82.3374 43.3893 81.044 41.4589 79.4485 41.4589C77.853 41.4589 76.5596 43.3893 76.5596 45.7707C76.5596 48.152 77.853 50.0825 79.4485 50.0825Z" fill="#B1B1B1"/>
-        <!-- eslint-disable-next-line -->
-        <path d="M13.0028 77.6264H117.004C117.804 77.6264 118.449 76.9824 118.449 76.1881V8.63141C118.449 7.83559 117.804 7.19312 117.004 7.19312H13.0028C12.2032 7.19312 11.5576 7.83559 11.5576 8.63141V76.1897C11.5576 76.9824 12.2032 77.6264 13.0028 77.6264ZM14.4481 10.0682H115.56V74.7514H14.4481V10.0682Z" fill="#B1B1B1"/>
-        <!-- eslint-disable-next-line -->
-        <path d="M125.67 80.5013H124.225V7.18839C124.225 3.22312 120.987 0 117.002 0H13.0009C9.01652 0 5.77785 3.22312 5.77785 7.18839V80.5013H4.33261C1.9429 80.5013 0 82.4364 0 84.8131V87.6882C0 90.0664 1.94444 92 4.33261 92H125.667C128.057 92 130 90.0649 130 87.6882V84.8131C130.005 82.4364 128.06 80.5013 125.67 80.5013ZM13.0025 2.87505H117.004C119.393 2.87505 121.336 4.81015 121.336 7.18685V80.5013H73.6698C72.8702 80.5013 72.2246 81.1454 72.2246 81.9396C72.2246 82.2954 72.2246 83.3779 67.892 83.3779H62.1142C57.7815 83.3779 57.7815 82.2969 57.7815 81.9396C57.7815 81.1454 57.136 80.5013 56.3363 80.5013H8.66985V7.18839C8.66985 4.81015 10.6127 2.87505 13.0025 2.87505ZM125.67 89.1265H4.3357C3.53912 89.1265 2.89046 88.4809 2.89046 87.6882V84.8131C2.89046 84.0204 3.53912 83.3749 4.3357 83.3749H55.1376C56.2131 86.2468 60.5549 86.2499 62.1142 86.2499H67.892C69.4528 86.2499 73.7931 86.2468 74.8686 83.3749H125.67C126.467 83.3749 127.116 84.0204 127.116 84.8131V87.6882C127.114 88.4809 126.467 89.1265 125.67 89.1265Z" fill="#B1B1B1"/>
-      </svg>
+  <div class="no-results" :class="`_type-${type}`">
+    <div class="icon">
+      <IconComputer
+        v-if="type === 'no-results'"
+        width="100"
+        height="72"
+      />
+      <IconAddNewEntity v-if="type === 'add-new'" />
     </div>
-    <p>Computer says no results</p>
+    <p>
+      <span v-if="!$slots.default && type === 'no-results'">No results</span>
+      <slot></slot>
+    </p>
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .no-results {
   padding: 50px 0;
+  width: 100%;
 
   p {
-    font-size: 20px;
-    color: #b1b1b1;
+    font-size: 14px;
+    line-height: 20px;
+    color: #c6cacc;
     text-align: center;
   }
 }
 
-.computer-icon {
+.icon {
   display: flex;
   justify-content: center;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+
+  .no-results._type-add-new & {
+    padding-right: 20px;
+  }
 }
 </style>

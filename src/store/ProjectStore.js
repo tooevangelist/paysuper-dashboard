@@ -2,7 +2,26 @@ import axios from 'axios';
 import qs from 'qs';
 
 function mapDataFormToApi(data) {
-  return data;
+  // eslint-disable-next-line
+  const { create_order_allowed_urls, ...rest } = data;
+  return {
+    ...rest,
+    // create_invoice_allowed_urls: create_order_allowed_urls || '',
+    notify_emails: data.notify_emails ? data.notify_emails : [],
+  };
+  // const {
+  //   image,
+  //   callback_currency,
+  //   callback_protocol,
+  //   secret_key,
+  // } = data;
+
+  // return {
+  //   image,
+  //   callback_currency: 'EUR',
+  //   callback_protocol,
+  //   secret_key,
+  // };
 }
 
 function mapDataApiToForm(data) {
@@ -75,7 +94,7 @@ export default function createProjectStore({ notifications }) {
           return;
         }
         await dispatch('fetchProject', id);
-        await dispatch('fetchProductsList', id);
+        // await dispatch('fetchProductsList', id);
       },
 
       async fetchProject({ commit, rootState }, id) {

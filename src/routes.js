@@ -18,13 +18,12 @@ const routes = [
   {
     path: '/projects/',
     component: () => import('@/pages/ProjectsList.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
-    name: 'projects',
+    meta: { layout: 'Layout', isAuthRequired: true },
+    name: 'ProjectsList',
   },
   {
     path: '/projects/:id',
     component: () => import('@/pages/ProjectCard.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
     children: [
       {
         path: '',
@@ -81,7 +80,7 @@ const routes = [
     path: '/dashboard/',
     component: () => import('@/pages/Dashboard.vue'),
     meta: { layout: 'Layout', isAuthRequired: true },
-    name: 'dashboard',
+    name: 'Dashboard',
   },
   {
     path: '/company/',

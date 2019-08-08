@@ -4,8 +4,16 @@
   v-bind="{ disabled, type }"
   @click="emitClick"
 >
-  {{ text }}
-  <slot />
+  <span
+    v-if="$slots.iconBefore"
+    class="icon-before"
+  >
+    <slot name="iconBefore"></slot>
+  </span>
+  <span class="text">
+    {{ text }}
+    <slot />
+  </span>
 </button>
 </template>
 
@@ -18,7 +26,7 @@ export default {
       default: 'blue',
       type: String,
       validator(value) {
-        return includes(['blue', 'orange', 'purple', 'green', 'gray', 'light-gray'], value);
+        return includes(['blue', 'orange', 'purple', 'green', 'gray', 'light-gray', 'red'], value);
       },
     },
     disabled: {
@@ -67,6 +75,7 @@ export default {
         this.disabled ? '_disabled' : '',
         this.isRounded ? '_rounded' : '',
         this.isTransparent ? '_transparent' : '',
+        this.noSidePaddings ? '_no-side-paddings' : '',
         ...[this.color, this.size, this.type].map(value => `_${value}`),
       ];
     },
@@ -95,8 +104,9 @@ $purple-button-color: #8077e7;
 $green-button-color: #2fa84f;
 $button-font-color: #fff;
 $gray-button-color: #919699;
-$light-gray-button-color: #f7f9fA;
+$light-gray-button-color: #f7f9fa;
 $light-gray-font-color: #333;
+$red-button-color: #ea3d2f;
 $disabled-button-color: #f1f3f4;
 $disabled-font-color: #919699;
 
@@ -186,5 +196,17 @@ $primary-button-size: 14px;
   &._light-gray {
     @include base-button($light-gray-button-color, $light-gray-font-color);
   }
+  &._red {
+    @include base-button($red-button-color);
+  }
+}
+
+.icon-before {
+  vertical-align: middle;
+  display: inline-flex;
+  margin: 0 6px 0 -6px;
+}
+.text {
+  vertical-align: middle;
 }
 </style>

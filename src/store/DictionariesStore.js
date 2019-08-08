@@ -7,7 +7,20 @@ export default function createDictionariesStore() {
     namespaced: true,
 
     state: () => ({
-      currencies: [],
+      currencies: [
+        {
+          name: { en: 'Rubles' },
+          code_a3: 'RUB',
+        },
+        {
+          name: { en: 'Euro' },
+          code_a3: 'EUR',
+        },
+        {
+          name: { en: 'Americal Dollar' },
+          code_a3: 'USD',
+        },
+      ],
       countries: [],
     }),
 

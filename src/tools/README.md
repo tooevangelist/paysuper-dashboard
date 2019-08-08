@@ -79,8 +79,8 @@ export default function createAbcStore({ config }) {
         const params = {
           ...state.apiQuery,
         };
-
-        await axios.get(`https://mysite.ru/api/?${qs.stringify(params)}`);
+        const queryString = qs.stringify(params, { arrayFormat: 'brackets' })
+        await axios.get(`https://mysite.ru/api/?${queryString}`);
       },
 
     },
@@ -122,20 +122,20 @@ export default {
   },
 
   methods: {
-    ...mapActions('Abc', ['submitFilters', 'search', 'initQuery]),
+    ...mapActions('Abc', ['submitFilters', 'search', 'initQuery']),
 
     updateFiltersFromQuery() {
       this.filters = this.getFilterValues(['quickFilter', 'limit', 'offset', 'sort']);
     },
 
     async emitSearch() {
-      this.isSearchRouting = true;
       this.submitFilters(this.filters);
       this.navigate();
       await this.search();
     },
 
     navigate() {
+      this.isSearchRouting = true;
       this.$router.push({
         path: this.$route.path,
         query: this.query,

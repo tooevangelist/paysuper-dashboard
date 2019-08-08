@@ -6,7 +6,7 @@ import {
   UiButton, UiTextField, UiHeader, UiTextarea, UiSwitchBox,
 } from '@protocol-one/ui-kit';
 import LangTextField from '@/components/LangTextField.vue';
-import CoverImage from '@/components/CoverImage.vue';
+import CoverImageUpload from '@/components/CoverImageUpload.vue';
 
 
 export default {
@@ -19,13 +19,17 @@ export default {
     UiTextarea,
     UiSwitchBox,
     LangTextField,
-    CoverImage,
+    CoverImageUpload,
   },
 
   props: {
     project: {
       required: true,
       type: Object,
+    },
+    uploadImage: {
+      type: Function,
+      required: true,
     },
   },
 
@@ -144,7 +148,10 @@ export default {
   <div class="project-form-settings">
     <UiHeader level="2" :hasMargin="true">Settings</UiHeader>
 
-    <CoverImage value=""></CoverImage>
+    <CoverImageUpload
+      :uploadImage="uploadImage"
+      v-model="project.image"
+    />
 
     <div class="field-row">
       <LangTextField

@@ -72,6 +72,17 @@ export default new Vuex.Store({
         commit('pageError', 520);
       }
     },
+
+    async uploadImage({ rootState }, imagefile) {
+      const formData = new FormData();
+      formData.append('file', imagefile);
+      const { data } = await axios.post(`${rootState.config.ownBackendUrl}/upload_file`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return data;
+    },
   },
 
   modules: {
