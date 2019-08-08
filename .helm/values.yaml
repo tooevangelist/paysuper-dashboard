@@ -10,7 +10,7 @@ ingress:
   pathBackend: 
    - /auth1/
    - /conf/
-   - /upload_file/
+   - /upload_file
   pathFrontend: 
    - /
 

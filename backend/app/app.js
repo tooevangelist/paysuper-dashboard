@@ -65,10 +65,10 @@ app.use(cors({
     if (!corsRoutes.includes(ctx.url)) {
       return false;
     }
-    if (config.corsValidOrigins.includes('*')) {
+    const requestOrigin = ctx.accept.headers.origin;
+    if (!requestOrigin || config.corsValidOrigins.includes('*')) {
       return '*';
     }
-    const requestOrigin = ctx.accept.headers.origin;
     if (!config.corsValidOrigins.includes(requestOrigin)) {
       return ctx.throw(`${requestOrigin} is not a valid origin`);
     }
