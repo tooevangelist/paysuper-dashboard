@@ -92,10 +92,7 @@ export default {
 
     navigate() {
       this.isSearchRouting = true;
-      this.$router.push({
-        path: this.$route.path,
-        query: this.query,
-      });
+      this.$navigate(this.$route.path, this.query);
     },
 
     openDeactivateDialog(projectId) {

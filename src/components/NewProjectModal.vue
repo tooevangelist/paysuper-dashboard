@@ -21,10 +21,6 @@ export default {
       image: '',
     };
   },
-
-  methods: {
-
-  },
 };
 </script>
 

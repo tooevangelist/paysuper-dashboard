@@ -42,7 +42,7 @@ export default {
 <style lang="scss" scoped>
 .header {
   color: #000000;
-  transition: color 0.15s ease;
+  transition: color 0.2s ease-out;
 
   h1 {
     font-weight: 900;

@@ -25,6 +25,13 @@ export default {
       this.isExpanded = true;
       this.$refs.input.focus();
     },
+
+    handleBlur() {
+      if (!this.value) {
+        this.isExpanded = false;
+      }
+      this.$emit('blur');
+    },
   },
 };
 </script>
@@ -41,7 +48,7 @@ export default {
     placeholder="Search"
     ref="input"
     :value="value"
-    @blur="$emit('blur')"
+    @blur="handleBlur"
     @focus="$emit('focus')"
     @input="$emit('input', $event.target.value)"
   >
@@ -63,7 +70,7 @@ $hover-background-color: #e6efff;
   position: relative;
   padding-right: 38px;
   overflow: hidden;
-  transition: width 0.3s ease;
+  transition: width 0.3s ease-out;
   background: #fff;
 
   &:not(._expanded) {
@@ -90,6 +97,7 @@ $hover-background-color: #e6efff;
   color: #000000;
   flex-grow: 1;
   opacity: 0;
+  transition: opacity 0.2s ease-out;
 
   &::placeholder {
     color: #c6cacc;

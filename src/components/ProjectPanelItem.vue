@@ -1,5 +1,5 @@
 <script>
-import moment from 'moment';
+import { format } from 'date-fns';
 import { directive as clickaway } from 'vue-clickaway';
 
 export default {
@@ -27,7 +27,8 @@ export default {
       return `/projects/${this.project.id}`;
     },
     date() {
-      return moment.unix(this.project.updated_at.seconds).format('D MMM YYYY, HH:MM');
+      const datetime = new Date(this.project.updated_at.seconds * 1000);
+      return format(datetime, 'D MMM YYYY, HH:MM');
     },
     isInactive() {
       return this.project.status === 4;
@@ -162,7 +163,7 @@ $hover-deactivate-background-color: rgba($hover-deactivate-text-color, 0.08);
   fill: #fff;
 
   & > svg {
-    transition: fill 0.15s ease;
+    transition: fill 0.2s ease-out;
   }
 
   &:hover,
@@ -341,6 +342,6 @@ $hover-deactivate-background-color: rgba($hover-deactivate-text-color, 0.08);
   right: 6px;
   bottom: 6px;
   opacity: 0;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.2s ease-out;
 }
 </style>
