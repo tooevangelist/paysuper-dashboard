@@ -140,11 +140,6 @@ export default {
         errorText: this.$getFieldErrorMessages(path),
       };
     },
-
-    async uploadProjectImage(file) {
-      const response = await this.uploadImage(file);
-      this.project.image = response.url;
-    },
   },
 };
 </script>
@@ -154,9 +149,8 @@ export default {
     <UiHeader level="2" :hasMargin="true">Settings</UiHeader>
 
     <CoverImageUpload
-      :value="project.image"
-      @upload="uploadProjectImage"
-      @delete="project.image = ''"
+      :uploadImage="uploadImage"
+      v-model="project.image"
     />
 
     <div class="field-row">
