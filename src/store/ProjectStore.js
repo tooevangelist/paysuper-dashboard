@@ -63,7 +63,6 @@ export default function createProjectStore({ notifications }) {
             callback_currency: '',
             limits_currency: '',
 
-
             // allow_dynamic_notify_urls: false,
             // allow_dynamic_redirect_urls: true,
             is_products_checkout: true,
