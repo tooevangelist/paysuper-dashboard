@@ -50,7 +50,7 @@ export default {
 
     handlePageChange({ offset }) {
       this.filters.offset = offset;
-      this.submitFilters({ offset });
+      this.submitFilters(this.filters);
       this.searchTransactions();
       this.isSearchRouting = true;
       this.navigate();

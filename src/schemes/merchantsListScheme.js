@@ -1,3 +1,5 @@
+import getPageMixin from '@/tools/SearchBuilder/getPageMixin';
+
 function getAgreementApiQuerValue(value) {
   if (value === 'signed') {
     return [4];
@@ -13,16 +15,6 @@ const filters = {
   quickFilter: {
     defaultValue: '',
     apiQueryName: 'quick_search',
-  },
-
-  limit: {
-    defaultValue: 10,
-    group: 'page',
-  },
-
-  offset: {
-    defaultValue: 0,
-    group: 'page',
   },
 
   agreement: {
@@ -41,27 +33,7 @@ const filters = {
   },
 };
 
-function getPageQuery({ queryValue, groupFilterValues: { limit } }) {
-  return {
-    limit,
-    offset: (queryValue - 1) * limit,
-  };
-}
-
-const groupHandlers = {
-  page: {
-    filterToQuery({ groupFilterValues: { offset, limit } }) {
-      return {
-        page: (offset / limit) + 1,
-      };
-    },
-    queryToFilter: getPageQuery,
-    queryToApiQuery: getPageQuery,
-  },
-};
-
-
 export default {
   filters,
-  groupHandlers,
+  mixins: [getPageMixin()],
 };

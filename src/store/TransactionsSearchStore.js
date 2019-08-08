@@ -2,7 +2,7 @@ import axios from 'axios';
 import qs from 'qs';
 import { map, isEmpty } from 'lodash-es';
 
-import SearchBuilder from '@/tools/SearchBuilder';
+import SearchBuilder from '@/tools/SearchBuilder/SearchBuilder';
 import transactionsListScheme from '@/schemes/transactionsListScheme';
 
 const searchBuilder = new SearchBuilder(transactionsListScheme);

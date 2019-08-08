@@ -20,7 +20,7 @@
           router: true
         }"
       >
-        <ui-table-cell>{{item.project.name}}</ui-table-cell>
+        <ui-table-cell>{{getValue(item, 'project.name')}}</ui-table-cell>
         <ui-table-cell>{{getValue(item, 'fixed_package.name')}}</ui-table-cell>
         <ui-table-cell>{{getFormattedDate(item)}}</ui-table-cell>
         <ui-table-cell>{{getValue(item, 'payer_data.country_name.en')}}</ui-table-cell>
