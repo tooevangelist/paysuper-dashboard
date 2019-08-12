@@ -22,7 +22,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('Dictionaries', ['countriesTwoLetters']),
+    ...mapGetters('Dictionaries', ['countries']),
   },
 
   validations: {
@@ -95,7 +95,7 @@ export default {
       <UiSelect
         v-model="merchant.country"
         label="Country"
-        :options="countriesTwoLetters"
+        :options="countries"
         v-bind="getValidatedFieldProps('merchant.country')"
       />
     </div>

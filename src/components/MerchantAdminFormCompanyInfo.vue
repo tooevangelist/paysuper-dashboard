@@ -48,7 +48,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('Dictionaries', ['countriesTwoLetters']),
+    ...mapGetters('Dictionaries', ['countries']),
     isFormValid() {
       return !filter(this.forms, item => item.status !== 'complete' && item.isValidable).length;
     },

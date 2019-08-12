@@ -1,18 +1,19 @@
 <script>
+import { mapActions, mapState } from 'vuex';
+import Notifications from '@/mixins/Notifications';
+
 export default {
   name: 'LicenseAgreement',
-  data() {
-    return {
-      isSigendYou: false,
-      isSigendPS: false,
-      isReject: false,
-      file: {
-        name: 'License Agreement.pdf',
-        link: '#',
-      },
-    };
-  },
+  mixins: [Notifications],
   computed: {
+    ...mapState('Company/LicenseAgreement', [
+      'isSigendYou',
+      'isSigendPS',
+      'isReject',
+      'file',
+      'signature',
+    ]),
+
     isCheckingAgreement() {
       return this.isSigendYou && !this.isSigendPS;
     },
@@ -49,10 +50,15 @@ export default {
       return 'Done';
     },
   },
+  async mounted() {
+    try {
+      await this.initState();
+    } catch (error) {
+      this.$_Notifications_showErrorMessage(error);
+    }
+  },
   methods: {
-    openLicense() {
-      // open hellosign
-    },
+    ...mapActions('Company/LicenseAgreement', ['initState', 'openLicense']),
   },
 };
 </script>
@@ -110,7 +116,7 @@ export default {
   </div>
 
   <UiButton
-    v-if="!isSigendYou || !isSigendPS"
+    v-if="(!isSigendYou || !isSigendPS) && signature"
     class="submit"
     :disabled="isSigendYou"
     @click="openLicense"

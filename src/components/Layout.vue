@@ -155,6 +155,9 @@ export default {
   padding: 0;
   overflow: hidden;
 }
+.x-hellosign-embedded {
+  z-index: 100;
+}
 
 .template-layout {
   font-family: "Roboto", sans-serif;

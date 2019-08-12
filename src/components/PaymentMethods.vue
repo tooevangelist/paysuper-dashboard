@@ -651,15 +651,13 @@ export default {
     </div>
 
     <UiTable>
-      <UiTableRow :isHead="true">
-        <UiTableCell class="cell _first"></UiTableCell>
-        <UiTableCell class="cell _second" align="left">Payment Method</UiTableCell>
+      <UiTableRow :isHead="true" class="row-indent">
+        <UiTableCell class="cell _second _with-pad" align="left">Payment Method</UiTableCell>
         <UiTableCell class="cell _merch">Chargeback fee, fix</UiTableCell>
         <UiTableCell class="cell _merch">Chargeback fee payout party</UiTableCell>
       </UiTableRow>
-      <UiTableRow>
-        <UiTableCell class="cell _first"></UiTableCell>
-        <UiTableCell class="cell _second" align="left">All Methods</UiTableCell>
+      <UiTableRow class="row-indent">
+        <UiTableCell class="cell _second _with-pad" align="left">All Methods</UiTableCell>
         <UiTableCell class="cell _merch">$25,00</UiTableCell>
         <UiTableCell class="cell _merch">Merchant</UiTableCell>
       </UiTableRow>
@@ -673,15 +671,13 @@ export default {
     </div>
 
     <UiTable>
-      <UiTableRow :isHead="true">
-        <UiTableCell class="cell _first"></UiTableCell>
-        <UiTableCell class="cell _second" align="left">Payment Method</UiTableCell>
+      <UiTableRow :isHead="true" class="row-indent">
+        <UiTableCell class="cell _second _with-pad" align="left">Payment Method</UiTableCell>
         <UiTableCell class="cell _merch">Payout fee, fix</UiTableCell>
         <UiTableCell class="cell _merch">Fee payout party</UiTableCell>
       </UiTableRow>
-      <UiTableRow>
-        <UiTableCell class="cell _first"></UiTableCell>
-        <UiTableCell class="cell _second" align="left">All Methods</UiTableCell>
+      <UiTableRow class="row-indent">
+        <UiTableCell class="cell _second _with-pad" align="left">All Methods</UiTableCell>
         <UiTableCell class="cell _merch">$25,00</UiTableCell>
         <UiTableCell class="cell _merch">Merchant</UiTableCell>
       </UiTableRow>
@@ -807,6 +803,11 @@ export default {
   }
   &._second {
     width: 120px;
+
+    &._with-pad {
+      padding-left: 40px;
+      width: 160px;
+    }
   }
   &._channel {
     width: 19.5%;
