@@ -13,7 +13,7 @@ export default function createLicenseAgreementStore() {
       isSigendYou: false,
       isSigendPS: false,
       isReject: false,
-      // Test filedata
+      // TODO: remove test data (@see https://protocol1.atlassian.net/browse/PAY-440)
       file: {
         name: 'License Agreement.pdf',
         link: '#',
@@ -40,6 +40,7 @@ export default function createLicenseAgreementStore() {
 
           const helloSign = new HelloSign({
             clientId: HELLOSIGN_CLIENT_ID,
+            // TODO: remove 3 lines below for production
             testMode: true,
             debug: true,
             skipDomainVerification: true,
@@ -56,35 +57,43 @@ export default function createLicenseAgreementStore() {
         }
       },
       async fetchAgreementSignature({ commit, rootState }) {
+        console.error(rootState);
         const { accessToken, Merchant } = rootState.User;
         const merchantId = Merchant.merchant.id;
 
         const response = await axios.put(
           `${rootState.config.apiUrl}/admin/api/v1/merchants/${merchantId}/agreement/signature`,
-          null,
+          { singer_type: 0 },
           { headers: { Authorization: `Bearer ${accessToken}` } },
         );
 
         commit('signature', response.data);
       },
       openLicense({ state }) {
-        state.helloSign.open(state.signature.signing_url, {
-          redirectTo: state.signature.signing_redirect_url,
-        });
+        state.helloSign.open(state.signature.signing_url);
       },
-      initWaitingForDocumentSigned({ commit, state, rootState }) {
+      initWaitingForDocumentSigned({ commit, rootState }) {
         const centrifuge = new Centrifuge(rootState.config.websocketUrl);
+        const { merchant } = rootState.User.Merchant;
 
-        centrifuge.setToken(state.profile.centrifugo_token);
-        centrifuge.subscribe(`paysuper:merchant#${rootState.Merchant.merchant.id}`, ({ data }) => {
+        centrifuge.setToken(merchant.centrifugo_token);
+        centrifuge.subscribe(`paysuper:merchant#${merchant.id}`, ({ data }) => {
           if (data.code === 'ds000003') {
             commit('isReject', true);
             commit('isSigendYou', false);
             commit('isSigendPS', false);
+
             return;
           }
 
-          commit('isSigendPS', true);
+          if (data.code === 'mr000018') {
+            commit('isSigendPS', true);
+          }
+
+          /**
+           * TODO: create notifications infrastructure for merchant notifications
+           * with showing ones' in header
+           */
         });
         centrifuge.connect();
       },
