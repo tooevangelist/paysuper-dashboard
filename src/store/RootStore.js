@@ -71,6 +71,7 @@ export default new Vuex.Store({
       } else {
         commit('pageError', 520);
       }
+      console.error(error);
     },
 
     async uploadImage({ rootState }, imagefile) {
