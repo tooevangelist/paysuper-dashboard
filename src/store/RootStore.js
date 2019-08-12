@@ -5,7 +5,6 @@ import { includes, get } from 'lodash-es';
 
 import DictionariesStore from './DictionariesStore';
 import LeaveFeedbackStore from './LeaveFeedbackStore';
-import LicenseAgreementStore from './LicenseAgreementStore';
 import UserStore from './UserStore';
 import resources from '@/resources';
 
@@ -89,7 +88,6 @@ export default new Vuex.Store({
   modules: {
     Dictionaries: DictionariesStore(resources),
     LeaveFeedback: LeaveFeedbackStore(resources),
-    LicenseAgreement: LicenseAgreementStore(resources),
     User: UserStore(resources),
   },
 });

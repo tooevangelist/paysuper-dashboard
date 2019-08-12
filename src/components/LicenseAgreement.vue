@@ -1,10 +1,18 @@
 <script>
 import { mapActions, mapState } from 'vuex';
+import Notifications from '@/mixins/Notifications';
 
 export default {
   name: 'LicenseAgreement',
+  mixins: [Notifications],
   computed: {
-    ...mapState('LicenseAgreement', ['isSigendYou', 'isSigendPS', 'isReject', 'file', 'signature']),
+    ...mapState('Company/LicenseAgreement', [
+      'isSigendYou',
+      'isSigendPS',
+      'isReject',
+      'file',
+      'signature',
+    ]),
 
     isCheckingAgreement() {
       return this.isSigendYou && !this.isSigendPS;
@@ -42,11 +50,15 @@ export default {
       return 'Done';
     },
   },
-  mounted() {
-    this.initState();
+  async mounted() {
+    try {
+      await this.initState();
+    } catch (error) {
+      this.$_Notifications_showErrorMessage(error);
+    }
   },
   methods: {
-    ...mapActions('LicenseAgreement', ['initState', 'openLicense']),
+    ...mapActions('Company/LicenseAgreement', ['initState', 'openLicense']),
   },
 };
 </script>

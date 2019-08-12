@@ -5,6 +5,7 @@ import Contacts from '@/components/Contacts.vue';
 import LicenseAgreement from '@/components/LicenseAgreement.vue';
 import PaymentMethods from '@/components/PaymentMethods.vue';
 import SmartListItem from '@/components/SmartListItem.vue';
+import CompanyStore from '@/store/CompanyStore';
 
 export default {
   name: 'Company',
@@ -15,6 +16,13 @@ export default {
     LicenseAgreement,
     PaymentMethods,
     SmartListItem,
+  },
+  async asyncData({ store, registerStoreModule }) {
+    try {
+      await registerStoreModule('Company', CompanyStore);
+    } catch (error) {
+      store.dispatch('setPageError', error);
+    }
   },
   data() {
     return {

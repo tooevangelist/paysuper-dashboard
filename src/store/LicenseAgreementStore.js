@@ -7,7 +7,7 @@ const HELLOSIGN_CLIENT_ID = '3555849b464426e6acbaa93482b7a847';
 export default function createLicenseAgreementStore() {
   return {
     namespaced: true,
-    state: () => ({
+    state: {
       helloSign: null,
       signature: null,
       isSigendYou: false,
@@ -18,7 +18,7 @@ export default function createLicenseAgreementStore() {
         name: 'License Agreement.pdf',
         link: '#',
       },
-    }),
+    },
     mutations: {
       isSigendYou(state, data) {
         state.isSigendYou = data;
@@ -35,29 +35,24 @@ export default function createLicenseAgreementStore() {
     },
     actions: {
       async initState({ commit, dispatch }) {
-        try {
-          await dispatch('fetchAgreementSignature');
+        await dispatch('fetchAgreementSignature');
 
-          const helloSign = new HelloSign({
-            clientId: HELLOSIGN_CLIENT_ID,
-            // TODO: remove 3 lines below for production
-            testMode: true,
-            debug: true,
-            skipDomainVerification: true,
-          });
+        const helloSign = new HelloSign({
+          clientId: HELLOSIGN_CLIENT_ID,
+          // TODO: remove 3 lines below for production
+          testMode: true,
+          debug: true,
+          skipDomainVerification: true,
+        });
 
-          helloSign.on('sign', () => {
-            commit('isSigendYou', true);
-            dispatch('initWaitingForDocumentSigned');
-          });
+        helloSign.on('sign', () => {
+          commit('isSigendYou', true);
+          dispatch('initWaitingForDocumentSigned');
+        });
 
-          commit('helloSign', helloSign);
-        } catch (error) {
-          console.warn(error);
-        }
+        commit('helloSign', helloSign);
       },
       async fetchAgreementSignature({ commit, rootState }) {
-        console.error(rootState);
         const { accessToken, Merchant } = rootState.User;
         const merchantId = Merchant.merchant.id;
 
@@ -78,6 +73,14 @@ export default function createLicenseAgreementStore() {
 
         centrifuge.setToken(merchant.centrifugo_token);
         centrifuge.subscribe(`paysuper:merchant#${merchant.id}`, ({ data }) => {
+          /**
+           * Data codes
+           * ds000001: Document signing failed
+           * ds000002: Signer decline document sign
+           * ds000003: Paysuper signer decline document sign
+           * mr000017: License agreement was signed by merchant
+           * mr000018: License agreement was signed by Paysuper admin
+           */
           if (data.code === 'ds000003') {
             commit('isReject', true);
             commit('isSigendYou', false);
