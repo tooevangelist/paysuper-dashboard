@@ -37,6 +37,7 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  line-height: 40px;
 }
 
 .code {

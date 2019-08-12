@@ -40,6 +40,30 @@ const routes = [
     ],
   },
   {
+    path: '/taxes/',
+    component: () => import('@/pages/TaxesListPage.vue'),
+    meta: { layout: 'Layout', isAuthRequired: true },
+    name: 'TaxesList',
+  },
+  {
+    path: '/taxes/:id',
+    component: () => import('@/pages/TaxesCardPage.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('@/pages/TaxesCardCountryPage.vue'),
+        meta: { layout: 'Layout', isAuthRequired: true },
+        name: 'TaxesCardCountryPage',
+      },
+      {
+        path: 'period/:periodId',
+        component: () => import('@/pages/TaxesCardPeriodPage.vue'),
+        meta: { layout: 'Layout', isAuthRequired: true },
+        name: 'TaxesCardPeriodPage',
+      },
+    ],
+  },
+  {
     path: '/merchants/',
     component: () => import('@/pages/MerchantsList.vue'),
     meta: { layout: 'Page', isAuthRequired: true },
