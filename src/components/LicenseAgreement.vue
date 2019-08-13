@@ -1,18 +1,13 @@
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 import Notifications from '@/mixins/Notifications';
 
 export default {
   name: 'LicenseAgreement',
   mixins: [Notifications],
   computed: {
-    ...mapState('Company/LicenseAgreement', [
-      'isSigendYou',
-      'isSigendPS',
-      'isReject',
-      'file',
-      'signature',
-    ]),
+    ...mapGetters('Company/LicenseAgreement', ['isSigendYou', 'isSigendPS']),
+    ...mapState('Company/LicenseAgreement', ['isReject', 'file', 'signature']),
 
     isCheckingAgreement() {
       return this.isSigendYou && !this.isSigendPS;
