@@ -10,47 +10,65 @@ export default function createLicenseAgreementStore() {
     state: {
       helloSign: null,
       signature: null,
-      isSigendYou: false,
-      isSigendPS: false,
       isReject: false,
+      status: 0,
       // TODO: remove test data (@see https://protocol1.atlassian.net/browse/PAY-440)
       file: {
         name: 'License Agreement.pdf',
         link: '#',
       },
     },
+    getters: {
+      isSigendYou(state) {
+        return state.status >= 3;
+      },
+      isSigendPS(state) {
+        return state.status >= 4;
+      },
+      isUsingHellosign(state) {
+        return state.status === 0 || state.isReject;
+      },
+    },
     mutations: {
-      isSigendYou(state, data) {
-        state.isSigendYou = data;
-      },
-      isSigendPS(state, data) {
-        state.isSigendPS = data;
-      },
       helloSign(state, data) {
         state.helloSign = data;
       },
       signature(state, data) {
         state.signature = data;
       },
+      status(state, data) {
+        state.status = data;
+      },
     },
     actions: {
-      async initState({ commit, dispatch }) {
+      async initState({
+        commit,
+        dispatch,
+        getters,
+        rootState,
+      }) {
         await dispatch('fetchAgreementSignature');
 
-        const helloSign = new HelloSign({
-          clientId: HELLOSIGN_CLIENT_ID,
-          // TODO: remove 3 lines below for production
-          testMode: true,
-          debug: true,
-          skipDomainVerification: true,
-        });
+        const { status } = rootState.User.Merchant.merchant;
 
-        helloSign.on('sign', () => {
-          commit('isSigendYou', true);
-          dispatch('initWaitingForDocumentSigned');
-        });
+        commit('status', status);
 
-        commit('helloSign', helloSign);
+        if (getters.isUsingHellosign) {
+          const helloSign = new HelloSign({
+            clientId: HELLOSIGN_CLIENT_ID,
+            // TODO: remove 3 lines below for production
+            testMode: true,
+            debug: true,
+            skipDomainVerification: true,
+          });
+
+          helloSign.on('sign', () => {
+            commit('status', 3);
+            dispatch('initWaitingForDocumentSigned');
+          });
+
+          commit('helloSign', helloSign);
+        }
       },
       async fetchAgreementSignature({ commit, rootState }) {
         const { accessToken, Merchant } = rootState.User;
@@ -64,8 +82,10 @@ export default function createLicenseAgreementStore() {
 
         commit('signature', response.data);
       },
-      openLicense({ state }) {
-        state.helloSign.open(state.signature.signing_url);
+      openLicense({ state, getters }) {
+        if (getters.isUsingHellosign) {
+          state.helloSign.open(state.signature.sign_url);
+        }
       },
       initWaitingForDocumentSigned({ commit, rootState }) {
         const centrifuge = new Centrifuge(rootState.config.websocketUrl);
@@ -83,14 +103,13 @@ export default function createLicenseAgreementStore() {
            */
           if (data.code === 'ds000003') {
             commit('isReject', true);
-            commit('isSigendYou', false);
-            commit('isSigendPS', false);
+            commit('status', 0);
 
             return;
           }
 
           if (data.code === 'mr000018') {
-            commit('isSigendPS', true);
+            commit('status', 4);
           }
 
           /**
