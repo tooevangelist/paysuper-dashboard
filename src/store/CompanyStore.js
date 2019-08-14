@@ -1,3 +1,6 @@
+import AccountInfoStore from './AccountInfoStore';
+import BankingInfoStore from './BankingInfoStore';
+import ContactsStore from './ContactsStore';
 import LicenseAgreementStore from './LicenseAgreementStore';
 
 export default function createCompanyStore() {
@@ -7,6 +10,9 @@ export default function createCompanyStore() {
       initState() {},
     },
     modules: {
+      AccountInfo: AccountInfoStore(),
+      BankingInfo: BankingInfoStore(),
+      Contacts: ContactsStore(),
       LicenseAgreement: LicenseAgreementStore(),
     },
   };

@@ -1,39 +1,45 @@
 <script>
+import { mapActions, mapGetters } from 'vuex';
 import { required } from 'vuelidate/lib/validators';
+import Notifications from '@/mixins/Notifications';
 
 export default {
   name: 'BankingInfo',
-  data() {
-    return {
-      swift: '',
-      currency: '',
-      bankAccount: '',
-      bankName: '',
-      bankAddress: '',
-      corBankAccount: '',
-    };
-  },
+  mixins: [Notifications],
   validations: {
-    swift: { required },
-    currency: { required },
-    bankAccount: { required },
-    bankName: { required },
-    bankAddress: { required },
-  },
-  computed: {
-    currencies() {
-      return [
-        { label: 'RUB', value: 'RUB' },
-        { label: 'USD', value: 'USD' },
-        { label: 'GBR', value: 'GBR' },
-      ];
+    bankingInfo: {
+      accountNumber: { required },
+      address: { required },
+      currency: { required },
+      name: { required },
+      swift: { required },
     },
   },
+  computed: {
+    ...mapGetters('Dictionaries', ['currenciesThreeLetters']),
+    ...mapGetters('Company/BankingInfo', ['bankingInfo']),
+  },
+  async mounted() {
+    try {
+      await this.initState();
+    } catch (error) {
+      this.$_Notifications_showErrorMessage(error);
+    }
+  },
   methods: {
-    submit() {
+    ...mapActions('Company/BankingInfo', ['initState', 'updateBankingInfo', 'submitBankingInfo']),
+
+    updateField(key, value) {
+      this.updateBankingInfo({ ...this.bankingInfo, [key]: value });
+    },
+    async submit() {
       this.$v.$touch();
-      if (!this.$v.$invalid) {
-        this.$emit('bankingInfoSubmit');
+      if (!this.$v.bankingInfo.$invalid) {
+        try {
+          await this.submitBankingInfo();
+        } catch (error) {
+          this.$_Notifications_showErrorMessage(error);
+        }
       }
     },
   },
@@ -50,45 +56,45 @@ export default {
     </div>
 
     <UiTextField
-      v-bind="$getValidatedFieldProps('swift')"
+      v-bind="$getValidatedFieldProps('bankingInfo.swift')"
       label="SWIFT"
-      :value="swift"
-      @input="swift = $event"
-      @blur="$v.swift.$touch()"
+      :value="bankingInfo.swift"
+      @input="updateField('swift', $event)"
+      @blur="$v.bankingInfo.swift.$touch()"
     />
     <UiSelect
-      v-bind="$getValidatedFieldProps('currency')"
+      v-bind="$getValidatedFieldProps('bankingInfo.currency')"
       label="Account Currency"
-      :options="currencies"
-      :value="currency"
-      @input="currency = $event"
-      @blur="$v.currency.$touch()"
+      :options="currenciesThreeLetters"
+      :value="bankingInfo.currency"
+      @input="updateField('currency', $event)"
+      @blur="$v.bankingInfo.currency.$touch()"
     />
     <UiTextField
-      v-bind="$getValidatedFieldProps('bankAccount')"
+      v-bind="$getValidatedFieldProps('bankingInfo.accountNumber')"
       label="Beneficiary’s bank account"
-      :value="bankAccount"
-      @input="bankAccount = $event"
-      @blur="$v.bankAccount.$touch()"
+      :value="bankingInfo.accountNumber"
+      @input="updateField('accountNumber', $event)"
+      @blur="$v.bankingInfo.accountNumber.$touch()"
     />
     <UiTextField
-      v-bind="$getValidatedFieldProps('bankName')"
+      v-bind="$getValidatedFieldProps('bankingInfo.name')"
       label="Beneficiary’s bank name"
-      :value="bankName"
-      @input="bankName = $event"
-      @blur="$v.bankName.$touch()"
+      :value="bankingInfo.name"
+      @input="updateField('name', $event)"
+      @blur="$v.bankingInfo.name.$touch()"
     />
     <UiTextField
-      v-bind="$getValidatedFieldProps('bankAddress')"
+      v-bind="$getValidatedFieldProps('bankingInfo.address')"
       label="Beneficiary’s bank address"
-      :value="bankAddress"
-      @input="bankAddress = $event"
-      @blur="$v.bankAddress.$touch()"
+      :value="bankingInfo.address"
+      @input="updateField('address', $event)"
+      @blur="$v.bankingInfo.address.$touch()"
     />
     <UiTextField
       label="Correspondent bank account"
-      :value="corBankAccount"
-      @input="corBankAccount = $event"
+      :value="bankingInfo.correspondentAccount"
+      @input="updateField('correspondentAccount', $event)"
     />
   </div>
 

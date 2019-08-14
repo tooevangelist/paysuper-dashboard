@@ -59,7 +59,7 @@ function mapDataApiToForm(data) {
     newData.country = newData.country.code_a2;
   }
 
-  if (newData.banking.currency) {
+  if (newData.banking.currency && newData.banking.currency.code_a3) {
     newData.banking.currency = newData.banking.currency.code_a3;
   }
 

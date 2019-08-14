@@ -17,7 +17,7 @@ export default function createDictionariesStore() {
           code_a3: 'EUR',
         },
         {
-          name: { en: 'Americal Dollar' },
+          name: { en: 'American Dollar' },
           code_a3: 'USD',
         },
       ],

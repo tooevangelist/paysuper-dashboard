@@ -1,49 +1,52 @@
 <script>
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import { required } from 'vuelidate/lib/validators';
+import Notifications from '@/mixins/Notifications';
 
 export default {
   name: 'AccountInfo',
-  data() {
-    return {
-      legalName: '',
-      website: '',
-      operatingName: '',
-      country: '',
-      region: '',
-      city: '',
-      zip: '',
-      address1: '',
-      address2: '',
-    };
-  },
+  mixins: [Notifications],
   validations: {
-    legalName: { required },
-    website: { required },
-    country: { required },
-    zip: { required },
-    city: { required },
-    address1: { required },
+    accountInfo: {
+      address: { required },
+      alternativeName: { required },
+      city: { required },
+      country: { required },
+      name: { required },
+      state: { required },
+      website: { required },
+      zip: { required },
+    },
   },
   computed: {
     ...mapGetters('Dictionaries', ['countries']),
-    // Stub for cities
-    cities() {
-      return [
-        { label: 'Moscow', value: 'moscow' },
-        { label: 'Novosibirsk', value: 'novosibirsk' },
-        { label: 'Samara', value: 'samara' },
-        { label: 'Omsk', value: 'omsk' },
-        { label: 'Vladivostok', value: 'vladivostok' },
-        { label: 'Chelyabinsk', value: 'chelyabinsk' },
-      ];
+    ...mapGetters('Company/AccountInfo', ['accountInfo', 'cities']),
+    // Cities must be into Dictionaries store
+    preparedCities() {
+      return this.cities.map(city => ({ label: city, value: city }));
     },
   },
+  async mounted() {
+    try {
+      await this.initState();
+    } catch (error) {
+      this.$_Notifications_showErrorMessage(error);
+    }
+  },
   methods: {
-    submit() {
+    ...mapActions('Company/AccountInfo', ['initState', 'updateAccountInfo', 'submitAccountInfo']),
+
+    updateField(key, value) {
+      this.updateAccountInfo({ ...this.accountInfo, [key]: value });
+    },
+    async submit() {
       this.$v.$touch();
-      if (!this.$v.$invalid) {
-        this.$emit('accountInfoSubmit');
+      if (!this.$v.accountInfo.$invalid) {
+        try {
+          await this.submitAccountInfo();
+        } catch (error) {
+          this.$_Notifications_showErrorMessage(error);
+        }
       }
     },
   },
@@ -60,23 +63,24 @@ export default {
     </div>
 
     <UiTextField
-      v-bind="$getValidatedFieldProps('legalName')"
+      v-bind="$getValidatedFieldProps('accountInfo.name')"
       label="Legal name"
-      :value="legalName"
-      @input="legalName = $event"
-      @blur="$v.legalName.$touch()"
+      :value="accountInfo.name"
+      @input="updateField('name', $event)"
+      @blur="$v.accountInfo.name.$touch()"
     />
     <UiTextField
-      v-bind="$getValidatedFieldProps('website')"
+      v-bind="$getValidatedFieldProps('accountInfo.website')"
       label="Website"
-      :value="website"
-      @input="website = $event"
-      @blur="$v.website.$touch()"
+      :value="accountInfo.website"
+      @input="updateField('website', $event)"
+      @blur="$v.accountInfo.website.$touch()"
     />
     <UiTextField
+      v-bind="$getValidatedFieldProps('accountInfo.alternativeName')"
       label="Operating name"
-      :value="operatingName"
-      @input="operatingName = $event"
+      :value="accountInfo.alternativeName"
+      @input="updateField('alternativeName', $event)"
     />
   </div>
 
@@ -89,50 +93,51 @@ export default {
     </div>
 
     <UiSelect
-      v-bind="$getValidatedFieldProps('country')"
+      v-bind="$getValidatedFieldProps('accountInfo.country')"
       label="Country"
       :options="countries"
-      :value="country"
-      @input="country = $event"
-      @blur="$v.country.$touch()"
+      :value="accountInfo.country"
+      @input="updateField('country', $event)"
+      @blur="$v.accountInfo.country.$touch()"
     />
     <UiTextField
+      v-bind="$getValidatedFieldProps('accountInfo.state')"
       label="State / Province / Region"
-      :value="region"
-      @input="region = $event"
+      :value="accountInfo.state"
+      @input="updateField('state', $event)"
     />
     <UiSelect
-      v-bind="$getValidatedFieldProps('city')"
+      v-bind="$getValidatedFieldProps('accountInfo.city')"
       label="City"
-      :options="cities"
-      :value="city"
-      @input="city = $event"
-      @blur="$v.city.$touch()"
+      :options="preparedCities"
+      :value="accountInfo.city"
+      @input="updateField('city', $event)"
+      @blur="$v.accountInfo.city.$touch()"
     />
     <UiTextField
-      v-bind="$getValidatedFieldProps('zip')"
+      v-bind="$getValidatedFieldProps('accountInfo.zip')"
       label="Zip Code"
-      :value="zip"
-      @input="zip = $event"
-      @blur="$v.zip.$touch()"
+      :value="accountInfo.zip"
+      @input="updateField('zip', $event)"
+      @blur="$v.accountInfo.zip.$touch()"
     />
     <UiTextField
-      v-bind="$getValidatedFieldProps('address1')"
+      v-bind="$getValidatedFieldProps('accountInfo.address')"
       label="Address 1"
-      :value="address1"
-      @input="address1 = $event"
-      @blur="$v.address1.$touch()"
+      :value="accountInfo.address"
+      @input="updateField('address', $event)"
+      @blur="$v.accountInfo.address.$touch()"
     />
     <UiTextField
       label="Address 2"
-      :value="address2"
-      @input="address2 = $event"
+      :value="accountInfo.addressAdditional"
+      @input="updateField('addressAdditional', $event)"
     />
   </div>
 
   <UiButton
     class="submit"
-    :disabled="$v.$invalid"
+    :disabled="$v.accountInfo.$invalid"
     @click="submit"
   >
     SUBMIT INFO
