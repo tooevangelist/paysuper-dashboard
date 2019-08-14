@@ -33,8 +33,6 @@ export default function createBankingStore() {
       async initState({ commit, rootState }) {
         const { banking } = rootState.User.Merchant.merchant;
 
-        console.error(banking);
-
         if (banking) {
           commit('bankingInfo', banking);
         }

@@ -21,7 +21,7 @@ export default {
   computed: {
     ...mapGetters('Dictionaries', ['countries']),
     ...mapGetters('Company/AccountInfo', ['accountInfo', 'cities']),
-    // Stub for cities
+    // Cities must be into Dictionaries store
     preparedCities() {
       return this.cities.map(city => ({ label: city, value: city }));
     },
