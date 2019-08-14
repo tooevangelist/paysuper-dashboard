@@ -1,5 +1,7 @@
 <script>
+import { mapActions, mapGetters } from 'vuex';
 import { email, required } from 'vuelidate/lib/validators';
+import Notifications from '@/mixins/Notifications';
 
 function phone(val) {
   const regex = /^[\s()+-]*([0-9][\s()+-]*){6,20}$/;
@@ -8,34 +10,52 @@ function phone(val) {
 
 export default {
   name: 'Contacts',
-  data() {
-    return {
-      agentFirstName: '',
-      agentLastName: '',
-      agentEmail: '',
-      agentPatronymic: '',
-      agentPhone: '',
-      techFirstName: '',
-      techLastName: '',
-      techEmail: '',
-      techPhone: '',
-    };
-  },
+  mixins: [Notifications],
   validations: {
-    agentFirstName: { required },
-    agentLastName: { required },
-    agentEmail: { email, required },
-    agentPhone: { phone, required },
-    techFirstName: { required },
-    techLastName: { required },
-    techEmail: { email, required },
-    techPhone: { phone, required },
+    contacts: {
+      authorized: {
+        firstName: { required },
+        email: { email, required },
+        phone: { phone, required },
+        position: { required },
+      },
+      technical: {
+        firstName: { required },
+        email: { email, required },
+        phone: { phone, required },
+      },
+    },
+  },
+  computed: {
+    ...mapGetters('Company/Contacts', ['contacts']),
+  },
+  async mounted() {
+    try {
+      await this.initState();
+    } catch (error) {
+      this.$_Notifications_showErrorMessage(error);
+    }
   },
   methods: {
-    submit() {
+    ...mapActions('Company/Contacts', ['initState', 'updateContacts', 'submitContacts']),
+
+    updateField(type, key, value) {
+      this.updateContacts({
+        ...this.contacts,
+        [type]: {
+          [key]: value,
+          ...this.contacts[type],
+        },
+      });
+    },
+    async submit() {
       this.$v.$touch();
-      if (!this.$v.$invalid) {
-        this.$emit('contactsSubmit');
+      if (!this.$v.contacts.$invalid) {
+        try {
+          await this.submitContacts();
+        } catch (error) {
+          this.$_Notifications_showErrorMessage(error);
+        }
       }
     },
   },
@@ -54,37 +74,38 @@ export default {
     </div>
 
     <UiTextField
-      v-bind="$getValidatedFieldProps('agentFirstName')"
+      v-bind="$getValidatedFieldProps('contacts.authorized.firstName')"
       label="First name"
-      :value="agentFirstName"
-      @input="agentFirstName = $event"
-      @blur="$v.agentFirstName.$touch()"
+      :value="contacts.authorized.firstName"
+      @input="updateField('authorized', 'firstName', $event)"
+      @blur="$v.contacts.authorized.firstName.$touch()"
     />
     <UiTextField
-      v-bind="$getValidatedFieldProps('agentLastName')"
       label="Last name"
-      :value="agentLastName"
-      @input="agentLastName = $event"
-      @blur="$v.agentLastName.$touch()"
+      :value="contacts.authorized.lastName"
+      @input="updateField('authorized', 'lastName', $event)"
+      @blur="$v.contacts.authorized.lastName.$touch()"
     />
     <UiTextField
-      v-bind="$getValidatedFieldProps('agentEmail')"
+      v-bind="$getValidatedFieldProps('contacts.authorized.email')"
       label="Email"
-      :value="agentEmail"
-      @input="agentEmail = $event"
-      @blur="$v.agentEmail.$touch()"
+      :value="contacts.authorized.email"
+      @input="updateField('authorized', 'email', $event)"
+      @blur="$v.contacts.authorized.email.$touch()"
     />
     <UiTextField
-      label="Patronymic"
-      :value="agentPatronymic"
-      @input="agentPatronymic = $event"
-    />
-    <UiTextField
-      v-bind="$getValidatedFieldProps('agentPhone')"
+      v-bind="$getValidatedFieldProps('contacts.authorized.phone')"
       label="Phone"
-      :value="agentPhone"
-      @input="agentPhone = $event"
-      @blur="$v.agentPhone.$touch()"
+      :value="contacts.authorized.phone"
+      @input="updateField('authorized', 'phone', $event)"
+      @blur="$v.contacts.authorized.phone.$touch()"
+    />
+    <UiTextField
+      v-bind="$getValidatedFieldProps('contacts.authorized.position')"
+      label="Position"
+      :value="contacts.authorized.position"
+      @input="updateField('authorized', 'position', $event)"
+      @blur="$v.contacts.authorized.position.$touch()"
     />
   </div>
 
@@ -96,38 +117,37 @@ export default {
     </div>
 
     <UiTextField
-      v-bind="$getValidatedFieldProps('techFirstName')"
+      v-bind="$getValidatedFieldProps('contacts.technical.firstName')"
       label="First name"
-      :value="techFirstName"
-      @input="techFirstName = $event"
-      @blur="$v.techFirstName.$touch()"
+      :value="contacts.technical.firstName"
+      @input="updateField('technical', 'firstName', $event)"
+      @blur="$v.contacts.technical.firstName.$touch()"
     />
     <UiTextField
-      v-bind="$getValidatedFieldProps('techLastName')"
       label="Last name"
-      :value="techLastName"
-      @input="techLastName = $event"
-      @blur="$v.techLastName.$touch()"
+      :value="contacts.technical.lastName"
+      @input="updateField('technical', 'lastName', $event)"
+      @blur="$v.contacts.technical.lastName.$touch()"
     />
     <UiTextField
-      v-bind="$getValidatedFieldProps('techEmail')"
+      v-bind="$getValidatedFieldProps('contacts.technical.email')"
       label="Email"
-      :value="techEmail"
-      @input="techEmail = $event"
-      @blur="$v.techEmail.$touch()"
+      :value="contacts.technical.email"
+      @input="updateField('technical', 'email', $event)"
+      @blur="$v.contacts.technical.email.$touch()"
     />
     <UiTextField
-      v-bind="$getValidatedFieldProps('techPhone')"
+      v-bind="$getValidatedFieldProps('contacts.technical.phone')"
       label="Phone"
-      :value="techPhone"
-      @input="techPhone = $event"
-      @blur="$v.techPhone.$touch()"
+      :value="contacts.technical.phone"
+      @input="updateField('technical', 'phone', $event)"
+      @blur="$v.contacts.technical.phone.$touch()"
     />
   </div>
 
   <UiButton
     class="submit"
-    :disabled="$v.$invalid"
+    :disabled="$v.contacts.$invalid"
     @click="submit"
   >
     SUBMIT INFO

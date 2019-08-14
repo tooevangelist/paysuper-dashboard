@@ -28,7 +28,7 @@ export default {
   },
 
   computed: {
-    ...mapState('Dictionaries', ['currencies']),
+    ...mapState('Dictionaries', ['currenciesThreeLetters']),
   },
 
   validations: {
@@ -88,7 +88,7 @@ export default {
       <UiSelect
         v-model="merchant.banking.currency"
         label="Payout currency"
-        :options="currencies"
+        :options="currenciesThreeLetters"
         v-bind="getValidatedFieldProps('merchant.banking.currency')"
       />
     </div>
