@@ -1,18 +1,25 @@
 <script>
+import Vue from 'vue';
 import { mapState } from 'vuex';
-import { includes, findIndex } from 'lodash-es';
+import { includes, findIndex, get } from 'lodash-es';
 import Loading from 'vue-loading-overlay';
-import LayoutAside from '@/components/LayoutAside.vue';
+import LayoutMainNavDefault from '@/components/LayoutMainNavDefault.vue';
 import LayoutHeader from '@/components/LayoutHeader.vue';
-import LayoutSubHeader from '@/components/LayoutSubHeader.vue';
+import LayoutSpecialNavProgress from '@/components/LayoutSpecialNavProgress.vue';
+import LayoutSpecialNavBackLink from '@/components/LayoutSpecialNavBackLink.vue';
+import LayoutTopControlsDatepicker from '@/components/LayoutTopControlsDatepicker.vue';
+
+
 import 'vue-loading-overlay/dist/vue-loading.css';
 
 export default {
   name: 'Layout',
   components: {
-    LayoutAside,
+    LayoutMainNavDefault,
     LayoutHeader,
-    LayoutSubHeader,
+    LayoutSpecialNavProgress,
+    LayoutSpecialNavBackLink,
+    LayoutTopControlsDatepicker,
     Loading,
   },
   data() {
@@ -70,7 +77,6 @@ export default {
           isAvailable: false,
         },
       ],
-      period: [1534784400000, 1537462800000],
       projectName: 'CD Projects',
     };
   },
@@ -89,8 +95,22 @@ export default {
     document.body.parentNode.classList.remove('layout-html');
   },
   methods: {
-    periodChange(period) {
-      this.period = period;
+    get,
+    isComponent(component) {
+      const type = typeof component;
+      if (type === 'function') {
+        return true;
+      }
+      if (type === 'object') {
+        return component instanceof Vue;
+      }
+      return false;
+    },
+    getBackLink(backLink) {
+      return backLink({
+        store: this.$store,
+        route: this.$route,
+      });
     },
   },
 };
@@ -102,19 +122,34 @@ export default {
     class="header"
     :projectName="projectName"
   />
-  <LayoutSubHeader
-    class="sub-header"
-    currentStepName="Account Info"
-    :currentStep="4"
-    :period="period"
-    :stepsCount="6"
-    @periodChange="periodChange"
-  />
+
+  <div class="sub-header">
+    <div class="special-nav">
+      <LayoutSpecialNavBackLink
+        v-if="get($route, 'meta.specialNav.backLink')"
+        :link="getBackLink($route.meta.specialNav.backLink)"
+      />
+      <LayoutSpecialNavProgress
+        v-if="!get($route, 'meta.specialNav')"
+      />
+    </div>
+    <div class="top-controls">
+      <component
+        v-if="isComponent(get($route, 'meta.topControls'))"
+        :is="$route.meta.topControls"
+      />
+    </div>
+  </div>
 
   <main class="main">
     <aside class="aside">
       <UiScrollbarBox class="scrollbox">
-        <LayoutAside
+        <component
+          v-if="isComponent(get($route, 'meta.mainNav'))"
+          :is="$route.meta.mainNav"
+        />
+        <LayoutMainNavDefault
+          v-else
           :currentItem="currentNavigationItem"
           :items="navigationItems"
         />
@@ -202,6 +237,8 @@ export default {
 </style>
 
 <style lang="scss" scoped>
+$content-side-padding: 6vw;
+
 .template-layout {
   display: flex;
   flex-direction: column;
@@ -211,8 +248,39 @@ export default {
   flex-shrink: 0;
 }
 .sub-header {
-  margin-bottom: 8px;
+  width: 100%;
+  height: 56px;
+  position: relative;
+  z-index: 15;
+  display: flex;
+  justify-content: space-between;
   flex-shrink: 0;
+  background: #fff;
+  border-bottom: 1px solid #f1f3f4;
+}
+.top-controls,
+.special-nav {
+  align-items: center;
+  display: flex;
+
+  & > * {
+    flex-grow: 1;
+  }
+}
+.top-controls {
+  padding-left: $content-side-padding;
+  height: 100%;
+}
+.special-nav {
+  height: 100%;
+}
+
+.special-nav,
+.aside {
+  position: relative;
+  min-width: 260px;
+  max-width: 320px;
+  flex-basis: 20%;
 }
 .main {
   display: flex;
@@ -221,17 +289,15 @@ export default {
   flex-grow: 1;
   min-height: 0;
 }
-.aside {
-  position: relative;
-  min-width: 260px;
-  max-width: 320px;
-  flex-basis: 20%;
-}
-.content {
+
+.content,
+.top-controls {
   position: relative;
   flex-basis: 80%;
   flex-grow: 1;
+}
 
+.content {
   &::after {
     position: absolute;
     left: 0;
@@ -255,7 +321,7 @@ export default {
   width: 100%;
 }
 .scrollbox-inner {
-  margin: 28px 6vw;
+  margin: 37px $content-side-padding;
   max-width: 920px;
 }
 </style>

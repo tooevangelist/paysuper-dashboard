@@ -1,8 +1,5 @@
 <script>
 import { find } from 'lodash-es';
-import {
-  UiButton, UiFormByStep,
-} from '@protocol-one/ui-kit';
 import ProjectFormSettings from '@/components/ProjectFormSettings.vue';
 import ProjectFormSimpleCheckout from '@/components/ProjectFormSimpleCheckout.vue';
 import ProjectFormProducts from '@/components/ProjectFormProducts.vue';
@@ -11,8 +8,6 @@ export default {
   name: 'ProjectForm',
 
   components: {
-    UiFormByStep,
-    UiButton,
     ProjectFormSettings,
     ProjectFormSimpleCheckout,
     ProjectFormProducts,
@@ -100,40 +95,32 @@ export default {
 
 <template>
   <div class="project-form">
-    <UiFormByStep
-      class="project-form__form-by-step"
-      :steps="steps"
-      :currentStep="currentStepInner"
-      v-model="currentStepInner"
-      @stepSelected="updateCurrentStep"
-    >
-      <ProjectFormSettings
-        v-show="currentStepInner === 'settings'"
-        :project="project"
-        :uploadImage="uploadImage"
-        ref="formSettings"
-        @validationResult="setStepStatus('settings', $event)"
-      />
-      <ProjectFormSimpleCheckout
-        v-show="currentStepInner === 'simpleCheckout'"
-        :project="project"
-        ref="formCheckout"
-        @validationResult="setStepStatus('simpleCheckout', $event)"
-      />
-      <ProjectFormProducts
-        v-show="currentStepInner === 'products'"
-        :project="project"
-        ref="formProducts"
-        @validationResult="setStepStatus('products', $event)"
-      />
+    <ProjectFormSettings
+      v-show="currentStepInner === 'settings'"
+      :project="project"
+      :uploadImage="uploadImage"
+      ref="formSettings"
+      @validationResult="setStepStatus('settings', $event)"
+    />
+    <ProjectFormSimpleCheckout
+      v-show="currentStepInner === 'simpleCheckout'"
+      :project="project"
+      ref="formCheckout"
+      @validationResult="setStepStatus('simpleCheckout', $event)"
+    />
+    <ProjectFormProducts
+      v-show="currentStepInner === 'products'"
+      :project="project"
+      ref="formProducts"
+      @validationResult="setStepStatus('products', $event)"
+    />
 
-      <div slot="side-footer" v-if="false">
-        You have finished filling out company details, send them for review
-        <div style="text-align: center; margin-top: 20px; ">
-          <UiButton>Finish</UiButton>
-        </div>
+    <div slot="side-footer" v-if="false">
+      You have finished filling out company details, send them for review
+      <div style="text-align: center; margin-top: 20px; ">
+        <UiButton>Finish</UiButton>
       </div>
-    </UiFormByStep>
+    </div>
   </div>
 </template>
 

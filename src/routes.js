@@ -28,13 +28,25 @@ const routes = [
       {
         path: '',
         component: () => import('@/pages/ProjectCardForm.vue'),
-        meta: { layout: 'Page', isAuthRequired: true },
-        name: 'projects-card',
+        meta: {
+          layout: 'Layout',
+          isAuthRequired: true,
+          specialNav: {
+            backLink() {
+              return {
+                url: '/projects/',
+                label: 'Back to projects',
+              };
+            },
+          },
+          mainNav: () => import('@/components/LayoutMainNavProject.vue'),
+        },
+        name: 'ProjectCard',
       },
       {
         path: 'product/:productId',
         component: () => import('@/pages/ProjectCardProduct.vue'),
-        meta: { layout: 'Page', isAuthRequired: true },
+        meta: { layout: 'Layout', isAuthRequired: true },
         name: 'ProjectCardProduct',
       },
     ],
@@ -103,7 +115,11 @@ const routes = [
   {
     path: '/dashboard/',
     component: () => import('@/pages/Dashboard.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true },
+    meta: {
+      layout: 'Layout',
+      isAuthRequired: true,
+      topControls: () => import('@/components/LayoutTopControlsDatepicker.vue'),
+    },
     name: 'Dashboard',
   },
   {

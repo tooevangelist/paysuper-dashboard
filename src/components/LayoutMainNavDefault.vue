@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: 'LayoutAside',
+  name: 'LayoutMainNavDefault',
   props: {
     currentItem: {
       default: 0,
@@ -15,7 +15,7 @@ export default {
 </script>
 
 <template>
-<div class="layout-aside">
+<div class="layout-main-nav-default">
   <RouterLink
     v-for="(item, index) in items"
     :key="index"
@@ -36,9 +36,10 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.layout-aside {
+.layout-main-nav-default {
   display: flex;
   flex-direction: column;
+  padding-top: 9px;
 }
 .item {
   display: flex;

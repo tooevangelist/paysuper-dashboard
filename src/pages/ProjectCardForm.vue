@@ -1,12 +1,11 @@
 <script>
 import { mapState, mapActions } from 'vuex';
-import { UiButton, UiPageHeader } from '@protocol-one/ui-kit';
 import Notifications from '@/mixins/Notifications';
 import ProjectForm from '@/components/ProjectForm.vue';
 
 export default {
   components: {
-    UiButton, UiPageHeader, ProjectForm,
+    ProjectForm,
   },
   mixins: [Notifications],
 
@@ -18,30 +17,7 @@ export default {
   },
 
   computed: {
-    ...mapState('Project', ['project', 'product']),
-    breadcrumbs() {
-      const crumbs = [
-        {
-          label: 'Projects list',
-          url: '/projects',
-        },
-      ];
-
-      if (this.product) {
-        if (this.project.id) {
-          crumbs.push({
-            label: this.project.name,
-            url: `/projects/${this.project.id}`,
-          });
-        } else {
-          crumbs.push({
-            label: 'New project',
-            url: '/projects/new',
-          });
-        }
-      }
-      return crumbs;
-    },
+    ...mapState('Project', ['project']),
   },
 
   async beforeRouteUpdate(to, from, next) {
@@ -103,23 +79,17 @@ export default {
 
 <template>
   <div>
-    <UiPageHeader
-      :breadcrumbs="breadcrumbs"
-      :title="project.name.en || 'New project'"
-    >
-      <UiButton
-        slot="right"
-        @click="validateAndSaveProject"
-        :text="project.id ? 'Save' : 'Create project'"
-      />
-    </UiPageHeader>
-
     <ProjectForm
       ref="projectForm"
       :project="project"
       :currentStep="currentStep"
       :uploadImage="uploadImage"
       @stepChanged="handleSectionChange"
+    />
+
+    <UiButton
+      @click="validateAndSaveProject"
+      :text="project.id ? 'Save' : 'Create project'"
     />
   </div>
 </template>
