@@ -1,18 +1,41 @@
 <script>
+import { mapState } from 'vuex';
+
 export default {
   name: 'LayoutSpecialNavProgress',
-  props: {
-    currentStep: {
-      default: 1,
-      type: Number,
+  data() {
+    return {
+      stepsCount: 6,
+    };
+  },
+  computed: {
+    ...mapState('Company', ['completeStepsCount', 'steps']),
+
+    currentStepCount() {
+      return this.completeStepsCount + 1;
     },
-    currentStepName: {
-      default: 'Account Info',
-      type: String,
+    infoStepName() {
+      if (!this.steps.company) {
+        return 'Account Info';
+      }
+      if (!this.steps.contacts) {
+        return 'Contacts';
+      }
+      if (!this.steps.banking) {
+        return 'Banking Info';
+      }
+      if (!this.steps.tariff) {
+        return 'Payments Methods';
+      }
+
+      return '';
     },
-    stepsCount: {
-      default: 6,
-      type: Number,
+    currentStep() {
+      switch (this.completeStepsCount) {
+        case 4: return { prepend: 'Review & Sign', name: 'License Agreement' };
+        case 5: return { prepend: 'Create your 1st', name: 'Project' };
+        default: return { prepend: 'Complete', name: this.infoStepName };
+      }
     },
   },
 };
@@ -24,12 +47,12 @@ export default {
   to="/company"
 >
   <UiProgressRing
-    :currentStep="currentStep"
+    :currentStep="currentStepCount"
     :stepsCount="stepsCount"
   />
   <div class="step-title">
-    Complete “<span class="step-name">{{ currentStepName }}</span>”
-    <span class="step-progress">{{ currentStep }}/{{ stepsCount }} steps</span>
+    {{ currentStep.prepend }} “<span class="step-name">{{ currentStep.name }}</span>”
+    <span class="step-progress">{{ currentStepCount }}/{{ stepsCount }} steps</span>
   </div>
 </RouterLink>
 </template>

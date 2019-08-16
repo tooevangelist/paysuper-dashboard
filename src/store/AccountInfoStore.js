@@ -31,7 +31,7 @@ export default function createAccountInfoStore() {
       cities(state) {
         const currentCountry = state.accountInfo.country || 'US';
 
-        return citiesByCountry[currentCountry];
+        return citiesByCountry[currentCountry] || [];
       },
     },
     mutations: {
@@ -47,15 +47,18 @@ export default function createAccountInfoStore() {
           commit('accountInfo', company);
         }
       },
-      async submitAccountInfo({ state, rootState }) {
-        const { accessToken, Merchant } = rootState.User;
-        const merchantId = Merchant.merchant.id;
+      async submitAccountInfo({ dispatch, state, rootState }) {
+        const { accessToken } = rootState.User;
 
-        await axios.put(
-          `${rootState.config.apiUrl}/admin/api/v1/merchants/${merchantId}/company`,
+        const response = await axios.put(
+          `${rootState.config.apiUrl}/admin/api/v1/merchants/company`,
           { ...state.accountInfo },
           { headers: { Authorization: `Bearer ${accessToken}` } },
         );
+
+        if (response.data) {
+          dispatch('Company/completeStep', 'company', { root: true });
+        }
       },
       updateAccountInfo({ commit }, accountInfo) {
         commit('accountInfo', reduce(accountInfo, (res, item, key) => ({

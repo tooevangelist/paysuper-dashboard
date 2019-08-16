@@ -3,7 +3,6 @@ import { includes } from 'lodash-es';
 
 export default {
   name: 'SmartListItem',
-
   props: {
     title: {
       type: String,
@@ -39,14 +38,15 @@ export default {
       type: [Object, String],
     },
   },
-
   data() {
     return {
-      isExpandedInner: this.isExpanded,
+      isToggleExpanded: false,
     };
   },
-
   computed: {
+    isExpandedInner() {
+      return this.isToggleExpanded && !includes(['complete', 'locked'], this.status);
+    },
     isRouterLink() {
       if (this.link && this.link.router !== false) {
         return true;
@@ -64,7 +64,6 @@ export default {
 
       return 'a';
     },
-
     url() {
       if (!this.link) {
         return undefined;
@@ -72,17 +71,10 @@ export default {
       return typeof this.link === 'string' ? this.link : this.link.url;
     },
   },
-
-  watch: {
-    isExpanded(value) {
-      this.isExpandedInner = value;
-    },
-  },
-
   methods: {
     handleClick() {
       if (this.expandable) {
-        this.isExpandedInner = !this.isExpandedInner;
+        this.isToggleExpanded = !this.isToggleExpanded;
       }
     },
   },
@@ -96,7 +88,7 @@ export default {
     `_status-${status}`,
     `_notice-status-${noticeStatus}`,
     { '_clickable': expandable || url },
-    { '_expanded': isExpandedInner }
+    { '_expanded': this.isExpanded || isExpandedInner }
   ]"
   :is="tagName"
   :to="isRouterLink ? url : undefined"

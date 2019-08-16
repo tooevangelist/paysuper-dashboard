@@ -1,49 +1,96 @@
 <script>
+import { mapState } from 'vuex';
+import { reduce } from 'lodash-es';
 import SmartListItem from '@/components/SmartListItem.vue';
 
 export default {
   name: 'AgreementProgressWidget',
-
   components: {
     SmartListItem,
   },
+  computed: {
+    ...mapState('Company', ['completeStepsCount', 'steps']),
+    ...mapState('User/Merchant', ['merchant']),
 
-  data() {
-    return {
-      steps: [
+    isCompanyInfoLocked() {
+      return this.completeStepsCount >= 3 && this.merchant.status === 0;
+    },
+    companyInfoStatuses() {
+      return reduce(['company', 'contacts', 'banking'], (res, item) => ({
+        ...res,
+        [item]: {
+          status: this.steps[item]
+            ? 'complete'
+            : this.isCompanyInfoLocked ? 'locked' : 'default',
+          notice: this.steps[item] ? '' : 'Incomplete',
+          noticeStatus: this.steps[item] ? 'default' : 'warning',
+        },
+      }), {});
+    },
+    isPaymentMethodsLocked() {
+      return this.completeStepsCount <= 2 || this.merchant.status !== 0;
+    },
+    paymentMethodsStatus() {
+      return {
+        status: this.steps.tariff
+          ? 'complete'
+          : this.isPaymentMethodsLocked ? 'locked' : 'default',
+        notice: this.steps.tariff
+          ? ''
+          : this.isPaymentMethodsLocked ? 'After Previous Steps' : 'Incomplete',
+      };
+    },
+    isLicenseLocked() {
+      return this.completeStepsCount <= 3;
+    },
+    licenseStatus() {
+      return {
+        status: this.merchant.status === 4
+          ? 'complete'
+          : this.isLicenseLocked ? 'locked' : 'default',
+        notice: this.merchant.status === 4
+          ? ''
+          : this.isLicenseLocked ? 'After Previous Steps' : 'Incomplete',
+      };
+    },
+    projectStatus() {
+      return {
+        status: this.merchant.status === 4
+          ? 'complete'
+          : this.isLicenseLocked ? 'locked' : 'default',
+        notice: this.merchant.status === 4
+          ? ''
+          : this.isLicenseLocked ? 'After Previous Steps' : 'Incomplete',
+      };
+    },
+    listItems() {
+      return [
         {
           title: '1. Complete “Account Info” about your сompany in “Settings” section',
-          status: 'complete',
+          ...this.companyInfoStatuses.company,
         },
         {
           title: '2. Complete “Contacts” about your company in “Settings” section',
-          status: 'complete',
+          ...this.companyInfoStatuses.contacts,
         },
         {
           title: '3. Complete “Banking Info” about your сompany in “Settings” section',
-          status: 'complete',
+          ...this.companyInfoStatuses.banking,
         },
         {
           title: '4. Complete “Payment Methods” in “Settings” section',
-          status: 'complete',
+          ...this.paymentMethodsStatus,
         },
         {
           title: '5. Complete “License Agreement” in “Settings” section',
-          status: 'default',
-          notice: 'Correct Company Info',
+          ...this.licenseStatus,
         },
         {
           title: '6. Create a project in “Projects” section',
-          status: 'default',
-          notice: 'Perform this Step',
+          ...this.projectStatus,
         },
-        {
-          title: '7. Get your first Payout',
-          status: 'locked',
-          notice: 'After Previous Steps',
-        },
-      ],
-    };
+      ];
+    },
   },
 };
 </script>
@@ -66,11 +113,9 @@ export default {
   </div>
   <SmartListItem
     class="item"
-    v-for="(step, index) in steps"
+    v-for="(item, index) in listItems"
     :key="index"
-    :status="step.status"
-    :notice="step.notice"
-    :title="step.title"
+    v-bind="item"
   />
 </div>
 </template>

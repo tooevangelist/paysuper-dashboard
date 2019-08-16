@@ -1,8 +1,8 @@
 import { get, cloneDeep, isEqual } from 'lodash-es';
 import axios from 'axios';
 import qs from 'qs';
-import { NOT_FOUND_ERROR, UNAUTHORIZED } from '@/errors';
 import mergeApiValuesWithDefaults from '@/helpers/mergeApiValuesWithDefaults';
+import { UNAUTHORIZED } from '@/errors';
 
 // const merchantStatues = {
 //   draft: 0,
@@ -19,17 +19,29 @@ const merchantAgreementTypes = {
 
 function mapDataApiToForm(data) {
   const defaultData = {
-    name: '',
-    alternative_name: '',
-    website: '',
-    country: '',
-    state: '',
-    zip: '',
-    city: '',
-    address: '',
-    address_additional: '',
-    registration_number: '',
-    tax_id: '',
+    id: '',
+    status: 0,
+    created_at: 0,
+    updated_at: 0,
+    first_payment_at: 0,
+    last_payout: {},
+    is_signed: false,
+    agreement_type: 0,
+    agreement_sent_via_mail: false,
+    mail_tracking_link: '',
+    signature_request: {},
+    tariff: {},
+    company: {
+      address: '',
+      address_additional: '',
+      alternative_name: '',
+      city: '',
+      country: '',
+      name: '',
+      state: '',
+      website: '',
+      zip: '',
+    },
     contacts: {
       authorized: {
         name: '',
@@ -44,10 +56,11 @@ function mapDataApiToForm(data) {
       },
     },
     banking: {
+      account_number: '',
+      address: '',
+      correspondent_account: '',
       currency: '',
       name: '',
-      address: '',
-      account_number: '',
       swift: '',
       details: '',
     },
@@ -112,47 +125,28 @@ export default function createMerchantStore() {
     actions: {
       async initState({ dispatch }, id) {
         await dispatch('fetchMerchantById', id);
-        await dispatch('fetchAgreement');
-      },
-
-      async createMerchant({ commit, rootState }, merchant) {
-        try {
-          const response = await axios.post(
-            `${rootState.config.apiUrl}/admin/api/v1/merchants`,
-            merchant,
-            {
-              headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-            },
-          );
-          commit('merchant', response.data);
-        } catch (error) {
-          console.error(error);
-        }
       },
 
       async fetchMerchantById({ commit, rootState }, id) {
         const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/merchants/${id}`, {
           headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-        });
-        commit('merchant', mapDataApiToForm(response.data));
+        }).catch(error => console.warn(error));
+
+        commit('merchant', mapDataApiToForm(get(response, 'data', {})));
       },
 
       async fetchMerchant({ commit, rootState }) {
-        try {
-          const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/merchants/user`, {
-            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-          });
-          commit('merchant', mapDataApiToForm(response.data));
-        } catch (error) {
+        const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/merchants/user`, {
+          headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
+        }).catch((error) => {
           const errorCode = get(error, 'response.status');
-          if (errorCode === 404) {
-            throw NOT_FOUND_ERROR;
-          } else if (errorCode === 401) {
+          if (errorCode === 401) {
             throw UNAUTHORIZED;
-          } else {
-            throw error;
           }
-        }
+          console.warn(error);
+        });
+
+        commit('merchant', mapDataApiToForm(get(response, 'data', {})));
       },
 
       async fetchMerchantPaymentMethods({ state, commit, rootState }, id) {
