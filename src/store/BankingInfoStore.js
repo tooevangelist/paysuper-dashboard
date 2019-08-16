@@ -37,15 +37,18 @@ export default function createBankingStore() {
           commit('bankingInfo', banking);
         }
       },
-      async submitBankingInfo({ state, rootState }) {
-        const { accessToken, Merchant } = rootState.User;
-        const merchantId = Merchant.merchant.id;
+      async submitBankingInfo({ dispatch, state, rootState }) {
+        const { accessToken } = rootState.User;
 
-        await axios.put(
-          `${rootState.config.apiUrl}/admin/api/v1/merchants/${merchantId}/banking`,
+        const response = await axios.put(
+          `${rootState.config.apiUrl}/admin/api/v1/merchants/banking`,
           { ...state.bankingInfo },
           { headers: { Authorization: `Bearer ${accessToken}` } },
         );
+
+        if (response.data) {
+          dispatch('Company/completeStep', 'banking', { root: true });
+        }
       },
       updateBankingInfo({ commit }, bankingInfo) {
         commit('bankingInfo', reduce(bankingInfo, (res, item, key) => ({

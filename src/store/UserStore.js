@@ -1,8 +1,7 @@
 import axios from 'axios';
 import { get } from 'lodash-es';
 import MerchantStore from '@/store/MerchantStore';
-import { NOT_FOUND_ERROR, UNAUTHORIZED } from '@/errors';
-// import router from '@/router';
+import { UNAUTHORIZED } from '@/errors';
 
 export default function createUserStore({ notifications }) {
   const accessToken = localStorage.getItem('token') || '';
@@ -48,16 +47,6 @@ export default function createUserStore({ notifications }) {
           await dispatch('Merchant/fetchMerchant');
           commit('isAuthorised', true);
         } catch (error) {
-          if (error === NOT_FOUND_ERROR) {
-            await dispatch('Merchant/createMerchant', {
-              contacts: {
-                authorized: {},
-                technical: {},
-              },
-              banking: {},
-            });
-          }
-
           throw error;
         }
       },

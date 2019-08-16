@@ -27,11 +27,14 @@ export default {
     };
   },
   computed: {
+    showedStrokeProgress() {
+      return this.currentStep - 0.8;
+    },
     indentUnpassed() {
-      return 360 * this.currentStep / this.stepsCount - 80;
+      return 360 * this.showedStrokeProgress / this.stepsCount - 80;
     },
     strokePassedDashoffset() {
-      return this.circumference - this.currentStep / this.stepsCount * this.circumference;
+      return this.circumference - this.showedStrokeProgress / this.stepsCount * this.circumference;
     },
     strokeUnpassedDashoffset() {
       return this.circumference - this.strokePassedDashoffset + 6;

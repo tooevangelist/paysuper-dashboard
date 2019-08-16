@@ -1,6 +1,6 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
-import { required } from 'vuelidate/lib/validators';
+import { maxLength, required } from 'vuelidate/lib/validators';
 import Notifications from '@/mixins/Notifications';
 
 export default {
@@ -8,10 +8,11 @@ export default {
   mixins: [Notifications],
   validations: {
     bankingInfo: {
-      accountNumber: { required },
-      address: { required },
+      accountNumber: { maxLength: maxLength(30), required },
+      address: { maxLength: maxLength(60), required },
+      correspondentAccount: { maxLength: maxLength(30) },
       currency: { required },
-      name: { required },
+      name: { maxLength: maxLength(60), required },
       swift: { required },
     },
   },
@@ -33,7 +34,7 @@ export default {
       this.updateBankingInfo({ ...this.bankingInfo, [key]: value });
     },
     async submit() {
-      this.$v.$touch();
+      this.$v.bankingInfo.$touch();
       if (!this.$v.bankingInfo.$invalid) {
         try {
           await this.submitBankingInfo();

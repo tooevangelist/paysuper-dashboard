@@ -1,6 +1,6 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
-import { email, required } from 'vuelidate/lib/validators';
+import { email, maxLength, required } from 'vuelidate/lib/validators';
 import Notifications from '@/mixins/Notifications';
 
 function phone(val) {
@@ -14,15 +14,17 @@ export default {
   validations: {
     contacts: {
       authorized: {
-        firstName: { required },
-        email: { email, required },
-        phone: { phone, required },
-        position: { required },
+        firstName: { maxLength: maxLength(30), required },
+        lastName: { maxLength: maxLength(30) },
+        email: { maxLength: maxLength(100), email, required },
+        phone: { maxLength: maxLength(20), phone, required },
+        position: { maxLength: maxLength(30), required },
       },
       technical: {
-        firstName: { required },
-        email: { email, required },
-        phone: { phone, required },
+        firstName: { maxLength: maxLength(30), required },
+        lastName: { maxLength: maxLength(30) },
+        email: { maxLength: maxLength(100), email, required },
+        phone: { maxLength: maxLength(20), phone, required },
       },
     },
   },
@@ -43,13 +45,13 @@ export default {
       this.updateContacts({
         ...this.contacts,
         [type]: {
-          [key]: value,
           ...this.contacts[type],
+          [key]: value,
         },
       });
     },
     async submit() {
-      this.$v.$touch();
+      this.$v.contacts.$touch();
       if (!this.$v.contacts.$invalid) {
         try {
           await this.submitContacts();

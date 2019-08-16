@@ -1,4 +1,6 @@
 <script>
+import { mapState } from 'vuex';
+import { reduce } from 'lodash-es';
 import AccountInfo from '@/components/AccountInfo.vue';
 import BankingInfo from '@/components/BankingInfo.vue';
 import Contacts from '@/components/Contacts.vue';
@@ -24,41 +26,80 @@ export default {
       store.dispatch('setPageError', error);
     }
   },
-  data() {
-    return {
-      steps: [
+  computed: {
+    ...mapState('Company', ['completeStepsCount', 'steps']),
+    ...mapState('User/Merchant', ['merchant']),
+
+    isCompanyInfoLocked() {
+      return this.completeStepsCount >= 3 && this.merchant.status === 0;
+    },
+    companyInfoStatuses() {
+      return reduce(['company', 'contacts', 'banking'], (res, item) => ({
+        ...res,
+        [item]: {
+          status: this.steps[item]
+            ? 'complete'
+            : this.isCompanyInfoLocked ? 'locked' : 'default',
+          notice: this.steps[item] ? '' : 'Incomplete',
+          noticeStatus: this.steps[item] ? 'default' : 'warning',
+        },
+      }), {});
+    },
+    isPaymentMethodsLocked() {
+      return this.completeStepsCount <= 2 || this.merchant.status !== 0;
+    },
+    paymentMethodsStatus() {
+      return {
+        status: this.steps.tariff
+          ? 'complete'
+          : this.isPaymentMethodsLocked ? 'locked' : 'default',
+        notice: this.steps.tariff
+          ? ''
+          : this.isPaymentMethodsLocked ? 'After Previous Steps' : 'Incomplete',
+      };
+    },
+    isLicenseLocked() {
+      return this.completeStepsCount <= 3;
+    },
+    licenseStatus() {
+      return {
+        status: this.merchant.status === 4
+          ? 'complete'
+          : this.isLicenseLocked ? 'locked' : 'default',
+        notice: this.merchant.status === 4
+          ? ''
+          : this.isLicenseLocked ? 'After Previous Steps' : 'Incomplete',
+      };
+    },
+    listItems() {
+      return [
         {
           title: 'Account Info',
-          notice: 'Incomplete',
-          noticeStatus: 'warning',
           componentName: 'AccountInfo',
+          ...this.companyInfoStatuses.company,
         },
         {
           title: 'Contacts',
-          notice: 'Incomplete',
-          noticeStatus: 'warning',
           componentName: 'Contacts',
+          ...this.companyInfoStatuses.contacts,
         },
         {
           title: 'Banking Info',
-          notice: 'Incomplete',
-          noticeStatus: 'warning',
           componentName: 'BankingInfo',
+          ...this.companyInfoStatuses.banking,
         },
         {
           title: 'Payment Methods',
-          notice: 'After Previous Steps',
-          noticeStatus: 'warning',
           componentName: 'PaymentMethods',
+          ...this.paymentMethodsStatus,
         },
         {
           title: 'License Agreement',
-          notice: 'After Previous Steps',
-          noticeStatus: 'warning',
           componentName: 'LicenseAgreement',
+          ...this.licenseStatus,
         },
-      ],
-    };
+      ];
+    },
   },
 };
 </script>
@@ -74,12 +115,12 @@ export default {
 
   <SmartListItem
     class="item"
-    v-for="(step, index) in steps"
-    v-bind="step"
+    v-for="(item, index) in listItems"
+    v-bind="item"
     :key="index"
     :expandable="true"
   >
-    <component v-if="step.componentName" :is="step.componentName" />
+    <component v-if="item.componentName" :is="item.componentName" />
   </SmartListItem>
 </div>
 </template>

@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { get } from 'lodash-es';
 import Centrifuge from 'centrifuge';
 import HelloSign from 'hellosign-embedded';
 
-const HELLOSIGN_CLIENT_ID = '3555849b464426e6acbaa93482b7a847';
+const HELLOSIGN_CLIENT_ID = '2599245f066de53be8e5837360edf3ac';
 
 export default function createLicenseAgreementStore() {
   return {
@@ -70,17 +71,20 @@ export default function createLicenseAgreementStore() {
           commit('helloSign', helloSign);
         }
       },
-      async fetchAgreementSignature({ commit, rootState }) {
+      async fetchAgreementSignature({ commit, rootState, rootGetters }) {
+        const isOnboardingComplete = rootGetters['Company/isOnboardingComplete'];
         const { accessToken, Merchant } = rootState.User;
-        const merchantId = Merchant.merchant.id;
+        const merchantId = get(Merchant, 'merchant.id', 0);
 
-        const response = await axios.put(
-          `${rootState.config.apiUrl}/admin/api/v1/merchants/${merchantId}/agreement/signature`,
-          { singer_type: 0 },
-          { headers: { Authorization: `Bearer ${accessToken}` } },
-        );
+        if (merchantId && isOnboardingComplete) {
+          const response = await axios.put(
+            `${rootState.config.apiUrl}/admin/api/v1/merchants/${merchantId}/agreement/signature`,
+            { singer_type: 0 },
+            { headers: { Authorization: `Bearer ${accessToken}` } },
+          );
 
-        commit('signature', response.data);
+          commit('signature', response.data);
+        }
       },
       openLicense({ state, getters }) {
         if (getters.isUsingHellosign) {

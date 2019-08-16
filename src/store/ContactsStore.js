@@ -26,14 +26,14 @@ export default function createContactsStore() {
 
         return {
           authorized: {
-            firstName: authFirstName,
-            lastName: authLastName,
             ...contacts.authorized,
+            firstName: authFirstName || '',
+            lastName: authLastName || '',
           },
           technical: {
-            firstName: techFirstName,
-            lastName: techLastName,
             ...contacts.technical,
+            firstName: techFirstName || '',
+            lastName: techLastName || '',
           },
         };
       },
@@ -51,28 +51,35 @@ export default function createContactsStore() {
           commit('contacts', contacts);
         }
       },
-      async submitContacts({ state, rootState }) {
-        const { accessToken, Merchant } = rootState.User;
-        const merchantId = Merchant.merchant.id;
+      async submitContacts({ dispatch, state, rootState }) {
+        const { accessToken } = rootState.User;
 
-        await axios.put(
-          `${rootState.config.apiUrl}/admin/api/v1/merchants/${merchantId}/contacts`,
+        const response = await axios.put(
+          `${rootState.config.apiUrl}/admin/api/v1/merchants/contacts`,
           { ...state.contacts },
           { headers: { Authorization: `Bearer ${accessToken}` } },
         );
+
+        if (response.data) {
+          dispatch('Company/completeStep', 'contacts', { root: true });
+        }
       },
       updateContacts({ commit }, contacts) {
-        const authName = `${contacts.authorized.firstName} ${contacts.authorized.lastName}`;
-        const techName = `${contacts.technical.firstName} ${contacts.technical.lastName}`;
+        const authFirstName = contacts.authorized.firstName || '';
+        const techFirstName = contacts.technical.firstName || '';
+        const authLastName = contacts.authorized.lastName || '';
+        const techLastName = contacts.technical.lastName || '';
+        const authName = `${authFirstName}${authLastName && ` ${authLastName}`}`;
+        const techName = `${techFirstName}${techLastName && ` ${techLastName}`}`;
 
         commit('contacts', {
           authorized: {
-            name: authName,
             ...contacts.authorized,
+            name: authName || '',
           },
           technical: {
-            name: techName,
             ...contacts.technical,
+            name: techName || '',
           },
         });
       },

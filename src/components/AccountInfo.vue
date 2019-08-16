@@ -1,6 +1,6 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
-import { required } from 'vuelidate/lib/validators';
+import { maxLength, required } from 'vuelidate/lib/validators';
 import Notifications from '@/mixins/Notifications';
 
 export default {
@@ -8,14 +8,15 @@ export default {
   mixins: [Notifications],
   validations: {
     accountInfo: {
-      address: { required },
-      alternativeName: { required },
+      address: { maxLength: maxLength(100), required },
+      addressAdditional: { maxLength: maxLength(100) },
+      alternativeName: { maxLength: maxLength(60), required },
       city: { required },
       country: { required },
-      name: { required },
+      name: { maxLength: maxLength(60), required },
       state: { required },
       website: { required },
-      zip: { required },
+      zip: { maxLength: maxLength(30), required },
     },
   },
   computed: {
@@ -40,7 +41,7 @@ export default {
       this.updateAccountInfo({ ...this.accountInfo, [key]: value });
     },
     async submit() {
-      this.$v.$touch();
+      this.$v.accountInfo.$touch();
       if (!this.$v.accountInfo.$invalid) {
         try {
           await this.submitAccountInfo();
