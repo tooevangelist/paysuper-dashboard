@@ -176,13 +176,13 @@ export default {
   </div>
 
   <DeactivateProjectModal
-    v-show="isDeactivationModalOpened"
+    v-if="isDeactivationModalOpened"
     @close="isDeactivationModalOpened = false"
     @deactivate="tryToDeactivateProject"
   />
 
   <NewProjectModal
-    v-show="isNewProjectModalOpened"
+    v-if="isNewProjectModalOpened"
     :uploadImage="uploadImage"
     @close="isNewProjectModalOpened = false"
   />

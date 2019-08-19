@@ -50,25 +50,22 @@ export default {
 
     async validateAndSaveProject() {
       const isProjectValid = this.$refs.projectForm.chekIfFormValid();
-
       if (isProjectValid) {
-        if (this.project.id) {
-          this.saveProject();
-        } else {
-          this.setIsLoading(true);
-          try {
+        this.setIsLoading(true);
+        try {
+          if (this.project.id) {
+            await this.saveProject();
+          } else {
             await this.createProject();
             this.$router.push({
               path: `/projects/${this.project.id}`,
             });
-            this.$_Notifications_showSuccessMessage('Project created successfully');
-          } catch (error) {
-            console.warn(error);
-            this.$_Notifications_showErrorMessage('Failed to create project');
           }
-
-          this.setIsLoading(false);
+          this.$_Notifications_showSuccessMessage('Project saved successfully');
+        } catch (error) {
+          this.$_Notifications_showErrorMessage(error);
         }
+        this.setIsLoading(false);
       } else {
         this.$_Notifications_showErrorMessage('The form is not filled right');
       }
@@ -78,18 +75,14 @@ export default {
 </script>
 
 <template>
-  <div>
-    <ProjectForm
-      ref="projectForm"
-      :project="project"
-      :currentStep="currentStep"
-      :uploadImage="uploadImage"
-      @stepChanged="handleSectionChange"
-    />
-
-    <UiButton
-      @click="validateAndSaveProject"
-      :text="project.id ? 'Save' : 'Create project'"
-    />
-  </div>
+<div>
+  <ProjectForm
+    ref="projectForm"
+    :project="project"
+    :currentStep="currentStep"
+    :uploadImage="uploadImage"
+    @stepChanged="handleSectionChange"
+    @submitForms="validateAndSaveProject"
+  />
+</div>
 </template>

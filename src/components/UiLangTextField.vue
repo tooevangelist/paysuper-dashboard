@@ -1,17 +1,8 @@
 <script>
-import {
-  UiLangsBar,
-  UiTextField,
-} from '@protocol-one/ui-kit';
 import { omit, pickBy, map } from 'lodash-es';
 
 export default {
-  name: 'LangTextField',
-
-  components: {
-    UiLangsBar,
-    UiTextField,
-  },
+  name: 'UiLangTextField',
 
   model: {
     prop: 'value',
@@ -19,6 +10,10 @@ export default {
   },
 
   props: {
+    langs: {
+      type: Array,
+      default: () => ['en', 'ru'],
+    },
     additionalInfo: {
       default: '',
       type: String,
@@ -79,16 +74,17 @@ export default {
 <template>
   <div class="lang-text-field">
     <UiTextField
-      v-bind="omit($props, ['value'])"
-      @input="updateValue"
+      v-bind="omit($props, ['value', 'label'])"
       :value="selectedValue"
-    ></UiTextField>
+      :label="`${label} (${selectedLang.toUpperCase()})`"
+      @input="updateValue"
+    />
     <UiLangsBar
-      :list="['en', 'ru']"
+      :list="langs"
       :selectedLang="selectedLang"
       :filledList="filledList"
       @change="selectedLang = $event"
-    ></UiLangsBar>
+    />
   </div>
 </template>
 

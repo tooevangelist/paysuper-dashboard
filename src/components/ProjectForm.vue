@@ -1,5 +1,4 @@
 <script>
-import { find } from 'lodash-es';
 import ProjectFormSettings from '@/components/ProjectFormSettings.vue';
 import ProjectFormSimpleCheckout from '@/components/ProjectFormSimpleCheckout.vue';
 import ProjectFormProducts from '@/components/ProjectFormProducts.vue';
@@ -30,47 +29,34 @@ export default {
 
   data() {
     return {
-      currentStepInner: this.currentStep,
-      stepsStatus: {
-        settings: 'initial',
-        simpleCheckout: 'initial',
-        products: 'initial',
+      steps: {
+        settings: {
+          label: 'Settings',
+          status: 'initial',
+          description: 'Setup main scope of project parameters here.',
+        },
+        simpleCheckout: {
+          label: 'Simple checkout',
+          status: 'initial',
+        },
+        products: {
+          label: 'Products',
+          status: 'initial',
+        },
       },
     };
   },
 
   computed: {
-    steps() {
-      return [
-        {
-          value: 'settings',
-          label: 'Settings',
-          status: this.stepsStatus.settings,
-        },
-        {
-          value: 'simpleCheckout',
-          label: 'Simple checkout',
-          status: this.stepsStatus.simpleCheckout,
-        },
-        {
-          value: 'products',
-          label: 'Products',
-          status: this.stepsStatus.products,
-        },
-      ];
+    currentStepItem() {
+      return this.steps[this.currentStep];
     },
 
     isFormValid() {
       return (
-        find(this.steps, { value: 'settings' }).status === 'complete'
-        && find(this.steps, { value: 'simpleCheckout' }).status === 'complete'
+        this.steps.settings.status === 'complete'
+        && this.steps.simpleCheckout.status === 'complete'
       );
-    },
-  },
-
-  watch: {
-    currentStep(value) {
-      this.currentStepInner = value;
     },
   },
 
@@ -82,55 +68,65 @@ export default {
     },
 
     setStepStatus(name, isValid) {
-      this.stepsStatus[name] = isValid ? 'complete' : 'incomplete';
-    },
-
-    updateCurrentStep(value) {
-      this.currentStepInner = value;
-      this.$emit('stepChanged', this.currentStepInner);
+      this.steps[name].status = isValid ? 'complete' : 'incomplete';
     },
   },
 };
 </script>
 
 <template>
-  <div class="project-form">
+<div class="project-form">
+  <header class="header">
+    <UiHeader level="2" :hasMargin="true">{{currentStepItem.label}}</UiHeader>
+    <p>{{currentStepItem.description}}</p>
+  </header>
+
+  <UiPanel>
     <ProjectFormSettings
-      v-show="currentStepInner === 'settings'"
+      v-show="currentStep === 'settings'"
       :project="project"
       :uploadImage="uploadImage"
       ref="formSettings"
       @validationResult="setStepStatus('settings', $event)"
     />
     <ProjectFormSimpleCheckout
-      v-show="currentStepInner === 'simpleCheckout'"
+      v-show="currentStep === 'simpleCheckout'"
       :project="project"
       ref="formCheckout"
       @validationResult="setStepStatus('simpleCheckout', $event)"
     />
     <ProjectFormProducts
-      v-show="currentStepInner === 'products'"
+      v-show="currentStep === 'products'"
       :project="project"
       ref="formProducts"
       @validationResult="setStepStatus('products', $event)"
     />
 
-    <div slot="side-footer" v-if="false">
-      You have finished filling out company details, send them for review
-      <div style="text-align: center; margin-top: 20px; ">
-        <UiButton>Finish</UiButton>
-      </div>
+    <div class="controls">
+      <UiButton
+        class="submit-button"
+        :text="project.id ? 'SAVE' : 'CREATE'"
+        @click="$emit('submitForms')"
+      />
     </div>
-  </div>
+  </UiPanel>
+</div>
 </template>
 
 <style lang="scss" scoped>
 .project-form {
-  display: flex;
-  min-height: calc(100vh - 84px);
+}
 
-  &__form-by-step {
-    flex-grow: 1;
-  }
+.header {
+  margin-bottom: 32px;
+}
+
+.controls {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.submit-button {
+  width: 140px;
 }
 </style>
