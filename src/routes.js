@@ -23,11 +23,11 @@ const routes = [
   },
   {
     path: '/projects/:id',
-    component: () => import('@/pages/ProjectCard.vue'),
+    component: () => import('@/pages/ProjectCardPage.vue'),
     children: [
       {
         path: '',
-        component: () => import('@/pages/ProjectCardForm.vue'),
+        component: () => import('@/pages/ProjectCardFormPage.vue'),
         meta: {
           layout: 'Layout',
           isAuthRequired: true,
@@ -45,7 +45,7 @@ const routes = [
       },
       {
         path: 'product/:productId',
-        component: () => import('@/pages/ProjectCardProduct.vue'),
+        component: () => import('@/pages/ProjectCardProductPage.vue'),
         meta: { layout: 'Layout', isAuthRequired: true },
         name: 'ProjectCardProduct',
       },

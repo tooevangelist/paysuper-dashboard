@@ -26,7 +26,10 @@ export default {
 </script>
 
 <template>
-<transition name="modal">
+<transition
+  name="modal"
+  appear
+>
   <div
     class="overlay"
     @click.self="$emit('close')"
@@ -55,7 +58,11 @@ export default {
         class="close-button"
         @click="$emit('close')"
       >
-        <IconClose width="14" height="14" />
+        <IconClose
+          class="close-icon"
+          width="14"
+          height="14"
+        />
       </div>
     </div>
   </div>

@@ -29,67 +29,73 @@ export default {
 </script>
 
 <template>
-<div
-  class="header"
-  :class="[`_align-${align}`, {'_has-margin': hasMargin}]"
->
-  <component class="tag" :is="`h${level}`">
-    <slot />
-  </component>
-</div>
+<component
+  class="ui-header"
+  :class="[`_align-${align}`, `_h${level}`, {'_has-margin': hasMargin}]"
+  :is="`h${level}`">
+  <slot />
+</component>
 </template>
 
 <style lang="scss" scoped>
-.header {
+.ui-header {
   color: #000000;
   transition: color 0.2s ease-out;
+  font-family: Quicksand;
+  margin: 0;
+  display: flex;
+  align-items: center;
 
-  h1 {
+  &._h1 {
     font-weight: 900;
     line-height: normal;
     font-size: 28px;
   }
 
-  h2 {
+  &._h2 {
     font-weight: normal;
     font-size: 34px;
     line-height: 42px;
   }
 
-  h3 {
+  &._h3 {
     font-weight: 500;
     font-size: 20px;
     line-height: 28px;
   }
 
-  h4 {
+  &._h4 {
     font-weight: 900;
     line-height: normal;
     font-size: 16px;
   }
 
   &._has-margin {
-    margin-bottom: 16px;
+    &._h1 {
+      margin-bottom: 16px;
+    }
+    &._h2 {
+      margin-bottom: 12px;
+    }
+    &._h3 {
+      margin-bottom: 8px;
+    }
+    &._h4 {
+      margin-bottom: 4px;
+    }
   }
-}
 
-.tag {
-  font-family: Quicksand;
-  margin: 0;
-  display: flex;
-  align-items: center;
-
-  .header._align-left & {
+  &._align-left {
     justify-content: flex-start;
     text-align: left;
   }
 
-  .header._align-center & {
+  &._align-center {
     justify-content: center;
     text-align: center;
   }
 
-  .header._align-right & {
+  &._align-right {
     justify-content: flex-end;
     text-align: right;
   }

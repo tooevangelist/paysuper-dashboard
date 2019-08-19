@@ -6,7 +6,7 @@ export default {
   name: 'LayoutMainNavProject',
 
   computed: {
-    ...mapState('Project', ['project']),
+    ...mapState('Project', ['project', 'projectPublicName']),
 
     items() {
       return [
@@ -78,7 +78,7 @@ export default {
       class="project-icon"
       :style="{backgroundImage: `url(${project.image})`}"
     >
-      <IconNoImage v-if="!project.image" />
+      <IconNoImage v-if="!project.image" fill="#C6CACC" />
     </span>
     <div class="project-texts">
       <UiHeader
@@ -87,9 +87,9 @@ export default {
       >
         <div
           class="project-name"
-          :class="{'_no-name': !project.name.en}"
+          :class="{'_no-name': !projectPublicName}"
         >
-          {{project.name.en || 'No name'}}
+          {{projectPublicName || 'No name'}}
         </div>
       </UiHeader>
       <div

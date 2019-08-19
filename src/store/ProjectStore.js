@@ -28,31 +28,35 @@ function mapDataApiToForm(data) {
   return data;
 }
 
-export default function createProjectStore({ notifications }) {
+export default function createProjectStore() {
   return {
     state: () => ({
       project: null,
+      projectPublicName: '',
     }),
 
     mutations: {
       project(state, value) {
         state.project = value;
       },
+      projectPublicName(state, value) {
+        state.projectPublicName = value.en;
+      },
     },
 
     actions: {
-      async initState({ commit, dispatch }, id) {
+      async initState({ state, commit, dispatch }, { id, name, image }) {
         if (id === 'new') {
           commit('project', {
             name: {
               ru: '',
-              en: '',
+              en: name || '',
             },
-            image: '',
-            url_check_account: '',
-            url_process_payment: '',
-            url_redirect_success: '',
-            url_redirect_fail: '',
+            image: image || '',
+            url_check_account: 'https://ya.ru',
+            url_process_payment: 'https://ya.ru',
+            url_redirect_success: 'https://ya.ru',
+            url_redirect_fail: 'https://ya.ru',
             secret_key: '',
             create_invoice_allowed_urls: [],
 
@@ -90,17 +94,19 @@ export default function createProjectStore({ notifications }) {
           //   is_allow_dynamic_notify_urls: false,
           //   is_allow_dynamic_redirect_urls: true,
           // });
+          commit('projectPublicName', state.project.name);
           return;
         }
         await dispatch('fetchProject', id);
         // await dispatch('fetchProductsList', id);
       },
 
-      async fetchProject({ commit, rootState }, id) {
+      async fetchProject({ state, commit, rootState }, id) {
         const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/projects/${id}`, {
           headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
         });
         commit('project', mapDataApiToForm(response.data.item));
+        commit('projectPublicName', state.project.name);
       },
 
       async fetchProductsList({ rootState }, projectId) {
@@ -130,23 +136,18 @@ export default function createProjectStore({ notifications }) {
         );
 
         commit('project', mapDataApiToForm(response.data.item));
+        commit('projectPublicName', state.project.name);
       },
 
-      async saveProject({ state, dispatch, rootState }) {
-        dispatch('setIsLoading', true, { root: true });
-        try {
-          await axios.patch(
-            `${rootState.config.apiUrl}/admin/api/v1/projects/${state.project.id}`,
-            mapDataFormToApi(state.project),
-            {
-              headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-            },
-          );
-          notifications.showSuccessMessage('Project saved successfully');
-        } catch (error) {
-          notifications.showErrorMessage('Failed to save project');
-        }
-        dispatch('setIsLoading', false, { root: true });
+      async saveProject({ state, commit, rootState }) {
+        await axios.patch(
+          `${rootState.config.apiUrl}/admin/api/v1/projects/${state.project.id}`,
+          mapDataFormToApi(state.project),
+          {
+            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
+          },
+        );
+        commit('projectPublicName', state.project.name);
       },
     },
 
