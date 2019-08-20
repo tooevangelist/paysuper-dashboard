@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import { extend } from 'lodash-es';
+import { showSuccessMessage, showErrorMessage } from '@/helpers/notifications';
 
 function $navigate(path, query = {}) {
   this.$router.push({ path, query });
@@ -12,4 +13,6 @@ function $formatPrice(value, currency) {
 extend(Vue.prototype, {
   $navigate,
   $formatPrice,
+  $showSuccessMessage: showSuccessMessage,
+  $showErrorMessage: showErrorMessage,
 });

@@ -49,14 +49,15 @@ export default {
     },
 
     deleteLang() {
-      const newLangs = this.langs.filter(item => this.langToDelete !== item);
       this.isDeleteModalOpened = false;
 
       if (this.isToReopenAddModal) {
         this.isLocalisationsModalOpened = true;
         this.isToReopenAddModal = false;
+        const newLangs = this.localisationsModalLangs.filter(item => this.langToDelete !== item);
         this.localisationsModalLangs = newLangs;
       } else {
+        const newLangs = this.langs.filter(item => this.langToDelete !== item);
         this.$emit('change', newLangs);
       }
     },
@@ -134,8 +135,9 @@ export default {
   line-height: 28px;
   text-transform: uppercase;
   display: inline-flex;
-  transition: background-color 0.2s ease-out;
+  transition: background-color 0.2s ease-out, color 0.2s ease-out;
   border: 0;
+  margin-bottom: 2px;
 
   & + & {
     margin-left: 2px;

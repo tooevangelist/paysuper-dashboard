@@ -69,6 +69,7 @@ export default {
   height: 28px;
   text-transform: uppercase;
   display: inline-flex;
+  margin-bottom: 2px;
 
   & + & {
     margin-left: 2px;

@@ -159,7 +159,7 @@ export default {
     cursor: default;
 
     .delete-icon {
-      opacity: 1;
+      display: flex;
     }
 
     .icon {
@@ -190,15 +190,18 @@ export default {
 
 .delete-icon {
   position: absolute;
-  opacity: 0;
+  display: none;
   right: 0;
   top: 8px;
   width: 32px;
   height: 32px;
   cursor: pointer;
-  display: flex;
   justify-content: center;
   align-items: center;
+
+  & > svg {
+    transition: fill 0.15s ease-out;
+  }
 
   &:hover > svg {
     fill: #ea3d2f;

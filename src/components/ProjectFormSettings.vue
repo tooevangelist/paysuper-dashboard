@@ -50,6 +50,17 @@ export default {
           minLength: minLength(12),
         },
       },
+
+      fullDescription: {
+        en: {
+          required,
+        },
+      },
+      shortDescription: {
+        en: {
+          required,
+        },
+      },
     };
 
     return rules;
@@ -139,13 +150,13 @@ export default {
       :value="fullDescription"
       :langs="langs"
       label="Full description"
-      :required="true"
+      v-bind="getValidatedFieldProps('fullDescription.en')"
     />
     <UiLangTextField
       :value="shortDescription"
       :langs="langs"
       label="Short description"
-      :required="true"
+      v-bind="getValidatedFieldProps('shortDescription.en')"
     />
   </div>
 

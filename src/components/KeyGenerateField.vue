@@ -54,7 +54,9 @@ export default {
       this.$emit('input', value);
     },
 
-    copyTextToClipboard,
+    copyToClipboard() {
+      copyTextToClipboard(this.value);
+    },
   },
 };
 </script>
@@ -82,7 +84,7 @@ export default {
       <button
         class="copy-button"
         type="button"
-        @click="copyTextToClipboard"
+        @click="copyToClipboard"
       >
         <IconCopy />
       </button>
@@ -147,6 +149,25 @@ $hover-background-color: #e6efff;
   align-items: center;
   cursor: pointer;
 }
+.copy-button {
+  width: 38px;
+  height: 38px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 5;
+
+  & > svg {
+    transition: fill 0.15s ease-out;
+  }
+
+  &:hover {
+    & > svg {
+      fill: #3d7bf5;
+    }
+  }
+}
+
 .generate-button {
   height: 40px;
   width: 40px;
@@ -180,15 +201,6 @@ $hover-background-color: #e6efff;
   &::placeholder {
     color: #c6cacc;
   }
-}
-
-.copy-button {
-  width: 38px;
-  height: 38px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 5;
 }
 
 .error {
