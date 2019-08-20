@@ -2,10 +2,15 @@
 import { upperFirst, includes } from 'lodash-es';
 
 export default {
-  name: 'DeleteLocalisationModal',
+  name: 'LocalisationsModal',
+
+  model: {
+    event: 'update',
+    prop: 'langs',
+  },
 
   props: {
-    selectedLangs: {
+    langs: {
       type: Array,
       required: true,
     },
@@ -14,12 +19,12 @@ export default {
   data() {
     return {
       availableLangs: {
-        'zh-Hant': { label: 'Традиционный китайский' },
-        'zh-Hans': { label: 'Упрощенный китайский' },
         en: { label: 'Английский' },
         es: { label: 'Испанский' },
         ar: { label: 'Арабский' },
         ru: { label: 'Русский' },
+        'zh-Hant': { label: 'Традиционный китайский' },
+        'zh-Hans': { label: 'Упрощенный китайский' },
         'pt-BR': { label: 'Бразильский португальский' },
         'pt-PT': { label: 'Португальский' },
         fr: { label: 'Французский' },
@@ -39,8 +44,6 @@ export default {
         sv: { label: 'Шведский' },
         da: { label: 'Датский' },
       },
-
-      selectedLangsInner: this.selectedLangs,
     };
   },
 
@@ -58,11 +61,18 @@ export default {
     includes,
 
     toggleLangSelected(langCode) {
-      if (includes(this.selectedLangsInner, langCode)) {
-        this.selectedLangsInner = this.selectedLangsInner.filter(item => item !== langCode);
-      } else {
-        this.selectedLangsInner.push(langCode);
+      if (langCode === 'en' || includes(this.langs, langCode)) {
+        return;
       }
+      let newLangs;
+      if (includes(this.langs, langCode)) {
+        newLangs = this.langs.filter(item => item !== langCode);
+      } else {
+        newLangs = this.langs.slice();
+        newLangs.push(langCode);
+      }
+
+      this.$emit('update', newLangs);
     },
   },
 };
@@ -79,7 +89,7 @@ export default {
     level="3"
     align="center"
   >
-    Add localisation
+    Localisations
   </UiHeader>
   <UiScrollbarBox class="content">
     <div
@@ -87,7 +97,8 @@ export default {
       class="item"
       :key="langCode"
       :class="{
-        '_selected': includes(selectedLangsInner, langCode),
+        '_selected': includes(langs, langCode),
+        '_undeletable': langCode === 'en',
       }"
       @click="toggleLangSelected(langCode)"
     >
@@ -100,15 +111,20 @@ export default {
         ({{ langCode.toUpperCase() }})
       </div>
 
-      <IconCheck class="check-mark" />
+      <span
+        class="delete-icon"
+        @click="$emit('delete', langCode)"
+      >
+        <IconCloseInCircle />
+      </span>
     </div>
   </UiScrollbarBox>
   <div class="controls">
     <UiButton
       class="submit-button"
-      @click="$emit('update', selectedLangsInner)"
+      @click="$emit('save', langs)"
     >
-      UPDATE
+      SAVE
     </UiButton>
   </div>
 </UiModal>
@@ -133,12 +149,29 @@ export default {
   padding-right: 20px;
   position: relative;
 
-  &._selected,
-  &._selected-now {
-    color: #919699;
+  &:not(._selected):hover {
+    background-color: rgba(#3d7bf5, 0.1);
+    color: #3d7bf5;
+  }
 
-    .check-mark {
+  &._selected {
+    color: #919699;
+    cursor: default;
+
+    .delete-icon {
       opacity: 1;
+    }
+
+    .icon {
+      opacity: 0.3;
+    }
+  }
+
+  &._undeletable {
+    cursor: default;
+
+    .delete-icon {
+      display: none;
     }
   }
 }
@@ -155,14 +188,21 @@ export default {
   white-space: nowrap;
 }
 
-.check-mark {
-  stroke: #c6cacc;
-  width: 14px;
-  height: 11px;
+.delete-icon {
   position: absolute;
-  right: 9px;
-  top: 18px;
   opacity: 0;
+  right: 0;
+  top: 8px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover > svg {
+    fill: #ea3d2f;
+  }
 }
 
 .controls {

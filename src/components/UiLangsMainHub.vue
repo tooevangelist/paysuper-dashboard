@@ -1,12 +1,12 @@
 <script>
-import AddLocalisationModal from '@/components/AddLocalisationModal.vue';
+import LocalisationsModal from '@/components/LocalisationsModal.vue';
 import DeleteLocalisationModal from '@/components/DeleteLocalisationModal.vue';
 
 export default {
   name: 'UiLangsMainHub',
 
   components: {
-    AddLocalisationModal,
+    LocalisationsModal,
     DeleteLocalisationModal,
   },
 
@@ -19,27 +19,51 @@ export default {
 
   data() {
     return {
-      isAddModalOpened: false,
+      isToReopenAddModal: false,
+      isLocalisationsModalOpened: false,
+      localisationsModalLangs: [],
       isDeleteModalOpened: false,
       langToDelete: '',
     };
   },
 
   methods: {
+    openLocalisationsModal() {
+      this.localisationsModalLangs = this.langs.slice();
+      this.isLocalisationsModalOpened = true;
+    },
+
     requestDeleteLang(lang) {
+      if (lang === 'en') {
+        return;
+      }
       this.isDeleteModalOpened = true;
       this.langToDelete = lang;
     },
 
-    deleteLang() {
-      const langs = this.langs.filter(item => this.langToDelete !== item);
-      this.$emit('change', langs);
-      this.isDeleteModalOpened = false;
+    requestDeleteLangFromModal(lang) {
+      this.langToDelete = lang;
+      this.isLocalisationsModalOpened = false;
+      this.isToReopenAddModal = true;
+      this.isDeleteModalOpened = true;
     },
 
-    handleAddUpdate(value) {
-      this.$emit('change', value);
-      this.isAddModalOpened = false;
+    deleteLang() {
+      const newLangs = this.langs.filter(item => this.langToDelete !== item);
+      this.isDeleteModalOpened = false;
+
+      if (this.isToReopenAddModal) {
+        this.isLocalisationsModalOpened = true;
+        this.isToReopenAddModal = false;
+        this.localisationsModalLangs = newLangs;
+      } else {
+        this.$emit('change', newLangs);
+      }
+    },
+
+    handleModalSave(newLangs) {
+      this.$emit('change', newLangs);
+      this.isLocalisationsModalOpened = false;
     },
   },
 };
@@ -51,13 +75,14 @@ export default {
   <div>
     <button
       class="add-button"
-      @click="isAddModalOpened = true"
+      @click="openLocalisationsModal"
     >
       <IconPlus width="9" height="9" />
       <span>ADD</span>
     </button>
     <button
       class="lang-button"
+      :class="{ '_undeletable': lang === 'en' }"
       v-for="lang in langs"
       :key="lang"
       @click="requestDeleteLang(lang)"
@@ -75,11 +100,12 @@ export default {
     @delete="deleteLang"
   />
 
-  <AddLocalisationModal
-    v-if="isAddModalOpened"
-    :selectedLangs="langs"
-    @close="isAddModalOpened = false"
-    @update="handleAddUpdate"
+  <LocalisationsModal
+    v-if="isLocalisationsModalOpened"
+    v-model="localisationsModalLangs"
+    @close="isLocalisationsModalOpened = false"
+    @delete="requestDeleteLangFromModal"
+    @save="handleModalSave"
   />
 </div>
 </template>
@@ -135,13 +161,20 @@ export default {
   padding: 0 20px;
   background-color: #f7f9fa;
 
-  &:hover {
+  &:not(._undeletable):hover {
     color: #ea3d2f;
     background-color: rgba(#ea3d2f, 0.1);
 
     .close-button {
       stroke: #ea3d2f;
-      opacity: 1;
+    }
+  }
+
+  &._undeletable {
+    cursor: default;
+
+    .close-button {
+      display: none;
     }
   }
 }
