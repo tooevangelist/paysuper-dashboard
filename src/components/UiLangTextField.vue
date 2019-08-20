@@ -1,5 +1,7 @@
 <script>
-import { omit, pickBy, map } from 'lodash-es';
+import {
+  omit, pickBy, map, includes,
+} from 'lodash-es';
 
 export default {
   name: 'UiLangTextField',
@@ -51,6 +53,14 @@ export default {
     return {
       selectedLang: 'en',
     };
+  },
+
+  watch: {
+    langs(langs) {
+      if (!includes(langs, this.selectedLang)) {
+        this.selectedLang = 'en';
+      }
+    },
   },
 
   computed: {

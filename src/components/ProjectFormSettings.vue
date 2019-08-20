@@ -1,4 +1,5 @@
 <script>
+import { forEach, get, set } from 'lodash-es';
 import { required, minLength } from 'vuelidate/lib/validators';
 import ImageUpload from '@/components/ImageUpload.vue';
 import KeyGenerateField from '@/components/KeyGenerateField.vue';
@@ -71,6 +72,24 @@ export default {
         errorText: this.$getFieldErrorMessages(path),
       };
     },
+
+    updateLangs(langs) {
+      this.langs = langs;
+
+      const langFields = [
+        'project.name',
+        'fullDescription',
+        'shortDescription',
+      ];
+
+      langFields.forEach((keypath) => {
+        const newFieldValue = {};
+        forEach(langs, (lang) => {
+          newFieldValue[lang] = get(this, `${keypath}.${lang}`) || '';
+        });
+        set(this, keypath, newFieldValue);
+      });
+    },
   },
 };
 </script>
@@ -95,7 +114,7 @@ export default {
     </p>
     <UiLangsMainHub
       :langs="langs"
-      @change="langs = $event"
+      @change="updateLangs"
     />
   </div>
 
