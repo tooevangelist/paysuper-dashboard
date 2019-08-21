@@ -1,12 +1,8 @@
-<template>
-  <div class="page-error">
-    <p class="code">{{errorCode}}</p>
-    <p class="text">{{errorText}}</p>
-  </div>
-</template>
-
 <script>
+import { kebabCase } from 'lodash-es';
+
 const errorTexts = {
+  401: 'Not authorized',
   404: 'Page not found',
   500: 'Server error',
   520: 'Unknown error',
@@ -20,6 +16,10 @@ export default {
       required: true,
       type: Number,
     },
+    layout: {
+      type: String,
+      default: 'PageNoLayout',
+    },
   },
 
   computed: {
@@ -27,8 +27,22 @@ export default {
       return errorTexts[this.errorCode];
     },
   },
+
+  methods: {
+    kebabCase,
+  },
 };
 </script>
+
+<template>
+  <div class="page-error" :class="`_layout-${kebabCase(layout)}`">
+    <p class="code">{{errorCode}}</p>
+    <p class="text">{{errorText}}</p>
+    <p v-if="errorCode === 401" class="link-text">
+      <RouterLink to="/login">Go for sign in</RouterLink>
+    </p>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .page-error {
@@ -37,16 +51,27 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  line-height: 40px;
+
+  &._layout-layout {
+    height: 51vh;
+  }
 }
 
 .code {
   font-size: 40px;
   font-weight: bold;
+  line-height: 50px;
 }
 
 .text {
   text-transform: uppercase;
   font-size: 20px;
+  line-height: 35px;
+}
+
+.link-text {
+  text-transform: uppercase;
+  font-size: 15px;
+  line-height: 25px;
 }
 </style>

@@ -29,7 +29,11 @@ export default {
 
 <template>
   <component class="app" :is="layoutComponentName">
-    <ErrorPage v-if="pageError" :errorCode="pageError" />
+    <ErrorPage
+      v-if="pageError"
+      :errorCode="pageError"
+      :layout="layoutComponentName"
+    />
     <RouterView v-else />
   </component>
 </template>

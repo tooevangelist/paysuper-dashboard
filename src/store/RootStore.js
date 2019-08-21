@@ -62,8 +62,9 @@ export default new Vuex.Store({
         return;
       }
 
-      const awailableCodes = [404, 500, 520];
+      const awailableCodes = [401, 404, 500, 520];
       const errorCode = get(error, 'response.status');
+
       if (includes(awailableCodes, error)) {
         commit('pageError', error);
       } else if (includes(awailableCodes, errorCode)) {
