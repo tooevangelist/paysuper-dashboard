@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
-import { includes, get } from 'lodash-es';
+import { get } from 'lodash-es';
 
 import DictionariesStore from './DictionariesStore';
 import LeaveFeedbackStore from './LeaveFeedbackStore';
@@ -62,16 +62,8 @@ export default new Vuex.Store({
         return;
       }
 
-      const awailableCodes = [401, 404, 500, 520];
-      const errorCode = get(error, 'response.status');
-
-      if (includes(awailableCodes, error)) {
-        commit('pageError', error);
-      } else if (includes(awailableCodes, errorCode)) {
-        commit('pageError', errorCode);
-      } else {
-        commit('pageError', 520);
-      }
+      const errorCode = get(error, 'response.status', 520);
+      commit('pageError', errorCode);
       console.error(error);
     },
 

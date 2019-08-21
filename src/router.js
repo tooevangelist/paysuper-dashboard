@@ -21,8 +21,6 @@ const router = new VueRouter(
 );
 
 async function registerStoreModule(moduleName, module, initParams) {
-  store.dispatch('setPageError', null);
-
   if (!store.state[moduleName]) {
     store.registerModule(moduleName, module(resources));
   }
@@ -30,6 +28,8 @@ async function registerStoreModule(moduleName, module, initParams) {
 }
 
 router.beforeResolve((to, from, next) => {
+  store.dispatch('setPageError', null);
+
   if (to.matched.some(record => record.meta.isAuthRequired)) {
     if (!store.state.User.isAuthorised) {
       return next({

@@ -24,7 +24,7 @@ export default {
 
   computed: {
     errorText() {
-      return errorTexts[this.errorCode];
+      return errorTexts[this.errorCode] || 'Error';
     },
   },
 
