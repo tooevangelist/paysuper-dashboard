@@ -3,10 +3,10 @@
 </template>
 
 <script>
-import ErrorPage from '@/components/ErrorPage.vue';
+import ErrorPage from '@/pages/ErrorPage.vue';
 
 export default {
-  name: 'Page404',
+  name: '404Page',
 
   components: {
     ErrorPage,

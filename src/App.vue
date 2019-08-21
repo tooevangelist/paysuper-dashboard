@@ -1,6 +1,6 @@
 <script>
 import { mapState } from 'vuex';
-import ErrorPage from '@/components/ErrorPage.vue';
+import ErrorPage from '@/pages/ErrorPage.vue';
 import Layout from '@/components/Layout.vue';
 import Page from '@/components/Page.vue';
 import PageNoLayout from '@/components/PageNoLayout.vue';

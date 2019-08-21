@@ -17,7 +17,7 @@ const routes = [
   },
   {
     path: '/projects/',
-    component: () => import('@/pages/ProjectsList.vue'),
+    component: () => import('@/pages/ProjectsListPage.vue'),
     meta: { layout: 'Layout', isAuthRequired: true },
     name: 'ProjectsList',
   },
@@ -199,7 +199,7 @@ const routes = [
   {
     path: '*',
     name: 'notFound',
-    component: () => import('@/pages/404.vue'),
+    component: () => import('@/pages/404Page.vue'),
   },
 ];
 

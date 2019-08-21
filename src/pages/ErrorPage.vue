@@ -39,7 +39,7 @@ export default {
     <p class="code">{{errorCode}}</p>
     <p class="text">{{errorText}}</p>
     <p v-if="errorCode === 401" class="link-text">
-      <RouterLink to="/login">Go for sign in</RouterLink>
+      <RouterLink :to="`/login/?redirect=${$route.fullPath}`">Go for sign in</RouterLink>
     </p>
   </div>
 </template>
