@@ -12,11 +12,18 @@ const config = {
   s3Region: getEnvVariable('S3_REGION'),
 };
 
-const allowedTypes = [{
-  type: 'image/jpeg',
-  extention: 'jpg',
-}];
-const maxFileSize = 5000000;
+const allowedTypes = [
+  {
+    type: 'image/jpeg',
+    extention: 'jpg',
+  },
+  {
+    type: 'image/png',
+    extention: 'png',
+  },
+];
+const maxFileSizeInMb = 30;
+const maxFileSize = maxFileSizeInMb * 1000 * 1000;
 
 const uploadFile = async file => new Promise((resolve, reject) => {
   const fileType = _.find(allowedTypes, { type: file.type });
@@ -24,7 +31,7 @@ const uploadFile = async file => new Promise((resolve, reject) => {
     reject(new Error('The file type in not allowed'));
   }
   if (file.size > maxFileSize) {
-    reject(new Error('The file size is over 5Mb'));
+    reject(new Error(`The file size is over ${maxFileSizeInMb}Mb`));
   }
 
   aws.config.update({
