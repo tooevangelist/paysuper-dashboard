@@ -23,17 +23,6 @@ export default {
         return includes(['left', 'right', 'center'], value);
       },
     },
-    isSortable: {
-      default: false,
-      type: Boolean,
-    },
-    sortDirection: {
-      default: null,
-      type: String,
-      validator(value) {
-        return includes(['asc', 'desc', null], value);
-      },
-    },
     isCollapsed: {
       default: false,
       type: Boolean,
@@ -89,9 +78,6 @@ export default {
     };
   },
   computed: {
-    isSortAvailable() {
-      return this.isHead && this.isSortable;
-    },
     isHead() {
       return this.$parent.isHead || false;
     },
@@ -158,8 +144,6 @@ export default {
     `_${align}`,
     {
       '_head': isHead,
-      '_sortable': isSortAvailable,
-      ['_' + sortDirection]: sortDirection,
       '_painted': isPainted,
       '_collapsed': isCollapsed,
       '_editable': isEditable,
@@ -176,20 +160,6 @@ export default {
   @mouseup="hasMouseDown = false"
   v-clickaway="unfocusField"
 >
-  <svg
-    v-if="isSortAvailable && sortDirection"
-    class="sort-arrow"
-    width="8"
-    height="10"
-    viewBox="0 0 8 10"
-  >
-    <path
-      d="M3.64645 9.35355C3.84171 9.54882 4.15829 9.54882 4.35355 9.35355L7.53553 6.17157C7.7308
-        5.97631 7.7308 5.65973 7.53553 5.46447C7.34027 5.2692 7.02369 5.2692 6.82843 5.46447L4
-        8.29289L1.17157 5.46447C0.976311 5.2692 0.659728 5.2692 0.464466 5.46447C0.269204 5.65973
-        0.269204 5.97631 0.464466 6.17157L3.64645 9.35355ZM3.5 0L3.5 9H4.5L4.5 0L3.5 0Z"
-    />
-  </svg>
   <slot />
   <template v-if="isEditing">
     <TheMask
@@ -314,22 +284,7 @@ export default {
     border-top: none;
     font-size: 12px;
     line-height: 16px;
-
-    &._sortable {
-      color: #0c2441;
-      cursor: pointer;
-    }
-
-    &._asc {
-      & > .sort-arrow {
-        transform: rotate(180deg);
-      }
-    }
   }
-}
-.sort-arrow {
-  fill: #919699;
-  vertical-align: baseline;
 }
 
 .input {
@@ -348,10 +303,6 @@ export default {
   box-shadow: 0px 2px 4px rgba(8, 35, 48, 0.24),
     0px 4px 8px rgba(8, 35, 48, 0.08);
   text-align: center;
-
-  // .complex-table-cell._editing & {
-
-  // }
 }
 
 .focus-holder {

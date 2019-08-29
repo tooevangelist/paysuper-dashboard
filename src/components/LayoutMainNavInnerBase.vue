@@ -47,10 +47,7 @@ export default {
       <IconNoImage v-if="!headImage" fill="#C6CACC" />
     </span>
     <div class="head-texts">
-      <UiHeader
-        class=""
-        level="3"
-      >
+      <UiHeader level="3">
         <div
           class="head-name"
           :class="{'_no-name': !headTitle}"
