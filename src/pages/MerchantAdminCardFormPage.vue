@@ -1,12 +1,11 @@
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex';
-import { UiButton, UiPageHeader } from '@protocol-one/ui-kit';
 import Notifications from '@/mixins/Notifications';
 import MerchantAdminForm from '@/components/MerchantAdminForm.vue';
 
 export default {
   components: {
-    UiButton, UiPageHeader, MerchantAdminForm,
+    MerchantAdminForm,
   },
   mixins: [Notifications],
 
@@ -25,15 +24,6 @@ export default {
     ...mapState('Merchant', [
       'merchant', 'paymentMethods', 'agreementDocument', 'paymentMethodsSort',
     ]),
-    breadcrumbs() {
-      const crumbs = [
-        {
-          label: 'Merchants list',
-          url: '/merchants/',
-        },
-      ];
-      return crumbs;
-    },
   },
 
   beforeRouteUpdate(to, from, next) {
@@ -123,28 +113,19 @@ export default {
 </script>
 
 <template>
-  <div>
-    <UiPageHeader
-      :breadcrumbs="breadcrumbs"
-      :title="merchant.name || 'Merchant'"
-    >
-      <UiButton
-        slot="right"
-        @click="validateAndSaveMerchant"
-        text="Save"
-      />
-    </UiPageHeader>
-    <MerchantAdminForm
-      ref="merchantForm"
-      :merchant="merchant"
-      :paymentMethods="paymentMethods"
-      :currentStep="currentStep"
-      :agreementDocument="agreementDocument"
-      :paymentMethodsSort="paymentMethodsSort"
-      @stepChanged="handleSectionChange"
-      @requestAgreementChange="handleAgreementChangeRequest"
-      @sendNotification="handleSendNotification"
-      @sortPaymentMethods="handlePaymentMethodsSort"
-    />
-  </div>
+<div>
+  <MerchantAdminForm
+    ref="merchantForm"
+    :merchant="merchant"
+    :paymentMethods="paymentMethods"
+    :currentStep="currentStep"
+    :agreementDocument="agreementDocument"
+    :paymentMethodsSort="paymentMethodsSort"
+    @stepChanged="handleSectionChange"
+    @requestAgreementChange="handleAgreementChangeRequest"
+    @sendNotification="handleSendNotification"
+    @sortPaymentMethods="handlePaymentMethodsSort"
+    @submitForms="validateAndSaveMerchant"
+  />
+</div>
 </template>

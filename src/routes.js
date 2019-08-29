@@ -77,31 +77,42 @@ const routes = [
   },
   {
     path: '/merchants/',
-    component: () => import('@/pages/MerchantsList.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
-    name: 'merchants',
+    component: () => import('@/pages/MerchantsListPage.vue'),
+    meta: { layout: 'Layout', isAuthRequired: true },
+    name: 'MerchantsList',
   },
   {
     path: '/merchants/:id',
-    component: () => import('@/pages/MerchantAdminCard.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
+    component: () => import('@/pages/MerchantAdminCardPage.vue'),
     children: [
       {
         path: '',
-        component: () => import('@/pages/MerchantAdminCardForm.vue'),
-        meta: { layout: 'Page', isAuthRequired: true },
+        component: () => import('@/pages/MerchantAdminCardFormPage.vue'),
+        meta: {
+          layout: 'Layout',
+          isAuthRequired: true,
+          specialNav: {
+            backLink() {
+              return {
+                url: '/merchants/',
+                label: 'Back to list',
+              };
+            },
+          },
+          mainNav: () => import('@/components/LayoutMainNavMerchant.vue'),
+        },
         name: 'MerchantAdminCardForm',
       },
       {
         path: 'paymentMethod/:paymentMethodId',
-        component: () => import('@/pages/MerchantAdminCardPaymentMethod.vue'),
-        meta: { layout: 'Page', isAuthRequired: true },
+        component: () => import('@/pages/MerchantAdminCardPaymentMethodPage.vue'),
+        meta: { layout: 'Layout', isAuthRequired: true },
         name: 'MerchantAdminCardPaymentMethod',
       },
       {
         path: 'history',
-        component: () => import('@/pages/MerchantAdminCardHistory.vue'),
-        meta: { layout: 'Page', isAuthRequired: true },
+        component: () => import('@/pages/MerchantAdminCardHistoryPage.vue'),
+        meta: { layout: 'Layout', isAuthRequired: true },
         name: 'MerchantAdminCardHistory',
       },
     ],

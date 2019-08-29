@@ -13,7 +13,7 @@ import LabelTag from '@/components/LabelTag.vue';
 import MerchantExtendingMenu from '@/components/MerchantExtendingMenu.vue';
 
 export default {
-  name: 'MerchantFormCompanyInfo',
+  name: 'MerchantAdminFormAgreement',
 
   components: {
     UiButton,
