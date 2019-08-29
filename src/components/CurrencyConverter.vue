@@ -93,7 +93,7 @@ export default {
       class="body-cell _switch"
       @click="switchCurrencies"
     >
-      <div class="button">
+      <div class="button _active">
         <IconTwoArrowsToOutside />
       </div>
     </div>
@@ -125,7 +125,7 @@ export default {
     </div>
     <div class="body-cell _equal">
       <div class="button">
-        <IconTwoArrowsToOutside />
+        <IconEqualSign />
       </div>
     </div>
     <div class="body-cell _result">
@@ -202,15 +202,18 @@ export default {
   justify-content: center;
   align-items: center;
   margin: 0 auto;
-  cursor: pointer;
 
-  & > svg {
-    transition: fill 0.2s ease-out;
-  }
+  &._active {
+    cursor: pointer;
 
-  &:hover {
     & > svg {
-      fill: #3d7bf5;
+      transition: fill 0.2s ease-out;
+    }
+
+    &:hover {
+      & > svg {
+        fill: #3d7bf5;
+      }
     }
   }
 }
