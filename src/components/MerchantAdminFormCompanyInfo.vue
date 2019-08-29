@@ -7,7 +7,7 @@ import MerchantFormBankingInfo from '@/components/MerchantFormBankingInfo.vue';
 import FormContent from '@/components/FormContent.vue';
 
 export default {
-  name: 'MerchantFormCompanyInfo',
+  name: 'MerchantAdminFormCompanyInfo',
 
   components: {
     MerchantFormBasicInfo,

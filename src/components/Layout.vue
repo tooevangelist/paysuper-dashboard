@@ -3,14 +3,14 @@ import Vue from 'vue';
 import { mapState } from 'vuex';
 import { includes, findIndex, get } from 'lodash-es';
 import Loading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/vue-loading.css';
+import getMerchantMainNavItems from '@/helpers/getMerchantMainNavItems';
+import getAdminMainNavItems from '@/helpers/getAdminMainNavItems';
 import LayoutMainNavDefault from '@/components/LayoutMainNavDefault.vue';
 import LayoutHeader from '@/components/LayoutHeader.vue';
 import LayoutSpecialNavProgress from '@/components/LayoutSpecialNavProgress.vue';
 import LayoutSpecialNavBackLink from '@/components/LayoutSpecialNavBackLink.vue';
 import LayoutTopControlsDatepicker from '@/components/LayoutTopControlsDatepicker.vue';
-
-
-import 'vue-loading-overlay/dist/vue-loading.css';
 
 export default {
   name: 'Layout',
@@ -24,66 +24,21 @@ export default {
   },
   data() {
     return {
-      navigationItems: [
-        {
-          additional: 'Homepage for main controls',
-          icon: 'IconDashboard',
-          link: '/dashboard',
-          title: 'Dashboard',
-          routeNames: ['Dashboard'],
-          isAvailable: true,
-        },
-        {
-          additional: 'Organise your products for sales',
-          icon: 'IconFolder',
-          link: '/projects',
-          title: 'Projects',
-          routeNames: ['ProjectsList'],
-          isAvailable: true,
-        },
-        {
-          additional: 'Your weekly royalty reports',
-          icon: 'IconBlank',
-          link: '/reports',
-          title: 'Reports',
-          isAvailable: false,
-        },
-        {
-          additional: 'Need license agreement',
-          icon: 'IconCash',
-          link: '/payouts',
-          title: 'Payouts',
-          isAvailable: false,
-        },
-        {
-          additional: 'Full list of customer transactions',
-          icon: 'IconCoin',
-          link: '/transaction',
-          title: 'Transaction Search',
-          isAvailable: false,
-        },
-        {
-          additional: 'Technical integrations',
-          icon: 'IconRepeat',
-          link: '/intagrations',
-          title: 'Intagrations',
-          isAvailable: false,
-        },
-        {
-          additional: 'Need license agreement',
-          icon: 'IconExcited',
-          link: '/customers',
-          title: 'Customers',
-          isAvailable: false,
-        },
-      ],
       projectName: 'CD Projects',
     };
   },
   computed: {
     ...mapState(['isLoading']),
+    ...mapState('User', ['role']),
     currentNavigationItem() {
-      return findIndex(this.navigationItems, item => includes(item.routeNames, this.$route.name));
+      return findIndex(this.mainNavItems, item => includes(item.routeNames, this.$route.name));
+    },
+
+    mainNavItems() {
+      if (this.role === 'admin') {
+        return getAdminMainNavItems();
+      }
+      return getMerchantMainNavItems();
     },
   },
   beforeMount() {
@@ -151,7 +106,7 @@ export default {
         <LayoutMainNavDefault
           v-else
           :currentItem="currentNavigationItem"
-          :items="navigationItems"
+          :items="mainNavItems"
         />
       </UiScrollbarBox>
     </aside>

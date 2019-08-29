@@ -1,19 +1,14 @@
 <script>
-import { map, filter } from 'lodash-es';
-import {
-  UiButton, UiFormByStep,
-} from '@protocol-one/ui-kit';
+import { filter } from 'lodash-es';
 import MerchantAdminFormCompanyInfo from '@/components/MerchantAdminFormCompanyInfo.vue';
 import MerchantAdminFormAgreement from '@/components/MerchantAdminFormAgreement.vue';
 import MerchantFormAgreement from '@/components/MerchantFormAgreement.vue';
 import MerchantAdminFormPaymentMethods from '@/components/MerchantAdminFormPaymentMethods.vue';
 
 export default {
-  name: 'MerchantForm',
+  name: 'MerchantAdminForm',
 
   components: {
-    UiFormByStep,
-    UiButton,
     MerchantAdminFormCompanyInfo,
     MerchantAdminFormAgreement,
     MerchantFormAgreement,
@@ -45,7 +40,6 @@ export default {
 
   data() {
     return {
-      currentStepInner: this.currentStep,
       steps: {
         basicInfo: {
           label: 'Basic info',
@@ -58,15 +52,15 @@ export default {
           status: 'initial',
           component: 'MerchantAdminFormAgreement',
         },
-        // licenseAgreementClient: {
-        //   label: 'License agreement client',
-        //   status: 'initial',
-        //   component: 'MerchantFormAgreement',
-        // },
         paymentMethods: {
           label: 'Payment methods',
           status: 'initial',
           component: 'MerchantAdminFormPaymentMethods',
+          description: `
+            Customise a unique setup of payment methods, commissions and rates. 
+            Every merchant must be setup individually, since not all methods and rates are available 
+            for all merchants. Edit respective table values right in their cells.
+          `,
         },
       },
     };
@@ -76,18 +70,8 @@ export default {
     isFormValid() {
       return !filter(this.steps, item => item.status !== 'complete' && item.isValidable).length;
     },
-
-    stepsList() {
-      return map(this.steps, (item, value) => ({
-        ...item,
-        value,
-      }));
-    },
-  },
-
-  watch: {
-    currentStep(value) {
-      this.currentStepInner = value;
+    currentStepItem() {
+      return this.steps[this.currentStep];
     },
   },
 
@@ -101,44 +85,44 @@ export default {
       return this.isFormValid;
     },
 
-    setStepStatus(name, isValid) {
-      this.steps[name].status = isValid ? 'complete' : 'incomplete';
-    },
-
-    updateCurrentStep(value) {
-      this.currentStepInner = value;
-      this.$emit('stepChanged', this.currentStepInner);
+    setStepStatus(/* name, isValid */) {
+      // this.steps[name].status = isValid ? 'complete' : 'incomplete';
     },
   },
 };
 </script>
 
 <template>
-  <div class="merchant-admin-form">
-    <UiFormByStep
-      class="merchant-admin-form__form-by-step"
-      :steps="stepsList"
-      :currentStep="currentStepInner"
-      v-model="currentStepInner"
-      @stepSelected="updateCurrentStep"
-    >
-      <component
-        v-for="(step, stepValue) in steps"
-        :is="step.component"
-        :key="stepValue"
-        v-show="currentStepInner === stepValue"
-        :merchant="merchant"
-        :paymentMethods="stepValue === 'paymentMethods' ? paymentMethods : undefined"
-        :agreementDocument="agreementDocument"
-        :paymentMethodsSort="paymentMethodsSort"
-        ref="forms"
-        @validationResult="setStepStatus(stepValue, $event)"
-        @requestAgreementChange="$emit('requestAgreementChange', $event)"
-        @sendNotification="$emit('sendNotification', $event)"
-        @sortPaymentMethods="$emit('sortPaymentMethods', $event)"
+<div class="merchant-admin-form">
+  <header class="header">
+    <UiHeader level="2" :hasMargin="true">{{currentStepItem.label}}</UiHeader>
+    <p class="text">{{currentStepItem.description}}</p>
+  </header>
+
+  <component
+    v-for="(step, stepValue) in steps"
+    :is="step.component"
+    :key="stepValue"
+    v-show="currentStep === stepValue"
+    :merchant="merchant"
+    :paymentMethods="stepValue === 'paymentMethods' ? paymentMethods : undefined"
+    :agreementDocument="agreementDocument"
+    :paymentMethodsSort="paymentMethodsSort"
+    ref="forms"
+    @validationResult="setStepStatus(stepValue, $event)"
+    @requestAgreementChange="$emit('requestAgreementChange', $event)"
+    @sendNotification="$emit('sendNotification', $event)"
+    @sortPaymentMethods="$emit('sortPaymentMethods', $event)"
+  >
+    <div class="controls" slot="controls">
+      <UiButton
+        class="submit-button"
+        text="SAVE"
+        @click="$emit('submitForms')"
       />
-    </UiFormByStep>
-  </div>
+    </div>
+  </component>
+</div>
 </template>
 
 <style lang="scss" scoped>
@@ -146,9 +130,22 @@ export default {
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 84px);
+}
 
-  &__form-by-step {
-    flex-grow: 1;
-  }
+.header {
+  margin-bottom: 32px;
+}
+
+.text {
+  width: 448px;
+}
+
+.controls {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.submit-button {
+  width: 140px;
 }
 </style>

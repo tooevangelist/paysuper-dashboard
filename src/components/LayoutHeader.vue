@@ -1,6 +1,6 @@
 <script>
 import { includes } from 'lodash-es';
-import { mapActions } from 'vuex';
+import { mapState, mapMutations, mapActions } from 'vuex';
 import { directive as clickaway } from 'vue-clickaway';
 import Notifications from '@/components/Notifications.vue';
 import LeaveFeedbackPopup from '@/components/LeaveFeedbackPopup.vue';
@@ -78,7 +78,11 @@ export default {
       ],
     };
   },
+  computed: {
+    ...mapState('User', ['role']),
+  },
   methods: {
+    ...mapMutations('User', { setRole: 'role' }),
     ...mapActions('LeaveFeedback', ['postFeedback']),
     hideInfoBlock() {
       this.hasInfoOpened = false;
@@ -160,6 +164,20 @@ export default {
   </div>
 
   <div class="right">
+    <div style="margin-right: 30px;">
+      <span
+        class="role-switch"
+        :class="{ '_current': role === 'merchant' }"
+        @click="setRole('merchant')"
+      >merchant</span>
+      /
+      <span
+        class="role-switch"
+        :class="{ '_current': role === 'admin' }"
+        @click="setRole('admin')"
+      >admin</span>&nbsp;
+      <span style="font-size: 8px;">(It's fake)</span>
+    </div>
     <div style="position: relative">
       <a
         class="feedback"
@@ -428,5 +446,16 @@ export default {
   font-weight: 500;
   color: #fff;
   background-color: #3d7bf5;
+}
+
+.role-switch {
+  font-size: 12px;
+  color: #3d7bf5;
+  cursor: pointer;
+
+  &._current {
+    cursor: default;
+    color: #919699;
+  }
 }
 </style>

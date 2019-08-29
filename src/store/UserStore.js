@@ -10,7 +10,7 @@ export default function createUserStore({ notifications }) {
       accessToken,
       isAuthorised: false,
       authIframeSrc: '',
-      isAdmin: false,
+      role: localStorage.getItem('userRole') || 'merchant',
     },
 
     mutations: {
@@ -23,8 +23,9 @@ export default function createUserStore({ notifications }) {
       authIframeSrc(state, value) {
         state.authIframeSrc = value;
       },
-      isAdmin(state, value) {
-        state.isAdmin = value;
+      role(state, value) {
+        state.role = value;
+        localStorage.setItem('userRole', value);
       },
     },
 
