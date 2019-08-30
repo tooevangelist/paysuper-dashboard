@@ -78,9 +78,9 @@ export default {
   <UiPanel>
     <section class="section">
       <UiHeader level="3" :hasMargin="true">Active methods selection</UiHeader>
-      <p class="text">
+      <UiText>
         Activate set of methods available for this merchant.
-      </p>
+      </UiText>
 
       <div class="payment-methods">
         <div>
@@ -103,52 +103,49 @@ export default {
     </section>
     <section class="section">
       <UiHeader level="3" :hasMargin="true">Channel costs</UiHeader>
-      <p class="text">
+      <UiText>
         Setup channel fees for available selection of payment methods.
-      </p>
+      </UiText>
 
       <MerchantAdminChannelCostsTable />
     </section>
 
     <section class="section">
       <UiHeader level="3" :hasMargin="true">Refund costs</UiHeader>
-      <p class="text">
+      <UiText>
         Setup refund fees for available selection of payment methods.
-      </p>
+      </UiText>
 
       <MerchantAdminRefundCostsTable />
     </section>
 
     <section class="section">
       <UiHeader level="3" :hasMargin="true">Chargeback</UiHeader>
-      <p class="text">
+      <UiText>
         Setup chargeback fees and operational limits.
         pecified values will be the same for all payment methods.
-      </p>
+      </UiText>
       <MerchantAdminChargebackTable />
     </section>
 
     <section class="section">
       <UiHeader level="3" :hasMargin="true">Other indicators</UiHeader>
-      <p class="text">
+      <UiText>
         Customise additional payment limits here.
-      </p>
+      </UiText>
       <MerchantAdminOtherIndicatorsTable />
     </section>
 
     <section class="section">
       <UiHeader level="3" :hasMargin="true">Currency conversion rates</UiHeader>
-      <p class="text">
+      <UiText>
         Here you can tune up currency conversion rates for every pair.
         Later it will be used for royalty reports calculation.
-      </p>
+      </UiText>
       <CurrencyConverter />
     </section>
 
-
     <slot name="controls"></slot>
-
-
   </UiPanel>
 
 

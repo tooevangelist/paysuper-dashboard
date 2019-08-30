@@ -1,36 +1,17 @@
 <script>
 import { debounce } from 'lodash-es';
 import { mapState, mapGetters, mapActions } from 'vuex';
-import {
-  UiButton,
-  UiHeader,
-  UiPageHeader,
-  UiTable,
-  UiTableCell,
-  UiTableRow,
-  UiTextField,
-  UiPaginator,
-  UiModal,
-} from '@protocol-one/ui-kit';
-import moment from 'moment';
 import MerchantHistoryStore from '@/store/MerchantHistoryStore';
-import NoResults from '@/components/NoResults.vue';
-import MerchantStatusTransitionLabel from '@/components/MerchantStatusTransitionLabel.vue';
+import SimplePageHeader from '@/components/SimplePageHeader.vue';
+import PictureClock from '@/components/PictureClock.vue';
+import MerchantAdminFormHistory from '@/components/MerchantAdminFormHistory.vue';
 import { toggleSort, getSortDirection } from '@/helpers/handleSort';
 
 export default {
   components: {
-    UiButton,
-    UiHeader,
-    UiPageHeader,
-    UiTable,
-    UiTableCell,
-    UiTableRow,
-    UiTextField,
-    UiPaginator,
-    UiModal,
-    NoResults,
-    MerchantStatusTransitionLabel,
+    SimplePageHeader,
+    PictureClock,
+    MerchantAdminFormHistory,
   },
 
   async asyncData({ store, registerStoreModule, route }) {
@@ -50,6 +31,67 @@ export default {
       isSearchRouting: false,
       isHistoryDetailsDialogOpen: false,
       currentHistoryItem: null,
+
+      stubItems: [
+        {
+          id: '11',
+          title: 'Account just has been created.',
+          statuses: null,
+          created_at: { seconds: 1554730535 },
+        },
+        {
+          id: '22',
+          title: 'Merchant signed the license agreement.',
+          statuses: { to: 0 },
+          created_at: { seconds: 1554730535 },
+        },
+        {
+          id: '33',
+          title: 'Data clarifying required.',
+          statuses: { from: 0, to: 1 },
+          created_at: { seconds: 1554730535 },
+          message: `
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt 
+            ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation 
+            ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          `,
+        },
+        {
+          id: '44',
+          title: 'License agreement sent to KYC.',
+          statuses: { from: 1, to: 2 },
+          created_at: { seconds: 1554730535 },
+        },
+        {
+          id: '55',
+          title: 'Data clarifying required.',
+          statuses: { from: 0, to: 1 },
+          created_at: { seconds: 1554730535 },
+          message: `
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt 
+            ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation 
+            ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          `,
+        },
+        {
+          id: '66',
+          title: 'License agreement signed by Pay Super.',
+          statuses: { from: 2, to: 3 },
+          created_at: { seconds: 1554730535 },
+        },
+        {
+          id: '77',
+          title: 'License agreement request is rejected.',
+          statuses: { from: 2, to: 4 },
+          created_at: { seconds: 1554730535 },
+        },
+        {
+          id: '88',
+          title: 'Merchant account was archived.',
+          statuses: { from: 2, to: 5 },
+          created_at: { seconds: 1554730535 },
+        },
+      ],
     };
   },
 
@@ -103,10 +145,6 @@ export default {
     ...mapActions(['setIsLoading']),
     ...mapActions('MerchantHistory', ['submitFilters', 'fetchHistory', 'initQuery']),
 
-    formatDate(date) {
-      return moment.unix(date).format('D MMM YYYY, HH:MM');
-    },
-
     async searchHistory() {
       this.isSearchRouting = true;
       this.setIsLoading(true);
@@ -151,83 +189,19 @@ export default {
 </script>
 
 <template>
-  <div>
-    <UiPageHeader :breadcrumbs="breadcrumbs">
-      <span slot="title">History</span>
-      <UiTextField
-        slot="right"
-        label="Quick search"
-        v-model="filters.quickFilter"
-        @input="handleQuickSearchInput"
-      />
-    </UiPageHeader>
+<div>
+  <SimplePageHeader >
+    <span slot="title">History</span>
+    <span slot="description">
+      This text log will keep the status change and conversation history with
+      merchant for checking the current onboarding status and future reference.
+    </span>
+    <PictureClock slot="picture" />
+  </SimplePageHeader>
 
-    <ui-table>
-      <ui-table-row :isHead="true">
-        <ui-table-cell>User</ui-table-cell>
-        <ui-table-cell>Event</ui-table-cell>
-        <ui-table-cell>Message</ui-table-cell>
-        <ui-table-cell
-          :isSortable="true"
-          :sortDirection="dateSortDirection"
-          @click.native="sortByDate"
-        >Date</ui-table-cell>
-      </ui-table-row>
-      <ui-table-row
-        v-for="item in history.items"
-        :key="item.id"
-        @click.native="openHistoryDetailsDialog(item)"
-      >
-        <ui-table-cell></ui-table-cell>
-        <ui-table-cell>{{item.title}}</ui-table-cell>
-        <ui-table-cell>
-          <div class="message">{{item.message}}</div>
-        </ui-table-cell>
-        <ui-table-cell>{{formatDate(item.created_at.seconds)}}</ui-table-cell>
-      </ui-table-row>
-    </ui-table>
+  <MerchantAdminFormHistory :items="history.items" />
 
-    <UiPaginator
-      v-if="history.items.length"
-      :offset="filters.offset"
-      :limit="filters.limit"
-      :count="history.count"
-      @pageChanged="handlePageChange"
-    />
-    <NoResults v-if="!history.items.length" />
-
-    <UiModal
-      v-if="isHistoryDetailsDialogOpen"
-      :hasCloseButton="true"
-      @close="closeHistoryDetailsDialog"
-    >
-      <div class="dialog" slot="main">
-        <UiHeader level="2" :hasMargin="true">{{currentHistoryItem.title}}</UiHeader>
-
-        <MerchantStatusTransitionLabel
-          v-if="currentHistoryItem.statuses"
-          :codeFrom="currentHistoryItem.statuses.from"
-          :codeTo="currentHistoryItem.statuses.to"
-        />
-
-        <div
-          class="dialog__message"
-          v-if="currentHistoryItem.message"
-          v-text="currentHistoryItem.message"
-        />
-
-        <div class="dialog__controls">
-          <div class="dialog__date">
-            {{formatDate(currentHistoryItem.created_at.seconds)}}
-          </div>
-          <UiButton
-            class="dialog__button"
-            @click="closeHistoryDetailsDialog"
-          >OK</UiButton>
-        </div>
-      </div>
-    </UiModal>
-  </div>
+</div>
 </template>
 
 
