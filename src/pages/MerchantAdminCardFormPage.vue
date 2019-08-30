@@ -116,11 +116,14 @@ export default {
 <div>
   <MerchantAdminForm
     ref="merchantForm"
-    :merchant="merchant"
-    :paymentMethods="paymentMethods"
-    :currentStep="currentStep"
-    :agreementDocument="agreementDocument"
-    :paymentMethodsSort="paymentMethodsSort"
+    v-bind="{
+      merchant,
+      paymentMethods,
+      currentStep,
+      agreementDocument,
+      paymentMethodsSort,
+      adminContentList,
+    }"
     @stepChanged="handleSectionChange"
     @requestAgreementChange="handleAgreementChangeRequest"
     @sendNotification="handleSendNotification"

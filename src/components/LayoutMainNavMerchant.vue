@@ -33,10 +33,19 @@ export default {
           icon: 'IconMoney',
           url: `/merchants/${this.merchant.id || 'new'}?step=paymentMethods`,
         },
+        {
+          title: 'History',
+          value: 'history',
+          icon: 'IconMoney',
+          url: `/merchants/${this.merchant.id || 'new'}/history/`,
+        },
       ];
     },
 
     currentItemIndex() {
+      if (this.$route.name === 'MerchantAdminCardHistory') {
+        return findIndex(this.items, { value: 'history' });
+      }
       return findIndex(this.items, { value: this.$route.query.step || 'basicInfo' });
       // return findIndex(this.items, item => includes(item.routeNames, this.$route.name));
     },

@@ -112,7 +112,19 @@ const routes = [
       {
         path: 'history',
         component: () => import('@/pages/MerchantAdminCardHistoryPage.vue'),
-        meta: { layout: 'Layout', isAuthRequired: true },
+        meta: {
+          layout: 'Layout',
+          isAuthRequired: true,
+          specialNav: {
+            backLink() {
+              return {
+                url: '/merchants/',
+                label: 'Back to list',
+              };
+            },
+          },
+          mainNav: () => import('@/components/LayoutMainNavMerchant.vue'),
+        },
         name: 'MerchantAdminCardHistory',
       },
     ],
@@ -205,6 +217,10 @@ const routes = [
   {
     path: '/confirm_email/',
     component: () => import('@/pages/ConfirmEmail.vue'),
+  },
+  {
+    path: '/icons/',
+    component: () => import('@/pages/IconsPage.vue'),
   },
 
   {
