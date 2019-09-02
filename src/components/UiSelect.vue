@@ -34,7 +34,7 @@
     {{ additionalInfo }}
   </span>
   <div class="box">
-    <div class="options">
+    <div class="options" v-if="focused">
       <UiScrollbarBox class="scrollbox">
         <label
           v-for="option in optionsView"
