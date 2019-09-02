@@ -1,8 +1,7 @@
 <script>
-import {
-  find, some, flatten, cloneDeep,
-} from 'lodash-es';
+import { find, cloneDeep } from 'lodash-es';
 import ClickOutside from 'vue-click-outside';
+import PaymentMethodsTable from '@/mixins/PaymentMethodsTable';
 import ExpandableCellText from '@/components/ExpandableCellText.vue';
 import ComplexTable from '@/components/ComplexTable.vue';
 import ComplexTableRow from '@/components/ComplexTableRow.vue';
@@ -10,9 +9,9 @@ import ComplexTableCell from '@/components/ComplexTableCell.vue';
 import OpenerCorner from '@/components/OpenerCorner.vue';
 import SimpleMenuItem from '@/components/SimpleMenuItem.vue';
 
-const activeFieldNames = ['value', 'businessDays'];
 export default {
   name: 'MerchantAdminRefundCostsTable',
+  mixins: [PaymentMethodsTable],
 
   components: {
     ComplexTable,
@@ -38,6 +37,7 @@ export default {
         hasError: false,
         hasFocus: false,
       },
+      country: 'United States',
       payoutParty: 'paysuper',
       isPayoutPartyMenuOpened: false,
     };
@@ -58,34 +58,37 @@ export default {
       isPayoutPartyMenuOpened: false,
     };
     return {
+      mainActiveFieldNames: ['fixedFee'],
+      secondaryActiveFieldNames: ['value', 'businessDays'],
       chargebackMainList: [
         {
-          ...cloneDeep(chargebackMainListItem),
-          country: 'United States',
-        },
-        {
-          ...cloneDeep(chargebackMainListItem),
-          country: 'Germany',
-        },
-        {
-          ...cloneDeep(chargebackMainListItem),
-          country: 'Netherlands',
-        },
-        {
-          ...cloneDeep(chargebackMainListItem),
-          country: 'Austria',
-        },
-        {
-          ...cloneDeep(chargebackMainListItem),
-          country: 'Russia',
-        },
-        {
-          ...cloneDeep(chargebackMainListItem),
-          country: 'China',
-        },
-        {
-          ...cloneDeep(chargebackMainListItem),
-          country: 'United States',
+          ...(cloneDeep(chargebackMainListItem)),
+          name: 'Chargeback',
+          isExpanded: false,
+          items: [
+            cloneDeep(chargebackMainListItem),
+            {
+              ...cloneDeep(chargebackMainListItem),
+              country: 'Germany',
+            },
+            {
+              ...cloneDeep(chargebackMainListItem),
+              country: 'Netherlands',
+            },
+            {
+              ...cloneDeep(chargebackMainListItem),
+              country: 'Austria',
+            },
+            {
+              ...cloneDeep(chargebackMainListItem),
+              country: 'Russia',
+            },
+            {
+              ...cloneDeep(chargebackMainListItem),
+              country: 'China',
+            },
+            cloneDeep(chargebackMainListItem),
+          ],
         },
       ],
 
@@ -135,55 +138,15 @@ export default {
   },
 
   computed: {
+    chargebackMainListFlattened() {
+      return this.$_PaymentMethodsTable_flattenDataList(this.chargebackMainList, 'name');
+    },
     chargebackSecondaryListFlattened() {
-      const result = [];
-      this.chargebackSecondaryList.forEach((item) => {
-        result.push(item);
-        if (item.items && item.isExpanded) {
-          result.push(
-            ...item.items.map(sub => ({ ...sub, parent: item.name })),
-          );
-        }
-      });
-
-      return result;
+      return this.$_PaymentMethodsTable_flattenDataList(this.chargebackSecondaryList, 'name');
     },
   },
 
   methods: {
-
-    handleCellChange(field, value) {
-      if (!value) {
-        field.hasError = true;
-      } else {
-        field.hasError = false;
-      }
-      field.value = value;
-
-      if (Number(field.value) !== 1) {
-        field.hasChanges = true;
-      } else {
-        field.hasChanges = false;
-      }
-    },
-
-    getCellText(value, symbol = '') {
-      if (value) {
-        return `${value}${symbol}`;
-      }
-      return value;
-    },
-
-    getGroupHasChanges(rowData) {
-      if (rowData.parent) {
-        return false;
-      }
-      const hasChangesArray = [rowData, ...(rowData.items ? rowData.items : [])]
-        .map(item => activeFieldNames.map(name => (item[name] ? item[name].hasChanges : false)));
-
-      return some(flatten(hasChangesArray), item => item);
-    },
-
     closePayoutPartyMenu(data) {
       data.isPayoutPartyMenuOpened = false;
     },
@@ -198,21 +161,6 @@ export default {
       }
       data.payoutParty = item.value;
       data.isPayoutPartyMenuOpened = false;
-    },
-
-    getCellProps(field) {
-      if (!field) {
-        return {
-          isInactive: true,
-        };
-      }
-      return {
-        isEditable: true,
-        hasChanges: field.hasChanges,
-        hasError: field.hasError,
-        hasFocus: field.hasFocus,
-        value: field.value,
-      };
     },
   },
 };
@@ -230,7 +178,7 @@ export default {
       <ComplexTableCell class="cell _fee">Chargeback fee payout party</ComplexTableCell>
     </ComplexTableRow>
     <template
-      v-for="(data, index) in chargebackMainList"
+      v-for="(data, index) in chargebackMainListFlattened"
     >
       <ComplexTableRow
         :key="index"
@@ -238,12 +186,15 @@ export default {
       >
         <ComplexTableCell
           class="cell _method"
+          :class="{ '_leading': !data.parent}"
           align="left"
-          :isCollapsed="index > 0"
+          :isCollapsed="!!data.parent"
+          :hasChanges="$_PaymentMethodsTable_getIsGroupHasChanges(data, mainActiveFieldNames)"
+          @click.native="data.isExpanded = !data.isExpanded"
         >
           <ExpandableCellText
             v-if="index === 0"
-            :isOpened="true"
+            :isOpened="data.isExpanded"
           >
             Chargeback
           </ExpandableCellText>
@@ -253,12 +204,12 @@ export default {
         <ComplexTableCell class="cell _country">{{data.country}}</ComplexTableCell>
         <ComplexTableCell
           class="cell _fee"
-          v-bind="getCellProps(data.fixedFee)"
+          v-bind="$_PaymentMethodsTable_getEditableCellProps(data.fixedFee)"
           @toggleFocus="data.fixedFee.hasFocus = $event"
-          @change="handleCellChange(data.fixedFee, $event)"
+          @change="$_PaymentMethodsTable_handleCellChange(data.fixedFee, $event)"
           mask="NNNNNN"
         >
-          {{ getCellText(data.fixedFee.value, '$') }}
+          {{ $_PaymentMethodsTable_getFieldText(data.fixedFee.value, '$') }}
         </ComplexTableCell>
         <ComplexTableCell
           class="cell _payout-party"
@@ -313,7 +264,7 @@ export default {
           :class="{ '_leading': !data.parent}"
           align="left"
           :isCollapsed="!!data.parent"
-          :hasChanges="getGroupHasChanges(data)"
+          :hasChanges="$_PaymentMethodsTable_getIsGroupHasChanges(data, secondaryActiveFieldNames)"
           @click.native="data.isExpanded = !data.isExpanded"
         >
           <ExpandableCellText
@@ -328,21 +279,21 @@ export default {
         <ComplexTableCell class="cell _country">United States</ComplexTableCell>
         <ComplexTableCell
           class="cell _fee"
-          v-bind="getCellProps(data.value)"
+          v-bind="$_PaymentMethodsTable_getEditableCellProps(data.value)"
           @toggleFocus="data.value.hasFocus = $event"
-          @change="handleCellChange(data.value, $event)"
+          @change="$_PaymentMethodsTable_handleCellChange(data.value, $event)"
           mask="NNNNNN"
         >
-          {{ data.value ? getCellText(data.value.value) : '–' }}
+          {{ $_PaymentMethodsTable_getFieldText(data.value) }}
         </ComplexTableCell>
         <ComplexTableCell
           class="cell _fee"
-          v-bind="getCellProps(data.businessDays)"
+          v-bind="$_PaymentMethodsTable_getEditableCellProps(data.businessDays)"
           @toggleFocus="data.businessDays.hasFocus = $event"
-          @change="handleCellChange(data.businessDays, $event)"
+          @change="$_PaymentMethodsTable_handleCellChange(data.businessDays, $event)"
           mask="NNNNNN"
         >
-          {{ data.businessDays ? getCellText(data.businessDays.value) : '–' }}
+          {{ $_PaymentMethodsTable_getFieldText(data.businessDays) }}
         </ComplexTableCell>
       </ComplexTableRow>
     </template>

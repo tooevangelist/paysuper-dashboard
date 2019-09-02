@@ -92,7 +92,7 @@ export default function createUserStore({ notifications }) {
           });
           // eslint-disable-next-line
         } catch (error) { }
-        // localStorage.removeItem('token');
+        localStorage.removeItem('token');
         commit('isAuthorised', false);
         commit('accessToken', '');
         // router.push({ path: '/login' });

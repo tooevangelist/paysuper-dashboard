@@ -1,14 +1,16 @@
 <script>
-import { some, flatten, cloneDeep } from 'lodash-es';
+import { cloneDeep } from 'lodash-es';
+import PaymentMethodsTable from '@/mixins/PaymentMethodsTable';
 import ExpandableCellText from '@/components/ExpandableCellText.vue';
 import ComplexTable from '@/components/ComplexTable.vue';
 import ComplexTableRow from '@/components/ComplexTableRow.vue';
 import ComplexTableCell from '@/components/ComplexTableCell.vue';
 import OpenerCorner from '@/components/OpenerCorner.vue';
 
-const activeFieldNames = ['fee', 'fixedFee', 'overallFee', 'psGeneralFixedFee'];
 export default {
   name: 'MerchantAdminChannelCostsTable',
+
+  mixins: [PaymentMethodsTable],
 
   components: {
     ComplexTable,
@@ -49,6 +51,7 @@ export default {
       },
     };
     return {
+      activeFieldNames: ['fee', 'fixedFee', 'overallFee', 'psGeneralFixedFee'],
       channelCosts: [
         {
           ...(cloneDeep(channelCostsItem)),
@@ -118,98 +121,19 @@ export default {
 
   computed: {
     channelCostsFlattened() {
-      const result = [];
-      this.channelCosts.forEach((item) => {
-        result.push(item);
-        if (item.items && item.isExpanded) {
-          result.push(
-            ...item.items.map(sub => ({ ...sub, parent: item.method })),
-          );
-        }
-      });
-
-      return result;
+      return this.$_PaymentMethodsTable_flattenDataList(this.channelCosts, 'method');
     },
   },
 
   methods: {
     moveFocus(index, fieldName, focusMoveDirection) {
-      this.channelCostsFlattened[index][fieldName].hasFocus = false;
-      const fieldIndex = activeFieldNames.indexOf(fieldName);
-      let newFieldName = fieldName;
-      let newIndex = index;
-
-      if (focusMoveDirection === 'right') {
-        if (fieldIndex + 1 === activeFieldNames.length) {
-          [newFieldName] = activeFieldNames;
-        } else {
-          newFieldName = activeFieldNames[fieldIndex + 1];
-        }
-      }
-      if (focusMoveDirection === 'left') {
-        if (fieldIndex === 0) {
-          newFieldName = activeFieldNames[activeFieldNames.length - 1];
-        } else {
-          newFieldName = activeFieldNames[fieldIndex - 1];
-        }
-      }
-      if (focusMoveDirection === 'up') {
-        if (index === 0) {
-          newIndex = this.channelCostsFlattened.length - 1;
-        } else {
-          newIndex = index - 1;
-        }
-      }
-      if (focusMoveDirection === 'down') {
-        if (index + 1 === this.channelCostsFlattened.length) {
-          newIndex = 0;
-        } else {
-          newIndex = index + 1;
-        }
-      }
-      this.channelCostsFlattened[newIndex][newFieldName].hasFocus = true;
-    },
-
-    handleCellChange(field, value) {
-      if (!value) {
-        field.hasError = true;
-      } else {
-        field.hasError = false;
-      }
-      field.value = value;
-
-      if (Number(field.value) !== 1) {
-        field.hasChanges = true;
-      } else {
-        field.hasChanges = false;
-      }
-    },
-
-    getCellText(value, symbol) {
-      if (value) {
-        return `${value}${symbol}`;
-      }
-      return value;
-    },
-
-    getGroupHasChanges(rowData) {
-      if (rowData.parent) {
-        return false;
-      }
-      const hasChangesArray = [rowData, ...(rowData.items ? rowData.items : [])]
-        .map(item => activeFieldNames.map(name => item[name].hasChanges));
-
-      return some(flatten(hasChangesArray), item => item);
-    },
-
-    getCellProps(field) {
-      return {
-        isEditable: true,
-        hasChanges: field.hasChanges,
-        hasError: field.hasError,
-        hasFocus: field.hasFocus,
-        value: field.value,
-      };
+      this.$_PaymentMethodsTable_moveFocus({
+        index,
+        fieldName,
+        focusMoveDirection,
+        activeFieldNames: this.activeFieldNames,
+        flattenedDataList: this.channelCostsFlattened,
+      });
     },
   },
 };
@@ -240,7 +164,7 @@ export default {
         :class="{ '_leading': !data.parent}"
         align="left"
         :isCollapsed="!!data.parent"
-        :hasChanges="getGroupHasChanges(data)"
+        :hasChanges="$_PaymentMethodsTable_getIsGroupHasChanges(data, activeFieldNames)"
         @click.native="data.isExpanded = !data.isExpanded"
       >
         <ExpandableCellText
@@ -257,41 +181,41 @@ export default {
       <ComplexTableCell class="cell _country">United States</ComplexTableCell>
       <ComplexTableCell
         class="cell _fee"
-        v-bind="getCellProps(data.fee)"
+        v-bind="$_PaymentMethodsTable_getEditableCellProps(data.fee)"
         @toggleFocus="data.fee.hasFocus = $event"
         @moveFocus="moveFocus(index, 'fee', $event)"
-        @change="handleCellChange(data.fee, $event)"
+        @change="$_PaymentMethodsTable_handleCellChange(data.fee, $event)"
         mask="###"
       >
-        {{ getCellText(data.fee.value, '%') }}
+        {{ $_PaymentMethodsTable_getCellText(data.fee.value, '%') }}
       </ComplexTableCell>
       <ComplexTableCell
         class="cell _fee"
-        v-bind="getCellProps(data.fixedFee)"
+        v-bind="$_PaymentMethodsTable_getEditableCellProps(data.fixedFee)"
         @toggleFocus="data.fixedFee.hasFocus = $event"
         @moveFocus="moveFocus(index, 'fixedFee', $event)"
-        @change="handleCellChange(data.fixedFee, $event)"
+        @change="$_PaymentMethodsTable_handleCellChange(data.fixedFee, $event)"
         mask="NNNNNN"
       >
-        {{ getCellText(data.fixedFee.value, '$') }}
+        {{ $_PaymentMethodsTable_getCellText(data.fixedFee.value, '$') }}
       </ComplexTableCell>
       <ComplexTableCell
         class="cell _fee"
-        v-bind="getCellProps(data.overallFee)"
+        v-bind="$_PaymentMethodsTable_getEditableCellProps(data.overallFee)"
         @toggleFocus="data.overallFee.hasFocus = $event"
         @moveFocus="moveFocus(index, 'overallFee', $event)"
-        @change="handleCellChange(data.overallFee, $event)"
+        @change="$_PaymentMethodsTable_handleCellChange(data.overallFee, $event)"
       >
-        {{ getCellText(data.overallFee.value, '%') }}
+        {{ $_PaymentMethodsTable_getCellText(data.overallFee.value, '%') }}
       </ComplexTableCell>
       <ComplexTableCell
         class="cell _fee"
-        v-bind="getCellProps(data.psGeneralFixedFee)"
+        v-bind="$_PaymentMethodsTable_getEditableCellProps(data.psGeneralFixedFee)"
         @toggleFocus="data.psGeneralFixedFee.hasFocus = $event"
         @moveFocus="moveFocus(index, 'psGeneralFixedFee', $event)"
-        @change="handleCellChange(data.psGeneralFixedFee, $event)"
+        @change="$_PaymentMethodsTable_handleCellChange(data.psGeneralFixedFee, $event)"
       >
-        {{ getCellText(data.psGeneralFixedFee.value, '$') }}
+        {{ $_PaymentMethodsTable_getCellText(data.psGeneralFixedFee.value, '$') }}
       </ComplexTableCell>
     </ComplexTableRow>
   </template>
