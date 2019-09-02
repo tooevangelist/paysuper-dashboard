@@ -82,6 +82,8 @@ export default {
     ...mapState('User', ['role']),
   },
   methods: {
+    ...mapActions(['setIsLoading']),
+    ...mapActions('User', ['logout']),
     ...mapMutations('User', { setRole: 'role' }),
     ...mapActions('LeaveFeedback', ['postFeedback']),
     hideInfoBlock() {
@@ -120,6 +122,13 @@ export default {
       } catch (error) {
         this.$_Notifications_showErrorMessage(error.message);
       }
+    },
+
+    async handleLogout() {
+      this.setIsLoading(true);
+      await this.logout();
+      this.setIsLoading(false);
+      this.$router.push({ path: '/' });
     },
   },
 };
@@ -263,7 +272,12 @@ export default {
       </UiTip>
     </div>
 
-    <a href="#" class="right-icon icon-user">
+    <a
+      href="#"
+      class="right-icon icon-user"
+      @click.prevent="handleLogout"
+      title="log out"
+    >
       <IconUser />
     </a>
   </div>

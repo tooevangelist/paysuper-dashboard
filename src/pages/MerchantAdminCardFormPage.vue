@@ -122,7 +122,6 @@ export default {
       currentStep,
       agreementDocument,
       paymentMethodsSort,
-      adminContentList,
     }"
     @stepChanged="handleSectionChange"
     @requestAgreementChange="handleAgreementChangeRequest"
