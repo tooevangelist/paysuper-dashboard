@@ -229,9 +229,6 @@ export default {
     background: #f7f9fa;
   }
 
-  &._editable {
-    // pointer-events: none;
-  }
   &._inactive {
     color: #c6cacc;
   }
@@ -251,29 +248,42 @@ export default {
     text-align: right;
   }
 
-  &._changes,
-  &._error {
-    &::before {
-      content: "";
-      position: absolute;
-      top: 4px;
-      left: 4px;
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-    }
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    display: none;
+  }
+  &::before {
+    background: #3d7bf5;
+  }
+  &::after {
+    background: #ea3d2f;
   }
 
   &._changes {
     &::before {
-      background: #3d7bf5;
+      display: block;
     }
   }
   &._error {
-    background: #fdefee;
+    &._editable {
+      background: #fdefee;
+    }
 
+    &::after {
+      display: block;
+    }
+  }
+
+  &._changes._error {
     &::before {
-      background: #ea3d2f;
+      left: 10px;
     }
   }
 

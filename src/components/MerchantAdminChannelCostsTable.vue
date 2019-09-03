@@ -165,6 +165,7 @@ export default {
         align="left"
         :isCollapsed="!!data.parent"
         :hasChanges="$_PaymentMethodsTable_getIsGroupHasChanges(data, activeFieldNames)"
+        :hasError="$_PaymentMethodsTable_getIsGroupHasError(data, activeFieldNames)"
         @click.native="data.isExpanded = !data.isExpanded"
       >
         <ExpandableCellText
