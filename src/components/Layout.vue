@@ -240,6 +240,7 @@ $content-side-padding: 6vw;
 .main {
   display: flex;
   justify-content: space-between;
+  height: 100px; // ie11 fix to force recalculate
   max-height: 100%;
   flex-grow: 1;
   min-height: 0;
