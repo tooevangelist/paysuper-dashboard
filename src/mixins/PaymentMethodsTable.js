@@ -25,6 +25,15 @@ export default {
 
       return some(flatten(hasChangesArray), item => item);
     },
+    $_PaymentMethodsTable_getIsGroupHasError(rowData, activeFieldNames) {
+      if (rowData.parent) {
+        return false;
+      }
+      const hasChangesArray = [rowData, ...(rowData.items ? rowData.items : [])]
+        .map(item => activeFieldNames.map(name => (item[name] ? item[name].hasError : false)));
+
+      return some(flatten(hasChangesArray), item => item);
+    },
     $_PaymentMethodsTable_getEditableCellProps(field) {
       if (!field) {
         return {
@@ -33,7 +42,7 @@ export default {
       }
       return {
         isEditable: true,
-        hasChanges: field.hasChanges,
+        hasChanges: !field.hasError && field.hasChanges,
         hasError: field.hasError,
         hasFocus: field.hasFocus,
         value: field.value,
