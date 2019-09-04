@@ -72,11 +72,11 @@ export default function createLicenseAgreementStore() {
         }
       },
       async fetchAgreementSignature({ commit, rootState, rootGetters }) {
-        const isOnboardingComplete = rootGetters['Company/isOnboardingComplete'];
+        const isStepsOnboardingComplete = rootGetters['Company/isStepsOnboardingComplete'];
         const { accessToken, Merchant } = rootState.User;
         const merchantId = get(Merchant, 'merchant.id', 0);
 
-        if (merchantId && isOnboardingComplete) {
+        if (merchantId && isStepsOnboardingComplete) {
           const response = await axios.put(
             `${rootState.config.apiUrl}/admin/api/v1/merchants/${merchantId}/agreement/signature`,
             { singer_type: 0 },

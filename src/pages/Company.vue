@@ -106,11 +106,19 @@ export default {
 
 <template>
 <div class="company">
-  <div class="title">Company</div>
-  <div class="info">
-    Please fill-in carefully official credentials of your company, because these data will be used
-    in our future License Agreement formation. If you change any of these data in future after we
-    sign license agreement please notify our support team about it.
+  <div class="wrapper">
+    <div class="left">
+      <div class="title">Company</div>
+
+      <div class="info">
+        Add the official credentials of your company. Please fill-in carefully,
+        because these data will be used in our future License Agreement formation.
+        If you decide to change any of these data in future after we sign license agreement
+        please notify our support team about it.
+      </div>
+    </div>
+
+    <IconCompanyPage class="right" />
   </div>
 
   <SmartListItem
@@ -137,12 +145,28 @@ export default {
   margin-bottom: 12px;
   color: #000;
 }
+.wrapper {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+.left {
+  margin-right: 48px;
+}
+.right {
+  flex-basis: 28%;
+  display: none;
+
+  @media screen and (min-width: 768px) {
+    display: block;
+  }
+}
 .info {
   font-size: 14px;
   line-height: 20px;
   letter-spacing: 0.25px;
   color: #5e6366;
-  max-width: 548px;
+  max-width: 448px;
   margin-bottom: 32px;
 }
 .item {
