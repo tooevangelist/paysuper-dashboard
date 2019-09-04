@@ -19,7 +19,7 @@ export default function createCompanyStore() {
       },
     },
     getters: {
-      isOnboardingComplete(state) {
+      isStepsOnboardingComplete(state) {
         return size(state.steps) === 4 && !some(state.steps, step => step === false);
       },
     },

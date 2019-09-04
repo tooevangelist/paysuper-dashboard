@@ -1,5 +1,4 @@
 <script>
-import { includes } from 'lodash-es';
 import { mapState, mapMutations, mapActions } from 'vuex';
 import { directive as clickaway } from 'vue-clickaway';
 import Notifications from '@/components/Notifications.vue';
@@ -20,13 +19,6 @@ export default {
     projectName: {
       required: true,
       type: String,
-    },
-    status: {
-      default: 'test',
-      type: String,
-      validator(val) {
-        return includes(['test', 'active'], val);
-      },
     },
   },
   data() {
@@ -80,6 +72,11 @@ export default {
   },
   computed: {
     ...mapState('User', ['role']),
+    ...mapState('Company/LicenseAgreement', { statusCode: 'status' }),
+
+    status() {
+      return this.statusCode >= 4 ? 'active' : 'test';
+    },
   },
   methods: {
     ...mapActions(['setIsLoading']),

@@ -77,6 +77,39 @@ export default {
               payoutParty: 'Pay Super',
             },
             {
+              method: 'Union Pay',
+              icon: 'IconUnionPay',
+              methodFee: '1',
+              fixedFee: '1',
+              overallFee: '1',
+              psGeneralFixedFee: '1',
+              refundFee: '1',
+              refundFixedFee: '1',
+              payoutParty: 'Pay Super',
+            },
+            {
+              method: 'JCB',
+              icon: 'IconJCB',
+              methodFee: '1',
+              fixedFee: '1',
+              overallFee: '1',
+              psGeneralFixedFee: '1',
+              refundFee: '1',
+              refundFixedFee: '1',
+              payoutParty: 'Pay Super',
+            },
+            {
+              method: 'PayPal',
+              icon: 'IconPayPal',
+              methodFee: '1',
+              fixedFee: '1',
+              overallFee: '1',
+              psGeneralFixedFee: '1',
+              refundFee: '1',
+              refundFixedFee: '1',
+              payoutParty: 'Pay Super',
+            },
+            {
               method: 'QIWI',
               icon: 'IconQiwi',
               methodFee: '1',
@@ -120,10 +153,22 @@ export default {
               refundFixedFee: '1',
               payoutParty: 'Pay Super',
             },
+            {
+              method: 'Token.io',
+              icon: 'IconTokenIo',
+              methodFee: '1',
+              fixedFee: '1',
+              overallFee: '1',
+              psGeneralFixedFee: '1',
+              refundFee: '1',
+              refundFixedFee: '1',
+              payoutParty: 'Pay Super',
+            },
           ],
           countries: ['USA'],
           defaultCurrency: 'usd',
           label: 'North America',
+          abbreviation: 'NA',
         },
         european_union: {
           costs: [
@@ -150,6 +195,39 @@ export default {
               payoutParty: 'Pay Super',
             },
             {
+              method: 'Union Pay',
+              icon: 'IconUnionPay',
+              methodFee: '1',
+              fixedFee: '1',
+              overallFee: '1',
+              psGeneralFixedFee: '1',
+              refundFee: '1',
+              refundFixedFee: '1',
+              payoutParty: 'Pay Super',
+            },
+            {
+              method: 'JCB',
+              icon: 'IconJCB',
+              methodFee: '1',
+              fixedFee: '1',
+              overallFee: '1',
+              psGeneralFixedFee: '1',
+              refundFee: '1',
+              refundFixedFee: '1',
+              payoutParty: 'Pay Super',
+            },
+            {
+              method: 'PayPal',
+              icon: 'IconPayPal',
+              methodFee: '1',
+              fixedFee: '1',
+              overallFee: '1',
+              psGeneralFixedFee: '1',
+              refundFee: '1',
+              refundFixedFee: '1',
+              payoutParty: 'Pay Super',
+            },
+            {
               method: 'QIWI',
               icon: 'IconQiwi',
               methodFee: '1',
@@ -193,10 +271,22 @@ export default {
               refundFixedFee: '1',
               payoutParty: 'Pay Super',
             },
+            {
+              method: 'Token.io',
+              icon: 'IconTokenIo',
+              methodFee: '1',
+              fixedFee: '1',
+              overallFee: '1',
+              psGeneralFixedFee: '1',
+              refundFee: '1',
+              refundFixedFee: '1',
+              payoutParty: 'Pay Super',
+            },
           ],
           countries: ['France'],
           defaultCurrency: 'euro',
           label: 'European Union',
+          abbreviation: 'EU',
         },
         united_kingdom: {
           costs: [
@@ -223,6 +313,39 @@ export default {
               payoutParty: 'Pay Super',
             },
             {
+              method: 'Union Pay',
+              icon: 'IconUnionPay',
+              methodFee: '1',
+              fixedFee: '1',
+              overallFee: '1',
+              psGeneralFixedFee: '1',
+              refundFee: '1',
+              refundFixedFee: '1',
+              payoutParty: 'Pay Super',
+            },
+            {
+              method: 'JCB',
+              icon: 'IconJCB',
+              methodFee: '1',
+              fixedFee: '1',
+              overallFee: '1',
+              psGeneralFixedFee: '1',
+              refundFee: '1',
+              refundFixedFee: '1',
+              payoutParty: 'Pay Super',
+            },
+            {
+              method: 'PayPal',
+              icon: 'IconPayPal',
+              methodFee: '1',
+              fixedFee: '1',
+              overallFee: '1',
+              psGeneralFixedFee: '1',
+              refundFee: '1',
+              refundFixedFee: '1',
+              payoutParty: 'Pay Super',
+            },
+            {
               method: 'QIWI',
               icon: 'IconQiwi',
               methodFee: '1',
@@ -266,10 +389,22 @@ export default {
               refundFixedFee: '1',
               payoutParty: 'Pay Super',
             },
+            {
+              method: 'Token.io',
+              icon: 'IconTokenIo',
+              methodFee: '1',
+              fixedFee: '1',
+              overallFee: '1',
+              psGeneralFixedFee: '1',
+              refundFee: '1',
+              refundFixedFee: '1',
+              payoutParty: 'Pay Super',
+            },
           ],
           countries: ['UK'],
           defaultCurrency: 'gbp',
           label: 'United Kingdom',
+          abbreviation: 'UK',
         },
         russia: {
           costs: [
@@ -296,6 +431,39 @@ export default {
               payoutParty: 'Pay Super',
             },
             {
+              method: 'Union Pay',
+              icon: 'IconUnionPay',
+              methodFee: '1',
+              fixedFee: '1',
+              overallFee: '1',
+              psGeneralFixedFee: '1',
+              refundFee: '1',
+              refundFixedFee: '1',
+              payoutParty: 'Pay Super',
+            },
+            {
+              method: 'JCB',
+              icon: 'IconJCB',
+              methodFee: '1',
+              fixedFee: '1',
+              overallFee: '1',
+              psGeneralFixedFee: '1',
+              refundFee: '1',
+              refundFixedFee: '1',
+              payoutParty: 'Pay Super',
+            },
+            {
+              method: 'PayPal',
+              icon: 'IconPayPal',
+              methodFee: '1',
+              fixedFee: '1',
+              overallFee: '1',
+              psGeneralFixedFee: '1',
+              refundFee: '1',
+              refundFixedFee: '1',
+              payoutParty: 'Pay Super',
+            },
+            {
               method: 'QIWI',
               icon: 'IconQiwi',
               methodFee: '1',
@@ -339,10 +507,22 @@ export default {
               refundFixedFee: '1',
               payoutParty: 'Pay Super',
             },
+            {
+              method: 'Token.io',
+              icon: 'IconTokenIo',
+              methodFee: '1',
+              fixedFee: '1',
+              overallFee: '1',
+              psGeneralFixedFee: '1',
+              refundFee: '1',
+              refundFixedFee: '1',
+              payoutParty: 'Pay Super',
+            },
           ],
           countries: ['Russia'],
           defaultCurrency: 'rub',
           label: 'Russia',
+          abbreviation: 'RU',
         },
         worldwide: {
           costs: [
@@ -369,6 +549,39 @@ export default {
               payoutParty: 'Pay Super',
             },
             {
+              method: 'Union Pay',
+              icon: 'IconUnionPay',
+              methodFee: '1',
+              fixedFee: '1',
+              overallFee: '1',
+              psGeneralFixedFee: '1',
+              refundFee: '1',
+              refundFixedFee: '1',
+              payoutParty: 'Pay Super',
+            },
+            {
+              method: 'JCB',
+              icon: 'IconJCB',
+              methodFee: '1',
+              fixedFee: '1',
+              overallFee: '1',
+              psGeneralFixedFee: '1',
+              refundFee: '1',
+              refundFixedFee: '1',
+              payoutParty: 'Pay Super',
+            },
+            {
+              method: 'PayPal',
+              icon: 'IconPayPal',
+              methodFee: '1',
+              fixedFee: '1',
+              overallFee: '1',
+              psGeneralFixedFee: '1',
+              refundFee: '1',
+              refundFixedFee: '1',
+              payoutParty: 'Pay Super',
+            },
+            {
               method: 'QIWI',
               icon: 'IconQiwi',
               methodFee: '1',
@@ -412,10 +625,22 @@ export default {
               refundFixedFee: '1',
               payoutParty: 'Pay Super',
             },
+            {
+              method: 'Token.io',
+              icon: 'IconTokenIo',
+              methodFee: '1',
+              fixedFee: '1',
+              overallFee: '1',
+              psGeneralFixedFee: '1',
+              refundFee: '1',
+              refundFixedFee: '1',
+              payoutParty: 'Pay Super',
+            },
           ],
           countries: ['China'],
           defaultCurrency: 'usd',
           label: 'Worldwide',
+          abbreviation: 'WW',
         },
       };
     },
@@ -449,10 +674,11 @@ export default {
 <div class="payment-methods">
   <div class="section">
     <div class="info">
-      Here you can choose the main operational region,
-      where you plan your main sales volume and initial payout currency.
+      Choose payout currency and the main operational region,
+      where you plan your main sales volume.
       This important choice will define your future money flow rates and commissions,
-      so check the variants below carefully and choose the best match for your needs.
+      so check the variants below carefully,
+      since you will not be able to change these parameters in future.
     </div>
 
     <div class="select">
@@ -502,7 +728,7 @@ export default {
   <div class="section">
     <div class="title">Channel costs</div>
     <div class="info">
-      Here you can find how your chosen pair <span class="bolder">Home Region</span> and
+      You can find how your chosen pair <span class="bolder">Home Region</span> and
       <span class="bolder">Payout Currency</span> affects on different payment methods fees.
     </div>
 
@@ -536,15 +762,16 @@ export default {
           on rates and fees, if your customer will get refund in another region
         </UiTip>
       </div>
-      Customers’ Region
+      External regions rates ({{ regions[channelCostsRegion].abbreviation }})
     </div>
     <div class="tabs">
       <UiButton
         v-for="(region, index) in prepareRegions"
         :key="index"
         class="tabs-btn"
+        color="light-gray"
         :isRounded="true"
-        :color="channelCostsRegion === region.value ? 'blue' : 'light-gray'"
+        :isTransparent="channelCostsRegion !== region.value"
         @click="channelCostsRegion = region.value"
       >
         {{ region.label }}
@@ -552,8 +779,7 @@ export default {
     </div>
 
     <UiTable>
-      <UiTableRow :isHead="true">
-        <UiTableCell class="cell _first"></UiTableCell>
+      <UiTableRow :isHead="true" class="row-indent">
         <UiTableCell class="cell _second" align="left">Payment Method</UiTableCell>
         <UiTableCell class="cell _channel">Method fee, %</UiTableCell>
         <UiTableCell class="cell _channel">Fixed fee</UiTableCell>
@@ -605,15 +831,16 @@ export default {
           on rates and fees, if your customer will get refund in another region
         </UiTip>
       </div>
-      Customers’ Region
+      External regions rates ({{ regions[refundCostsRegion].abbreviation }})
     </div>
     <div class="tabs">
       <UiButton
         v-for="(region, index) in prepareRegions"
         :key="index"
         class="tabs-btn"
+        color="light-gray"
         :isRounded="true"
-        :color="refundCostsRegion === region.value ? 'blue' : 'light-gray'"
+        :isTransparent="refundCostsRegion !== region.value"
         @click="refundCostsRegion = region.value"
       >
         {{ region.label }}
@@ -621,8 +848,7 @@ export default {
     </div>
 
     <UiTable>
-      <UiTableRow :isHead="true">
-        <UiTableCell class="cell _first"></UiTableCell>
+      <UiTableRow :isHead="true" class="row-indent">
         <UiTableCell class="cell _second" align="left">Payment Method</UiTableCell>
         <UiTableCell class="cell _refund">Refund fee, %</UiTableCell>
         <UiTableCell class="cell _refund">Refund fixed fee</UiTableCell>
@@ -652,12 +878,12 @@ export default {
 
     <UiTable>
       <UiTableRow :isHead="true" class="row-indent">
-        <UiTableCell class="cell _second _with-pad" align="left">Payment Method</UiTableCell>
+        <UiTableCell class="cell _second" align="left">Payment Method</UiTableCell>
         <UiTableCell class="cell _merch">Chargeback fee, fix</UiTableCell>
         <UiTableCell class="cell _merch">Chargeback fee payout party</UiTableCell>
       </UiTableRow>
       <UiTableRow class="row-indent">
-        <UiTableCell class="cell _second _with-pad" align="left">All Methods</UiTableCell>
+        <UiTableCell class="cell _second" align="left">All Methods</UiTableCell>
         <UiTableCell class="cell _merch">$25,00</UiTableCell>
         <UiTableCell class="cell _merch">Merchant</UiTableCell>
       </UiTableRow>
@@ -672,12 +898,12 @@ export default {
 
     <UiTable>
       <UiTableRow :isHead="true" class="row-indent">
-        <UiTableCell class="cell _second _with-pad" align="left">Payment Method</UiTableCell>
+        <UiTableCell class="cell _second" align="left">Payment Method</UiTableCell>
         <UiTableCell class="cell _merch">Payout fee, fix</UiTableCell>
         <UiTableCell class="cell _merch">Fee payout party</UiTableCell>
       </UiTableRow>
       <UiTableRow class="row-indent">
-        <UiTableCell class="cell _second _with-pad" align="left">All Methods</UiTableCell>
+        <UiTableCell class="cell _second" align="left">All Methods</UiTableCell>
         <UiTableCell class="cell _merch">$25,00</UiTableCell>
         <UiTableCell class="cell _merch">Merchant</UiTableCell>
       </UiTableRow>
@@ -778,16 +1004,14 @@ export default {
 }
 .tabs {
   display: flex;
-  justify-content: space-between;
-  align-items: stretch;
   flex-wrap: wrap;
   margin-bottom: 20px;
 }
-.tabs-btn {
+.tabs > .tabs-btn {
   font-weight: normal;
   letter-spacing: 0.25px;
-  flex-basis: calc(20% - 4px);
   margin-bottom: 4px;
+  margin-right: 4px;
 }
 .method-icon {
   width: 32px;
@@ -797,17 +1021,20 @@ export default {
 .bolder {
   font-weight: 500;
 }
+.row-indent {
+  &::before {
+    content: '';
+    display: table-cell;
+    width: 40px;
+    border-bottom: 2px solid #e3e5e6;
+  }
+}
 .cell {
   &._first {
     width: 40px;
   }
   &._second {
     width: 120px;
-
-    &._with-pad {
-      padding-left: 40px;
-      width: 160px;
-    }
   }
   &._channel {
     width: 19.5%;

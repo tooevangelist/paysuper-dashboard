@@ -106,13 +106,26 @@ $button-font-color: #fff;
 $gray-button-color: #919699;
 $light-gray-button-color: #f7f9fa;
 $light-gray-font-color: #333;
+$light-gray-font-weight: normal;
+$light-gray-transparent-font-color: #333;
+$light-gray-transparent-border-color: #e3e5e6;
+$light-gray-transparent-hover-font-color: #3d7bf5;
+$light-gray-transparent-hover-box-color: rgba(#3d7bf5, 0.08);
 $red-button-color: #ea3d2f;
 $disabled-button-color: #f1f3f4;
 $disabled-font-color: #919699;
 
 $primary-button-size: 14px;
 
-@mixin base-button($background, $color: $button-font-color) {
+@mixin base-button(
+  $background,
+  $color: $button-font-color,
+  $fontWeight: 500,
+  $transparentColor: $background,
+  $transparentBorderColor: $background,
+  $transparentHoverColor: $color,
+  $transparentHoverBoxColor: transparent
+) {
   background-color: $background;
   border-radius: 4px;
   border-width: 0;
@@ -121,14 +134,14 @@ $primary-button-size: 14px;
   display: inline-block;
   font-size: $primary-button-size;
   font-family: Roboto;
-  font-weight: 500;
+  font-weight: $fontWeight;
   line-height: 24px;
   max-width: 100%;
   outline: none;
   padding: 8px 24px;
   position: relative;
   text-align: center;
-  transition: background-color 0.2s ease-out, box-shadow 0.2s ease-out;
+  transition: color 0.2s ease-out, background-color 0.2s ease-out, box-shadow 0.2s ease-out;
 
   &:not(._disabled):not(._transparent):before {
     bottom: 1px;
@@ -172,8 +185,13 @@ $primary-button-size: 14px;
 
   &._transparent {
     background-color: transparent;
-    color: $background;
-    box-shadow: inset 0px 0px 0px 1px $background;
+    color: $transparentColor;
+    box-shadow: inset 0px 0px 0px 1px $transparentBorderColor;
+
+    &:hover {
+      background-color: $transparentHoverBoxColor;
+      color: $transparentHoverColor;
+    }
   }
 }
 
@@ -194,7 +212,15 @@ $primary-button-size: 14px;
     @include base-button($gray-button-color);
   }
   &._light-gray {
-    @include base-button($light-gray-button-color, $light-gray-font-color);
+    @include base-button(
+      $light-gray-button-color,
+      $light-gray-font-color,
+      normal,
+      $light-gray-transparent-font-color,
+      $light-gray-transparent-border-color,
+      $light-gray-transparent-hover-font-color,
+      $light-gray-transparent-hover-box-color
+    );
   }
   &._red {
     @include base-button($red-button-color);
