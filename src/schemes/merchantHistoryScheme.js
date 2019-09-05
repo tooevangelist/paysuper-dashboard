@@ -8,7 +8,7 @@ const filters = {
 
   status: {
     defaultValue: () => [],
-    isQueryDisabled: true,
+    isPassingToQueryDisabled: true,
   },
 
   sort: {

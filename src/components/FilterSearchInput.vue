@@ -12,6 +12,11 @@ export default {
       type: [String, Number],
       default: '',
     },
+
+    isAlwaysExpanded: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -39,7 +44,7 @@ export default {
 <template>
 <div
   class="filter-search-input"
-  :class="{ '_expanded': isExpanded }"
+  :class="{ '_expanded': isAlwaysExpanded || isExpanded }"
   @click="expandInput"
 >
   <input

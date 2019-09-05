@@ -4,7 +4,6 @@
   class="ui-table-row"
   :class="{
     '_head': isHead,
-    '_hoverable': isHoverable,
     '_clickable': isClickable || link
   }"
   :to="link && isRouter(link.router) ? url : null"
@@ -20,10 +19,6 @@ export default {
 
   props: {
     isHead: {
-      type: Boolean,
-      default: false,
-    },
-    isHoverable: {
       type: Boolean,
       default: false,
     },
@@ -80,13 +75,12 @@ export default {
 .ui-table-row {
   display: table-row;
   text-decoration: none;
+  color: #000;
 
-  &._hoverable:hover {
-    background: #e3eeff;
-  }
-
-  &._clickable {
+  &._clickable:hover {
+    background: rgba(61, 123, 245, 0.08);
     cursor: pointer;
+    color: #3d7bf5;
   }
 }
 </style>

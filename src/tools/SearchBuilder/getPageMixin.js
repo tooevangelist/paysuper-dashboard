@@ -1,4 +1,4 @@
-function getPageQuery({ queryValue, groupFilterValues: { limit } }) {
+export function getPageQuery({ queryValue, groupFilterValues: { limit } }) {
   return {
     limit,
     offset: (queryValue - 1) * limit,

@@ -5,6 +5,7 @@
     `_${align}`,
     { '_head': isHead, '_is-sortable': isSortAvailable, ['_' + sortDirection]: sortDirection }
   ]"
+  :style="{ width }"
 >
   <svg
     v-if="isSortAvailable && sortDirection"
@@ -49,6 +50,10 @@ export default {
         return includes(['asc', 'desc', null], value);
       },
     },
+    width: {
+      default: '',
+      type: String,
+    },
   },
   data() {
     return {
@@ -67,7 +72,6 @@ export default {
 .ui-table-cell {
   display: table-cell;
   padding: 9px 2px;
-  color: #000;
   vertical-align: middle;
   border-bottom: 1px solid #e3e5e6;
   text-align: center;

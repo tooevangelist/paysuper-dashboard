@@ -54,7 +54,10 @@ export default function createMerchantListStore() {
     },
 
     actions: {
-      async initState({ commit, dispatch }, { query, apiQueryExtention }) {
+      async initState({ commit, getters, dispatch }, { query, apiQueryExtention }) {
+        const filters = getters.getFilterValues();
+        dispatch('submitFilters', filters);
+
         commit('apiQueryExtention', apiQueryExtention);
         dispatch('initQuery', query);
         await dispatch('fetchMerchants');
@@ -74,6 +77,14 @@ export default function createMerchantListStore() {
           items: [],
           count: 0,
         };
+
+        // append mode for infinite scroll
+        if (state.apiQuery.offset > 0 && merchants.count === state.merchants.count) {
+          merchants.items = [
+            ...state.merchants.items,
+            ...merchants.items,
+          ];
+        }
         commit('merchants', merchants);
       },
 
