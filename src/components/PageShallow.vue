@@ -7,16 +7,6 @@ export default {
   components: {
     LocaleSwitcher,
   },
-
-  beforeMount() {
-    document.body.classList.add('page-shallow-body');
-    document.body.parentNode.classList.add('page-shallow-html');
-  },
-
-  destroyed() {
-    document.body.classList.remove('page-shallow-body');
-    document.body.parentNode.classList.remove('page-shallow-html');
-  },
 };
 </script>
 

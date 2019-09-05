@@ -97,16 +97,6 @@ export default {
     },
   },
 
-  beforeMount() {
-    document.body.classList.add('page-body');
-    document.body.parentNode.classList.add('page-html');
-  },
-
-  destroyed() {
-    document.body.classList.remove('page-body');
-    document.body.parentNode.classList.remove('page-html');
-  },
-
   methods: {
     ...mapActions('User', ['logout']),
     ...mapActions(['setIsLoading']),

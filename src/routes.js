@@ -226,7 +226,7 @@ const routes = [
   {
     path: '*',
     name: 'notFound',
-    component: () => import('@/pages/404Page.vue'),
+    component: () => import('@/pages/Error404Page.vue'),
   },
 ];
 

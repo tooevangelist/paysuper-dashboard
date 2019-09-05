@@ -41,14 +41,7 @@ export default {
       return getMerchantMainNavItems();
     },
   },
-  beforeMount() {
-    document.body.classList.add('layout-body');
-    document.body.parentNode.classList.add('layout-html');
-  },
-  destroyed() {
-    document.body.classList.remove('layout-body');
-    document.body.parentNode.classList.remove('layout-html');
-  },
+
   methods: {
     get,
     isComponent(component) {

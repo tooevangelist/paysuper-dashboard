@@ -1,16 +1,6 @@
 <script>
 export default {
   name: 'PageNoLayout',
-
-  beforeMount() {
-    document.body.classList.add('page-no-layout-body');
-    document.body.parentNode.classList.add('page-no-layout-html');
-  },
-
-  destroyed() {
-    document.body.classList.remove('page-no-layout-body');
-    document.body.parentNode.classList.remove('page-no-layout-html');
-  },
 };
 </script>
 
