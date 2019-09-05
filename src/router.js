@@ -1,5 +1,6 @@
 import VueRouter from 'vue-router';
 import qs from 'qs';
+import { get, kebabCase } from 'lodash-es';
 import store from './store/RootStore';
 import resources from './resources';
 import routes from './routes';
@@ -25,6 +26,20 @@ async function registerStoreModule(moduleName, module, initParams) {
     store.registerModule(moduleName, module(resources));
   }
   return store.dispatch(`${moduleName}/initState`, initParams);
+}
+
+/**
+ * Handles special class-modificators for html and body tag
+ * to allow layout components to change its styles independetly
+ */
+function updateDocumentClassModificators(to, from) {
+  const nameToRemove = kebabCase(get(from, 'meta.layout', 'PageNoLayout'));
+  const nameToAdd = kebabCase(get(to, 'meta.layout', 'PageNoLayout'));
+
+  document.body.classList.remove(`${nameToRemove}-body`);
+  document.body.parentNode.classList.remove(`${nameToRemove}-html`);
+  document.body.classList.add(`${nameToAdd}-body`);
+  document.body.parentNode.classList.add(`${nameToAdd}-html`);
 }
 
 router.beforeResolve((to, from, next) => {
@@ -66,8 +81,11 @@ router.beforeResolve((to, from, next) => {
     next();
   }).catch(next);
 
-
   return undefined;
+});
+
+router.afterEach((to, from) => {
+  updateDocumentClassModificators(to, from);
 });
 
 export default router;
