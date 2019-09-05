@@ -112,7 +112,11 @@ export default {
     </aside>
 
     <section class="content">
-      <UiScrollbarBox class="scrollbox">
+      <UiScrollbarBox
+        class="scrollbox"
+        @ps-y-reach-end="$appEvents.$emit('contentScrollReachEnd')"
+        @ps-scroll-y="$appEvents.$emit('contentScroll')"
+      >
         <div class="scrollbox-inner">
           <slot />
         </div>

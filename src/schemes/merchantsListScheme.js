@@ -1,5 +1,3 @@
-import getPageMixin from '@/tools/SearchBuilder/getPageMixin';
-
 function getAgreementApiQuerValue(value) {
   if (value === 'signed') {
     return [4];
@@ -31,9 +29,28 @@ const filters = {
   sort: {
     defaultValue: () => [],
   },
+
+  limit: {
+    isPassingToQueryDisabled: true,
+    defaultValue: 30,
+  },
+
+  offset: {
+    isPassingToQueryDisabled: true,
+    defaultValue: 0,
+  },
+
+  dateFrom: {
+    defaultValue: null,
+    apiQueryName: 'last_payout_date_from',
+  },
+
+  dateTo: {
+    defaultValue: null,
+    apiQueryName: 'last_payout_date_to',
+  },
 };
 
 export default {
   filters,
-  mixins: [getPageMixin()],
 };

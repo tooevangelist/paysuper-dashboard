@@ -156,7 +156,8 @@ export default {
   queryName: '',
   apiQueryName: '',
   group: 'page',
-  isQueryDisabled: true,
+  isPassingToQueryDisabled: true,
+  isPassingToApiQueryDisabled: true,
   queryToFilter({ queryValue }) {
     return Number(queryValue);
   },

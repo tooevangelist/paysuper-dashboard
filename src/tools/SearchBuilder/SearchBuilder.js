@@ -112,7 +112,7 @@ export default class SearchBulder {
     forEach(filters, (filterValue, filterName) => {
       const schemeItem = this.scheme.filters[filterName];
 
-      if (schemeItem.isQueryDisabled) {
+      if (schemeItem.isPassingToQueryDisabled) {
         return;
       }
 
@@ -146,6 +146,10 @@ export default class SearchBulder {
     const groups = {};
     forEach(filters, (filterValue, filterName) => {
       const schemeItem = this.scheme.filters[filterName];
+
+      if (schemeItem.isPassingToApiQueryDisabled) {
+        return;
+      }
 
       if (
         schemeItem.group
@@ -201,6 +205,10 @@ export default class SearchBulder {
     let apiQuery = {};
     forEach(filters, (filterValue, filterName) => {
       const schemeItem = this.scheme.filters[filterName];
+
+      if (schemeItem.isPassingToApiQueryDisabled) {
+        return;
+      }
 
       if (
         schemeItem.group

@@ -88,7 +88,7 @@ export default {
       this.setIsLoading(true);
       this.submitFilters(this.filters);
       this.navigate();
-      await this.fetchProjects();
+      await this.fetchProjects().catch(this.$_Notifications_showErrorMessage);
       this.setIsLoading(false);
     },
 
