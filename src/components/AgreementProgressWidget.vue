@@ -1,47 +1,58 @@
 <script>
 import { mapState } from 'vuex';
 import { reduce } from 'lodash-es';
+import PictureWelcomeSheets from '@/components/PictureWelcomeSheets.vue';
 import SmartListItem from '@/components/SmartListItem.vue';
 
 export default {
   name: 'AgreementProgressWidget',
   components: {
+    PictureWelcomeSheets,
     SmartListItem,
   },
   computed: {
-    ...mapState('Company', ['completeStepsCount', 'steps']),
-    ...mapState('User/Merchant', ['merchant']),
+    ...mapState('User/Merchant', [
+      'onboardingCompleteStepsCount',
+      'onboardingSteps',
+      'merchant',
+      'hasProjects',
+    ]),
 
     isCompanyInfoLocked() {
-      return this.completeStepsCount >= 3 && this.merchant.status === 0;
+      return this.onboardingCompleteStepsCount > 2;
     },
     companyInfoStatuses() {
       return reduce(['company', 'contacts', 'banking'], (res, item) => ({
         ...res,
         [item]: {
-          status: this.steps[item]
+          status: this.onboardingSteps[item]
             ? 'complete'
             : this.isCompanyInfoLocked ? 'locked' : 'default',
-          notice: this.steps[item] ? '' : 'Incomplete',
-          noticeStatus: this.steps[item] ? 'default' : 'warning',
+          notice: this.onboardingSteps[item] ? '' : 'Incomplete',
+          noticeStatus: this.onboardingSteps[item] ? 'default' : 'warning',
         },
       }), {});
     },
     isPaymentMethodsLocked() {
-      return this.completeStepsCount <= 2 || this.merchant.status !== 0;
+      return this.onboardingCompleteStepsCount < 3 || this.merchant.status !== 0;
     },
     paymentMethodsStatus() {
       return {
-        status: this.steps.tariff
+        status: this.onboardingSteps.tariff
           ? 'complete'
           : this.isPaymentMethodsLocked ? 'locked' : 'default',
-        notice: this.steps.tariff
+        notice: this.onboardingSteps.tariff
           ? ''
           : this.isPaymentMethodsLocked ? 'After Previous Steps' : 'Incomplete',
       };
     },
     isLicenseLocked() {
-      return this.completeStepsCount <= 3;
+      return this.onboardingCompleteStepsCount < 4;
+    },
+    licenseNotice() {
+      return this.isLicenseLocked
+        ? 'After Previous Steps'
+        : this.merchant.status < 3 ? 'Not Signed' : 'Checking agreement…';
     },
     licenseStatus() {
       return {
@@ -50,17 +61,20 @@ export default {
           : this.isLicenseLocked ? 'locked' : 'default',
         notice: this.merchant.status === 4
           ? ''
-          : this.isLicenseLocked ? 'After Previous Steps' : 'Incomplete',
+          : this.licenseNotice,
       };
+    },
+    isProjectLocked() {
+      return this.merchant.status < 4;
     },
     projectStatus() {
       return {
-        status: this.merchant.status === 4
+        status: this.hasProjects
           ? 'complete'
-          : this.isLicenseLocked ? 'locked' : 'default',
-        notice: this.merchant.status === 4
+          : this.isProjectLocked ? 'locked' : 'default',
+        notice: this.hasProjects
           ? ''
-          : this.isLicenseLocked ? 'After Previous Steps' : 'Incomplete',
+          : this.isProjectLocked ? 'After Previous Steps' : 'Incomplete',
       };
     },
     listItems() {
@@ -99,7 +113,7 @@ export default {
 <div>
   <div class="welcome">
     <span class="welcome-icon">
-      <IconWelcomeSheets />
+      <PictureWelcomeSheets />
     </span>
     <div class="welcome-texts">
       <UiHeader class="title" level="3">Welcome to Pay Super!</UiHeader>

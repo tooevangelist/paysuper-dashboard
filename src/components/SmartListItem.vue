@@ -138,7 +138,8 @@ export default {
   }
 
   &._status-complete {
-    background-color: #daf5f2;
+    background-color: #fff;
+    border-color: #e3e5e6;
   }
 
   &._status-locked {

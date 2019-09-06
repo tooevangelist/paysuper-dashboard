@@ -45,7 +45,7 @@ export default function createUserStore({ notifications }) {
 
       async initUserMerchantData({ commit, dispatch }) {
         try {
-          await dispatch('Merchant/fetchMerchant');
+          await dispatch('Merchant/initState');
           commit('isAuthorised', true);
         } catch (error) {
           throw error;

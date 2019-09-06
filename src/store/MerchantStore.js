@@ -1,4 +1,10 @@
-import { get, cloneDeep, isEqual } from 'lodash-es';
+import {
+  get,
+  cloneDeep,
+  isEqual,
+  size,
+  some,
+} from 'lodash-es';
 import axios from 'axios';
 import qs from 'qs';
 import mergeApiValuesWithDefaults from '@/helpers/mergeApiValuesWithDefaults';
@@ -95,6 +101,15 @@ export default function createMerchantStore() {
     state: () => ({
       merchant: null,
       merchantOriginalCopy: null,
+      onboardingCompleteStepsCount: 0,
+      merchantStatus: 'draft',
+      hasProjects: false,
+      onboardingSteps: {
+        company: false,
+        contacts: false,
+        banking: false,
+        tariff: false,
+      },
       paymentMethods: [],
       paymentMethodsSort: [],
       agreementDocument: getDefaultAgreementDocument(),
@@ -103,6 +118,9 @@ export default function createMerchantStore() {
     getters: {
       isMerchantChanged(state) {
         return !isEqual(state.merchant, state.merchantOriginalCopy);
+      },
+      isOnboardingStepsComplete(state) {
+        return size(state.steps) === 4 && !some(state.steps, step => step === false);
       },
     },
 
@@ -120,11 +138,25 @@ export default function createMerchantStore() {
       agreementDocument(state, data) {
         state.agreementDocument = data;
       },
+      onboardingCompleteStepsCount(state, data) {
+        state.onboardingCompleteStepsCount = data;
+      },
+      merchantStatus(state, data) {
+        state.merchantStatus = data;
+      },
+      onboardingSteps(state, data) {
+        state.onboardingSteps = data;
+      },
+      hasProjects(state, data) {
+        state.hasProjects = data;
+      },
     },
 
     actions: {
-      async initState({ dispatch }, id) {
-        await dispatch('fetchMerchantById', id);
+      async initState({ dispatch }) {
+        await dispatch('fetchMerchant');
+        await dispatch('fetchMerchantStatus');
+        await dispatch('hasProjects');
       },
 
       async fetchMerchantById({ commit, rootState }, id) {
@@ -133,6 +165,56 @@ export default function createMerchantStore() {
         }).catch(error => console.warn(error));
 
         commit('merchant', mapDataApiToForm(get(response, 'data', {})));
+      },
+
+      async fetchMerchantStatus({ commit, state, rootState }) {
+        const merchantId = get(state.merchant, 'id', 0);
+
+        if (merchantId) {
+          const response = await axios.get(
+            `${rootState.config.apiUrl}/admin/api/v1/merchants/${merchantId}/status`,
+            { headers: { Authorization: `Bearer ${rootState.User.accessToken}` } },
+          );
+
+          if (response.data) {
+            const merchantStatus = get(response, 'data.status', 'draft');
+            const stepsCount = get(response, 'data.complete_steps_count', 0);
+
+            commit('onboardingCompleteStepsCount', stepsCount + (merchantStatus === 'life' ? 1 : 0));
+            commit('merchantStatus', merchantStatus);
+            commit(
+              'onboardingSteps',
+              get(response, 'data.steps', {
+                company: false,
+                contacts: false,
+                banking: false,
+                tariff: false,
+              }),
+            );
+          }
+        }
+      },
+
+      async hasProjects({ state, commit, rootState }) {
+        const merchantId = get(state.merchant, 'id', 0);
+
+        const response = await axios.get(
+          `${rootState.config.apiUrl}/admin/api/v1/projects?merchant_id=${merchantId}&limit=0`,
+          { headers: { Authorization: `Bearer ${rootState.User.accessToken}` } },
+        );
+
+        commit('hasProjects', Boolean(get(response, 'data.count', 0)));
+        commit('onboardingCompleteStepsCount', state.onboardingCompleteStepsCount + 1);
+      },
+
+      completeStep({ commit, state }, stepName) {
+        if (stepName !== 'license') {
+          commit('onboardingSteps', {
+            ...state.onboardingSteps,
+            [stepName]: true,
+          });
+        }
+        commit('onboardingCompleteStepsCount', state.onboardingCompleteStepsCount + 1);
       },
 
       async fetchMerchant({ commit, rootState }) {
