@@ -43,7 +43,7 @@ export default {
         if (!item) {
           return null;
         }
-        return item / 1000;
+        return Number((item / 1000).toFixed(0));
       });
       this.$emit('input', formattedValue);
     },
