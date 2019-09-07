@@ -153,10 +153,8 @@ export default function createMerchantStore() {
     },
 
     actions: {
-      async initState({ dispatch }) {
-        await dispatch('fetchMerchant');
-        await dispatch('fetchMerchantStatus');
-        await dispatch('hasProjects');
+      async initState({ dispatch }, id) {
+        await dispatch('fetchMerchantById', id);
       },
 
       async fetchMerchantById({ commit, rootState }, id) {
@@ -195,11 +193,15 @@ export default function createMerchantStore() {
         }
       },
 
+      /**
+       * TODO: after https://protocolone.tpondemand.com/restui/board.aspx?#page=task/191909
+       * remove this method and use has_projects attribute from merchant object
+       */
       async hasProjects({ state, commit, rootState }) {
         const merchantId = get(state.merchant, 'id', 0);
 
         const response = await axios.get(
-          `${rootState.config.apiUrl}/admin/api/v1/projects?merchant_id=${merchantId}&limit=0`,
+          `${rootState.config.apiUrl}/admin/api/v1/projects?merchant_id=${merchantId}&limit=1`,
           { headers: { Authorization: `Bearer ${rootState.User.accessToken}` } },
         );
 
@@ -217,7 +219,7 @@ export default function createMerchantStore() {
         commit('onboardingCompleteStepsCount', state.onboardingCompleteStepsCount + 1);
       },
 
-      async fetchMerchant({ commit, rootState }) {
+      async fetchMerchant({ commit, dispatch, rootState }) {
         const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/merchants/user`, {
           headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
         }).catch((error) => {
@@ -229,6 +231,9 @@ export default function createMerchantStore() {
         });
 
         commit('merchant', mapDataApiToForm(get(response, 'data', {})));
+
+        await dispatch('fetchMerchantStatus');
+        await dispatch('hasProjects');
       },
 
       async fetchMerchantPaymentMethods({ state, commit, rootState }, id) {
