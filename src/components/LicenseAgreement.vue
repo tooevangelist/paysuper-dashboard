@@ -7,7 +7,7 @@ export default {
   mixins: [Notifications],
   computed: {
     ...mapGetters('Company/LicenseAgreement', ['isSigendYou', 'isSigendPS']),
-    ...mapState('Company/LicenseAgreement', ['isReject', 'file', 'signature']),
+    ...mapState('Company/LicenseAgreement', ['isReject', 'file']),
 
     isCheckingAgreement() {
       return this.isSigendYou && !this.isSigendPS;
@@ -111,7 +111,7 @@ export default {
   </div>
 
   <UiButton
-    v-if="(!isSigendYou || !isSigendPS) && signature"
+    v-if="(!isSigendYou || !isSigendPS)"
     class="submit"
     :disabled="isSigendYou"
     @click="openLicense"

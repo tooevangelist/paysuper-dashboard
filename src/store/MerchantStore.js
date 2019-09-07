@@ -1,4 +1,10 @@
-import { get, cloneDeep, isEqual } from 'lodash-es';
+import {
+  get,
+  cloneDeep,
+  isEqual,
+  size,
+  some,
+} from 'lodash-es';
 import axios from 'axios';
 import qs from 'qs';
 import mergeApiValuesWithDefaults from '@/helpers/mergeApiValuesWithDefaults';
@@ -95,6 +101,15 @@ export default function createMerchantStore() {
     state: () => ({
       merchant: null,
       merchantOriginalCopy: null,
+      onboardingCompleteStepsCount: 0,
+      merchantStatus: 'draft',
+      hasProjects: false,
+      onboardingSteps: {
+        company: false,
+        contacts: false,
+        banking: false,
+        tariff: false,
+      },
       paymentMethods: [],
       paymentMethodsSort: [],
       agreementDocument: getDefaultAgreementDocument(),
@@ -103,6 +118,9 @@ export default function createMerchantStore() {
     getters: {
       isMerchantChanged(state) {
         return !isEqual(state.merchant, state.merchantOriginalCopy);
+      },
+      isOnboardingStepsComplete(state) {
+        return size(state.steps) === 4 && !some(state.steps, step => step === false);
       },
     },
 
@@ -120,6 +138,18 @@ export default function createMerchantStore() {
       agreementDocument(state, data) {
         state.agreementDocument = data;
       },
+      onboardingCompleteStepsCount(state, data) {
+        state.onboardingCompleteStepsCount = data;
+      },
+      merchantStatus(state, data) {
+        state.merchantStatus = data;
+      },
+      onboardingSteps(state, data) {
+        state.onboardingSteps = data;
+      },
+      hasProjects(state, data) {
+        state.hasProjects = data;
+      },
     },
 
     actions: {
@@ -135,7 +165,61 @@ export default function createMerchantStore() {
         commit('merchant', mapDataApiToForm(get(response, 'data', {})));
       },
 
-      async fetchMerchant({ commit, rootState }) {
+      async fetchMerchantStatus({ commit, state, rootState }) {
+        const merchantId = get(state.merchant, 'id', 0);
+
+        if (merchantId) {
+          const response = await axios.get(
+            `${rootState.config.apiUrl}/admin/api/v1/merchants/${merchantId}/status`,
+            { headers: { Authorization: `Bearer ${rootState.User.accessToken}` } },
+          );
+
+          if (response.data) {
+            const merchantStatus = get(response, 'data.status', 'draft');
+            const stepsCount = get(response, 'data.complete_steps_count', 0);
+
+            commit('onboardingCompleteStepsCount', stepsCount + (merchantStatus === 'life' ? 1 : 0));
+            commit('merchantStatus', merchantStatus);
+            commit(
+              'onboardingSteps',
+              get(response, 'data.steps', {
+                company: false,
+                contacts: false,
+                banking: false,
+                tariff: false,
+              }),
+            );
+          }
+        }
+      },
+
+      /**
+       * TODO: after https://protocolone.tpondemand.com/restui/board.aspx?#page=task/191909
+       * remove this method and use has_projects attribute from merchant object
+       */
+      async hasProjects({ state, commit, rootState }) {
+        const merchantId = get(state.merchant, 'id', 0);
+
+        const response = await axios.get(
+          `${rootState.config.apiUrl}/admin/api/v1/projects?merchant_id=${merchantId}&limit=1`,
+          { headers: { Authorization: `Bearer ${rootState.User.accessToken}` } },
+        );
+
+        commit('hasProjects', Boolean(get(response, 'data.count', 0)));
+        commit('onboardingCompleteStepsCount', state.onboardingCompleteStepsCount + 1);
+      },
+
+      completeStep({ commit, state }, stepName) {
+        if (stepName !== 'license') {
+          commit('onboardingSteps', {
+            ...state.onboardingSteps,
+            [stepName]: true,
+          });
+        }
+        commit('onboardingCompleteStepsCount', state.onboardingCompleteStepsCount + 1);
+      },
+
+      async fetchMerchant({ commit, dispatch, rootState }) {
         const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/merchants/user`, {
           headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
         }).catch((error) => {
@@ -147,6 +231,9 @@ export default function createMerchantStore() {
         });
 
         commit('merchant', mapDataApiToForm(get(response, 'data', {})));
+
+        await dispatch('fetchMerchantStatus');
+        await dispatch('hasProjects');
       },
 
       async fetchMerchantPaymentMethods({ state, commit, rootState }, id) {

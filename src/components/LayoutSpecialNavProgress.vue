@@ -9,41 +9,41 @@ export default {
     };
   },
   computed: {
-    ...mapState('Company', ['completeStepsCount', 'steps']),
+    ...mapState('User/Merchant', ['onboardingCompleteStepsCount', 'onboardingSteps', 'hasProjects']),
     ...mapState('Company/LicenseAgreement', ['status']),
 
     currentStepCount() {
-      return this.completeStepsCount + 1;
+      return this.onboardingCompleteStepsCount + 1;
     },
     infoStepName() {
-      if (!this.steps.company) {
+      if (!this.onboardingSteps.company) {
         return 'Account Info';
       }
-      if (!this.steps.contacts) {
+      if (!this.onboardingSteps.contacts) {
         return 'Contacts';
       }
-      if (!this.steps.banking) {
+      if (!this.onboardingSteps.banking) {
         return 'Banking Info';
       }
-      if (!this.steps.tariff) {
+      if (!this.onboardingSteps.tariff) {
         return 'Payments Methods';
       }
 
       return '';
     },
     currentStep() {
-      switch (this.completeStepsCount) {
+      switch (this.onboardingCompleteStepsCount) {
         case 4: return { prepend: 'Review & Sign', name: 'License Agreement' };
         case 5: return { prepend: 'Create your 1st', name: 'Project' };
         default: return { prepend: 'Complete', name: this.infoStepName };
       }
     },
     hasClosed() {
-      return this.completeStepsCount > 5;
+      return this.onboardingCompleteStepsCount > 5;
     },
   },
   methods: {
-    ...mapMutations('Company', { setCompleteStepsCount: 'completeStepsCount' }),
+    ...mapMutations('User/Merchant', { setCompleteStepsCount: 'onboardingCompleteStepsCount' }),
   },
 };
 </script>
@@ -54,7 +54,7 @@ export default {
   class="layout-special-nav-progress"
 >
   <RouterLink
-    v-if="status < 4"
+    v-if="status < 4 || !hasProjects"
     class="box _progress"
     to="/company"
   >
@@ -80,7 +80,7 @@ export default {
     </div>
     <div
       class="close"
-      @click="setCompleteStepsCount(completeStepsCount + 1)"
+      @click="setCompleteStepsCount(onboardingCompleteStepsCount + 1)"
     >
       <IconClose />
     </div>

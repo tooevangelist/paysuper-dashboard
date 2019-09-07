@@ -72,10 +72,10 @@ export default {
   },
   computed: {
     ...mapState('User', ['role']),
-    ...mapState('Company/LicenseAgreement', { statusCode: 'status' }),
+    ...mapState('User/Merchant', ['merchantStatus']),
 
     status() {
-      return this.statusCode >= 4 ? 'active' : 'test';
+      return this.merchantStatus === 'life' ? 'active' : 'test';
     },
   },
   methods: {
@@ -83,6 +83,7 @@ export default {
     ...mapActions('User', ['logout']),
     ...mapMutations('User', { setRole: 'role' }),
     ...mapActions('LeaveFeedback', ['postFeedback']),
+
     hideInfoBlock() {
       this.hasInfoOpened = false;
     },

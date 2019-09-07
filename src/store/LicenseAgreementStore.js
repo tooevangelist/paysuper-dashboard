@@ -48,11 +48,11 @@ export default function createLicenseAgreementStore() {
         getters,
         rootState,
       }) {
-        await dispatch('fetchAgreementSignature');
-
         const { status } = rootState.User.Merchant.merchant;
 
         commit('status', status);
+
+        await dispatch('fetchAgreementSignature');
 
         if (getters.isUsingHellosign) {
           const helloSign = new HelloSign({
@@ -71,15 +71,20 @@ export default function createLicenseAgreementStore() {
           commit('helloSign', helloSign);
         }
       },
-      async fetchAgreementSignature({ commit, rootState, rootGetters }) {
-        const isStepsOnboardingComplete = rootGetters['Company/isStepsOnboardingComplete'];
+      async fetchAgreementSignature({
+        commit,
+        getters,
+        rootState,
+        rootGetters,
+      }) {
+        const isOnboardingStepsComplete = rootGetters['User/Merchant/isOnboardingStepsComplete'];
         const { accessToken, Merchant } = rootState.User;
         const merchantId = get(Merchant, 'merchant.id', 0);
 
-        if (merchantId && isStepsOnboardingComplete) {
+        if (merchantId && isOnboardingStepsComplete && getters.isUsingHellosign) {
           const response = await axios.put(
             `${rootState.config.apiUrl}/admin/api/v1/merchants/${merchantId}/agreement/signature`,
-            { singer_type: 0 },
+            { signer_type: 0 },
             { headers: { Authorization: `Bearer ${accessToken}` } },
           );
 
@@ -91,7 +96,7 @@ export default function createLicenseAgreementStore() {
           state.helloSign.open(state.signature.sign_url);
         }
       },
-      initWaitingForDocumentSigned({ commit, rootState }) {
+      initWaitingForDocumentSigned({ commit, dispatch, rootState }) {
         const centrifuge = new Centrifuge(rootState.config.websocketUrl);
         const { merchant } = rootState.User.Merchant;
 
@@ -114,6 +119,7 @@ export default function createLicenseAgreementStore() {
 
           if (data.code === 'mr000018') {
             commit('status', 4);
+            dispatch('Company/completeStep', 'license', { root: true });
           }
 
           /**
