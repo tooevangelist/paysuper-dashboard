@@ -104,13 +104,25 @@ const routes = [
         name: 'MerchantAdminCardForm',
       },
       {
-        path: 'paymentMethod/:paymentMethodId',
-        component: () => import('@/pages/MerchantAdminCardPaymentMethodPage.vue'),
-        meta: { layout: 'Layout', isAuthRequired: true },
-        name: 'MerchantAdminCardPaymentMethod',
+        path: 'payment-methods/',
+        component: () => import('@/pages/MerchantAdminCardPaymentMethodsPage.vue'),
+        meta: {
+          layout: 'Layout',
+          isAuthRequired: true,
+          specialNav: {
+            backLink() {
+              return {
+                url: '/merchants/',
+                label: 'Back to list',
+              };
+            },
+          },
+          mainNav: () => import('@/components/LayoutMainNavMerchant.vue'),
+        },
+        name: 'MerchantAdminCardPaymentMethods',
       },
       {
-        path: 'history',
+        path: 'history/',
         component: () => import('@/pages/MerchantAdminCardHistoryPage.vue'),
         meta: {
           layout: 'Layout',

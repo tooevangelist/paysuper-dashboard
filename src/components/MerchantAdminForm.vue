@@ -52,16 +52,6 @@ export default {
           status: 'initial',
           component: 'MerchantAdminFormAgreement',
         },
-        paymentMethods: {
-          label: 'Payment methods',
-          status: 'initial',
-          component: 'MerchantAdminFormPaymentMethods',
-          description: `
-            Customise a unique setup of payment methods, commissions and rates. 
-            Every merchant must be setup individually, since not all methods and rates are available 
-            for all merchants. Edit respective table values right in their cells.
-          `,
-        },
       },
     };
   },
