@@ -16,7 +16,6 @@ export default function createMerchantListStore() {
       filterValues: {},
       query: {},
       apiQuery: {},
-      apiQueryExtention: {},
     }),
 
     getters: {
@@ -48,17 +47,12 @@ export default function createMerchantListStore() {
       apiQuery(store, value) {
         store.apiQuery = value;
       },
-      apiQueryExtention(store, value) {
-        store.apiQueryExtention = value;
-      },
     },
 
     actions: {
-      async initState({ commit, getters, dispatch }, { query, apiQueryExtention }) {
+      async initState({ getters, dispatch }, { query }) {
         const filters = getters.getFilterValues();
         dispatch('submitFilters', filters);
-
-        commit('apiQueryExtention', apiQueryExtention);
         dispatch('initQuery', query);
         await dispatch('fetchMerchants');
       },
@@ -66,7 +60,6 @@ export default function createMerchantListStore() {
       async fetchMerchants({ state, commit, rootState }) {
         const query = qs.stringify({
           ...state.apiQuery,
-          ...state.apiQueryExtention,
         }, { arrayFormat: 'brackets' });
         const url = `${rootState.config.apiUrl}/admin/api/v1/merchants?${query}`;
 

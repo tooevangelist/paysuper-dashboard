@@ -39,16 +39,17 @@ export default class SearchBulder {
     const filters = mapValues(schemeFilters, (schemeItem, filterName) => {
       const queryName = schemeItem.queryName || filterName;
 
+      if (schemeItem.queryToFilter) {
+        return schemeItem.queryToFilter({
+          query,
+          dictionaries,
+          queryValue: query[queryName],
+          defaultValue: schemeItem.defaultValue,
+          emptyFilterValues,
+        });
+      }
+
       if (query[queryName]) {
-        if (schemeItem.queryToFilter) {
-          return schemeItem.queryToFilter({
-            query,
-            dictionaries,
-            queryValue: query[queryName],
-            defaultValue: schemeItem.defaultValue,
-            emptyFilterValues,
-          });
-        }
         return query[queryName];
       }
 
@@ -183,15 +184,16 @@ export default class SearchBulder {
     const filters = mapValues(this.scheme.filters, (schemeItem, filterName) => {
       const queryName = schemeItem.queryName || filterName;
 
+      if (schemeItem.queryToApiQuery) {
+        return schemeItem.queryToApiQuery({
+          query,
+          queryValue: query[queryName],
+          defaultValue: schemeItem.defaultValue,
+          emptyFilterValues,
+        });
+      }
+
       if (query[queryName]) {
-        if (schemeItem.queryToApiQuery) {
-          return schemeItem.queryToApiQuery({
-            query,
-            queryValue: query[queryName],
-            defaultValue: schemeItem.defaultValue,
-            emptyFilterValues,
-          });
-        }
         return query[queryName];
       }
 

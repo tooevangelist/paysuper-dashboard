@@ -1,5 +1,6 @@
 <script>
 import { format } from 'date-fns';
+import merchantStatusScheme from '@/schemes/merchantStatusScheme';
 
 export default {
   name: 'MerchantAdminFormHistory',
@@ -11,6 +12,12 @@ export default {
     },
   },
 
+  data() {
+    return {
+      merchantStatusScheme,
+    };
+  },
+
   methods: {
     formatDate(seconds) {
       const datetime = new Date(seconds * 1000);
@@ -19,33 +26,9 @@ export default {
 
     getStatus(statuses) {
       if (!statuses || !statuses.to) {
-        return 'unknown';
+        return merchantStatusScheme[0];
       }
-
-      const map = {
-        0: 'draft',
-        1: 'agreement-requested',
-        2: 'on-review',
-        3: 'agreement-signing',
-        4: 'agreement-signed',
-      };
-
-      return map[statuses.to];
-    },
-
-    getStatusText(statuses) {
-      const status = this.getStatus(statuses);
-      const map = {
-        unknown: 'No agreement',
-        draft: 'New',
-        'agreement-requested': 'Agreement requested',
-        'on-review': 'On review',
-        'agreement-signing': 'Signing',
-        'agreement-signed': 'Signed',
-        // rejected: 'Rejected',
-        // archieved: 'Archieved',
-      };
-      return map[status] || 'Unknown';
+      return this.merchantStatusScheme[statuses.to];
     },
   },
 };
@@ -70,12 +53,13 @@ export default {
         {{formatDate(item.created_at.seconds)}}
       </td>
       <td class="table-cell _content">
-        <div class="status" :class="`_${getStatus(item.statuses)}`">
-          <IconArchieve
-            class="status-icon-archieve"
-            v-if="getStatus(item.statuses) === 'archieved'"
+        <div class="status" :class="`_${getStatus(item.statuses).color}`">
+          <component
+            class="status-icon"
+            v-if="getStatus(item.statuses).icon"
+            :is="getStatus(item.statuses).icon"
           />
-          {{getStatusText(item.statuses)}}
+          {{getStatus(item.statuses).text}}
         </div>
         <p class="title">
           {{item.title}}
@@ -150,36 +134,29 @@ export default {
     top: 8px;
   }
 
-  .status-icon-archieve {
-    position: absolute;
-    left: -18px;
-    top: 6px;
-  }
-
-  &._unknown {
+  &._transparent {
     color: #919699;
 
     &::before {
       display: none;
     }
   }
-  &._draft {
+  &._blue {
     &::before {
       background: #3d7bf5;
     }
   }
-  &._agreement-requested,
-  &._on-review {
+  &._orange {
     &::before {
       background: #f3aa18;
     }
   }
-  &._agreement-signing {
+  &._purple {
     &::before {
       background: #7e57c2;
     }
   }
-  &._agreement-signed {
+  &._green {
     &::before {
       background: #2fa84f;
     }
@@ -194,6 +171,13 @@ export default {
   //   }
   // }
 }
+
+.status-icon {
+  position: absolute;
+  left: -18px;
+  top: 6px;
+}
+
 .message {
   padding-left: 32px;
   margin-top: 16px;

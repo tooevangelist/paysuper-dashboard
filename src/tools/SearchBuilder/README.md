@@ -158,10 +158,10 @@ export default {
   group: 'page',
   isPassingToQueryDisabled: true,
   isPassingToApiQueryDisabled: true,
-  queryToFilter({ queryValue }) {
+  queryToFilter({ query, queryValue, defaultValue, emptyFilterValues, dictionaries }) {
     return Number(queryValue);
   },
-  queryToApiQuery({ queryValue }) {
+  queryToApiQuery({ query, queryValue, defaultValue, emptyFilterValues }) {
     return Number(queryValue);
   },
   filterToQuery({ filterValue }) {

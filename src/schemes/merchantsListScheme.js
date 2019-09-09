@@ -1,9 +1,18 @@
+import { forEach } from 'lodash-es';
+import merchantStatusScheme from '@/schemes/merchantStatusScheme';
+
 function getAgreementApiQuerValue(value) {
-  if (value === 'signed') {
-    return [4];
+  if (value === 'all') {
+    return [];
   }
-  if (value === 'not_signed') {
-    return [0, 1, 2, 3];
+  let statusCode;
+  forEach(merchantStatusScheme, (item, key) => {
+    if (value === item.value) {
+      statusCode = key;
+    }
+  });
+  if (statusCode) {
+    return [statusCode];
   }
   return [];
 }
@@ -15,14 +24,13 @@ const filters = {
     apiQueryName: 'quick_search',
   },
 
-  agreement: {
-    defaultValue: '',
-    apiQueryName: 'status',
+  status: {
+    defaultValue: 'all',
     filterToApiQuery({ filterValue }) {
       return getAgreementApiQuerValue(filterValue);
     },
-    queryToApiQuery({ queryValue }) {
-      return getAgreementApiQuerValue(queryValue);
+    queryToApiQuery({ queryValue, defaultValue }) {
+      return getAgreementApiQuerValue(queryValue || defaultValue);
     },
   },
 

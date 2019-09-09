@@ -131,8 +131,8 @@ const routes = [
   },
   {
     path: '/agreement-requests/',
-    component: () => import('@/pages/AgreementRequestsList.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
+    component: () => import('@/pages/AgreementRequestsListPage.vue'),
+    meta: { layout: 'Layout', isAuthRequired: true },
     name: 'AgreementRequestsList',
   },
   {
