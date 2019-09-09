@@ -1,9 +1,14 @@
 <script>
 import { format } from 'date-fns';
 import merchantStatusScheme from '@/schemes/merchantStatusScheme';
+import NoResults from '@/components/NoResults.vue';
 
 export default {
   name: 'MerchantAdminFormHistory',
+
+  components: {
+    NoResults,
+  },
 
   props: {
     items: {
@@ -43,7 +48,10 @@ export default {
     Check the whole merchant onboarding process step by step here. This information is not editable.
   </UiText>
 
-  <table class="table">
+  <table
+    class="table"
+    v-if="items.length"
+  >
     <tr
       class="table-row"
       v-for="item in items"
@@ -78,6 +86,7 @@ export default {
       </td>
     </tr>
   </table>
+  <NoResults v-else>No history found</NoResults>
 </UiPanel>
 </template>
 

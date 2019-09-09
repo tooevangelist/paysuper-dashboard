@@ -1,6 +1,6 @@
 <script>
 import { mapState } from 'vuex';
-import { findIndex } from 'lodash-es';
+import { findIndex, includes } from 'lodash-es';
 import LayoutMainNavInnerBase from '@/components/LayoutMainNavInnerBase.vue';
 
 export default {
@@ -31,23 +31,25 @@ export default {
           title: 'Payment Methods',
           value: 'paymentMethods',
           icon: 'IconMoney',
-          url: `/merchants/${this.merchant.id || 'new'}?step=paymentMethods`,
+          url: `/merchants/${this.merchant.id || 'new'}/payment-methods/`,
+          routeNames: ['MerchantAdminCardPaymentMethods'],
         },
         {
           title: 'History',
           value: 'history',
           icon: 'IconMoney',
           url: `/merchants/${this.merchant.id || 'new'}/history/`,
+          routeNames: ['MerchantAdminCardHistory'],
         },
       ];
     },
 
     currentItemIndex() {
-      if (this.$route.name === 'MerchantAdminCardHistory') {
-        return findIndex(this.items, { value: 'history' });
+      const routeIndex = findIndex(this.items, item => includes(item.routeNames, this.$route.name));
+      if (routeIndex !== -1) {
+        return routeIndex;
       }
       return findIndex(this.items, { value: this.$route.query.step || 'basicInfo' });
-      // return findIndex(this.items, item => includes(item.routeNames, this.$route.name));
     },
 
     status() {
