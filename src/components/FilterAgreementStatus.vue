@@ -15,6 +15,10 @@ export default {
       type: String,
       default: 'all',
     },
+    countsByStatus: {
+      type: Object,
+      default: null,
+    },
   },
 
   data() {
@@ -78,6 +82,12 @@ export default {
           :is="item.icon"
         />
         {{item.text}}
+        <span
+          class="status-count"
+          v-if="countsByStatus"
+        >
+          ({{ countsByStatus[item.value] || 0 }})
+        </span>
       </div>
     </div>
   </UiTip>
@@ -156,7 +166,10 @@ export default {
   }
 
   &._current {
-    color: #c6cacc;
+    &,
+    .status-count {
+      color: #c6cacc;
+    }
   }
 
   &._transparent {
@@ -201,5 +214,10 @@ export default {
   position: absolute;
   left: 12px;
   top: 12px;
+}
+.status-count {
+  color: #919699;
+  margin-left: 4px;
+  font-size: 12px;
 }
 </style>

@@ -1,5 +1,7 @@
 <script>
-import { debounce, get } from 'lodash-es';
+import {
+  debounce, get, groupBy, mapKeys, mapValues,
+} from 'lodash-es';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import Notifications from '@/mixins/Notifications';
 import MerchanstListStore from '@/store/MerchanstListStore';
@@ -85,6 +87,20 @@ export default {
         this.filters.dateFrom = dateFrom;
         this.filters.dateTo = dateTo;
       },
+    },
+
+    countsByStatus() {
+      const groups = groupBy(this.merchants.items, 'status');
+
+      const itemsCounts = mapKeys(
+        mapValues(groups, item => item.length),
+        (value, key) => merchantStatusScheme[key].value,
+      );
+
+      return {
+        all: this.merchants.items.length,
+        ...itemsCounts,
+      };
     },
   },
 
@@ -199,6 +215,7 @@ export default {
       <div class="filters-right">
         <FilterAgreementStatus
           class="agreement-status-filter"
+          :countsByStatus="countsByStatus"
           v-model="filters.status"
           @input="filterMerchants"
         />
