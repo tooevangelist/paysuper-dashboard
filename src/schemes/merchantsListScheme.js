@@ -1,16 +1,11 @@
-import { forEach } from 'lodash-es';
+import { findLastKey } from 'lodash-es';
 import merchantStatusScheme from '@/schemes/merchantStatusScheme';
 
-function getAgreementApiQuerValue(value) {
+function getAgreementApiQueryValue(value) {
   if (value === 'all') {
     return [];
   }
-  let statusCode;
-  forEach(merchantStatusScheme, (item, key) => {
-    if (value === item.value) {
-      statusCode = key;
-    }
-  });
+  const statusCode = findLastKey(merchantStatusScheme, item => value === item.value);
   if (statusCode) {
     return [statusCode];
   }
@@ -27,10 +22,10 @@ const filters = {
   status: {
     defaultValue: 'all',
     filterToApiQuery({ filterValue }) {
-      return getAgreementApiQuerValue(filterValue);
+      return getAgreementApiQueryValue(filterValue);
     },
     queryToApiQuery({ queryValue, defaultValue }) {
-      return getAgreementApiQuerValue(queryValue || defaultValue);
+      return getAgreementApiQueryValue(queryValue || defaultValue);
     },
   },
 
