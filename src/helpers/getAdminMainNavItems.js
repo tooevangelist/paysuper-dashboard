@@ -13,7 +13,8 @@ export default function getAdminMainNavItems() {
       additional: 'Description',
       icon: 'IconBlank',
       link: '/agreement-requests',
-      isAvailable: false,
+      routeNames: ['AgreementRequestsList'],
+      isAvailable: true,
     },
     {
       title: 'Section',

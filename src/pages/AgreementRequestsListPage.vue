@@ -1,28 +1,37 @@
 <script>
-import { debounce, get } from 'lodash-es';
+import {
+  debounce, get, groupBy, mapKeys, mapValues,
+} from 'lodash-es';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import Notifications from '@/mixins/Notifications';
 import MerchanstListStore from '@/store/MerchanstListStore';
+import merchantStatusScheme from '@/schemes/merchantStatusScheme';
 import SimplePageHeader from '@/components/SimplePageHeader.vue';
 import NoResults from '@/components/NoResults.vue';
-import PictureDiagramPresentation from '@/components/PictureDiagramPresentation.vue';
+import PictureBlocksScheme from '@/components/PictureBlocksScheme.vue';
 import FilterSearchInput from '@/components/FilterSearchInput.vue';
 import FilterDate from '@/components/FilterDate.vue';
+import LabelTag from '@/components/LabelTag.vue';
+import FilterAgreementStatus from '@/components/FilterAgreementStatus.vue';
 
 export default {
+  name: 'AgreementRequestsListPage',
+
   mixins: [Notifications],
 
   components: {
     SimplePageHeader,
-    PictureDiagramPresentation,
+    PictureBlocksScheme,
     NoResults,
     FilterSearchInput,
     FilterDate,
+    FilterAgreementStatus,
+    LabelTag,
   },
 
   async asyncData({ store, registerStoreModule, route }) {
     try {
-      await registerStoreModule('MerchanstList', MerchanstListStore, {
+      await registerStoreModule('AgreementRequestsList', MerchanstListStore, {
         query: route.query,
       });
     } catch (error) {
@@ -35,6 +44,7 @@ export default {
       filters: {},
       isSearchRouting: false,
       isInfiniteScrollLocked: false,
+      merchantStatusScheme,
     };
   },
 
@@ -59,8 +69,8 @@ export default {
   },
 
   computed: {
-    ...mapState('MerchanstList', ['merchants', 'filterValues', 'query', 'apiQuery']),
-    ...mapGetters('MerchanstList', ['getFilterValues']),
+    ...mapState('AgreementRequestsList', ['merchants', 'filterValues', 'query', 'apiQuery']),
+    ...mapGetters('AgreementRequestsList', ['getFilterValues']),
 
     handleQuickSearchInput() {
       return debounce(() => {
@@ -78,18 +88,34 @@ export default {
         this.filters.dateTo = dateTo;
       },
     },
+
+    countsByStatus() {
+      const groups = groupBy(this.merchants.items, 'status');
+
+      const itemsCounts = mapKeys(
+        mapValues(groups, item => item.length),
+        (value, key) => merchantStatusScheme[key].value,
+      );
+
+      return {
+        all: this.merchants.items.length,
+        ...itemsCounts,
+      };
+    },
   },
 
   methods: {
     ...mapActions(['setIsLoading']),
-    ...mapActions('MerchanstList', [
+    ...mapActions('AgreementRequestsList', [
       'submitFilters', 'fetchMerchants', 'initQuery', 'sendNotification',
     ]),
 
     get,
 
     updateFiltersFromQuery() {
-      this.filters = this.getFilterValues(['quickFilter', 'offset', 'limit', 'dateFrom', 'dateTo']);
+      this.filters = this.getFilterValues([
+        'quickFilter', 'offset', 'limit', 'dateFrom', 'dateTo', 'status',
+      ]);
     },
 
     filterMerchants() {
@@ -168,12 +194,13 @@ export default {
 <template>
 <div>
   <SimplePageHeader>
-    <span slot="title">Merchants</span>
+    <span slot="title">Agreement requests</span>
     <span slot="description">
-      Here is the list of our active merchants with license agreement signed by both sides.
-      These clients have full access to Pay Super platform functionality.
+      Here is the list of active agreement requests from merchants with actual statuses.
+      All these requests must be worked out until Signed or Rejected status.
+      You can archive rejected requests from view.
     </span>
-    <PictureDiagramPresentation slot="picture" />
+    <PictureBlocksScheme slot="picture" />
   </SimplePageHeader>
 
   <UiPanel>
@@ -184,10 +211,20 @@ export default {
         v-model="filters.quickFilter"
         @input="handleQuickSearchInput"
       />
-      <FilterDate
-        v-model="dateFilter"
-        @input="filterMerchants"
-      />
+
+      <div class="filters-right">
+        <FilterAgreementStatus
+          class="agreement-status-filter"
+          :countsByStatus="countsByStatus"
+          v-model="filters.status"
+          @input="filterMerchants"
+        />
+
+        <FilterDate
+          v-model="dateFilter"
+          @input="filterMerchants"
+        />
+      </div>
     </div>
 
     <UiTable
@@ -198,9 +235,9 @@ export default {
         <UiTableCell width="16.666%" align="left">Company</UiTableCell>
         <UiTableCell width="16.666%" align="left">Owner name</UiTableCell>
         <UiTableCell width="16.666%" align="left">Country</UiTableCell>
-        <UiTableCell width="16.666%" align="left">Registration date</UiTableCell>
-        <UiTableCell width="16.666%" align="left">Last payout date</UiTableCell>
-        <UiTableCell width="16.666%" align="left">Last payout sum</UiTableCell>
+        <UiTableCell width="16.666%" align="left">Received</UiTableCell>
+        <UiTableCell width="16.666%" align="left">Last change</UiTableCell>
+        <UiTableCell width="16.666%" align="left">Status</UiTableCell>
       </UiTableRow>
       <UiTableRow
         class="content-row"
@@ -234,28 +271,28 @@ export default {
         </UiTableCell>
         <UiTableCell align="left">
           <span
-            class="cell-text"
-            :class="{'_empty': !merchant.created_at}"
+            class="cell-text _empty"
           >
-            {{$formatDate(merchant.created_at, 'DD.MM.YY') || '—'}}
+            —
           </span>
           <span class="cell-text"></span>
         </UiTableCell>
         <UiTableCell align="left">
           <span
             class="cell-text"
-            :class="{'_empty': !get(merchant, 'last_payout.date')}"
+            :class="{'_empty': !merchant.updated_at}"
           >
-            {{$formatDate(get(merchant, 'last_payout.date'), 'DD.MM.YY') || '—'}}
+            {{$formatDate(merchant.updated_at, 'DD.MM.YY') || '—'}}
           </span>
         </UiTableCell>
         <UiTableCell align="left">
-          <span
-            class="cell-text _price"
-            :class="{'_empty': !get(merchant, 'last_payout.amount')}"
-          >
-            {{getLastPayoutValue(merchant)}}
-          </span>
+          <div class="label-tag-holder">
+            <LabelTag
+              :color="merchantStatusScheme[merchant.status].color"
+            >
+              {{merchantStatusScheme[merchant.status].text}}
+            </LabelTag>
+          </div>
         </UiTableCell>
       </UiTableRow>
     </UiTable>
@@ -292,5 +329,16 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-bottom: 32px;
+}
+.agreement-status-filter {
+  margin-right: 4px;
+}
+.label-tag-holder {
+  display: flex;
+
+  & > * {
+    flex-grow: 1;
+    max-width: 104px;
+  }
 }
 </style>

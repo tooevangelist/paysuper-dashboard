@@ -31,67 +31,6 @@ export default {
       isSearchRouting: false,
       isHistoryDetailsDialogOpen: false,
       currentHistoryItem: null,
-
-      stubItems: [
-        {
-          id: '11',
-          title: 'Account just has been created.',
-          statuses: null,
-          created_at: { seconds: 1554730535 },
-        },
-        {
-          id: '22',
-          title: 'Merchant signed the license agreement.',
-          statuses: { to: 0 },
-          created_at: { seconds: 1554730535 },
-        },
-        {
-          id: '33',
-          title: 'Data clarifying required.',
-          statuses: { from: 0, to: 1 },
-          created_at: { seconds: 1554730535 },
-          message: `
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt 
-            ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation 
-            ullamco laboris nisi ut aliquip ex ea commodo consequat.
-          `,
-        },
-        {
-          id: '44',
-          title: 'License agreement sent to KYC.',
-          statuses: { from: 1, to: 2 },
-          created_at: { seconds: 1554730535 },
-        },
-        {
-          id: '55',
-          title: 'Data clarifying required.',
-          statuses: { from: 0, to: 1 },
-          created_at: { seconds: 1554730535 },
-          message: `
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt 
-            ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation 
-            ullamco laboris nisi ut aliquip ex ea commodo consequat.
-          `,
-        },
-        {
-          id: '66',
-          title: 'License agreement signed by Pay Super.',
-          statuses: { from: 2, to: 3 },
-          created_at: { seconds: 1554730535 },
-        },
-        {
-          id: '77',
-          title: 'License agreement request is rejected.',
-          statuses: { from: 2, to: 4 },
-          created_at: { seconds: 1554730535 },
-        },
-        {
-          id: '88',
-          title: 'Merchant account was archived.',
-          statuses: { from: 2, to: 5 },
-          created_at: { seconds: 1554730535 },
-        },
-      ],
     };
   },
 
@@ -200,7 +139,6 @@ export default {
   </SimplePageHeader>
 
   <MerchantAdminFormHistory :items="history.items" />
-
 </div>
 </template>
 

@@ -15,7 +15,10 @@ export default {
       type: String,
       default: 'gray',
       validator(value) {
-        return includes(['gray', 'blue', 'green', 'orange', 'purple', 'aqua'], value);
+        return includes(
+          ['gray', 'red', 'blue', 'green', 'orange', 'purple', 'aqua', 'transparent'],
+          value,
+        );
       },
     },
   },
@@ -24,35 +27,42 @@ export default {
 
 <style lang="scss" scoped>
 .label-tag {
-  height: 28px;
+  height: 24px;
   min-width: 80px;
   box-sizing: border-box;
   padding: 0 5px;
   color: #fff;
-  font-family: Lato;
-  font-size: 14px;
+  font-size: 12px;
+  line-height: 16px;
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  border-radius: 3px;
+  border-radius: 12px;
 
   &._color-gray {
     background-color: #b1b1b1;
   }
+  &._color-red {
+    background-color: #ea3d2f;
+  }
   &._color-blue {
-    background-color: #0084ff;
+    background-color: #3d7bf5;
   }
   &._color-green {
-    background-color: #009d19;
+    background-color: #2fa84f;
   }
   &._color-orange {
-    background-color: #ffa338;
+    background-color: #f3aa18;
   }
   &._color-purple {
-    background-color: #8077e7;
+    background-color: #7e57c2;
   }
   &._color-aqua {
     background-color: #3acfcf;
+  }
+  &._color-transparent {
+    border: 1px solid #e3e5e6;
+    color: #919699;
   }
 }
 </style>
