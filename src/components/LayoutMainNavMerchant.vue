@@ -16,17 +16,24 @@ export default {
     items() {
       return [
         {
-          title: 'Basic info',
-          value: 'basicInfo',
-          icon: 'IconMoney',
-          url: `/merchants/${this.merchant.id || 'new'}?step=basicInfo`,
+          title: 'Personal Profile',
+          value: 'personalProfile',
+          icon: 'IconProfile',
+          url: `/merchants/${this.merchant.id || 'new'}/personal-profile/`,
+          routeNames: ['MerchantAdminCardPersonalProfile'],
         },
-        {
-          title: 'Licence agreement',
-          value: 'licenseAgreement',
-          icon: 'IconMoney',
-          url: `/merchants/${this.merchant.id || 'new'}?step=licenseAgreement`,
-        },
+        // {
+        //   title: 'Company Info',
+        //   value: 'companyInfo',
+        //   icon: 'IconBusinessCase',
+        //   url: `/merchants/${this.merchant.id || 'new'}/company-info/`,
+        // },
+        // {
+        //   title: 'Licence Agreement',
+        //   value: 'licenseAgreement',
+        //   icon: 'IconMoney',
+        //   url: `/merchants/${this.merchant.id || 'new'}?step=licenseAgreement`,
+        // },
         {
           title: 'Payment Methods',
           value: 'paymentMethods',
@@ -37,7 +44,7 @@ export default {
         {
           title: 'History',
           value: 'history',
-          icon: 'IconMoney',
+          icon: 'IconSandglass',
           url: `/merchants/${this.merchant.id || 'new'}/history/`,
           routeNames: ['MerchantAdminCardHistory'],
         },

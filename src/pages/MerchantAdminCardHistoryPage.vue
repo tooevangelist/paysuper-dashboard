@@ -129,7 +129,7 @@ export default {
 
 <template>
 <div>
-  <SimplePageHeader >
+  <SimplePageHeader>
     <span slot="title">History</span>
     <span slot="description">
       This text log will keep the status change and conversation history with
