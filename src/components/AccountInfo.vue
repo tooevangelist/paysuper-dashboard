@@ -44,7 +44,11 @@ export default {
       this.$v.accountInfo.$touch();
       if (!this.$v.accountInfo.$invalid) {
         try {
-          await this.submitAccountInfo();
+          const hasSubmit = await this.submitAccountInfo();
+
+          if (hasSubmit) {
+            this.$emit('hasSubmit');
+          }
         } catch (error) {
           this.$_Notifications_showErrorMessage(error);
         }

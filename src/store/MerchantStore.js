@@ -193,6 +193,11 @@ export default function createMerchantStore() {
         }
       },
 
+      updateStatus({ commit, state }, status) {
+        commit('merchant', { ...state.merchant, status });
+        commit('merchantStatus', status > 3 ? 'life' : 'draft');
+      },
+
       /**
        * TODO: after https://protocolone.tpondemand.com/restui/board.aspx?#page=task/191909
        * remove this method and use has_projects attribute from merchant object
@@ -200,16 +205,26 @@ export default function createMerchantStore() {
       async hasProjects({ state, commit, rootState }) {
         const merchantId = get(state.merchant, 'id', 0);
 
-        const response = await axios.get(
-          `${rootState.config.apiUrl}/admin/api/v1/projects?merchant_id=${merchantId}&limit=1`,
-          { headers: { Authorization: `Bearer ${rootState.User.accessToken}` } },
-        );
+        if (merchantId) {
+          const response = await axios.get(
+            `${rootState.config.apiUrl}/admin/api/v1/projects?merchant_id=${merchantId}&limit=1`,
+            { headers: { Authorization: `Bearer ${rootState.User.accessToken}` } },
+          );
 
-        commit('hasProjects', Boolean(get(response, 'data.count', 0)));
-        commit('onboardingCompleteStepsCount', state.onboardingCompleteStepsCount + 1);
+          const hasProjects = Boolean(get(response, 'data.count', 0));
+
+          commit('hasProjects', hasProjects);
+
+          if (hasProjects) {
+            commit('onboardingCompleteStepsCount', state.onboardingCompleteStepsCount + 1);
+          }
+        }
       },
 
       completeStep({ commit, state }, stepName) {
+        if (state.onboardingSteps[stepName]) {
+          return;
+        }
         if (stepName !== 'license') {
           commit('onboardingSteps', {
             ...state.onboardingSteps,

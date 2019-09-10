@@ -1,651 +1,90 @@
 <script>
+import { mapState, mapActions } from 'vuex';
 import { required } from 'vuelidate/lib/validators';
-import { map } from 'lodash-es';
+import Notifications from '@/mixins/Notifications';
 
 export default {
   name: 'PaymentMethods',
+  mixins: [Notifications],
   data() {
     return {
       hasCountriesOpened: false,
       hasChannelCustomersTipOpened: false,
       hasRefundCustomersTipOpened: false,
-      currency: '',
-      homeRegion: '',
-      channelCostsRegion: 'north_america',
-      refundCostsRegion: 'north_america',
-      paymentAmount: '501-1000',
     };
   },
   validations: {
-    currency: { required },
-    homeRegion: { required },
+    paymentMethods: {
+      currency: { required },
+      region: { required },
+    },
   },
   computed: {
+    ...mapState('Company/Tariff', [
+      'amount',
+      'currency',
+      'channelCostsRegion',
+      'refundCostsRegion',
+      'region',
+      'regions',
+    ]),
+
     currencies() {
       return [
-        { label: 'USD', value: 'usd' },
-        { label: 'Euro', value: 'euro' },
-        { label: 'GBP', value: 'gbp' },
-        { label: 'RUB', value: 'rub' },
+        { label: 'USD', value: 'USD' },
+        { label: 'EUR', value: 'EUR' },
+        { label: 'GBP', value: 'GBP' },
+        { label: 'RUB', value: 'RUB' },
       ];
     },
-    paymentAmounts() {
+    amounts() {
       return [
-        { label: '1-10$', value: '1-10' },
-        { label: '11-100$', value: '11-100' },
-        { label: '101-500$', value: '101-500' },
-        { label: '501-1000$', value: '501-1000' },
+        { label: `0.75-5 ${this.currency}`, value: '0.75-5' },
+        { label: `1-10 ${this.currency}`, value: '1-10' },
+        { label: `11-100 ${this.currency}`, value: '11-100' },
+        { label: `101-500 ${this.currency}`, value: '101-500' },
+        { label: `501-1000 ${this.currency}`, value: '501-1000' },
       ];
     },
     prepareCountries() {
-      const region = this.regions[this.homeRegion];
+      const region = this.regions[this.region];
       return region ? region.countries.join(', ') : 'List countries for region';
     },
     prepareRegions() {
-      return map(this.regions, (region, key) => ({ label: region.label, value: key }));
+      return [
+        { label: 'North America', value: 'north_america' },
+        { label: 'European United', value: 'eu' },
+        { label: 'United Kingdom', value: 'uk' },
+        { label: 'Russia', value: 'russia' },
+        { label: 'Worldwide', value: 'worldwide' },
+      ];
     },
     channelCosts() {
-      return { ...this.regions[this.channelCostsRegion].costs };
+      const region = this.regions[this.channelCostsRegion];
+      return region ? { ...region.channelCosts } : [];
     },
     refundCosts() {
-      return { ...this.regions[this.refundCostsRegion].costs };
+      const region = this.regions[this.refundCostsRegion];
+      return region ? { ...region.refundCosts } : [];
     },
-    regions() {
-      return {
-        north_america: {
-          costs: [
-            {
-              method: 'Visa',
-              icon: 'IconVisa',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Mastercard',
-              icon: 'IconMastercard',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Union Pay',
-              icon: 'IconUnionPay',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'JCB',
-              icon: 'IconJCB',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'PayPal',
-              icon: 'IconPayPal',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'QIWI',
-              icon: 'IconQiwi',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Ali Pay',
-              icon: 'IconAliPay',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Webmoney',
-              icon: 'IconWebmoney',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Yandex Money',
-              icon: 'IconYandexMoney',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Token.io',
-              icon: 'IconTokenIo',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-          ],
-          countries: ['USA'],
-          defaultCurrency: 'usd',
-          label: 'North America',
-          abbreviation: 'NA',
-        },
-        european_union: {
-          costs: [
-            {
-              method: 'Visa',
-              icon: 'IconVisa',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Mastercard',
-              icon: 'IconMastercard',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Union Pay',
-              icon: 'IconUnionPay',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'JCB',
-              icon: 'IconJCB',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'PayPal',
-              icon: 'IconPayPal',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'QIWI',
-              icon: 'IconQiwi',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Ali Pay',
-              icon: 'IconAliPay',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Webmoney',
-              icon: 'IconWebmoney',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Yandex Money',
-              icon: 'IconYandexMoney',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Token.io',
-              icon: 'IconTokenIo',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-          ],
-          countries: ['France'],
-          defaultCurrency: 'euro',
-          label: 'European Union',
-          abbreviation: 'EU',
-        },
-        united_kingdom: {
-          costs: [
-            {
-              method: 'Visa',
-              icon: 'IconVisa',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Mastercard',
-              icon: 'IconMastercard',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Union Pay',
-              icon: 'IconUnionPay',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'JCB',
-              icon: 'IconJCB',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'PayPal',
-              icon: 'IconPayPal',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'QIWI',
-              icon: 'IconQiwi',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Ali Pay',
-              icon: 'IconAliPay',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Webmoney',
-              icon: 'IconWebmoney',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Yandex Money',
-              icon: 'IconYandexMoney',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Token.io',
-              icon: 'IconTokenIo',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-          ],
-          countries: ['UK'],
-          defaultCurrency: 'gbp',
-          label: 'United Kingdom',
-          abbreviation: 'UK',
-        },
-        russia: {
-          costs: [
-            {
-              method: 'Visa',
-              icon: 'IconVisa',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Mastercard',
-              icon: 'IconMastercard',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Union Pay',
-              icon: 'IconUnionPay',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'JCB',
-              icon: 'IconJCB',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'PayPal',
-              icon: 'IconPayPal',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'QIWI',
-              icon: 'IconQiwi',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Ali Pay',
-              icon: 'IconAliPay',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Webmoney',
-              icon: 'IconWebmoney',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Yandex Money',
-              icon: 'IconYandexMoney',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Token.io',
-              icon: 'IconTokenIo',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-          ],
-          countries: ['Russia'],
-          defaultCurrency: 'rub',
-          label: 'Russia',
-          abbreviation: 'RU',
-        },
-        worldwide: {
-          costs: [
-            {
-              method: 'Visa',
-              icon: 'IconVisa',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Mastercard',
-              icon: 'IconMastercard',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Union Pay',
-              icon: 'IconUnionPay',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'JCB',
-              icon: 'IconJCB',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'PayPal',
-              icon: 'IconPayPal',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'QIWI',
-              icon: 'IconQiwi',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Ali Pay',
-              icon: 'IconAliPay',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Webmoney',
-              icon: 'IconWebmoney',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Yandex Money',
-              icon: 'IconYandexMoney',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-            {
-              method: 'Token.io',
-              icon: 'IconTokenIo',
-              methodFee: '1',
-              fixedFee: '1',
-              overallFee: '1',
-              psGeneralFixedFee: '1',
-              refundFee: '1',
-              refundFixedFee: '1',
-              payoutParty: 'Pay Super',
-            },
-          ],
-          countries: ['China'],
-          defaultCurrency: 'usd',
-          label: 'Worldwide',
-          abbreviation: 'WW',
-        },
-      };
+    regionChannelAbbr() {
+      const region = this.regions[this.channelCostsRegion];
+      return region ? region.abbreviation : null;
+    },
+    regionRefundAbbr() {
+      const region = this.regions[this.refundCostsRegion];
+      return region ? region.abbreviation : null;
+    },
+    chargeback() {
+      const region = this.regions[this.region];
+      return region ? region.chargeback : {};
+    },
+    payout() {
+      const region = this.regions[this.region];
+      return region ? region.payout : {};
     },
     isHomeDefaultCurrency() {
-      const region = this.regions[this.homeRegion];
+      const region = this.regions[this.region];
       return region && this.currency ? region.defaultCurrency === this.currency : true;
     },
     isOneLineCountries() {
@@ -659,11 +98,36 @@ export default {
           with chosen region’s default payout currency.`;
     },
   },
+  async mounted() {
+    try {
+      await this.initState();
+    } catch (error) {
+      this.$_Notifications_showErrorMessage(error);
+    }
+  },
   methods: {
-    submit() {
-      this.$v.$touch();
-      if (!this.$v.$invalid) {
-        this.$emit('submitApplication');
+    ...mapActions('Company/Tariff', [
+      'initState',
+      'submitTariffs',
+      'updateAmount',
+      'updateCurrency',
+      'updateChannelCostsRegion',
+      'updateRefundCostsRegion',
+      'updateRegion',
+    ]),
+
+    async submit() {
+      this.$v.paymentMethods.$touch();
+      if (!this.$v.paymentMethods.$invalid) {
+        try {
+          const hasSubmit = await this.submitTariffs();
+
+          if (hasSubmit) {
+            this.$emit('hasSubmit');
+          }
+        } catch (error) {
+          this.$_Notifications_showErrorMessage(error);
+        }
       }
     },
   },
@@ -683,12 +147,12 @@ export default {
 
     <div class="select">
       <UiSelect
-        v-bind="$getValidatedFieldProps('homeRegion')"
+        v-bind="$getValidatedFieldProps('paymentMethods.region')"
         label="Home Region"
         :options="prepareRegions"
-        :value="homeRegion"
-        @input="homeRegion = $event"
-        @blur="$v.homeRegion.$touch()"
+        :value="region"
+        @input="updateRegion($event)"
+        @blur="$v.paymentMethods.region.$touch()"
       />
       <div
         class="icon-wrapper"
@@ -712,15 +176,15 @@ export default {
 
     <div class="select">
       <UiSelect
-        v-bind="$getValidatedFieldProps('currency')"
+        v-bind="$getValidatedFieldProps('paymentMethods.currency')"
         label="Payout Currency"
         :options="currencies"
         :value="currency"
         :errorText="currencyErrorText"
         :hasError="$isFieldInvalid('currency') || !isHomeDefaultCurrency"
         :errorColor="isHomeDefaultCurrency ? 'red' : 'black'"
-        @input="currency = $event"
-        @blur="$v.currency.$touch()"
+        @input="updateCurrency($event)"
+        @blur="$v.paymentMethods.currency.$touch()"
       />
     </div>
   </div>
@@ -735,9 +199,9 @@ export default {
     <div class="select">
       <UiSelect
         label="Payment Amount"
-        :options="paymentAmounts"
-        :value="paymentAmount"
-        @input="paymentAmount = $event"
+        :options="amounts"
+        :value="amount"
+        @input="updateAmount($event)"
       />
     </div>
 
@@ -762,7 +226,7 @@ export default {
           on rates and fees, if your customer will get refund in another region
         </UiTip>
       </div>
-      External regions rates ({{ regions[channelCostsRegion].abbreviation }})
+      External regions rates ({{ regionChannelAbbr }})
     </div>
     <div class="tabs">
       <UiButton
@@ -772,7 +236,7 @@ export default {
         color="light-gray"
         :isRounded="true"
         :isTransparent="channelCostsRegion !== region.value"
-        @click="channelCostsRegion = region.value"
+        @click="updateChannelCostsRegion(region.value)"
       >
         {{ region.label }}
       </UiButton>
@@ -782,7 +246,7 @@ export default {
       <UiTableRow :isHead="true" class="row-indent">
         <UiTableCell class="cell _second" align="left">Payment Method</UiTableCell>
         <UiTableCell class="cell _channel">Method fee, %</UiTableCell>
-        <UiTableCell class="cell _channel">Fixed fee</UiTableCell>
+        <UiTableCell class="cell _channel">Fixed fee, {{ currency }}</UiTableCell>
         <UiTableCell class="cell _channel">Overall fee, %</UiTableCell>
         <UiTableCell class="cell _channel">PS general fixed fee</UiTableCell>
       </UiTableRow>
@@ -831,7 +295,7 @@ export default {
           on rates and fees, if your customer will get refund in another region
         </UiTip>
       </div>
-      External regions rates ({{ regions[refundCostsRegion].abbreviation }})
+      External regions rates ({{ regionRefundAbbr }})
     </div>
     <div class="tabs">
       <UiButton
@@ -841,7 +305,7 @@ export default {
         color="light-gray"
         :isRounded="true"
         :isTransparent="refundCostsRegion !== region.value"
-        @click="refundCostsRegion = region.value"
+        @click="updateRefundCostsRegion(region.value)"
       >
         {{ region.label }}
       </UiButton>
@@ -851,7 +315,7 @@ export default {
       <UiTableRow :isHead="true" class="row-indent">
         <UiTableCell class="cell _second" align="left">Payment Method</UiTableCell>
         <UiTableCell class="cell _refund">Refund fee, %</UiTableCell>
-        <UiTableCell class="cell _refund">Refund fixed fee</UiTableCell>
+        <UiTableCell class="cell _refund">Refund fixed fee, {{ currency }}</UiTableCell>
         <UiTableCell class="cell _refund">Refund fee payout party</UiTableCell>
       </UiTableRow>
       <UiTableRow
@@ -879,13 +343,13 @@ export default {
     <UiTable>
       <UiTableRow :isHead="true" class="row-indent">
         <UiTableCell class="cell _second" align="left">Payment Method</UiTableCell>
-        <UiTableCell class="cell _merch">Chargeback fee, fix</UiTableCell>
+        <UiTableCell class="cell _merch">Chargeback fixed fee, {{ currency }}</UiTableCell>
         <UiTableCell class="cell _merch">Chargeback fee payout party</UiTableCell>
       </UiTableRow>
       <UiTableRow class="row-indent">
         <UiTableCell class="cell _second" align="left">All Methods</UiTableCell>
-        <UiTableCell class="cell _merch">$25,00</UiTableCell>
-        <UiTableCell class="cell _merch">Merchant</UiTableCell>
+        <UiTableCell class="cell _merch">{{ chargeback.fee }}</UiTableCell>
+        <UiTableCell class="cell _merch">{{ chargeback.payoutParty}}</UiTableCell>
       </UiTableRow>
     </UiTable>
   </div>
@@ -899,13 +363,13 @@ export default {
     <UiTable>
       <UiTableRow :isHead="true" class="row-indent">
         <UiTableCell class="cell _second" align="left">Payment Method</UiTableCell>
-        <UiTableCell class="cell _merch">Payout fee, fix</UiTableCell>
+        <UiTableCell class="cell _merch">Payout fixed fee, {{ currency }}</UiTableCell>
         <UiTableCell class="cell _merch">Fee payout party</UiTableCell>
       </UiTableRow>
       <UiTableRow class="row-indent">
         <UiTableCell class="cell _second" align="left">All Methods</UiTableCell>
-        <UiTableCell class="cell _merch">$25,00</UiTableCell>
-        <UiTableCell class="cell _merch">Merchant</UiTableCell>
+        <UiTableCell class="cell _merch">{{ payout.fee }}</UiTableCell>
+        <UiTableCell class="cell _merch">{{ payout.payoutParty}}</UiTableCell>
       </UiTableRow>
     </UiTable>
   </div>
@@ -913,7 +377,6 @@ export default {
   <UiButton
     class="submit"
     color="green"
-    :disabled="$v.$invalid"
     @click="submit"
   >
     SUBMIT APPLICATION

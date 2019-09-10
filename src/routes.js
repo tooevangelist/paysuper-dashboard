@@ -129,11 +129,7 @@ const routes = [
   {
     path: '/dashboard/',
     component: () => import('@/pages/Dashboard.vue'),
-    meta: {
-      layout: 'Layout',
-      isAuthRequired: true,
-      topControls: () => import('@/components/LayoutTopControlsDatepicker.vue'),
-    },
+    meta: { layout: 'Layout', isAuthRequired: true },
     name: 'Dashboard',
   },
   {

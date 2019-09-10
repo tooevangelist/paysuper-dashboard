@@ -61,8 +61,11 @@ export default function createContactsStore() {
         );
 
         if (response.data) {
-          dispatch('Company/completeStep', 'contacts', { root: true });
+          dispatch('User/Merchant/completeStep', 'contacts', { root: true });
+          return true;
         }
+
+        return false;
       },
       updateContacts({ commit }, contacts) {
         const authFirstName = contacts.authorized.firstName || '';
