@@ -221,7 +221,7 @@ export default function createMerchantStore() {
         }
       },
 
-      completeStep({ commit, state }, stepName) {
+      completeStep({ commit, dispatch, state }, stepName) {
         if (state.onboardingSteps[stepName]) {
           return;
         }
@@ -230,6 +230,9 @@ export default function createMerchantStore() {
             ...state.onboardingSteps,
             [stepName]: true,
           });
+        }
+        if (stepName === 'tariff') {
+          dispatch('Company/LicenseAgreement/fetchAgreementSignature', null, { root: true });
         }
         commit('onboardingCompleteStepsCount', state.onboardingCompleteStepsCount + 1);
       },

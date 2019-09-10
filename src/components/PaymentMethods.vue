@@ -14,10 +14,8 @@ export default {
     };
   },
   validations: {
-    paymentMethods: {
-      currency: { required },
-      region: { required },
-    },
+    currency: { required },
+    region: { required },
   },
   computed: {
     ...mapState('Company/Tariff', [
@@ -28,7 +26,11 @@ export default {
       'region',
       'regions',
     ]),
+    ...mapState('User/Merchant', ['merchant', 'onboardingSteps']),
 
+    status() {
+      return this.merchant.status;
+    },
     currencies() {
       return [
         { label: 'USD', value: 'USD' },
@@ -117,8 +119,10 @@ export default {
     ]),
 
     async submit() {
-      this.$v.paymentMethods.$touch();
-      if (!this.$v.paymentMethods.$invalid) {
+      this.$v.region.$touch();
+      this.$v.currency.$touch();
+
+      if (!this.$v.region.$invalid && !this.$v.currency.$invalid) {
         try {
           const hasSubmit = await this.submitTariffs();
 
@@ -152,7 +156,7 @@ export default {
         :options="prepareRegions"
         :value="region"
         @input="updateRegion($event)"
-        @blur="$v.paymentMethods.region.$touch()"
+        @blur="$v.region.$touch()"
       />
       <div
         class="icon-wrapper"
@@ -184,7 +188,7 @@ export default {
         :hasError="$isFieldInvalid('currency') || !isHomeDefaultCurrency"
         :errorColor="isHomeDefaultCurrency ? 'red' : 'black'"
         @input="updateCurrency($event)"
-        @blur="$v.paymentMethods.currency.$touch()"
+        @blur="$v.currency.$touch()"
       />
     </div>
   </div>
@@ -381,6 +385,7 @@ export default {
   <UiButton
     class="submit"
     color="green"
+    :disabled="onboardingSteps.tariff || status !== 0"
     @click="submit"
   >
     SUBMIT APPLICATION

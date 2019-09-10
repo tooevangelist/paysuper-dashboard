@@ -1,7 +1,24 @@
 import axios from 'axios';
-import { camelCase, upperFirst } from 'lodash-es';
+import {
+  camelCase,
+  map,
+  toNumber,
+  upperFirst,
+} from 'lodash-es';
 import qs from 'qs';
 import getCountriesByRegion from '@/helpers/getCountriesByRegion';
+
+function mapRegionNames(region) {
+  const regions = {
+    'North America': 'north_america',
+    EA: 'ea',
+    'United Kingdom': 'uk',
+    Russia: 'russia',
+    Worldwide: 'worldwide',
+  };
+
+  return region && regions[region];
+}
 
 function prepareRegionData(region, data) {
   const regions = {
@@ -79,8 +96,21 @@ export default function createTariffStore() {
       },
     },
     actions: {
-      async initState({ dispatch, state }) {
-        await dispatch('fetchTariffs', state.region);
+      async initState({
+        commit,
+        dispatch,
+        state,
+        rootState,
+      }) {
+        const { tariff } = rootState.User.Merchant.merchant;
+        const region = tariff && mapRegionNames(tariff.region);
+
+        if (region) {
+          commit('region', region);
+          commit('regions', { [region]: prepareRegionData(region, tariff) });
+        } else {
+          await dispatch('fetchTariffs', state.region);
+        }
       },
       async fetchTariffs({ commit, state, rootState }, region) {
         if (state.regions[region]) {
@@ -88,7 +118,8 @@ export default function createTariffStore() {
         }
 
         const { accessToken } = rootState.User;
-        const amount = state.amount.split('-');
+        const amount = map(state.amount.split('-'), toNumber);
+
         const queryString = qs.stringify({
           region,
           payout_currency: state.currency,
@@ -108,7 +139,7 @@ export default function createTariffStore() {
       async submitTariffs({ dispatch, state, rootState }) {
         const { accessToken, Merchant } = rootState.User;
         const merchantId = Merchant.merchant.id;
-        const amount = state.amount.split('-');
+        const amount = map(state.amount.split('-'), toNumber);
 
         const response = await axios.post(
           `${rootState.config.apiUrl}/admin/api/v1/merchants/${merchantId}/tariffs`,
@@ -121,7 +152,7 @@ export default function createTariffStore() {
           { headers: { Authorization: `Bearer ${accessToken}` } },
         );
 
-        if (response.data) {
+        if (response.status === 200) {
           dispatch('User/Merchant/completeStep', 'tariff', { root: true });
           return true;
         }
