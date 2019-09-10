@@ -1,3 +1,17 @@
+const merchantPagesMeta = {
+  layout: 'Layout',
+  isAuthRequired: true,
+  specialNav: {
+    backLink() {
+      return {
+        url: '/merchants/',
+        label: 'Back to list',
+      };
+    },
+  },
+  mainNav: () => import('@/components/LayoutMainNavMerchant.vue'),
+};
+
 const routes = [
   {
     path: '/',
@@ -84,59 +98,24 @@ const routes = [
   {
     path: '/merchants/:id',
     component: () => import('@/pages/MerchantAdminCardPage.vue'),
+    redirect: { name: 'MerchantAdminCardPersonalProfile' },
     children: [
       {
-        path: '',
-        component: () => import('@/pages/MerchantAdminCardFormPage.vue'),
-        meta: {
-          layout: 'Layout',
-          isAuthRequired: true,
-          specialNav: {
-            backLink() {
-              return {
-                url: '/merchants/',
-                label: 'Back to list',
-              };
-            },
-          },
-          mainNav: () => import('@/components/LayoutMainNavMerchant.vue'),
-        },
-        name: 'MerchantAdminCardForm',
+        path: 'personal-profile/',
+        component: () => import('@/pages/MerchantAdminCardPersonalProfilePage.vue'),
+        meta: merchantPagesMeta,
+        name: 'MerchantAdminCardPersonalProfile',
       },
       {
         path: 'payment-methods/',
         component: () => import('@/pages/MerchantAdminCardPaymentMethodsPage.vue'),
-        meta: {
-          layout: 'Layout',
-          isAuthRequired: true,
-          specialNav: {
-            backLink() {
-              return {
-                url: '/merchants/',
-                label: 'Back to list',
-              };
-            },
-          },
-          mainNav: () => import('@/components/LayoutMainNavMerchant.vue'),
-        },
+        meta: merchantPagesMeta,
         name: 'MerchantAdminCardPaymentMethods',
       },
       {
         path: 'history/',
         component: () => import('@/pages/MerchantAdminCardHistoryPage.vue'),
-        meta: {
-          layout: 'Layout',
-          isAuthRequired: true,
-          specialNav: {
-            backLink() {
-              return {
-                url: '/merchants/',
-                label: 'Back to list',
-              };
-            },
-          },
-          mainNav: () => import('@/components/LayoutMainNavMerchant.vue'),
-        },
+        meta: merchantPagesMeta,
         name: 'MerchantAdminCardHistory',
       },
     ],
