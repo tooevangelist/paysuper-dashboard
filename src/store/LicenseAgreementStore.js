@@ -12,7 +12,6 @@ export default function createLicenseAgreementStore() {
       helloSign: null,
       signature: null,
       isReject: false,
-      status: 0,
       // TODO: remove test data (@see https://protocol1.atlassian.net/browse/PAY-440)
       file: {
         name: 'License Agreement.pdf',
@@ -20,14 +19,17 @@ export default function createLicenseAgreementStore() {
       },
     },
     getters: {
-      isSigendYou(state) {
-        return state.status >= 3;
+      isSigendYou(state, getters) {
+        return getters.status >= 3;
       },
-      isSigendPS(state) {
-        return state.status >= 4;
+      isSigendPS(state, getters) {
+        return getters.status >= 4;
       },
-      isUsingHellosign(state) {
-        return state.status === 0 || state.isReject;
+      isUsingHellosign(state, getters) {
+        return getters.status === 0 || state.isReject;
+      },
+      status(state, getter, rootState) {
+        return rootState.User.Merchant.merchant.status;
       },
     },
     mutations: {
@@ -37,21 +39,9 @@ export default function createLicenseAgreementStore() {
       signature(state, data) {
         state.signature = data;
       },
-      status(state, data) {
-        state.status = data;
-      },
     },
     actions: {
-      async initState({
-        commit,
-        dispatch,
-        getters,
-        rootState,
-      }) {
-        const { status } = rootState.User.Merchant.merchant;
-
-        commit('status', status);
-
+      async initState({ commit, dispatch, getters }) {
         await dispatch('fetchAgreementSignature');
 
         if (getters.isUsingHellosign) {
@@ -64,7 +54,7 @@ export default function createLicenseAgreementStore() {
           });
 
           helloSign.on('sign', () => {
-            commit('status', 3);
+            dispatch('User/Merchant/updateStatus', 3, { root: true });
             dispatch('initWaitingForDocumentSigned');
           });
 
@@ -112,14 +102,14 @@ export default function createLicenseAgreementStore() {
            */
           if (data.code === 'ds000003') {
             commit('isReject', true);
-            commit('status', 0);
+            dispatch('User/Merchant/updateStatus', 0, { root: true });
 
             return;
           }
 
           if (data.code === 'mr000018') {
-            commit('status', 4);
-            dispatch('Company/completeStep', 'license', { root: true });
+            dispatch('User/Merchant/updateStatus', 4, { root: true });
+            dispatch('User/Merchant/completeStep', 'license', { root: true });
           }
 
           /**

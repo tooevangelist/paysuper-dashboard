@@ -57,8 +57,11 @@ export default function createAccountInfoStore() {
         );
 
         if (response.data) {
-          dispatch('Company/completeStep', 'company', { root: true });
+          dispatch('User/Merchant/completeStep', 'company', { root: true });
+          return true;
         }
+
+        return false;
       },
       updateAccountInfo({ commit }, accountInfo) {
         commit('accountInfo', reduce(accountInfo, (res, item, key) => ({

@@ -1,5 +1,5 @@
 <script>
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 import { reduce } from 'lodash-es';
 import AccountInfo from '@/components/AccountInfo.vue';
 import BankingInfo from '@/components/BankingInfo.vue';
@@ -28,9 +28,20 @@ export default {
       store.dispatch('setPageError', error);
     }
   },
+  data() {
+    return {
+      expandItems: {
+        account: false,
+        contacts: false,
+        banking: false,
+        tariff: false,
+        license: false,
+      },
+    };
+  },
   computed: {
     ...mapState('User/Merchant', ['onboardingCompleteStepsCount', 'onboardingSteps']),
-    ...mapState('Company/LicenseAgreement', ['status']),
+    ...mapGetters('Company/LicenseAgreement', ['status']),
 
     isCompanyInfoLocked() {
       return this.onboardingCompleteStepsCount > 2;
@@ -79,33 +90,33 @@ export default {
       };
     },
     listItems() {
-      return [
-        {
+      return {
+        account: {
           title: 'Account Info',
           componentName: 'AccountInfo',
           ...this.companyInfoStatuses.company,
         },
-        {
+        contacts: {
           title: 'Contacts',
           componentName: 'Contacts',
           ...this.companyInfoStatuses.contacts,
         },
-        {
+        banking: {
           title: 'Banking Info',
           componentName: 'BankingInfo',
           ...this.companyInfoStatuses.banking,
         },
-        {
+        tariff: {
           title: 'Payment Methods',
           componentName: 'PaymentMethods',
           ...this.paymentMethodsStatus,
         },
-        {
+        license: {
           title: 'License Agreement',
           componentName: 'LicenseAgreement',
           ...this.licenseStatus,
         },
-      ];
+      };
     },
   },
 };
@@ -130,12 +141,18 @@ export default {
 
   <SmartListItem
     class="item"
-    v-for="(item, index) in listItems"
+    v-for="(item, key) in listItems"
     v-bind="item"
-    :key="index"
+    :key="key"
     :expandable="true"
+    :isExpanded="expandItems[key]"
+    @toggle="expandItems[key] = $event"
   >
-    <component v-if="item.componentName" :is="item.componentName" />
+    <component
+      v-if="item.componentName"
+      :is="item.componentName"
+      @hasSubmit="expandItems[key] = false"
+    />
   </SmartListItem>
 </div>
 </template>

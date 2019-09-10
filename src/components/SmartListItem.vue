@@ -45,7 +45,7 @@ export default {
   },
   computed: {
     isExpandedInner() {
-      return this.isToggleExpanded && !includes(['complete', 'locked'], this.status);
+      return this.isToggleExpanded && !includes(['locked'], this.status);
     },
     isRouterLink() {
       if (this.link && this.link.router !== false) {
@@ -75,7 +75,13 @@ export default {
     handleClick() {
       if (this.expandable) {
         this.isToggleExpanded = !this.isToggleExpanded;
+        this.$emit('toggle', this.isToggleExpanded);
       }
+    },
+  },
+  watch: {
+    isExpanded(value) {
+      this.isToggleExpanded = value;
     },
   },
 };
@@ -158,7 +164,8 @@ export default {
   justify-content: space-between;
   padding: 7px 4px;
 
-  .smart-list-item._status-default._clickable & {
+  .smart-list-item._status-default._clickable &,
+  .smart-list-item._status-complete._clickable & {
     cursor: pointer;
   }
   .smart-list-item._status-waiting._clickable & {
@@ -211,7 +218,7 @@ export default {
 .icon {
   transition: transform 0.2s ease-out;
 
-  .smart-list-item._expanded & {
+  .smart-list-item._expanded:not(._status-complete) & {
     fill: #c6cacc;
     transform: rotate(90deg);
   }

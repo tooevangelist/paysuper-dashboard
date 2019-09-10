@@ -113,7 +113,6 @@ export default {
   <UiButton
     v-if="(!isSigendYou || !isSigendPS)"
     class="submit"
-    :disabled="isSigendYou"
     @click="openLicense"
   >
     REVIEW & SIGN

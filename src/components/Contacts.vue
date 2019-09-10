@@ -1,5 +1,5 @@
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 import { email, maxLength, required } from 'vuelidate/lib/validators';
 import Notifications from '@/mixins/Notifications';
 
@@ -30,6 +30,11 @@ export default {
   },
   computed: {
     ...mapGetters('Company/Contacts', ['contacts']),
+    ...mapState('User/Merchant', ['merchant']),
+
+    status() {
+      return this.merchant.status;
+    },
   },
   async mounted() {
     try {
@@ -149,7 +154,7 @@ export default {
 
   <UiButton
     class="submit"
-    :disabled="$v.contacts.$invalid"
+    :disabled="$v.contacts.$invalid || status !== 0"
     @click="submit"
   >
     SUBMIT INFO

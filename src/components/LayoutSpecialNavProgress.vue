@@ -9,8 +9,16 @@ export default {
     };
   },
   computed: {
-    ...mapState('User/Merchant', ['onboardingCompleteStepsCount', 'onboardingSteps', 'hasProjects']),
-    ...mapState('Company/LicenseAgreement', ['status']),
+    ...mapState('User/Merchant', [
+      'onboardingCompleteStepsCount',
+      'onboardingSteps',
+      'hasProjects',
+      'merchant',
+    ]),
+
+    status() {
+      return this.merchant.status;
+    },
 
     currentStepCount() {
       return this.onboardingCompleteStepsCount + 1;

@@ -47,8 +47,11 @@ export default function createBankingStore() {
         );
 
         if (response.data) {
-          dispatch('Company/completeStep', 'banking', { root: true });
+          dispatch('User/Merchant/completeStep', 'banking', { root: true });
+          return true;
         }
+
+        return false;
       },
       updateBankingInfo({ commit }, bankingInfo) {
         commit('bankingInfo', reduce(bankingInfo, (res, item, key) => ({
