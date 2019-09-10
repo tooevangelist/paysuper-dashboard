@@ -61,11 +61,11 @@ export default {
     },
     channelCosts() {
       const region = this.regions[this.channelCostsRegion];
-      return region ? { ...region.channelCosts } : [];
+      return region ? region.channelCosts : [];
     },
     refundCosts() {
       const region = this.regions[this.refundCostsRegion];
-      return region ? { ...region.refundCosts } : [];
+      return region ? region.refundCosts : [];
     },
     regionChannelAbbr() {
       const region = this.regions[this.channelCostsRegion];
@@ -147,7 +147,7 @@ export default {
 
     <div class="select">
       <UiSelect
-        v-bind="$getValidatedFieldProps('paymentMethods.region')"
+        v-bind="$getValidatedFieldProps('region')"
         label="Home Region"
         :options="prepareRegions"
         :value="region"
@@ -176,7 +176,7 @@ export default {
 
     <div class="select">
       <UiSelect
-        v-bind="$getValidatedFieldProps('paymentMethods.currency')"
+        v-bind="$getValidatedFieldProps('currency')"
         label="Payout Currency"
         :options="currencies"
         :value="currency"
@@ -242,28 +242,30 @@ export default {
       </UiButton>
     </div>
 
-    <UiTable>
-      <UiTableRow :isHead="true" class="row-indent">
-        <UiTableCell class="cell _second" align="left">Payment Method</UiTableCell>
-        <UiTableCell class="cell _channel">Method fee, %</UiTableCell>
-        <UiTableCell class="cell _channel">Fixed fee, {{ currency }}</UiTableCell>
-        <UiTableCell class="cell _channel">Overall fee, %</UiTableCell>
-        <UiTableCell class="cell _channel">PS general fixed fee</UiTableCell>
-      </UiTableRow>
-      <UiTableRow
-        v-for="(data, index) in channelCosts"
-        :key="index"
-      >
-        <UiTableCell class="cell _first">
-          <component :is="data.icon" class="method-icon" />
-        </UiTableCell>
-        <UiTableCell class="cell _second" align="left">{{ data.method }}</UiTableCell>
-        <UiTableCell class="cell _channel">{{ data.methodFee }}</UiTableCell>
-        <UiTableCell class="cell _channel">{{ data.fixedFee }}</UiTableCell>
-        <UiTableCell class="cell _channel">{{ data.overallFee }}</UiTableCell>
-        <UiTableCell class="cell _channel">{{ data.psGeneralFixedFee }}</UiTableCell>
-      </UiTableRow>
-    </UiTable>
+    <transition name="table" mode="out-in">
+      <UiTable v-if="channelCosts.length">
+        <UiTableRow :isHead="true" class="row-indent">
+          <UiTableCell class="cell _second" align="left">Payment Method</UiTableCell>
+          <UiTableCell class="cell _channel">Method fee, %</UiTableCell>
+          <UiTableCell class="cell _channel">Fixed fee, {{ currency }}</UiTableCell>
+          <UiTableCell class="cell _channel">Overall fee, %</UiTableCell>
+          <UiTableCell class="cell _channel">PS general fixed fee</UiTableCell>
+        </UiTableRow>
+        <UiTableRow
+          v-for="(data, index) in channelCosts"
+          :key="index"
+        >
+          <UiTableCell class="cell _first">
+            <component :is="data.icon" class="method-icon" />
+          </UiTableCell>
+          <UiTableCell class="cell _second" align="left">{{ data.method }}</UiTableCell>
+          <UiTableCell class="cell _channel">{{ data.methodFee }}</UiTableCell>
+          <UiTableCell class="cell _channel">{{ data.fixedFee }}</UiTableCell>
+          <UiTableCell class="cell _channel">{{ data.overallFee }}</UiTableCell>
+          <UiTableCell class="cell _channel">{{ data.psGeneralFixedFee }}</UiTableCell>
+        </UiTableRow>
+      </UiTable>
+    </transition>
   </div>
 
   <div class="section">
@@ -311,26 +313,28 @@ export default {
       </UiButton>
     </div>
 
-    <UiTable>
-      <UiTableRow :isHead="true" class="row-indent">
-        <UiTableCell class="cell _second" align="left">Payment Method</UiTableCell>
-        <UiTableCell class="cell _refund">Refund fee, %</UiTableCell>
-        <UiTableCell class="cell _refund">Refund fixed fee, {{ currency }}</UiTableCell>
-        <UiTableCell class="cell _refund">Refund fee payout party</UiTableCell>
-      </UiTableRow>
-      <UiTableRow
-        v-for="(data, index) in refundCosts"
-        :key="index"
-      >
-        <UiTableCell class="cell _first">
-          <component :is="data.icon" class="method-icon" />
-        </UiTableCell>
-        <UiTableCell class="cell _second" align="left">{{ data.method }}</UiTableCell>
-        <UiTableCell class="cell _refund">{{ data.refundFee }}</UiTableCell>
-        <UiTableCell class="cell _refund">{{ data.refundFixedFee }}</UiTableCell>
-        <UiTableCell class="cell _refund">{{ data.payoutParty }}</UiTableCell>
-      </UiTableRow>
-    </UiTable>
+    <transition name="table" mode="out-in">
+      <UiTable v-if="refundCosts.length">
+        <UiTableRow :isHead="true" class="row-indent">
+          <UiTableCell class="cell _second" align="left">Payment Method</UiTableCell>
+          <UiTableCell class="cell _refund">Refund fee, %</UiTableCell>
+          <UiTableCell class="cell _refund">Refund fixed fee, {{ currency }}</UiTableCell>
+          <UiTableCell class="cell _refund">Refund fee payout party</UiTableCell>
+        </UiTableRow>
+        <UiTableRow
+          v-for="(data, index) in refundCosts"
+          :key="index"
+        >
+          <UiTableCell class="cell _first">
+            <component :is="data.icon" class="method-icon" />
+          </UiTableCell>
+          <UiTableCell class="cell _second" align="left">{{ data.method }}</UiTableCell>
+          <UiTableCell class="cell _refund">{{ data.refundFee }}</UiTableCell>
+          <UiTableCell class="cell _refund">{{ data.refundFixedFee }}</UiTableCell>
+          <UiTableCell class="cell _refund">{{ data.payoutParty }}</UiTableCell>
+        </UiTableRow>
+      </UiTable>
+    </transition>
   </div>
 
   <div class="section">
@@ -508,6 +512,14 @@ export default {
   &._merch {
     width: 39%;
   }
+}
+.table-enter,
+.table-leave-active {
+  opacity: 0;
+}
+.table-enter-active,
+.table-leave-active {
+  transition: opacity 0.2s ease-out;
 }
 .submit {
   min-width: 180px;
