@@ -15,7 +15,7 @@ export default {
 
   async asyncData({ store, registerStoreModule, route }) {
     try {
-      await registerStoreModule('MerchantUserProfile', MerchantProfileStore, route.params.id);
+      await registerStoreModule('MerchantProfile', MerchantProfileStore, route.params.id);
     } catch (error) {
       store.dispatch('setPageError', error);
     }
@@ -47,7 +47,7 @@ export default {
   },
 
   computed: {
-    ...mapState('MerchantUserProfile', ['profile']),
+    ...mapState('MerchantProfile', ['profile']),
 
     helpText() {
       const checkedItems = omitBy(this.profile.help, item => !item);
