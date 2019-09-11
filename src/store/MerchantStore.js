@@ -120,7 +120,8 @@ export default function createMerchantStore() {
         return !isEqual(state.merchant, state.merchantOriginalCopy);
       },
       isOnboardingStepsComplete(state) {
-        return size(state.steps) === 4 && !some(state.steps, step => step === false);
+        return size(state.onboardingSteps) === 4
+          && !some(state.onboardingSteps, step => step === false);
       },
     },
 
@@ -231,10 +232,11 @@ export default function createMerchantStore() {
             [stepName]: true,
           });
         }
-        if (stepName === 'tariff') {
-          dispatch('Company/LicenseAgreement/fetchAgreementSignature', null, { root: true });
-        }
         commit('onboardingCompleteStepsCount', state.onboardingCompleteStepsCount + 1);
+
+        if (!some(state.onboardingSteps, step => step)) {
+          dispatch('fetchMerchant');
+        }
       },
 
       async fetchMerchant({ commit, dispatch, rootState }) {

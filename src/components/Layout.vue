@@ -41,7 +41,13 @@ export default {
       return getMerchantMainNavItems();
     },
   },
-
+  mounted() {
+    this.$appEventsOn('updateContentScroll', () => {
+      this.$nextTick(() => {
+        this.$refs.contentScrollbox.update();
+      });
+    });
+  },
   methods: {
     get,
     isComponent(component) {
@@ -107,6 +113,7 @@ export default {
     <section class="content">
       <UiScrollbarBox
         class="scrollbox"
+        ref="contentScrollbox"
         @ps-y-reach-end="$appEvents.$emit('contentScrollReachEnd')"
         @ps-scroll-y="$appEvents.$emit('contentScroll')"
       >

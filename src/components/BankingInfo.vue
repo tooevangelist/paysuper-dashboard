@@ -1,6 +1,6 @@
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex';
-import { maxLength, required } from 'vuelidate/lib/validators';
+import { integer, maxLength, required } from 'vuelidate/lib/validators';
 import Notifications from '@/mixins/Notifications';
 
 export default {
@@ -8,9 +8,9 @@ export default {
   mixins: [Notifications],
   validations: {
     bankingInfo: {
-      accountNumber: { maxLength: maxLength(30), required },
+      accountNumber: { integer, maxLength: maxLength(30), required },
       address: { maxLength: maxLength(60), required },
-      correspondentAccount: { maxLength: maxLength(30) },
+      correspondentAccount: { integer, maxLength: maxLength(30) },
       currency: { required },
       name: { maxLength: maxLength(60), required },
       swift: { required },
@@ -42,7 +42,11 @@ export default {
       this.$v.bankingInfo.$touch();
       if (!this.$v.bankingInfo.$invalid) {
         try {
-          await this.submitBankingInfo();
+          const hasSubmit = await this.submitBankingInfo();
+
+          if (hasSubmit) {
+            this.$emit('hasSubmit');
+          }
         } catch (error) {
           this.$_Notifications_showErrorMessage(error);
         }
@@ -98,9 +102,12 @@ export default {
       @blur="$v.bankingInfo.address.$touch()"
     />
     <UiTextField
+      v-bind="$getValidatedFieldProps('bankingInfo.correspondentAccount')"
       label="Correspondent bank account"
+      :required="false"
       :value="bankingInfo.correspondentAccount"
       @input="updateField('correspondentAccount', $event)"
+      @blur="$v.bankingInfo.correspondentAccount.$touch()"
     />
   </div>
 

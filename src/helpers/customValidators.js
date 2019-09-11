@@ -4,7 +4,6 @@ export function onlyRusAndLat(value) {
   }
   return /^[A-Za-zА-Яа-я- ]*$/.test(value);
 }
-
 export function onlyRusAndLatAndNum(value) {
   if (!value) {
     return true;

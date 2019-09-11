@@ -1,6 +1,7 @@
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import { email, maxLength, required } from 'vuelidate/lib/validators';
+import { onlyRusAndLat } from '@/helpers/customValidators';
 import Notifications from '@/mixins/Notifications';
 
 function phone(val) {
@@ -14,22 +15,20 @@ export default {
   validations: {
     contacts: {
       authorized: {
-        firstName: { maxLength: maxLength(30), required },
-        lastName: { maxLength: maxLength(30) },
+        name: { onlyRusAndLat, maxLength: maxLength(30), required },
         email: { maxLength: maxLength(100), email, required },
         phone: { maxLength: maxLength(20), phone, required },
         position: { maxLength: maxLength(30), required },
       },
       technical: {
-        firstName: { maxLength: maxLength(30), required },
-        lastName: { maxLength: maxLength(30) },
+        name: { onlyRusAndLat, maxLength: maxLength(30), required },
         email: { maxLength: maxLength(100), email, required },
         phone: { maxLength: maxLength(20), phone, required },
       },
     },
   },
   computed: {
-    ...mapGetters('Company/Contacts', ['contacts']),
+    ...mapState('Company/Contacts', ['contacts']),
     ...mapState('User/Merchant', ['merchant']),
 
     status() {
@@ -59,7 +58,11 @@ export default {
       this.$v.contacts.$touch();
       if (!this.$v.contacts.$invalid) {
         try {
-          await this.submitContacts();
+          const hasSubmit = await this.submitContacts();
+
+          if (hasSubmit) {
+            this.$emit('hasSubmit');
+          }
         } catch (error) {
           this.$_Notifications_showErrorMessage(error);
         }
@@ -81,17 +84,11 @@ export default {
     </div>
 
     <UiTextField
-      v-bind="$getValidatedFieldProps('contacts.authorized.firstName')"
-      label="First name"
-      :value="contacts.authorized.firstName"
-      @input="updateField('authorized', 'firstName', $event)"
-      @blur="$v.contacts.authorized.firstName.$touch()"
-    />
-    <UiTextField
-      label="Last name"
-      :value="contacts.authorized.lastName"
-      @input="updateField('authorized', 'lastName', $event)"
-      @blur="$v.contacts.authorized.lastName.$touch()"
+      v-bind="$getValidatedFieldProps('contacts.authorized.name')"
+      label="Name"
+      :value="contacts.authorized.name"
+      @input="updateField('authorized', 'name', $event)"
+      @blur="$v.contacts.authorized.name.$touch()"
     />
     <UiTextField
       v-bind="$getValidatedFieldProps('contacts.authorized.email')"
@@ -124,17 +121,11 @@ export default {
     </div>
 
     <UiTextField
-      v-bind="$getValidatedFieldProps('contacts.technical.firstName')"
-      label="First name"
-      :value="contacts.technical.firstName"
-      @input="updateField('technical', 'firstName', $event)"
-      @blur="$v.contacts.technical.firstName.$touch()"
-    />
-    <UiTextField
-      label="Last name"
-      :value="contacts.technical.lastName"
-      @input="updateField('technical', 'lastName', $event)"
-      @blur="$v.contacts.technical.lastName.$touch()"
+      v-bind="$getValidatedFieldProps('contacts.technical.name')"
+      label="Name"
+      :value="contacts.technical.name"
+      @input="updateField('technical', 'name', $event)"
+      @blur="$v.contacts.technical.name.$touch()"
     />
     <UiTextField
       v-bind="$getValidatedFieldProps('contacts.technical.email')"
