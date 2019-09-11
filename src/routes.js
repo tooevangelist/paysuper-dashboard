@@ -107,6 +107,12 @@ const routes = [
         name: 'MerchantAdminCardPersonalProfile',
       },
       {
+        path: 'company-info/',
+        component: () => import('@/pages/MerchantAdminCardCompanyInfoPage.vue'),
+        meta: merchantPagesMeta,
+        name: 'MerchantAdminCardCompanyInfo',
+      },
+      {
         path: 'payment-methods/',
         component: () => import('@/pages/MerchantAdminCardPaymentMethodsPage.vue'),
         meta: merchantPagesMeta,

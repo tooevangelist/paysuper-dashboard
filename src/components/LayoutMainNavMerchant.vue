@@ -22,12 +22,13 @@ export default {
           url: `/merchants/${this.merchant.id || 'new'}/personal-profile/`,
           routeNames: ['MerchantAdminCardPersonalProfile'],
         },
-        // {
-        //   title: 'Company Info',
-        //   value: 'companyInfo',
-        //   icon: 'IconBusinessCase',
-        //   url: `/merchants/${this.merchant.id || 'new'}/company-info/`,
-        // },
+        {
+          title: 'Company Info',
+          value: 'companyInfo',
+          icon: 'IconBusinessCase',
+          url: `/merchants/${this.merchant.id || 'new'}/company-info/`,
+          routeNames: ['MerchantAdminCardCompanyInfo'],
+        },
         // {
         //   title: 'Licence Agreement',
         //   value: 'licenseAgreement',
