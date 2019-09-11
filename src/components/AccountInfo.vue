@@ -1,6 +1,7 @@
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex';
-import { maxLength, required } from 'vuelidate/lib/validators';
+import { maxLength, required, url } from 'vuelidate/lib/validators';
+import { onlyRusAndLat } from '@/helpers/customValidators';
 import Notifications from '@/mixins/Notifications';
 
 export default {
@@ -10,12 +11,12 @@ export default {
     accountInfo: {
       address: { maxLength: maxLength(100), required },
       addressAdditional: { maxLength: maxLength(100) },
-      alternativeName: { maxLength: maxLength(60), required },
+      alternativeName: { onlyRusAndLat, maxLength: maxLength(60), required },
       city: { required },
       country: { required },
-      name: { maxLength: maxLength(60), required },
+      name: { onlyRusAndLat, maxLength: maxLength(60), required },
       state: { required },
-      website: { required },
+      website: { required, url },
       zip: { maxLength: maxLength(30), required },
     },
   },

@@ -154,6 +154,7 @@ export default function createTariffStore() {
 
         if (response.status === 200) {
           dispatch('User/Merchant/completeStep', 'tariff', { root: true });
+          dispatch('Company/LicenseAgreement/fetchAgreementSignature', null, { root: true });
           return true;
         }
 

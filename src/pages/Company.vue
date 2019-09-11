@@ -119,6 +119,12 @@ export default {
       };
     },
   },
+  methods: {
+    submited(key) {
+      this.expandItems[key] = false;
+      this.$appEvents.$emit('updateContentScroll');
+    },
+  },
 };
 </script>
 
@@ -151,7 +157,7 @@ export default {
     <component
       v-if="item.componentName"
       :is="item.componentName"
-      @hasSubmit="expandItems[key] = false"
+      @hasSubmit="submited(key)"
     />
   </SmartListItem>
 </div>

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { trim } from 'lodash-es';
 
 export default function createContactsStore() {
   return {
@@ -16,26 +17,6 @@ export default function createContactsStore() {
           email: '',
           phone: '',
         },
-      },
-    },
-    getters: {
-      contacts(state) {
-        const { contacts } = state;
-        const [authFirstName, authLastName] = contacts.authorized.name.split(' ');
-        const [techFirstName, techLastName] = contacts.technical.name.split(' ');
-
-        return {
-          authorized: {
-            ...contacts.authorized,
-            firstName: authFirstName || '',
-            lastName: authLastName || '',
-          },
-          technical: {
-            ...contacts.technical,
-            firstName: techFirstName || '',
-            lastName: techLastName || '',
-          },
-        };
       },
     },
     mutations: {
@@ -68,12 +49,8 @@ export default function createContactsStore() {
         return false;
       },
       updateContacts({ commit }, contacts) {
-        const authFirstName = contacts.authorized.firstName || '';
-        const techFirstName = contacts.technical.firstName || '';
-        const authLastName = contacts.authorized.lastName || '';
-        const techLastName = contacts.technical.lastName || '';
-        const authName = `${authFirstName}${authLastName && ` ${authLastName}`}`;
-        const techName = `${techFirstName}${techLastName && ` ${techLastName}`}`;
+        const authName = trim(contacts.authorized.name) || '';
+        const techName = trim(contacts.technical.name) || '';
 
         commit('contacts', {
           authorized: {
