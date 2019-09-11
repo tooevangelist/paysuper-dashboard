@@ -14,6 +14,7 @@ export default {
       validator(value) {
         return includes(['new', 'inactive'], value);
       },
+      default: 'new',
     },
     headImage: {
       required: true,
@@ -127,7 +128,7 @@ export default {
   font-size: 12px;
   line-height: 16px;
   letter-spacing: 0.4px;
-  color: #ea3d2f;
+  color: #3d7bf5;
 }
 
 .nav {

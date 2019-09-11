@@ -1,6 +1,6 @@
 <script>
 import { mapState } from 'vuex';
-import { findIndex, includes } from 'lodash-es';
+import { get, findIndex, includes } from 'lodash-es';
 import LayoutMainNavInnerBase from '@/components/LayoutMainNavInnerBase.vue';
 
 export default {
@@ -66,13 +66,17 @@ export default {
       // }
       return 'new';
     },
+
+    headTitle() {
+      return get(this.merchant, 'company.name') || '';
+    },
   },
 };
 </script>
 
 <template>
 <LayoutMainNavInnerBase
-  :headTitle="merchant.name || ''"
+  :headTitle="headTitle"
   :headStatus="status"
   :headImage="''"
   :items="items"
