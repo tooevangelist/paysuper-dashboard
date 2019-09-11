@@ -18,7 +18,7 @@ export default {
     countryText() {
       const country = get(this.merchant, 'company.country');
       if (!country) {
-        return '—';
+        return '';
       }
       return this.$t(`countries.${country}`);
     },
@@ -28,13 +28,13 @@ export default {
     get,
     getWebsiteValue(value) {
       if (!value) {
-        return '—';
+        return '';
       }
       return `<a target="_blank" href="${value}">${value}</a>`;
     },
     getEmailValue(value) {
       if (!value) {
-        return '—';
+        return '';
       }
       return `<a href="mailto:${value}">${value}</a>`;
     },
@@ -60,11 +60,11 @@ export default {
       <div class="columns">
         <UiTextFieldReadonly
           label="Legal name"
-          :value="get(merchant, 'company.name', '—')"
+          :value="get(merchant, 'company.name')"
         />
         <UiTextFieldReadonly
           label="Operating name"
-          :value="get(merchant, 'company.alternative_name', '—')"
+          :value="get(merchant, 'company.alternative_name')"
         />
       </div>
       <div class="columns">
@@ -84,27 +84,27 @@ export default {
         />
         <UiTextFieldReadonly
           label="Zip сode"
-          :value="get(merchant, 'company.zip', '—')"
+          :value="get(merchant, 'company.zip')"
         />
       </div>
       <div class="columns">
         <UiTextFieldReadonly
           label="State/ province/ region"
-          :value="get(merchant, 'company.state', '—')"
+          :value="get(merchant, 'company.state')"
         />
         <UiTextFieldReadonly
           label="Address 1"
-          :value="get(merchant, 'company.address', '—')"
+          :value="get(merchant, 'company.address')"
         />
       </div>
       <div class="columns">
         <UiTextFieldReadonly
           label="City"
-          :value="get(merchant, 'company.city', '—')"
+          :value="get(merchant, 'company.city')"
         />
         <UiTextFieldReadonly
           label="Address 2"
-          :value="get(merchant, 'company.address_additional', '—')"
+          :value="get(merchant, 'company.address_additional')"
         />
       </div>
     </section>
@@ -114,11 +114,11 @@ export default {
       <div class="columns">
         <UiTextFieldReadonly
           label="Name"
-          :value="get(merchant, 'contacts.authorized.name', '—')"
+          :value="get(merchant, 'contacts.authorized.name')"
         />
         <UiTextFieldReadonly
           label="Phone"
-          :value="get(merchant, 'contacts.authorized.phone', '—')"
+          :value="get(merchant, 'contacts.authorized.phone')"
         />
       </div>
       <div class="columns">
@@ -128,7 +128,7 @@ export default {
         />
         <UiTextFieldReadonly
           label="Position"
-          :value="get(merchant, 'contacts.authorized.position', '—')"
+          :value="get(merchant, 'contacts.authorized.position')"
         />
       </div>
     </section>
@@ -138,11 +138,11 @@ export default {
       <div class="columns">
         <UiTextFieldReadonly
           label="Name"
-          :value="get(merchant, 'contacts.technical.name', '—')"
+          :value="get(merchant, 'contacts.technical.name')"
         />
         <UiTextFieldReadonly
           label="Phone"
-          :value="get(merchant, 'contacts.technical.phone', '—')"
+          :value="get(merchant, 'contacts.technical.phone')"
         />
       </div>
       <div class="columns">
@@ -158,31 +158,31 @@ export default {
       <div class="columns">
         <UiTextFieldReadonly
           label="SWIFT"
-          :value="get(merchant, 'banking.swift', '—')"
+          :value="get(merchant, 'banking.swift')"
         />
         <UiTextFieldReadonly
           label="Beneficiary’s bank name"
-          :value="get(merchant, 'banking.name', '—')"
+          :value="get(merchant, 'banking.name')"
         />
       </div>
       <div class="columns">
         <UiTextFieldReadonly
           label="Account currency"
-          :value="get(merchant, 'banking.currency', '—')"
+          :value="get(merchant, 'banking.currency')"
         />
         <UiTextFieldReadonly
           label="Beneficiary’s bank address"
-          :value="get(merchant, 'banking.address', '—')"
+          :value="get(merchant, 'banking.address')"
         />
       </div>
       <div class="columns">
         <UiTextFieldReadonly
           label="Beneficiary’s bank account"
-          :value="get(merchant, 'banking.account_number', '—')"
+          :value="get(merchant, 'banking.account_number')"
         />
         <UiTextFieldReadonly
           label="Correspondent bank account"
-          :value="get(merchant, 'banking.correspondent_account', '—')"
+          :value="get(merchant, 'banking.correspondent_account')"
         />
       </div>
     </section>

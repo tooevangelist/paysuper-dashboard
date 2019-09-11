@@ -52,7 +52,7 @@ export default {
     helpText() {
       const checkedItems = omitBy(this.profile.help, item => !item);
       const wtf = map(checkedItems, (value, key) => `— ${this.helpOptions[key]}`);
-      return wtf ? wtf.join('<br/>') : 'Not defined';
+      return wtf ? wtf.join('<br/>') : '';
     },
 
     websiteText() {
@@ -64,7 +64,7 @@ export default {
 
     annualIncomeText() {
       if (!this.profile.company.annual_income) {
-        return 'Not defined';
+        return '';
       }
       const { from, to } = this.profile.company.annual_income;
       return this.annualIncomeOptions[`${from}-${to}`];
@@ -72,7 +72,7 @@ export default {
 
     employeesNumberText() {
       if (!this.profile.company.number_of_employees) {
-        return 'Not defined';
+        return '';
       }
       const { from, to } = this.profile.company.number_of_employees;
       return this.employeesNumberOptions[`${from}-${to}`];

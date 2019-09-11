@@ -1,8 +1,9 @@
 <template>
 <div class="ui-text-field-inactive">
   <span
-    v-html="value"
-    :class="inputClasses"
+    class="input _hide-overflow"
+    :class="{ '_text-overflow-hidden': isTextOverflowHidden}"
+    v-html="value || '—'"
   />
   <span
     class="label"
@@ -24,18 +25,9 @@ export default {
       default: '',
       type: [String, Number],
     },
-  },
-  computed: {
-    /**
-     * Classes for input
-     * @return {Array<string>}
-     */
-    inputClasses() {
-      const isEmpty = !this.value && this.value !== 0;
-      return [
-        'input',
-        isEmpty ? '_empty' : '',
-      ];
+    isTextOverflowHidden: {
+      default: true,
+      type: Boolean,
     },
   },
 };
@@ -73,15 +65,23 @@ $left-indent: 12px;
   transition: border-color 0.2s ease-out;
   width: 100%;
 
-  &:not(._empty) ~ .label {
-    color: $secondary-input-color;
-    width: 50%;
-    transform: translateY(-24px) scale(0.75, 0.75);
-  }
-
   /deep/ a {
     color: #3d7bf5;
     text-decoration: none;
+  }
+
+  &._text-overflow-hidden {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    /deep/ & > a {
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+    }
   }
 }
 .label {
@@ -93,12 +93,13 @@ $left-indent: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: $primary-input-size;
+  color: $secondary-input-color;
   left: 0;
   pointer-events: none;
   top: 24px;
-  transform-origin: left;
-  transition: transform 0.2s ease-out, color 0.2s linear, width 0.1s ease-out;
-  width: 100%;
   margin-left: 12px;
+  width: 50%;
+  transform-origin: left;
+  transform: translateY(-24px) scale(0.75, 0.75);
 }
 </style>
