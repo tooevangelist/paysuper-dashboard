@@ -4,7 +4,7 @@ import { mapState } from 'vuex';
 import MerchantAdminFormPaymentMethods from '@/components/MerchantAdminFormPaymentMethods.vue';
 
 export default {
-  name: 'MerchantAdminCardPaymentMethodPage',
+  name: 'MerchantAdminPaymentMethodPage',
   components: {
     MerchantAdminFormPaymentMethods,
   },

@@ -6,7 +6,7 @@ import PictureProfileAndPeople from '@/components/PictureProfileAndPeople.vue';
 import MerchantProfileStore from '@/store/MerchantProfileStore';
 
 export default {
-  name: 'MerchantAdminCardPersonalProfilePage',
+  name: 'MerchantAdminPersonalProfilePage',
 
   components: {
     SimplePageHeader,
