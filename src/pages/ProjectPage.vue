@@ -1,16 +1,27 @@
 <script>
 import { cloneDeep, isEqual } from 'lodash-es';
 import { mapState, mapActions } from 'vuex';
-import Notifications from '@/mixins/Notifications';
-import ProjectForm from '@/components/ProjectForm.vue';
+import ProjectStore from '@/store/ProjectStore';
 import SaveDataWarningModal from '@/components/SaveDataWarningModal.vue';
 
 export default {
+  name: 'ProjectCard',
+
   components: {
-    ProjectForm,
     SaveDataWarningModal,
   },
-  mixins: [Notifications],
+
+  async asyncData({ store, registerStoreModule, route }) {
+    try {
+      await registerStoreModule('Project', ProjectStore, {
+        id: route.params.id,
+        name: route.query.name,
+        image: route.query.image,
+      });
+    } catch (error) {
+      store.dispatch('setPageError', error);
+    }
+  },
 
   data() {
     return {
@@ -29,9 +40,9 @@ export default {
 
   async beforeRouteUpdate(to, from, next) {
     if (to.params.id !== from.params.id) {
-      await this.initState(to.params.id);
+      await this.initState({ id: to.params.id });
+      this.updateProjectLocal();
     }
-    this.applyQueryParams(to);
     next();
   },
 
@@ -43,14 +54,13 @@ export default {
     try {
       await this.confirmDataSaved();
       next(false);
-      this.validateAndSaveProject();
+      this.handleSaveProject();
     } catch (error) {
       next();
     }
   },
 
   created() {
-    this.applyQueryParams(this.$route);
     this.updateProjectLocal();
   },
 
@@ -66,36 +76,27 @@ export default {
       this.projectLocal = cloneDeep(this.project);
     },
 
-    applyQueryParams(route) {
-      this.currentStep = route.query.step || this.defaultStep;
-    },
-
     handleSectionChange(step) {
       this.$router.push({ query: { step } });
     },
 
-    async validateAndSaveProject() {
-      const isProjectValid = this.$refs.projectForm.chekIfFormValid();
-      if (isProjectValid) {
-        this.setIsLoading(true);
-        try {
-          if (this.project.id) {
-            await this.saveProject(this.projectLocal);
-          } else {
-            await this.createProject(this.projectLocal);
-            this.$router.push({
-              path: `/projects/${this.project.id}`,
-            });
-          }
-          this.updateProjectLocal();
-          this.$_Notifications_showSuccessMessage('Project saved successfully');
-        } catch (error) {
-          this.$_Notifications_showErrorMessage(error);
+    async handleSaveProject() {
+      this.setIsLoading(true);
+      try {
+        if (this.project.id) {
+          await this.saveProject(this.projectLocal);
+        } else {
+          await this.createProject(this.projectLocal);
+          this.$router.push({
+            path: `/projects/${this.project.id}`,
+          });
         }
-        this.setIsLoading(false);
-      } else {
-        this.$_Notifications_showErrorMessage('The form is not filled right');
+        this.updateProjectLocal();
+        this.$showSuccessMessage('Project saved successfully');
+      } catch (error) {
+        this.$showErrorMessage(error);
       }
+      this.setIsLoading(false);
     },
 
     confirmDataSaved() {
@@ -111,22 +112,19 @@ export default {
         });
       });
     },
-
   },
 };
 </script>
 
 <template>
 <div>
-  <ProjectForm
-    ref="projectForm"
-    :project="projectLocal"
-    :currentStep="currentStep"
-    :uploadImage="uploadImage"
-    @stepChanged="handleSectionChange"
-    @submitForms="validateAndSaveProject"
+  <RouterView
+    v-bind="{
+      uploadImage,
+      project: projectLocal,
+    }"
+    @save="handleSaveProject"
   />
-
   <SaveDataWarningModal
     v-show="isUnsavedDataModalOpened"
     ref="saveDataWarningModal"

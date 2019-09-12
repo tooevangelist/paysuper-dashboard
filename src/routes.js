@@ -1,3 +1,18 @@
+
+const projectPagesMeta = {
+  layout: 'Layout',
+  isAuthRequired: true,
+  specialNav: {
+    backLink() {
+      return {
+        url: '/projects/',
+        label: 'Back to projects',
+      };
+    },
+  },
+  mainNav: () => import('@/components/LayoutMainNavProject.vue'),
+};
+
 const merchantPagesMeta = {
   layout: 'Layout',
   isAuthRequired: true,
@@ -37,31 +52,20 @@ const routes = [
   },
   {
     path: '/projects/:id',
-    component: () => import('@/pages/ProjectCardPage.vue'),
+    component: () => import('@/pages/ProjectPage.vue'),
+    redirect: { name: 'ProjectSettings' },
     children: [
       {
-        path: '',
-        component: () => import('@/pages/ProjectCardFormPage.vue'),
-        meta: {
-          layout: 'Layout',
-          isAuthRequired: true,
-          specialNav: {
-            backLink() {
-              return {
-                url: '/projects/',
-                label: 'Back to projects',
-              };
-            },
-          },
-          mainNav: () => import('@/components/LayoutMainNavProject.vue'),
-        },
-        name: 'ProjectCard',
+        path: 'settings',
+        component: () => import('@/pages/ProjectSettingsPage.vue'),
+        meta: projectPagesMeta,
+        name: 'ProjectSettings',
       },
       {
         path: 'product/:productId',
-        component: () => import('@/pages/ProjectCardProductPage.vue'),
+        component: () => import('@/pages/ProjectProductPage.vue'),
         meta: { layout: 'Layout', isAuthRequired: true },
-        name: 'ProjectCardProduct',
+        name: 'ProjectProduct',
       },
     ],
   },

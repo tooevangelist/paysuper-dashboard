@@ -67,13 +67,9 @@ export default {
   },
 
   methods: {
-    validateForm() {
+    chekIsFormValid() {
       this.$v.$touch();
-
-      this.$watch('$v.$invalid', (value) => {
-        this.$emit('validationResult', !value);
-      });
-      this.$emit('validationResult', !this.$v.$invalid);
+      return !this.$v.$invalid;
     },
 
     getValidatedFieldProps(path) {

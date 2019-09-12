@@ -1,6 +1,6 @@
 <script>
 import { mapState } from 'vuex';
-import { findIndex } from 'lodash-es';
+import { findIndex, includes } from 'lodash-es';
 import LayoutMainNavInnerBase from '@/components/LayoutMainNavInnerBase.vue';
 
 export default {
@@ -19,21 +19,9 @@ export default {
           title: 'Settings',
           value: 'settings',
           icon: 'IconSettings',
-          url: `/projects/${this.project.id || 'new'}?step=settings`,
+          url: `/projects/${this.project.id || 'new'}/settings/`,
+          routeNames: ['ProjectSettings'],
         },
-        {
-          title: 'Simple checkout',
-          value: 'simpleCheckout',
-          icon: 'IconMoney',
-          url: `/projects/${this.project.id || 'new'}?step=simpleCheckout`,
-        },
-        {
-          title: 'Products',
-          value: 'products',
-          icon: 'IconLabel',
-          url: `/projects/${this.project.id || 'new'}?step=products`,
-        },
-
 
         // {
         //   icon: 'IconInfo',
@@ -65,8 +53,7 @@ export default {
     },
 
     currentItemIndex() {
-      return findIndex(this.items, { value: this.$route.query.step || 'settings' });
-      // return findIndex(this.items, item => includes(item.routeNames, this.$route.name));
+      return findIndex(this.items, item => includes(item.routeNames, this.$route.name));
     },
 
     status() {
