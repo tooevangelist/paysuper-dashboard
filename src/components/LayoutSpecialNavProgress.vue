@@ -1,5 +1,5 @@
 <script>
-import { mapMutations, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 export default {
   name: 'LayoutSpecialNavProgress',
@@ -9,10 +9,11 @@ export default {
     };
   },
   computed: {
+    ...mapGetters('User/Merchant', ['isOnboardingComplete']),
     ...mapState('User/Merchant', [
       'onboardingCompleteStepsCount',
       'onboardingSteps',
-      'hasProjects',
+      'isCompleteShown',
       'merchant',
     ]),
 
@@ -46,23 +47,20 @@ export default {
         default: return { prepend: 'Complete', name: this.infoStepName };
       }
     },
-    hasClosed() {
-      return this.onboardingCompleteStepsCount > 5;
-    },
   },
   methods: {
-    ...mapMutations('User/Merchant', { setCompleteStepsCount: 'onboardingCompleteStepsCount' }),
+    ...mapActions('User/Merchant', ['closeCompleteShown']),
   },
 };
 </script>
 
 <template>
 <div
-  v-if="!hasClosed"
+  v-if="isCompleteShown || !isOnboardingComplete"
   class="layout-special-nav-progress"
 >
   <RouterLink
-    v-if="status < 4 || !hasProjects"
+    v-if="!isOnboardingComplete"
     class="box _progress"
     to="/company"
   >
@@ -88,7 +86,7 @@ export default {
     </div>
     <div
       class="close"
-      @click="setCompleteStepsCount(onboardingCompleteStepsCount + 1)"
+      @click="closeCompleteShown"
     >
       <IconClose />
     </div>

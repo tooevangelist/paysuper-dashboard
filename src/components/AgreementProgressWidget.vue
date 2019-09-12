@@ -18,6 +18,9 @@ export default {
       'hasProjects',
     ]),
 
+    status() {
+      return this.merchant.status;
+    },
     isCompanyInfoLocked() {
       return this.onboardingCompleteStepsCount > 2;
     },
@@ -34,7 +37,7 @@ export default {
       }), {});
     },
     isPaymentMethodsLocked() {
-      return this.onboardingCompleteStepsCount < 3 || this.merchant.status !== 0;
+      return this.onboardingCompleteStepsCount < 3 || this.status !== 0;
     },
     paymentMethodsStatus() {
       return {
@@ -52,20 +55,22 @@ export default {
     licenseNotice() {
       return this.isLicenseLocked
         ? 'After Previous Steps'
-        : this.merchant.status < 3 ? 'Not Signed' : 'Checking agreement…';
+        : this.status < 3 ? 'Not Signed' : 'Checking agreement…';
     },
     licenseStatus() {
       return {
-        status: this.merchant.status === 4
+        status: this.status === 4
           ? 'complete'
-          : this.isLicenseLocked ? 'locked' : 'default',
-        notice: this.merchant.status === 4
+          : this.isLicenseLocked
+            ? 'locked'
+            : this.status === 3 ? 'waiting' : 'default',
+        notice: this.status === 4
           ? ''
           : this.licenseNotice,
       };
     },
     isProjectLocked() {
-      return this.merchant.status < 4;
+      return this.status < 4;
     },
     projectStatus() {
       return {
