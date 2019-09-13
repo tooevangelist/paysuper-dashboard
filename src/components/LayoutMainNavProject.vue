@@ -1,6 +1,6 @@
 <script>
 import { mapState } from 'vuex';
-import { findIndex } from 'lodash-es';
+import { findIndex, includes } from 'lodash-es';
 import LayoutMainNavInnerBase from '@/components/LayoutMainNavInnerBase.vue';
 
 export default {
@@ -14,26 +14,20 @@ export default {
     ...mapState('Project', ['project', 'projectPublicName']),
 
     items() {
+      const projectId = this.project.id || 'new';
       return [
         {
-          title: 'Settings',
-          value: 'settings',
-          icon: 'IconSettings',
-          url: `/projects/${this.project.id || 'new'}?step=settings`,
-        },
-        {
-          title: 'Simple checkout',
-          value: 'simpleCheckout',
+          title: 'Sales options',
           icon: 'IconMoney',
-          url: `/projects/${this.project.id || 'new'}?step=simpleCheckout`,
+          url: `/projects/${projectId}/virtual-currency/`,
+          routeNames: ['ProjectVirtualCurrency'],
         },
         {
-          title: 'Products',
-          value: 'products',
-          icon: 'IconLabel',
-          url: `/projects/${this.project.id || 'new'}?step=products`,
+          title: 'Settings',
+          icon: 'IconSettings',
+          url: `/projects/${projectId}/settings/`,
+          routeNames: ['ProjectSettings'],
         },
-
 
         // {
         //   icon: 'IconInfo',
@@ -65,8 +59,7 @@ export default {
     },
 
     currentItemIndex() {
-      return findIndex(this.items, { value: this.$route.query.step || 'settings' });
-      // return findIndex(this.items, item => includes(item.routeNames, this.$route.name));
+      return findIndex(this.items, item => includes(item.routeNames, this.$route.name));
     },
 
     status() {

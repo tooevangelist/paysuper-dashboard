@@ -47,19 +47,25 @@ export default {
     value: {
       required: true,
     },
+    isMoney: {
+      default: false,
+      type: Boolean,
+    },
+    money: {
+      type: Object,
+      default: () => {},
+    },
   },
 
   data() {
     return {
-      selectedLang: 'en',
+      selectedLang: this.getSelectedLang(this.langs),
     };
   },
 
   watch: {
     langs(langs) {
-      if (!includes(langs, this.selectedLang)) {
-        this.selectedLang = 'en';
-      }
+      this.selectedLang = this.getSelectedLang(langs, this.selectedLang);
     },
   },
 
@@ -76,6 +82,12 @@ export default {
     updateValue(value) {
       this.value[this.selectedLang] = value;
     },
+    getSelectedLang(langs, selectedLang = '') {
+      if (!includes(langs, selectedLang)) {
+        return langs[0];
+      }
+      return selectedLang;
+    },
     omit,
   },
 };
@@ -84,7 +96,7 @@ export default {
 <template>
   <div class="lang-text-field">
     <UiTextField
-      v-bind="omit($props, ['value', 'label'])"
+      v-bind="{ ...$attrs, ...omit($props, ['value', 'label']) }"
       :value="selectedValue"
       :label="`${label} (${selectedLang.toUpperCase()})`"
       @input="updateValue"

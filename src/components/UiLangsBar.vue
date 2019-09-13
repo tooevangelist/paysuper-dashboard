@@ -64,7 +64,6 @@ export default {
   border-radius: 14px;
   font-size: 14px;
   padding: 0 18px;
-  cursor: pointer;
   outline: none;
   height: 28px;
   text-transform: uppercase;
@@ -90,6 +89,7 @@ export default {
     color: #3d7bf5;
     background-color: #e6efff;
     border-color: #e6efff;
+    cursor: pointer;
 
     .close-button {
       fill: #3d7bf5;

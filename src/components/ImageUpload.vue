@@ -8,6 +8,14 @@ export default {
     event: 'change',
   },
   props: {
+    title: {
+      type: String,
+      default: 'Update cover',
+    },
+    description: {
+      type: String,
+      default: '.png, .jpg, .jpeg, max size 30Mb, min 200x300px; max 1000x1500px',
+    },
     uploadImage: {
       required: true,
       type: Function,
@@ -82,7 +90,7 @@ export default {
     <template v-if="errorMessage">
       <div class="description">
         <IconWarning class="info-icon" />
-        {{errorMessage}}
+        {{ errorMessage }}
       </div>
     </template>
     <template v-else>
@@ -91,7 +99,7 @@ export default {
           class="upload-button"
         >
           <IconUpload />
-          Update cover
+          {{ title }}
         </span>
         <span
           v-if="value"
@@ -103,7 +111,7 @@ export default {
         </span>
       </div>
       <div class="description">
-        .png, .jpg, .jpeg, max size 30Mb, min 200x300px; max 1000x1500px
+        {{ description }}
       </div>
     </template>
 
@@ -144,6 +152,9 @@ $error-text-color: #ea3d2f;
   margin-left: 17px;
   cursor: pointer;
   color: #919699;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 
   &._error {
     border-color: rgba($error-text-color, 0.48);

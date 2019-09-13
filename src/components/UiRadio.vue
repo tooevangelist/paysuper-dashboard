@@ -1,5 +1,5 @@
 <template>
-<div class="ui-radio">
+<div class="ui-radio" :class="{ '_disabled': disabled }">
   <label class="wrapper">
     <div class="radio">
       <input
@@ -9,9 +9,9 @@
         @change="emitChange"
         :checked="isRadioChecked"
       >
-      <div :class="radioClasses">
-
-      </div>
+      <IconCircle class="icon icon-default" />
+      <IconRadioChecked class="icon icon-checked" />
+      <IconForbiddenCircle class="icon icon-disabled" />
     </div>
     <div class="text">
       <slot></slot>
@@ -21,8 +21,6 @@
 </template>
 
 <script>
-import { includes } from 'lodash-es';
-
 export default {
   model: {
     prop: 'matchValue',
@@ -43,23 +41,8 @@ export default {
       default: false,
       type: Boolean,
     },
-    size: {
-      default: 'default',
-      type: String,
-      validator(value) {
-        return includes(['default'], value);
-      },
-    },
   },
   computed: {
-    /**
-     * Classes for radio
-     * @return {Array<string>}
-     */
-    radioClasses() {
-      return ['label', `_${this.size}`, this.disabled ? '_disabled' : ''];
-    },
-
     isRadioChecked() {
       if (this.value && this.matchValue) {
         return this.value === this.matchValue;
@@ -89,14 +72,18 @@ $checked-radio-color: #3d7bf5;
 $disabled-radio-color: #e1e1e1;
 
 .ui-radio {
-  display: inline-flex;
+  display: block;
   position: relative;
   padding-left: 12px;
 }
 
 .wrapper {
-  display: flex;
-  cursor: pointer;
+  display: inline-flex;
+  vertical-align: top;
+
+  .ui-radio:not(._disabled) & {
+    cursor: pointer;
+  }
 }
 
 .radio {
@@ -109,6 +96,13 @@ $disabled-radio-color: #e1e1e1;
 
 .text:not(:empty) {
   margin-left: 12px;
+  font-size: 16px;
+  line-height: 24px;
+  color: #000000;
+
+  .ui-radio._disabled & {
+    color: #919699;
+  }
 }
 .input {
   height: 0;
@@ -116,23 +110,33 @@ $disabled-radio-color: #e1e1e1;
   visibility: hidden;
   width: 0;
 
-  &:checked + .label {
-    border-color: $checked-radio-color;
-    background: $checked-radio-color;
-    box-shadow: inset 0 0 0 2.5px #fff;
+  &:checked {
+    & ~ .icon-checked {
+      display: block;
+    }
+    & ~ .icon-default {
+      display: none;
+    }
   }
 }
-.label {
-  cursor: pointer;
+.icon {
   display: block;
   height: 16px;
   width: 16px;
-  border: 2px solid #78909c;
-  border-radius: 50%;
+}
+.icon-default {
+  .ui-radio._disabled & {
+    display: none;
+  }
+}
+.icon-checked {
+  display: none;
+}
+.icon-disabled {
+  display: none;
 
-  &._disabled {
-    border-color: $disabled-radio-color;
-    background: $disabled-radio-color;
+  .ui-radio._disabled & {
+    display: block;
   }
 }
 </style>

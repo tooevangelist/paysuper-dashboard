@@ -124,7 +124,7 @@ export default function createProjectStore() {
       },
 
       async createProject({
-        state, commit, dispatch, rootState,
+        state, commit, rootState,
       }, project) {
         const response = await axios.post(
           `${rootState.config.apiUrl}/admin/api/v1/projects`,
@@ -139,11 +139,6 @@ export default function createProjectStore() {
 
         commit('project', mapDataApiToForm(response.data.item));
         commit('projectPublicName', state.project.name);
-        /**
-         * TODO: after https://protocolone.tpondemand.com/restui/board.aspx?#page=task/191909
-         * remove this and use has_projects attribute from merchant object
-         */
-        dispatch('User/Merchant/completeStep', 'projects', { root: true });
       },
 
       async saveProject({ state, commit, rootState }, project) {

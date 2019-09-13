@@ -67,21 +67,9 @@ export default {
   },
 
   methods: {
-    validateForm() {
+    chekIsFormValid() {
       this.$v.$touch();
-
-      this.$watch('$v.$invalid', (value) => {
-        this.$emit('validationResult', !value);
-      });
-      this.$emit('validationResult', !this.$v.$invalid);
-    },
-
-    getValidatedFieldProps(path) {
-      return {
-        required: true,
-        hasError: this.$isFieldInvalid(path),
-        errorText: this.$getFieldErrorMessages(path),
-      };
+      return !this.$v.$invalid;
     },
 
     updateLangs(langs) {
@@ -108,12 +96,12 @@ export default {
 <template>
 <div class="project-form-settings">
   <ImageUpload
-    class="field-row"
+    class="section"
     :uploadImage="uploadImage"
     v-model="project.image"
   />
 
-  <div class="field-row">
+  <div class="section">
     <UiHeader
       :hasMargin="true"
       level="3"
@@ -129,7 +117,7 @@ export default {
     />
   </div>
 
-  <div class="field-row">
+  <div class="section">
     <UiHeader
       :hasMargin="true"
       level="3"
@@ -144,23 +132,23 @@ export default {
       :value="project.name"
       :langs="langs"
       label="Project name"
-      v-bind="getValidatedFieldProps('project.name.en')"
+      v-bind="$getValidatedFieldProps('project.name.en')"
     />
     <UiLangTextField
       :value="fullDescription"
       :langs="langs"
       label="Full description"
-      v-bind="getValidatedFieldProps('fullDescription.en')"
+      v-bind="$getValidatedFieldProps('fullDescription.en')"
     />
     <UiLangTextField
       :value="shortDescription"
       :langs="langs"
       label="Short description"
-      v-bind="getValidatedFieldProps('shortDescription.en')"
+      v-bind="$getValidatedFieldProps('shortDescription.en')"
     />
   </div>
 
-  <div class="field-row">
+  <div class="section">
     <UiHeader
       :hasMargin="true"
       level="3"
@@ -175,7 +163,7 @@ export default {
     <KeyGenerateField
       v-model="project.secret_key"
       label="Secret key"
-      v-bind="getValidatedFieldProps('project.secret_key')"
+      v-bind="$getValidatedFieldProps('project.secret_key')"
     />
   </div>
 
@@ -186,7 +174,7 @@ export default {
 .project-form-settings {
 }
 
-.field-row {
+.section {
   margin-bottom: 32px;
 }
 
