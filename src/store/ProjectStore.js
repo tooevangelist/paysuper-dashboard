@@ -143,7 +143,7 @@ export default function createProjectStore() {
          * TODO: after https://protocolone.tpondemand.com/restui/board.aspx?#page=task/191909
          * remove this and use has_projects attribute from merchant object
          */
-        dispatch('User/Merchant/hasProject', null, { root: true });
+        dispatch('User/Merchant/completeStep', 'projects', { root: true });
       },
 
       async saveProject({ state, commit, rootState }, project) {

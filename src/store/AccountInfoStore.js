@@ -57,6 +57,7 @@ export default function createAccountInfoStore() {
         );
 
         if (response.data) {
+          dispatch('User/Merchant/changeMerchant', response.data, { root: true });
           dispatch('User/Merchant/completeStep', 'company', { root: true });
           return true;
         }

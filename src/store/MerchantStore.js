@@ -1,6 +1,7 @@
 import {
   get,
   cloneDeep,
+  includes,
   isEqual,
   size,
   some,
@@ -104,6 +105,7 @@ export default function createMerchantStore() {
       onboardingCompleteStepsCount: 0,
       merchantStatus: 'draft',
       hasProjects: false,
+      isCompleteShown: false,
       onboardingSteps: {
         company: false,
         contacts: false,
@@ -122,6 +124,11 @@ export default function createMerchantStore() {
       isOnboardingStepsComplete(state) {
         return size(state.onboardingSteps) === 4
           && !some(state.onboardingSteps, step => step === false);
+      },
+      isOnboardingComplete(state, getters) {
+        return getters.isOnboardingStepsComplete
+          && state.merchant.status === 4
+          && state.hasProjects;
       },
     },
 
@@ -150,6 +157,9 @@ export default function createMerchantStore() {
       },
       hasProjects(state, data) {
         state.hasProjects = data;
+      },
+      isCompleteShown(state, data) {
+        state.isCompleteShown = data;
       },
     },
 
@@ -194,6 +204,10 @@ export default function createMerchantStore() {
         }
       },
 
+      closeCompleteShown({ commit }) {
+        commit('isCompleteShown', false);
+      },
+
       updateStatus({ commit, state }, status) {
         commit('merchant', { ...state.merchant, status });
         commit('merchantStatus', status > 3 ? 'life' : 'draft');
@@ -212,31 +226,31 @@ export default function createMerchantStore() {
             { headers: { Authorization: `Bearer ${rootState.User.accessToken}` } },
           );
 
-          const hasProjects = Boolean(get(response, 'data.count', 0));
+          const projectsCount = get(response, 'data.count', 0);
 
-          commit('hasProjects', hasProjects);
+          commit('hasProjects', Boolean(projectsCount));
 
-          if (hasProjects) {
+          if (projectsCount) {
             commit('onboardingCompleteStepsCount', state.onboardingCompleteStepsCount + 1);
           }
         }
       },
 
-      completeStep({ commit, dispatch, state }, stepName) {
+      completeStep({ commit, state }, stepName) {
         if (state.onboardingSteps[stepName]) {
           return;
         }
-        if (stepName !== 'license') {
+        if (!includes(['license', 'projects'], stepName)) {
           commit('onboardingSteps', {
             ...state.onboardingSteps,
             [stepName]: true,
           });
         }
-        commit('onboardingCompleteStepsCount', state.onboardingCompleteStepsCount + 1);
-
-        if (!some(state.onboardingSteps, step => step)) {
-          dispatch('fetchMerchant');
+        if (stepName === 'projects') {
+          commit('isCompleteShown', true);
+          commit('hasProjects', true);
         }
+        commit('onboardingCompleteStepsCount', state.onboardingCompleteStepsCount + 1);
       },
 
       async fetchMerchant({ commit, dispatch, rootState }) {
@@ -275,6 +289,10 @@ export default function createMerchantStore() {
         } catch (error) {
           console.error(error);
         }
+      },
+
+      changeMerchant({ commit }, merchant) {
+        commit('merchant', mapDataApiToForm(merchant));
       },
 
       async updateMerchant({ state, commit, rootState }) {

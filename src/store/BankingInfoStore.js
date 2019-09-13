@@ -47,6 +47,7 @@ export default function createBankingStore() {
         );
 
         if (response.data) {
+          dispatch('User/Merchant/changeMerchant', response.data, { root: true });
           dispatch('User/Merchant/completeStep', 'banking', { root: true });
           return true;
         }
