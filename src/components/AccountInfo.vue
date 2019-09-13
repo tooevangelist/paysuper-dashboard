@@ -56,7 +56,7 @@ export default {
             this.$emit('hasSubmit');
           }
         } catch (error) {
-          this.$_Notifications_showErrorMessage(error);
+          this.$_Notifications_showErrorMessage(error, 'details');
         }
       }
     },
