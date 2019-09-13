@@ -65,9 +65,17 @@ export default {
 <template>
 <div>
   <SimplePageHeader tag="testing">
-    <span slot="title">
+    <template slot="title">
       Virtual currency
-    </span>
+      <span class="tag">
+        Testing
+        <IconParagraphPointer
+          fill="#F3AA18"
+          width="5"
+          height="9"
+        />
+      </span>
+    </template>
     <span slot="description">
       Virtual Currency is an option to sell your in-game currency — gold, coins, etc.
       This method allows you to sell customisable quantity of your currency.
@@ -206,5 +214,24 @@ export default {
 
 .submit-button {
   width: 140px;
+}
+
+.tag {
+  position: relative;
+  top: -8px;
+  margin-left: 8px;
+  height: 24px;
+  line-height: 20px;
+  border: 1px solid #f3aa18;
+  box-sizing: border-box;
+  border-radius: 12px;
+  padding: 0 12px;
+  font-size: 12px;
+  color: #f3aa18;
+  letter-spacing: 0.4px;
+
+  & > svg {
+    margin-left: 4px;
+  }
 }
 </style>
