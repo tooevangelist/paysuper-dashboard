@@ -1,16 +1,12 @@
 import { get } from 'lodash-es';
 
-export default function getMessageFromError(error, field = 'message') {
+export default function getMessageFromError(error) {
   if (typeof error === 'string') {
     return error;
   }
-
-  const message = get(error, `response.data.error.${field}`)
-    || get(error, `response.data.${field}`)
-    || get(error, field);
-  const defaultMessage = get(error, 'response.data.error.message')
+  return (
+    get(error, 'response.data.error.message')
     || get(error, 'response.data.message')
-    || get(error, 'message');
-
-  return message || defaultMessage;
+    || get(error, 'message')
+  );
 }

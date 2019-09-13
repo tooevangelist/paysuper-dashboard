@@ -22,8 +22,8 @@ export function showSuccessMessage(message, opts = {}) {
   notify('success', message, opts);
 }
 
-export function showErrorMessage(error, field, opts = {}) {
-  let message = getMessageFromError(error, field);
+export function showErrorMessage(error, opts = {}) {
+  let message = getMessageFromError(error);
   if (!message) {
     message = 'Unknown error. Try request later.';
     console.error(error);

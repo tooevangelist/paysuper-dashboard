@@ -1,5 +1,6 @@
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex';
+import { get } from 'lodash-es';
 import { maxLength, required, url } from 'vuelidate/lib/validators';
 import { onlyRusAndLat } from '@/helpers/customValidators';
 import Notifications from '@/mixins/Notifications';
@@ -56,7 +57,7 @@ export default {
             this.$emit('hasSubmit');
           }
         } catch (error) {
-          this.$_Notifications_showErrorMessage(error, 'details');
+          this.$_Notifications_showErrorMessage(get(error, 'response.data.details'));
         }
       }
     },
