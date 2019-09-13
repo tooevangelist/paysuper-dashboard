@@ -14,12 +14,18 @@ export default {
     ...mapState('Project', ['project', 'projectPublicName']),
 
     items() {
+      const projectId = this.project.id || 'new';
       return [
         {
+          title: 'Sales options',
+          icon: 'IconMoney',
+          url: `/projects/${projectId}/virtual-currency/`,
+          routeNames: ['ProjectVirtualCurrency'],
+        },
+        {
           title: 'Settings',
-          value: 'settings',
           icon: 'IconSettings',
-          url: `/projects/${this.project.id || 'new'}/settings/`,
+          url: `/projects/${projectId}/settings/`,
           routeNames: ['ProjectSettings'],
         },
 

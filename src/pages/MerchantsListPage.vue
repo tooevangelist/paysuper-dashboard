@@ -1,5 +1,5 @@
 <script>
-import { debounce, get } from 'lodash-es';
+import { debounce, get, isEqual } from 'lodash-es';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import Notifications from '@/mixins/Notifications';
 import MerchanstListStore from '@/store/MerchanstListStore';
@@ -101,7 +101,7 @@ export default {
       this.$appEventsOn('contentScrollReachEnd', async () => {
         if (
           this.isInfiniteScrollLocked
-          || this.filters.offset + this.filters.limit > this.merchants.count
+          || this.filters.offset + this.filters.limit >= this.merchants.count
         ) {
           return;
         }
@@ -123,6 +123,9 @@ export default {
     },
 
     navigate() {
+      if (isEqual(this.$route.query, this.query)) {
+        return;
+      }
       this.$router.push({
         path: this.$route.path,
         query: this.query,

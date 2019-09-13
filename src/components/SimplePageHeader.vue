@@ -1,6 +1,18 @@
 <script>
+import { includes } from 'lodash-es';
+
 export default {
   name: 'SimplePageHeader',
+
+  props: {
+    tag: {
+      type: String,
+      default: '',
+      validator(value) {
+        return includes(['', 'testing'], value);
+      },
+    },
+  },
 };
 </script>
 

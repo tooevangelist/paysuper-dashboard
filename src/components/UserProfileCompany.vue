@@ -337,8 +337,6 @@ export default {
 }
 
 .checkbox-and-radio {
-  display: block;
-
   & + & {
     margin-top: 16px;
   }

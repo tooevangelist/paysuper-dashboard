@@ -84,14 +84,15 @@ export default {
 $disabled-checkbox-color: #e1e1e1;
 
 .base-checkbox {
-  display: inline-flex;
+  display: block;
   position: relative;
   padding-left: 12px;
 }
 
 .wrapper {
-  display: flex;
+  display: inline-flex;
   cursor: pointer;
+  vertical-align: top;
 }
 
 .checkbox {
@@ -104,6 +105,9 @@ $disabled-checkbox-color: #e1e1e1;
 
 .text:not(:empty) {
   margin-left: 12px;
+  font-size: 16px;
+  line-height: 24px;
+  color: #000000;
 }
 .input {
   height: 0;

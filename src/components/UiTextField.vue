@@ -1,38 +1,10 @@
-<template>
-<div class="text-field">
-  <input
-    v-model="inputValue"
-    v-bind="{ type, required, disabled }"
-    :class="inputClasses"
-    @blur="$emit('blur')"
-    @focus="$emit('focus')"
-    @input="$emit('input', inputValue)"
-  >
-  <label
-    class="label"
-    :title="label"
-  >
-    {{ label }}
-  </label>
-  <span
-    v-if="isVisibleError"
-    class="error"
-    :title="errorText"
-  >
-    {{ errorText }}
-  </span>
-  <span
-    v-if="additionalInfo"
-    class="additional"
-    :title="additionalInfo"
-  >
-    {{ additionalInfo }}
-  </span>
-</div>
-</template>
-
 <script>
+import { Money } from 'v-money';
+
 export default {
+  components: {
+    Money,
+  },
   props: {
     additionalInfo: {
       default: '',
@@ -66,10 +38,26 @@ export default {
       default: '',
       type: [String, Number],
     },
+    isMoney: {
+      default: false,
+      type: Boolean,
+    },
+    money: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     return {
       inputValue: this.value,
+      moneyDefault: {
+        decimal: '.',
+        thousands: ' ',
+        prefix: '',
+        suffix: '',
+        precision: 0,
+        masked: false,
+      },
     };
   },
   computed: {
@@ -102,6 +90,49 @@ export default {
   },
 };
 </script>
+
+<template>
+<div class="text-field">
+  <Money
+    v-if="isMoney"
+    v-model="inputValue"
+    v-bind="{ ...$attrs, ...moneyDefault, ...money, type, required, disabled }"
+    :class="inputClasses"
+    @blur="$emit('blur')"
+    @focus="$emit('focus')"
+    @input="$emit('input', inputValue)"
+  />
+  <input
+    v-else
+    v-model="inputValue"
+    v-bind="{ ...$attrs, type, required, disabled }"
+    :class="inputClasses"
+    @blur="$emit('blur')"
+    @focus="$emit('focus')"
+    @input="$emit('input', inputValue)"
+  />
+  <label
+    class="label"
+    :title="label"
+  >
+    {{ label }}
+  </label>
+  <span
+    v-if="isVisibleError"
+    class="error"
+    :title="errorText"
+  >
+    {{ errorText }}
+  </span>
+  <span
+    v-if="additionalInfo"
+    class="additional"
+    :title="additionalInfo"
+  >
+    {{ additionalInfo }}
+  </span>
+</div>
+</template>
 
 <style scoped lang="scss">
 /** @TODO - move to gui for typographics */
