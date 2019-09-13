@@ -71,6 +71,7 @@ export default {
       'createProject',
       'saveProject',
     ]),
+    ...mapActions('User/Merchant', ['completeStep']),
 
     updateProjectLocal() {
       this.projectLocal = cloneDeep(this.project);
@@ -87,6 +88,11 @@ export default {
           await this.saveProject(this.projectLocal);
         } else {
           await this.createProject(this.projectLocal);
+          /**
+           * TODO: after https://protocolone.tpondemand.com/restui/board.aspx?#page=task/191909
+           * remove this and use has_projects attribute from merchant object
+           */
+          this.completeStep('projects');
           this.$router.push({
             path: `/projects/${this.project.id}`,
           });
