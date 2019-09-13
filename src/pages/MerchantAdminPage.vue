@@ -3,6 +3,8 @@ import { mapState, mapMutations, mapActions } from 'vuex';
 import MerchantStore from '@/store/MerchantStore';
 
 export default {
+  name: 'MerchantAdminPage',
+
   async asyncData({ store, registerStoreModule, route }) {
     try {
       await registerStoreModule('Merchant', MerchantStore, route.params.id);

@@ -60,8 +60,8 @@ export default {
           url: '/merchants',
           name: [
             'merchants',
-            'MerchantAdminCardForm',
-            'MerchantAdminCardPaymentMethod',
+            'MerchantAdminForm',
+            'MerchantAdminPaymentMethod',
             'MerchantHistory',
           ],
         },

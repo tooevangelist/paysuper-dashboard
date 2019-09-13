@@ -8,6 +8,8 @@ import MerchantAdminFormHistory from '@/components/MerchantAdminFormHistory.vue'
 import { toggleSort, getSortDirection } from '@/helpers/handleSort';
 
 export default {
+  name: 'MerchantAdminHistoryPage',
+
   components: {
     SimplePageHeader,
     PictureClock,

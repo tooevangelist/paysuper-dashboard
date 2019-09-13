@@ -5,7 +5,7 @@ import SimplePageHeader from '@/components/SimplePageHeader.vue';
 import PictureDwellingHouse from '@/components/PictureDwellingHouse.vue';
 
 export default {
-  name: 'MerchantAdminCardCompanyInfoPage',
+  name: 'MerchantAdminCompanyInfoPage',
 
   components: {
     SimplePageHeader,

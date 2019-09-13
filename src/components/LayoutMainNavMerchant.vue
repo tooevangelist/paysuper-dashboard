@@ -20,14 +20,14 @@ export default {
           value: 'personalProfile',
           icon: 'IconProfile',
           url: `/merchants/${this.merchant.id || 'new'}/personal-profile/`,
-          routeNames: ['MerchantAdminCardPersonalProfile'],
+          routeNames: ['MerchantAdminPersonalProfile'],
         },
         {
           title: 'Company Info',
           value: 'companyInfo',
           icon: 'IconBusinessCase',
           url: `/merchants/${this.merchant.id || 'new'}/company-info/`,
-          routeNames: ['MerchantAdminCardCompanyInfo'],
+          routeNames: ['MerchantAdminCompanyInfo'],
         },
         // {
         //   title: 'Licence Agreement',
@@ -40,14 +40,14 @@ export default {
           value: 'paymentMethods',
           icon: 'IconMoney',
           url: `/merchants/${this.merchant.id || 'new'}/payment-methods/`,
-          routeNames: ['MerchantAdminCardPaymentMethods'],
+          routeNames: ['MerchantAdminPaymentMethods'],
         },
         {
           title: 'History',
           value: 'history',
           icon: 'IconSandglass',
           url: `/merchants/${this.merchant.id || 'new'}/history/`,
-          routeNames: ['MerchantAdminCardHistory'],
+          routeNames: ['MerchantAdminHistory'],
         },
       ];
     },
