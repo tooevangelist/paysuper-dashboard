@@ -7,7 +7,7 @@ export default {
   mixins: [Notifications],
   computed: {
     ...mapGetters('Company/LicenseAgreement', ['isSigendYou', 'isSigendPS']),
-    ...mapState('Company/LicenseAgreement', ['isReject', 'file']),
+    ...mapState('Company/LicenseAgreement', ['isReject', 'document', 'agreement']),
 
     isCheckingAgreement() {
       return this.isSigendYou && !this.isSigendPS;
@@ -53,7 +53,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('Company/LicenseAgreement', ['initState', 'openLicense']),
+    ...mapActions('Company/LicenseAgreement', ['initState', 'openLicense', 'uploadDocument']),
   },
 };
 </script>
@@ -71,10 +71,16 @@ export default {
 
     <div class="container">
       <div v-if="isSigendYou && isSigendPS" class="item">
-        <IconFile />
+        <IconFile v-if="agreement.metadata.size" />
+        <IconFileLoader v-else />
         <div class="item-text _file">
-          <div class="first-line">{{ file.name }}</div>
-          <a :href="file.link" class="second-line _link">DOWNLOAD</a>
+          <div class="first-line">License Agreement.{{ agreement.metadata.extension }}</div>
+          <a
+            v-if="agreement.metadata.size"
+            class="second-line _link"
+            :href="agreement.url"
+            @click.prevent="uploadDocument"
+          >DOWNLOAD</a>
         </div>
       </div>
       <div class="item">
