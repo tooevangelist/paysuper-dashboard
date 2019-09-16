@@ -93,6 +93,7 @@ export default {
       label="Operating name"
       :value="accountInfo.alternativeName"
       @input="updateField('alternativeName', $event)"
+      @blur="$v.accountInfo.name.$touch()"
     />
   </div>
 
