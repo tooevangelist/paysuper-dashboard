@@ -113,18 +113,15 @@ export default function createTariffStore() {
         }
       },
       async fetchTariffs({ commit, state, rootState }, region) {
-        if (state.regions[region]) {
-          return;
-        }
-
+        const actualRegion = region || state.region;
         const { accessToken } = rootState.User;
         const amount = map(state.amount.split('-'), toNumber);
 
         const queryString = qs.stringify({
-          region,
+          region: actualRegion,
           payout_currency: state.currency,
-          amountFrom: amount[0],
-          amountTo: amount[1],
+          amount_from: amount[0],
+          amount_to: amount[1],
         });
 
         const response = await axios.get(
@@ -133,7 +130,10 @@ export default function createTariffStore() {
         );
 
         if (response.data) {
-          commit('regions', { ...state.regions, [region]: prepareRegionData(region, response.data) });
+          commit('regions', {
+            ...state.regions,
+            [actualRegion]: prepareRegionData(actualRegion, response.data),
+          });
         }
       },
       async submitTariffs({ dispatch, state, rootState }) {
@@ -164,8 +164,9 @@ export default function createTariffStore() {
         commit('region', region);
         dispatch('fetchTariffs', region);
       },
-      updateCurrency({ commit }, currency) {
+      updateCurrency({ commit, dispatch }, currency) {
         commit('currency', currency);
+        dispatch('fetchTariffs');
       },
       updateChannelCostsRegion({ commit, dispatch }, region) {
         commit('channelCostsRegion', region);
@@ -175,8 +176,9 @@ export default function createTariffStore() {
         commit('refundCostsRegion', region);
         dispatch('fetchTariffs', region);
       },
-      updateAmount({ commit }, amount) {
+      updateAmount({ commit, dispatch }, amount) {
         commit('amount', amount);
+        dispatch('fetchTariffs');
       },
     },
   };
