@@ -63,7 +63,7 @@ export default function createDictionariesStore() {
     actions: {
       initState({ dispatch }) {
         return Promise.all([
-          dispatch('fetchCurrencies'),
+          // dispatch('fetchCurrencies'),
           dispatch('fetchCountries'),
         ]);
       },

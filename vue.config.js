@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const path = require('path');
 const aliasesConfig = require('./aliases.config');
 const webappConfigScheme = require('./backend/config/webappConfigScheme.js');
 
@@ -16,6 +17,12 @@ module.exports = {
   },
 
   configureWebpack: {
+    entry: [
+      'core-js/modules/es.promise',
+      'core-js/modules/es.string.includes',
+      'core-js/modules/es.array.iterator',
+      path.resolve(__dirname, 'src/main.js'),
+    ],
     resolve: {
       alias: aliasesConfig.webpack,
     },

@@ -3,7 +3,6 @@ import Vuex from 'vuex';
 import VueRouter from 'vue-router';
 import { sync } from 'vuex-router-sync';
 
-import './plugins/bootstrap';
 import './plugins/vue-datepicker';
 import './plugins/vue-select';
 import './plugins/vue-toasted';
