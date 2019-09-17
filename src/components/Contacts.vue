@@ -1,13 +1,8 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 import { email, maxLength, required } from 'vuelidate/lib/validators';
-import { onlyRusAndLat } from '@/helpers/customValidators';
+import { onlyRusAndLat, phone } from '@/helpers/customValidators';
 import Notifications from '@/mixins/Notifications';
-
-function phone(val) {
-  const regex = /^[\s()+-]*([0-9][\s()+-]*){6,20}$/;
-  return regex.test(val);
-}
 
 export default {
   name: 'Contacts',
@@ -18,7 +13,7 @@ export default {
         name: { onlyRusAndLat, maxLength: maxLength(30), required },
         email: { maxLength: maxLength(100), email, required },
         phone: { maxLength: maxLength(20), phone, required },
-        position: { maxLength: maxLength(30), required },
+        position: { onlyRusAndLat, maxLength: maxLength(30), required },
       },
       technical: {
         name: { onlyRusAndLat, maxLength: maxLength(30), required },
@@ -91,6 +86,13 @@ export default {
       @blur="$v.contacts.authorized.name.$touch()"
     />
     <UiTextField
+      v-bind="$getValidatedFieldProps('contacts.authorized.position')"
+      label="Position"
+      :value="contacts.authorized.position"
+      @input="updateField('authorized', 'position', $event)"
+      @blur="$v.contacts.authorized.position.$touch()"
+    />
+    <UiTextField
       v-bind="$getValidatedFieldProps('contacts.authorized.email')"
       label="Email"
       :value="contacts.authorized.email"
@@ -103,13 +105,6 @@ export default {
       :value="contacts.authorized.phone"
       @input="updateField('authorized', 'phone', $event)"
       @blur="$v.contacts.authorized.phone.$touch()"
-    />
-    <UiTextField
-      v-bind="$getValidatedFieldProps('contacts.authorized.position')"
-      label="Position"
-      :value="contacts.authorized.position"
-      @input="updateField('authorized', 'position', $event)"
-      @blur="$v.contacts.authorized.position.$touch()"
     />
   </div>
 
