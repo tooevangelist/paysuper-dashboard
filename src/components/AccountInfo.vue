@@ -2,7 +2,7 @@
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { get } from 'lodash-es';
 import { maxLength, required, url } from 'vuelidate/lib/validators';
-import { onlyRusAndLat } from '@/helpers/customValidators';
+import { onlyRusAndLat, onlyRusAndLatAndNum } from '@/helpers/customValidators';
 import Notifications from '@/mixins/Notifications';
 
 export default {
@@ -16,7 +16,9 @@ export default {
       city: { required },
       country: { required },
       name: { onlyRusAndLat, maxLength: maxLength(60), required },
+      registrationNumber: { onlyRusAndLatAndNum, maxLength: maxLength(20), required },
       state: { required },
+      taxId: { onlyRusAndLatAndNum, maxLength: maxLength(20) },
       website: { required, url },
       zip: { maxLength: maxLength(30), required },
     },
@@ -93,7 +95,22 @@ export default {
       label="Operating name"
       :value="accountInfo.alternativeName"
       @input="updateField('alternativeName', $event)"
-      @blur="$v.accountInfo.name.$touch()"
+      @blur="$v.accountInfo.alternativeName.$touch()"
+    />
+    <UiTextField
+      v-bind="$getValidatedFieldProps('accountInfo.registrationNumber')"
+      label="Registration number"
+      :value="accountInfo.registrationNumber"
+      @input="updateField('registrationNumber', $event)"
+      @blur="$v.accountInfo.registrationNumber.$touch()"
+    />
+    <UiTextField
+      v-bind="$getValidatedFieldProps('accountInfo.taxId')"
+      label="VAT number (EU)"
+      :value="accountInfo.taxId"
+      :required="false"
+      @input="updateField('taxId', $event)"
+      @blur="$v.accountInfo.taxId.$touch()"
     />
   </div>
 
@@ -118,6 +135,7 @@ export default {
       label="State / Province / Region"
       :value="accountInfo.state"
       @input="updateField('state', $event)"
+      @blur="$v.accountInfo.state.$touch()"
     />
     <UiSelect
       v-bind="$getValidatedFieldProps('accountInfo.city')"
@@ -142,9 +160,12 @@ export default {
       @blur="$v.accountInfo.address.$touch()"
     />
     <UiTextField
+      v-bind="$getValidatedFieldProps('accountInfo.addressAdditional')"
       label="Address 2"
       :value="accountInfo.addressAdditional"
+      :required="false"
       @input="updateField('addressAdditional', $event)"
+      @blur="$v.accountInfo.addressAdditional.$touch()"
     />
   </div>
 
