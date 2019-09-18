@@ -49,6 +49,7 @@ export default {
     <circle
       v-bind="circleAttrs"
       class="ring _unpassed"
+      :transform="`rotate(${indentUnpassed} 21 21)`"
       :style="{
         strokeDashoffset: strokeUnpassedDashoffset,
         transform: `rotate(${indentUnpassed}deg)`,
@@ -57,6 +58,7 @@ export default {
     <circle
       v-bind="circleAttrs"
       class="ring _passed"
+      transform="rotate(-90 21 21)"
       :style="{ strokeDashoffset: strokePassedDashoffset }"
     />
   </svg>

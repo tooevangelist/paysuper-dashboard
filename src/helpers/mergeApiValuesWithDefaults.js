@@ -1,10 +1,10 @@
-import { mapValues, merge } from 'lodash-es';
+import { isArray, mapValues, merge } from 'lodash-es';
 
 function replaceDataEmptyValuesWithDefaults(defaultData, data) {
   return mapValues(defaultData, (value, key) => {
     const defaultValue = data[key];
     if (value) {
-      if (typeof value === 'object' && !Array.isArray(value) && defaultValue) {
+      if (typeof value === 'object' && !isArray(value) && defaultValue) {
         return replaceDataEmptyValuesWithDefaults(value, defaultValue);
       }
     }

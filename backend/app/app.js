@@ -62,14 +62,14 @@ app.use(session(sessionParams));
 const corsRoutes = ['/auth1/refresh', '/auth1/logout', '/upload_file'];
 app.use(cors({
   origin(ctx) {
-    if (!corsRoutes.includes(ctx.url)) {
+    if (corsRoutes.indexOf(ctx.url) === -1) {
       return false;
     }
     const requestOrigin = ctx.accept.headers.origin;
-    if (!requestOrigin || config.corsValidOrigins.includes('*')) {
+    if (!requestOrigin || config.corsValidOrigins.indexOf('*') !== -1) {
       return '*';
     }
-    if (!config.corsValidOrigins.includes(requestOrigin)) {
+    if (config.corsValidOrigins.indexOf(requestOrigin) === -1) {
       return ctx.throw(`${requestOrigin} is not a valid origin`);
     }
     return requestOrigin;
