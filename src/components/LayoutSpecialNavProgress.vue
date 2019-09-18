@@ -104,6 +104,7 @@ export default {
   display: flex;
   align-content: center;
   align-items: center;
+  width: 100%;
 
   &._progress {
     padding-left: 7px;

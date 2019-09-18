@@ -87,11 +87,11 @@ export default {
         v-if="!get($route, 'meta.specialNav')"
       />
     </div>
-    <div class="top-controls">
-      <component
-        v-if="isComponent(get($route, 'meta.topControls'))"
-        :is="$route.meta.topControls"
-      />
+    <div
+      v-if="isComponent(get($route, 'meta.topControls'))"
+      class="top-controls"
+    >
+      <component :is="$route.meta.topControls" />
     </div>
   </div>
 
