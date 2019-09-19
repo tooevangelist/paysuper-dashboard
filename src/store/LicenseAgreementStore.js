@@ -97,11 +97,12 @@ export default function createLicenseAgreementStore() {
           commit('signature', response.data);
         }
       },
-      async fetchAgreementMetadata({ commit, rootState }) {
+      async fetchAgreementMetadata({ commit, rootState, rootGetters }) {
+        const isOnboardingStepsComplete = rootGetters['User/Merchant/isOnboardingStepsComplete'];
         const { accessToken, Merchant } = rootState.User;
         const merchantId = get(Merchant, 'merchant.id', 0);
 
-        if (merchantId) {
+        if (merchantId && isOnboardingStepsComplete) {
           const response = await axios.get(
             `${rootState.config.apiUrl}/admin/api/v1/merchants/${merchantId}/agreement`,
             { headers: { Authorization: `Bearer ${accessToken}` } },
