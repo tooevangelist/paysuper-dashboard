@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { camelCase, reduce, snakeCase } from 'lodash-es';
 // TODO: it will be service, and must be located in DictionariesStore
-import citiesByCountry from '@/citiesByCountry';
+import citiesByCountry from '@/citiesByCountry.json';
 
 export default function createAccountInfoStore() {
   return {

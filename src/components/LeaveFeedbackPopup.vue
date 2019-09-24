@@ -1,5 +1,5 @@
 <script>
-import { TextareaAutosize } from 'vue-textarea-autosize';
+import TextareaAutosize from 'vue-textarea-autosize/src/components/TextareaAutosize.vue';
 import { debounce } from 'lodash-es';
 
 export default {
