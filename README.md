@@ -21,7 +21,7 @@ npm run serve
 npm run serve:be
 ```
 
-3. Also there are extra env-variables required for image uploading. Ask @fullfs for its valus
+3. Also there are extra env-variables required for image uploading. Ask Andrey Solodovnikov for its values
 ```
 S3_ACCESS_KEY_ID
 S3_SECRET_ACCESS_KEY
