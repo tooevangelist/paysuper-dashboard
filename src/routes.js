@@ -222,6 +222,10 @@ const routes = [
     path: '/icons/',
     component: () => import('@/pages/IconsPage.vue'),
   },
+  {
+    path: '/ui/',
+    component: () => import('@/pages/ComponentsPage.vue'),
+  },
 
   {
     path: '*',
