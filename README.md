@@ -21,6 +21,14 @@ npm run serve
 npm run serve:be
 ```
 
+3. Also there are extra env-variables required for image uploading. Ask @fullfs for its valus
+```
+S3_ACCESS_KEY_ID
+S3_SECRET_ACCESS_KEY
+S3_BUCKET_NAME
+S3_REGION
+```
+
 # Authentication backend for PayOne
 
 ## Dependencies: 
