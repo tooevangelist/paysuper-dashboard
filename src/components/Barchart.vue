@@ -2,7 +2,16 @@
 import Chart from '@/helpers/roundedBarCharts';
 
 export default {
-  props: ['data', 'options'],
+  props: {
+    data: {
+      default: () => ({}),
+      type: Object,
+    },
+    options: {
+      default: () => ({}),
+      type: Object,
+    },
+  },
   data() {
     return {
       chart: null,

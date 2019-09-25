@@ -1,5 +1,5 @@
 <script>
-import { get, find, startCase } from 'lodash-es';
+import { find, get, startCase } from 'lodash-es';
 import { directive as clickaway } from 'vue-clickaway';
 
 export default {
@@ -79,9 +79,8 @@ export default {
 <template>
 <UiButton
   v-clickaway="hide"
+  v-bind="$attrs"
   :class="['select-as-button', { '_opened': isOpened }]"
-  color="transparent-gray"
-  :isTransparent="true"
   @click.self="toggle"
 >
   <span
@@ -93,18 +92,26 @@ export default {
     {{ label }}
   </span>
 
-  <div
-    class="list"
-    @click="hide"
+  <UiTip
+    innerPosition="right"
+    position="bottom"
+    :margin="2"
+    :closeDelay="0"
+    :visible="isOpened"
+    :stayOpenedOnHover="false"
   >
-    <div
-      class="item"
-      v-for="(option, index) in options"
-      :key="index"
-      :class="{ '_selected': option.value === value }"
-      @click="emitChange(option.value)"
-    >{{ option.label }}</div>
-  </div>
+    <div class="list">
+      <div
+        v-for="(option, index) in options"
+        class="item"
+        :key="index"
+        :class="{ '_selected': option.value === value }"
+        @click="emitChange(option.value)"
+      >
+        {{ option.label }}
+      </div>
+    </div>
+  </UiTip>
 </UiButton>
 </template>
 
@@ -113,11 +120,6 @@ $normal-text-color: #78909c;
 $selected-text-color: #c6cacc;
 $hover-text-color: #3d7bf5;
 $hover-background-color: rgba($hover-text-color, 0.08);
-
-button.base-button.select-as-button {
-  padding-left: 16px;
-  padding-right: 16px;
-}
 
 .selected {
   font-size: 12px;
@@ -137,29 +139,11 @@ button.base-button.select-as-button {
     transform: rotateX(180deg);
   }
 }
-
 .list {
-  position: absolute;
   border-radius: 4px;
-  padding: 5px 0;
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.2s ease-out;
-  z-index: 20;
-  cursor: auto;
-  right: 0;
-  text-align: left;
-  transform: translate3d(0, 20px, 0);
-  top: 100%;
-  width: 200px;
-  background-color: #fff;
-  box-shadow: 0px 8px 16px rgba(8, 35, 48, 0.1), 0px 24px 32px rgba(8, 35, 48, 0.06);
-
-  .select-as-button._opened & {
-    pointer-events: auto;
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
+  padding: 6px 0;
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
 }
 
 .item {
@@ -167,12 +151,19 @@ button.base-button.select-as-button {
   line-height: 20px;
   color: #000000;
   cursor: pointer;
-  padding: 5px 20px;
+  padding: 8px 16px;
+  height: 36px;
   transition: all 0.2s ease-out;
+  display: flex;
+  align-items: center;
 
-  &:hover:not(._selected) {
+  &:not(._selected):hover {
     background: $hover-background-color;
     color: $hover-text-color;
+
+    .icon > svg {
+      fill: $hover-text-color;
+    }
   }
 
   &._selected {

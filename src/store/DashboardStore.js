@@ -178,8 +178,13 @@ export default function createContactsStore() {
         state.main = data;
       },
       revenueDynamics(state, data) {
+        const currency = get(data, 'currency');
+
         state.revenue = get(data, 'items', []);
-        state.currency = get(data, 'currency', 'USD');
+
+        if (currency) {
+          state.currency = get(data, 'currency');
+        }
       },
       basePeriod(state, data) {
         state.basePeriod = data;

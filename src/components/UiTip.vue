@@ -19,6 +19,10 @@ export default {
       default: '',
       type: String,
     },
+    margin: {
+      default: 20,
+      type: Number,
+    },
     hasCaret: {
       default: false,
       type: Boolean,
@@ -55,6 +59,13 @@ export default {
       innerVisible: false,
       timeoutId: 0,
     };
+  },
+  computed: {
+    marginByPosition() {
+      const isTop = this.position === 'top';
+      const key = isTop ? 'margin-bottom' : 'margin-top';
+      return { [key]: `${this.margin}px` };
+    },
   },
   methods: {
     hide() {
@@ -106,6 +117,7 @@ export default {
     width: width || undefined,
     maxHeight: maxHeight || undefined,
     maxWidth: maxWidth || undefined,
+    ...marginByPosition,
   }"
   @mouseenter="innerVisible = true"
   @mouseleave="hide"
@@ -141,7 +153,7 @@ export default {
 
   &._bottom {
     transform: translate3d(0, 20px, 0);
-    top: calc(100% + 20px);
+    top: 100%;
 
     &._inner-center {
       transform: translate3d(-50%, 20px, 0);
@@ -154,7 +166,7 @@ export default {
 
   &._top {
     transform: translate3d(0, -20px, 0);
-    bottom: calc(100% + 20px);
+    bottom: 100%;
 
     &._inner-center {
       transform: translate3d(-50%, -20px, 0);

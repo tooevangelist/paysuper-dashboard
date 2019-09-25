@@ -26,6 +26,6 @@ export default {
 <template>
 <div>
   <AgreementProgressWidget v-if="!isOnboardingComplete" />
-  <Charts />
+  <Charts v-if="isOnboardingComplete" />
 </div>
 </template>

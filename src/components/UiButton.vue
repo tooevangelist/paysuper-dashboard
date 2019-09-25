@@ -54,7 +54,7 @@ export default {
       default: 'default',
       type: String,
       validator(value) {
-        return includes(['default'], value);
+        return includes(['small', 'default'], value);
       },
     },
     text: {
@@ -204,6 +204,12 @@ $primary-button-size: 14px;
       background-color: $transparentHoverBoxColor;
       color: $transparentHoverColor;
     }
+  }
+
+  &._small {
+    padding: 8px 16px;
+    line-height: 16px;
+    height: 32px;
   }
 }
 

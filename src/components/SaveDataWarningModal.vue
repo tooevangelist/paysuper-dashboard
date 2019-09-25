@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: 'DeleteLocalizationModal',
+  name: 'SaveDataWarningModal',
 };
 </script>
 

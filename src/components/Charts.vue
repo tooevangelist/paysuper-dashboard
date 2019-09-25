@@ -7,6 +7,7 @@ import {
   merge,
   reduce,
 } from 'lodash-es';
+import print from 'print-js';
 import Barchart from '@/components/Barchart.vue';
 import getBarchartOptionsByType from '@/helpers/getBarchartOptionsByType';
 
@@ -106,11 +107,103 @@ export default {
         { label: 'Show last 90 payments', value: 90 },
       ];
     },
+
+    mainData() {
+      return this.getData('main');
+    },
+    revenueData() {
+      return this.getData('revenue');
+    },
+    baseData() {
+      return this.getData('base');
+    },
+    getData() {
+      return (type) => {
+        if (type === 'revenue') {
+          console.error(1);
+          const revenue = reduce(this.revenue, (res, item) => {
+            res.labels.push(item.label);
+            res.data.push(item.amount);
+
+            return res;
+          }, { labels: [], data: [] });
+
+          const revenueColors = {
+            backgroundColor: map(revenue.data, (item, index) => {
+              const isLastBar = index === revenue.data.length - 1;
+              return isLastBar ? '#3d7bf5' : '#e9edef';
+            }),
+            hoverBackgroundColor: map(revenue.data, (item, index) => {
+              const isLastBar = index === revenue.data.length - 1;
+              return isLastBar ? '#3d7bf5' : '#c5d7fc';
+            }),
+          };
+
+          return {
+            labels: revenue.labels,
+            datasets: [{
+              label: '',
+              ...revenueColors,
+              data: revenue.data,
+            }],
+          };
+        }
+
+        return reduce(this[type], (res, item, key) => {
+          const current = get(item, 'total_current', get(item, 'amount_current', item.count_current));
+          const previous = get(item, 'total_previous', get(item, 'amount_previous', item.count_previous));
+          const chart = reduce(item.chart, (result, chartItem) => {
+            result.labels.push(chartItem.label);
+            result.data.push(chartItem.value || chartItem.amount);
+
+            return result;
+          }, { labels: [], data: [] });
+
+          const colors = {
+            backgroundColor: map(chart.data, (chartItem, index) => {
+              const isLastBar = index === chart.data.length - 1;
+              return isLastBar ? this[`${type}LastBarColor`][key] : '#e9edef';
+            }),
+            hoverBackgroundColor: map(chart.data, (chartItem, index) => {
+              const isLastBar = index === chart.data.length - 1;
+              return isLastBar ? this[`${type}LastBarColor`][key] : '#c5d7fc';
+            }),
+          };
+
+          return {
+            ...res,
+            [key]: {
+              amount: current.toLocaleString(),
+              amountPrevious: previous.toLocaleString(),
+              isIncreased: current > previous,
+              top: item.top || undefined,
+              chart: {
+                labels: chart.labels,
+                datasets: [{
+                  label: '',
+                  ...colors,
+                  data: chart.data,
+                }],
+              },
+            },
+          };
+        }, {});
+      };
+    },
   },
   methods: {
     ...mapActions('Dashboard', ['changePeriod', 'fetchLastPayments']),
 
     get,
+
+    printDashboard() {
+      print({
+        printable: 'dashboard-charts',
+        type: 'html',
+        targetStyles: ['*'],
+        maxWidth: 1200,
+      });
+    },
 
     changePaymentsCount(count) {
       this.paymentsCount = count;
@@ -128,90 +221,33 @@ export default {
     getCountryByCode(code) {
       return get(find(this.countries, ({ value }) => value === code), 'label', code);
     },
-
-    getData(type) {
-      if (type === 'revenue') {
-        const revenue = reduce(this.revenue, (res, item) => {
-          res.labels.push(item.label);
-          res.data.push(item.amount);
-
-          return res;
-        }, { labels: [], data: [] });
-
-        const revenueColors = {
-          backgroundColor: map(revenue.data, (item, index) => {
-            const isLastBar = index === revenue.data.length - 1;
-            return isLastBar ? '#3d7bf5' : '#e9edef';
-          }),
-          hoverBackgroundColor: map(revenue.data, (item, index) => {
-            const isLastBar = index === revenue.data.length - 1;
-            return isLastBar ? '#3d7bf5' : '#c5d7fc';
-          }),
-        };
-
-        return {
-          labels: revenue.labels,
-          datasets: [{
-            label: '',
-            ...revenueColors,
-            data: revenue.data,
-          }],
-        };
-      }
-
-      return reduce(this[type], (res, item, key) => {
-        const current = get(item, 'total_current', get(item, 'amount_current', item.count_current));
-        const previous = get(item, 'total_previous', get(item, 'amount_previous', item.count_previous));
-        const chart = reduce(item.chart, (result, chartItem) => {
-          result.labels.push(chartItem.label);
-          result.data.push(chartItem.value || chartItem.amount);
-
-          return result;
-        }, { labels: [], data: [] });
-
-        const colors = {
-          backgroundColor: map(chart.data, (chartItem, index) => {
-            const isLastBar = index === chart.data.length - 1;
-            return isLastBar ? this[`${type}LastBarColor`][key] : '#e9edef';
-          }),
-          hoverBackgroundColor: map(chart.data, (chartItem, index) => {
-            const isLastBar = index === chart.data.length - 1;
-            return isLastBar ? this[`${type}LastBarColor`][key] : '#c5d7fc';
-          }),
-        };
-
-        return {
-          ...res,
-          [key]: {
-            amount: current.toLocaleString(),
-            amountPrevious: previous.toLocaleString(),
-            isIncreased: current > previous,
-            top: item.top || undefined,
-            chart: {
-              labels: chart.labels,
-              datasets: [{
-                label: '',
-                ...colors,
-                data: chart.data,
-              }],
-            },
-          },
-        };
-      }, {});
-    },
   },
 };
 </script>
 
 <template>
-<div class="charts">
+<div id="dashboard-charts" class="charts">
   <div class="header">
     <div class="title">{{ title }}</div>
-    <UiSelectAsButton
-      :options="mainPeriods"
-      :value="mainPeriod"
-      @input="changePeriod({ type: 'main', period: $event })"
-    />
+    <div class="controls">
+      <UiSelectAsButton
+        color="transparent-gray"
+        size="small"
+        :options="mainPeriods"
+        :value="mainPeriod"
+        :isTransparent="true"
+        @input="changePeriod({ type: 'main', period: $event })"
+      />
+      <UiButton
+        class="print"
+        color="transparent-gray"
+        size="small"
+        :isTransparent="true"
+        @click="printDashboard"
+      >
+        <IconPrint />
+      </UiButton>
+    </div>
   </div>
 
   <div class="section">
@@ -228,57 +264,57 @@ export default {
   <div class="section">
     <div class="box _main">
       <div class="value">
-        {{ getData('main').gross_revenue.amount }} {{ currency }}
+        {{ mainData.gross_revenue.amount }} {{ currency }}
         <IconArrowBold
-          :class="['arrow', { '_is-decreased': !getData('main').gross_revenue.isIncreased }]"
+          :class="['arrow', { '_is-decreased': !mainData.gross_revenue.isIncreased }]"
         />
       </div>
       <div class="additional">Gross revenue</div>
       <Barchart
         class="main-chart"
-        :data="getData('main').gross_revenue.chart"
+        :data="mainData.gross_revenue.chart"
         :options="mainOptions"
       />
     </div>
     <div class="box _main">
       <div class="value">
-        {{ getData('main').total_transactions.amount }} {{ currency }}
+        {{ mainData.total_transactions.amount }} {{ currency }}
         <IconArrowBold
-          :class="['arrow', { '_is-decreased': !getData('main').total_transactions.isIncreased }]"
+          :class="['arrow', { '_is-decreased': !mainData.total_transactions.isIncreased }]"
         />
       </div>
       <div class="additional">Total transactions</div>
       <Barchart
         class="main-chart"
-        :data="getData('main').total_transactions.chart"
+        :data="mainData.total_transactions.chart"
         :options="mainOptions"
       />
     </div>
     <div class="box _main">
       <div class="value">
-        {{ getData('main').arpu.amount }} {{ currency }}
+        {{ mainData.arpu.amount }} {{ currency }}
         <IconArrowBold
-          :class="['arrow', { '_is-decreased': !getData('main').arpu.isIncreased }]"
+          :class="['arrow', { '_is-decreased': !mainData.arpu.isIncreased }]"
         />
       </div>
       <div class="additional">ARPU</div>
       <Barchart
         class="main-chart"
-        :data="getData('main').arpu.chart"
+        :data="mainData.arpu.chart"
         :options="mainOptions"
       />
     </div>
     <div class="box _main">
       <div class="value">
-        {{ getData('main').vat.amount }} {{ currency }}
+        {{ mainData.vat.amount }} {{ currency }}
         <IconArrowBold
-          :class="['arrow', { '_is-decreased': !getData('main').vat.isIncreased }]"
+          :class="['arrow', { '_is-decreased': !mainData.vat.isIncreased }]"
         />
       </div>
       <div class="additional">VAT</div>
       <Barchart
         class="main-chart"
-        :data="getData('main').vat.chart"
+        :data="mainData.vat.chart"
         :options="mainOptions"
       />
     </div>
@@ -291,7 +327,7 @@ export default {
       </div>
 
       <Barchart
-        :data="getData('revenue')"
+        :data="revenueData"
         :options="revenueOptions"
       />
     </div>
@@ -302,8 +338,11 @@ export default {
       <div class="box-header">
         <div class="box-title">Basic Reports</div>
         <UiSelectAsButton
+          color="transparent-gray"
+          size="small"
           :options="basePeriods"
           :value="basePeriod"
+          :isTransparent="true"
           @input="changePeriod({ type: 'base', period: $event })"
         />
       </div>
@@ -312,26 +351,26 @@ export default {
         <div class="basic-item">
           <div class="basic-title">Revenue by country</div>
           <div class="value">
-            {{ getData('base').revenue_by_country.amount }} {{ currency }}
+            {{ baseData.revenue_by_country.amount }} {{ currency }}
             <IconArrowBold
               :class="[
                 'arrow',
-                { '_is-decreased': !getData('base').revenue_by_country.isIncreased },
+                { '_is-decreased': !baseData.revenue_by_country.isIncreased },
               ]"
             />
           </div>
           <div class="additional">
-            {{ getData('base').revenue_by_country.amountPrevious }} {{ currency }} previously
+            {{ baseData.revenue_by_country.amountPrevious }} {{ currency }} previously
           </div>
           <Barchart
             class="main-chart"
-            :data="getData('base').revenue_by_country.chart"
+            :data="baseData.revenue_by_country.chart"
             :options="mainOptions"
           />
           <div class="top">
             <div class="top-title">Top countries</div>
             <div
-              v-for="(item, index) in getData('base').revenue_by_country.top"
+              v-for="(item, index) in baseData.revenue_by_country.top"
               :key="index"
               class="top-item"
             >
@@ -343,26 +382,26 @@ export default {
         <div class="basic-item">
           <div class="basic-title">Sources</div>
           <div class="value">
-            {{ getData('base').sources.amount }}
+            {{ baseData.sources.amount }}
             <IconArrowBold
               :class="[
                 'arrow',
-                { '_is-decreased': !getData('base').sources.isIncreased },
+                { '_is-decreased': !baseData.sources.isIncreased },
               ]"
             />
           </div>
           <div class="additional">
-            {{ getData('base').sources.amountPrevious }} previously
+            {{ baseData.sources.amountPrevious }} previously
           </div>
           <Barchart
             class="main-chart"
-            :data="getData('base').sources.chart"
+            :data="baseData.sources.chart"
             :options="baseOptions"
           />
           <div class="top">
             <div class="top-title">Best referrers</div>
             <div
-              v-for="(item, index) in getData('base').sources.top"
+              v-for="(item, index) in baseData.sources.top"
               :key="index"
               class="top-item"
             >
@@ -374,26 +413,26 @@ export default {
         <div class="basic-item">
           <div class="basic-title">Sales</div>
           <div class="value">
-            {{ getData('base').sales_today.amount }}
+            {{ baseData.sales_today.amount }}
             <IconArrowBold
               :class="[
                 'arrow',
-                { '_is-decreased': !getData('base').sales_today.isIncreased },
+                { '_is-decreased': !baseData.sales_today.isIncreased },
               ]"
             />
           </div>
           <div class="additional">
-            {{ getData('base').sales_today.amountPrevious }} previously
+            {{ baseData.sales_today.amountPrevious }} previously
           </div>
           <Barchart
             class="main-chart"
-            :data="getData('base').sales_today.chart"
+            :data="baseData.sales_today.chart"
             :options="baseOptions"
           />
           <div class="top">
             <div class="top-title">Top products</div>
             <div
-              v-for="(item, index) in getData('base').sales_today.top"
+              v-for="(item, index) in baseData.sales_today.top"
               :key="index"
               class="top-item"
             >
@@ -411,8 +450,11 @@ export default {
       <div class="box-header">
         <div class="box-title">Last payments</div>
         <UiSelectAsButton
+          color="transparent-gray"
+          size="small"
           :options="paymentsSettings"
           :value="paymentsCount"
+          :isTransparent="true"
           @input="changePaymentsCount"
         />
       </div>
@@ -476,6 +518,13 @@ export default {
   letter-spacing: 0.25px;
   color: #000;
   padding-right: 16px;
+}
+.controls {
+  display: flex;
+  align-items: center;
+}
+.print {
+  margin-left: 8px;
 }
 .section {
   display: flex;
@@ -586,6 +635,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   flex-basis: calc(33% - 30px);
+  align-self: flex-start;
 
   & > .value,
   & > .additional {
