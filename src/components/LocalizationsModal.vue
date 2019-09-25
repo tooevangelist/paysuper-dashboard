@@ -2,7 +2,7 @@
 import { upperFirst, includes } from 'lodash-es';
 
 export default {
-  name: 'LocalisationsModal',
+  name: 'LocalizationsModal',
 
   model: {
     event: 'update',
@@ -89,7 +89,7 @@ export default {
     level="3"
     align="center"
   >
-    Localisations
+    Localizations
   </UiHeader>
   <UiScrollbarBox class="content">
     <div

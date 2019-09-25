@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: 'DeleteLocalisationModal',
+  name: 'DeleteLocalizationModal',
 };
 </script>
 

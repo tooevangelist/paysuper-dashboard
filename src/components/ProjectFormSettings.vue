@@ -106,7 +106,7 @@ export default {
       :hasMargin="true"
       level="3"
     >
-      Localisations
+      Localizations
     </UiHeader>
     <p class="text">
       Choose complete set of supported languages for all products and descriptions.

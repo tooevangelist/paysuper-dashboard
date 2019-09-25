@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: 'DeleteLocalisationModal',
+  name: 'DeleteLocalizationModal',
 };
 </script>
 
@@ -11,7 +11,7 @@ export default {
     level="3"
     align="center"
   >
-    Delete localisation
+    Delete localization
   </UiHeader>
   <p class="description">
     Are you sure you want to delete?
