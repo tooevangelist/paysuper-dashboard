@@ -56,16 +56,25 @@ const routes = [
     redirect: { name: 'ProjectSettings' },
     children: [
       {
-        path: 'virtual-currency',
+        path: 'virtual-currency/',
         component: () => import('@/pages/ProjectVirtualCurrencyPage.vue'),
         meta: {
           ...projectPagesMeta,
-          topControls: () => import('@/components/LayoutTopControlsDatepicker.vue'),
+          topControls: () => import('@/components/LayoutTopControlsProjectSalesOptions.vue'),
         },
         name: 'ProjectVirtualCurrency',
       },
       {
-        path: 'settings',
+        path: 'game-keys/',
+        component: () => import('@/pages/ProjectGameKeysPage.vue'),
+        meta: {
+          ...projectPagesMeta,
+          topControls: () => import('@/components/LayoutTopControlsProjectSalesOptions.vue'),
+        },
+        name: 'ProjectGameKeysPage',
+      },
+      {
+        path: 'settings/',
         component: () => import('@/pages/ProjectSettingsPage.vue'),
         meta: projectPagesMeta,
         name: 'ProjectSettings',

@@ -1,12 +1,12 @@
 <script>
-import ProjectFormSettings from '@/components/ProjectFormSettings.vue';
 import SimplePageHeader from '@/components/SimplePageHeader.vue';
+import PictureGameKeyWithDoor from '@/components/PictureGameKeyWithDoor.vue';
 
 export default {
-  name: 'ProjectSettingsPage',
+  name: 'ProjectGameKeysPage',
   components: {
-    ProjectFormSettings,
     SimplePageHeader,
+    PictureGameKeyWithDoor,
   },
   props: {
     project: {
@@ -33,27 +33,16 @@ export default {
 <template>
 <div>
   <SimplePageHeader>
-    <span slot="title">Settings</span>
+    <span slot="title">Game keys</span>
     <span slot="description">
-      Setup main scope of project parameters here.
+      This sales method is intended to sell game keys for specific DRM platforms,
+      sending your customers e-mail with a key. Key distribution allows you to sell not only games,
+      but any key activated products.
     </span>
-    <!-- <PictureClock slot="picture" /> -->
+    <PictureGameKeyWithDoor slot="picture" />
   </SimplePageHeader>
 
   <UiPanel>
-    <ProjectFormSettings
-      ref="form"
-      v-bind="$props"
-      v-on="$listeners"
-    />
-
-    <div class="controls">
-      <UiButton
-        class="submit-button"
-        @click="handleSave"
-        text="SAVE"
-      />
-    </div>
   </UiPanel>
 </div>
 </template>
