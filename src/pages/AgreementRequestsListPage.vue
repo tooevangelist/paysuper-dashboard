@@ -11,7 +11,6 @@ import NoResults from '@/components/NoResults.vue';
 import PictureBlocksScheme from '@/components/PictureBlocksScheme.vue';
 import FilterSearchInput from '@/components/FilterSearchInput.vue';
 import FilterDate from '@/components/FilterDate.vue';
-import LabelTag from '@/components/LabelTag.vue';
 import FilterAgreementStatus from '@/components/FilterAgreementStatus.vue';
 
 export default {
@@ -26,7 +25,6 @@ export default {
     FilterSearchInput,
     FilterDate,
     FilterAgreementStatus,
-    LabelTag,
   },
 
   async asyncData({ store, registerStoreModule, route }) {
@@ -107,7 +105,7 @@ export default {
   methods: {
     ...mapActions(['setIsLoading']),
     ...mapActions('AgreementRequestsList', [
-      'submitFilters', 'fetchMerchants', 'initQuery', 'sendNotification',
+      'submitFilters', 'fetchMerchants', 'initQuery',
     ]),
 
     get,
@@ -156,21 +154,6 @@ export default {
         path: this.$route.path,
         query: this.query,
       });
-    },
-
-    async handleSendNotification(merchant, notification) {
-      this.setIsLoading(true);
-      try {
-        await this.sendNotification({
-          notification,
-          merchantId: merchant.id,
-        });
-        this.$_Notifications_showSuccessMessage('Notification sent successfully');
-      } catch (error) {
-        console.warn(error);
-        this.$_Notifications_showErrorMessage('Failed to send notification');
-      }
-      this.setIsLoading(false);
     },
 
     getCountry(merchant) {
@@ -290,11 +273,11 @@ export default {
         </UiTableCell>
         <UiTableCell align="left">
           <div class="label-tag-holder">
-            <LabelTag
+            <UiLabelTag
               :color="merchantStatusScheme[merchant.status].color"
             >
               {{merchantStatusScheme[merchant.status].text}}
-            </LabelTag>
+            </UiLabelTag>
           </div>
         </UiTableCell>
       </UiTableRow>

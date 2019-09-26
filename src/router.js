@@ -42,7 +42,10 @@ function updateDocumentClassModificators(to, from) {
   document.body.parentNode.classList.add(`${nameToAdd}-html`);
 }
 
-router.beforeResolve((to, from, next) => {
+router.beforeResolve(async (to, from, next) => {
+  if (!store.state.isStateInited && (!to.meta || !to.meta.isStoreInitDisabled)) {
+    await store.dispatch('initState');
+  }
   store.dispatch('setPageError', null);
 
   if (to.matched.some(record => record.meta.isAuthRequired)) {

@@ -19,8 +19,6 @@ Vue.use(Vuex);
 sync(store, router);
 
 async function initApp() {
-  await store.dispatch('initState');
-
   new Vue(
     {
       i18n,

@@ -1,13 +1,11 @@
 <script>
 import merchantStatusScheme from '@/schemes/merchantStatusScheme';
-import LabelTag from '@/components/LabelTag.vue';
 import IconBigArrow from '@/components/IconBigArrow.vue';
 
 export default {
   name: 'MerchantStatusTransitionLabel',
 
   components: {
-    LabelTag,
     IconBigArrow,
   },
 
@@ -33,13 +31,13 @@ export default {
   <div
     class="merchant-status-transition-label"
   >
-    <LabelTag
+    <UiLabelTag
       v-if="codeFrom !== undefined"
       :color="statuses[codeFrom].color"
       v-text="statuses[codeFrom].text"
     />
     <IconBigArrow class="arrow" />
-    <LabelTag
+    <UiLabelTag
       v-if="codeTo !== undefined"
       :color="statuses[codeTo].color"
       v-text="statuses[codeTo].text"

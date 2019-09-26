@@ -1,23 +1,6 @@
 <script>
 export default {
   name: 'ComponentsPage',
-
-  computed: {
-    components() {
-      return {
-        UiTable: {
-          props: {},
-        },
-        UiTableCell: {
-          props: {},
-        },
-        UiTableRow: {
-          props: {},
-        },
-      };
-    },
-  },
-
 };
 </script>
 
@@ -199,6 +182,15 @@ export default {
             <UiTableCell align="left">Inactive</UiTableCell>
           </UiTableRow>
         </UiTable>
+      </td>
+    </tr>
+    <tr>
+      <td class="cell">
+        UiLabelTag
+      </td>
+      <td class="cell">
+        <UiLabelTag color="green">Active</UiLabelTag>
+        <UiLabelTag color="transparent">Inactive</UiLabelTag>
       </td>
     </tr>
   </table>

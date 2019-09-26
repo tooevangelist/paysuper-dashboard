@@ -204,14 +204,17 @@ const routes = [
   {
     path: '/payform-sdk/',
     component: () => import('@/pages/PaymentFormSdk.vue'),
+    meta: { isStoreInitDisabled: true },
   },
   {
     path: '/payform-page/',
     component: () => import('@/pages/PaymentFormPage.vue'),
+    meta: { isStoreInitDisabled: true },
   },
   {
     path: '/payform-loading/',
     component: () => import('@/pages/PaymentFormLoading.vue'),
+    meta: { isStoreInitDisabled: true },
   },
   {
     path: '/profile/',
@@ -230,10 +233,12 @@ const routes = [
   {
     path: '/icons/',
     component: () => import('@/pages/IconsPage.vue'),
+    meta: { isStoreInitDisabled: true },
   },
   {
     path: '/ui/',
     component: () => import('@/pages/ComponentsPage.vue'),
+    meta: { isStoreInitDisabled: true },
   },
 
   {
