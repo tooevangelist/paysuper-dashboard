@@ -27,7 +27,6 @@ export default function createDictionariesStore() {
     getters: {
       countries(state) {
         const countries = state.countries
-          .filter(item => item.payments_allowed)
           .map(item => ({
             label: i18n.t(`countries.${item.iso_code_a2}`),
             value: item.iso_code_a2,

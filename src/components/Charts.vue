@@ -1,29 +1,27 @@
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex';
-import {
-  get,
-  find,
-  map,
-  merge,
-  reduce,
-} from 'lodash-es';
+import { get, map, reduce } from 'lodash-es';
 import print from 'print-js';
-import Barchart from '@/components/Barchart.vue';
-import getBarchartOptionsByType from '@/helpers/getBarchartOptionsByType';
+import ChartsHeader from '@/components/ChartsHeader.vue';
+import ChartsMain from '@/components/ChartsMain.vue';
+import ChartsRevenue from '@/components/ChartsRevenue.vue';
+import ChartsBasic from '@/components/ChartsBasic.vue';
+import ChartsLastPayments from '@/components/ChartsLastPayments.vue';
 
 export default {
-  name: 'DashboardItemBox',
-  components: { Barchart },
+  name: 'Charts',
+  components: {
+    ChartsHeader,
+    ChartsMain,
+    ChartsRevenue,
+    ChartsBasic,
+    ChartsLastPayments,
+  },
   props: {
     title: {
       default: 'Dashboard',
       type: String,
     },
-  },
-  data() {
-    return {
-      paymentsCount: 30,
-    };
   },
   computed: {
     ...mapState('Dashboard', [
@@ -35,43 +33,9 @@ export default {
       'currency',
       'lastPayments',
     ]),
-    ...mapGetters('Dashboard', ['revenueChartPeriod', 'baseChartPeriod']),
+    ...mapGetters('Dashboard', ['mainChartPeriod', 'baseChartPeriod']),
     ...mapGetters('Dictionaries', ['countries']),
 
-    mainPeriods() {
-      return [
-        { label: 'This month', value: 'current_month' },
-        { label: 'Previous month', value: 'previous_month' },
-        { label: 'This quarter', value: 'current_quarter' },
-        { label: 'Previous quarter', value: 'previous_quarter' },
-        { label: 'This year', value: 'current_year' },
-        { label: 'Previous year', value: 'previous_year' },
-      ];
-    },
-    basePeriods() {
-      return [
-        { label: 'Today', value: 'current_day' },
-        { label: 'Yesterday', value: 'previous_day' },
-        { label: 'This week', value: 'current_week' },
-        { label: 'Previous week', value: 'previous_week' },
-        { label: 'This month', value: 'current_month' },
-        { label: 'Previous month', value: 'previous_month' },
-        { label: 'This quarter', value: 'current_quarter' },
-        { label: 'Previous quarter', value: 'previous_quarter' },
-        { label: 'This year', value: 'current_year' },
-        { label: 'Previous year', value: 'previous_year' },
-      ];
-    },
-
-    revenueOptions() {
-      return merge(
-        getBarchartOptionsByType('revenue'),
-        {
-          scales: { xAxes: [{ time: { ...this.revenueChartPeriod } }] },
-          tooltips: { callbacks: { label: ({ yLabel }) => `${yLabel} ${this.currency}` } },
-        },
-      );
-    },
     mainLastBarColor() {
       return {
         gross_revenue: '#3d7bf5',
@@ -80,12 +44,6 @@ export default {
         vat: '#ea3d2f',
       };
     },
-    mainOptions() {
-      return merge(
-        getBarchartOptionsByType('common'),
-        { tooltips: { callbacks: { label: ({ yLabel }) => `${yLabel} ${this.currency}` } } },
-      );
-    },
     baseLastBarColor() {
       return {
         revenue_by_country: '#3d7bf5',
@@ -93,102 +51,80 @@ export default {
         sources: '#2fa84f',
       };
     },
-    baseOptions() {
-      return merge(
-        getBarchartOptionsByType('common'),
-        { scales: { xAxes: [{ time: { ...this.baseChartPeriod } }] } },
-      );
-    },
+    revenueData() {
+      const revenue = reduce(this.revenue, (res, item) => {
+        res.labels.push(item.label);
+        res.data.push(item.amount);
 
-    paymentsSettings() {
-      return [
-        { label: 'Show last 30 payments', value: 30 },
-        { label: 'Show last 60 payments', value: 60 },
-        { label: 'Show last 90 payments', value: 90 },
-      ];
-    },
+        return res;
+      }, { labels: [], data: [] });
 
+      const revenueColors = {
+        backgroundColor: map(revenue.data, (item, index) => {
+          const isLastBar = index === revenue.data.length - 1;
+          return isLastBar ? '#3d7bf5' : '#e9edef';
+        }),
+        hoverBackgroundColor: map(revenue.data, (item, index) => {
+          const isLastBar = index === revenue.data.length - 1;
+          return isLastBar ? '#3d7bf5' : '#c5d7fc';
+        }),
+      };
+
+      return {
+        labels: revenue.labels,
+        datasets: [{
+          label: '',
+          ...revenueColors,
+          data: revenue.data,
+        }],
+      };
+    },
     mainData() {
       return this.getData('main');
-    },
-    revenueData() {
-      return this.getData('revenue');
     },
     baseData() {
       return this.getData('base');
     },
     getData() {
-      return (type) => {
-        if (type === 'revenue') {
-          console.error(1);
-          const revenue = reduce(this.revenue, (res, item) => {
-            res.labels.push(item.label);
-            res.data.push(item.amount);
+      return type => reduce(this[type], (res, item, key) => {
+        const current = get(item, 'total_current', get(item, 'amount_current', item.count_current));
+        const previous = get(item, 'total_previous', get(item, 'amount_previous', item.count_previous));
+        const chart = reduce(item.chart, (result, chartItem) => {
+          result.labels.push(chartItem.label);
+          result.data.push(chartItem.value || chartItem.amount);
 
-            return res;
-          }, { labels: [], data: [] });
+          return result;
+        }, { labels: [], data: [] });
 
-          const revenueColors = {
-            backgroundColor: map(revenue.data, (item, index) => {
-              const isLastBar = index === revenue.data.length - 1;
-              return isLastBar ? '#3d7bf5' : '#e9edef';
-            }),
-            hoverBackgroundColor: map(revenue.data, (item, index) => {
-              const isLastBar = index === revenue.data.length - 1;
-              return isLastBar ? '#3d7bf5' : '#c5d7fc';
-            }),
-          };
+        const colors = {
+          backgroundColor: map(chart.data, (chartItem, index) => {
+            const isLastBar = index === chart.data.length - 1;
+            return isLastBar ? this[`${type}LastBarColor`][key] : '#e9edef';
+          }),
+          hoverBackgroundColor: map(chart.data, (chartItem, index) => {
+            const isLastBar = index === chart.data.length - 1;
+            return isLastBar ? this[`${type}LastBarColor`][key] : '#c5d7fc';
+          }),
+        };
 
-          return {
-            labels: revenue.labels,
-            datasets: [{
-              label: '',
-              ...revenueColors,
-              data: revenue.data,
-            }],
-          };
-        }
-
-        return reduce(this[type], (res, item, key) => {
-          const current = get(item, 'total_current', get(item, 'amount_current', item.count_current));
-          const previous = get(item, 'total_previous', get(item, 'amount_previous', item.count_previous));
-          const chart = reduce(item.chart, (result, chartItem) => {
-            result.labels.push(chartItem.label);
-            result.data.push(chartItem.value || chartItem.amount);
-
-            return result;
-          }, { labels: [], data: [] });
-
-          const colors = {
-            backgroundColor: map(chart.data, (chartItem, index) => {
-              const isLastBar = index === chart.data.length - 1;
-              return isLastBar ? this[`${type}LastBarColor`][key] : '#e9edef';
-            }),
-            hoverBackgroundColor: map(chart.data, (chartItem, index) => {
-              const isLastBar = index === chart.data.length - 1;
-              return isLastBar ? this[`${type}LastBarColor`][key] : '#c5d7fc';
-            }),
-          };
-
-          return {
-            ...res,
-            [key]: {
-              amount: current.toLocaleString(),
-              amountPrevious: previous.toLocaleString(),
-              isIncreased: current > previous,
-              top: item.top || undefined,
-              chart: {
-                labels: chart.labels,
-                datasets: [{
-                  label: '',
-                  ...colors,
-                  data: chart.data,
-                }],
-              },
+        return {
+          ...res,
+          [key]: {
+            amount: current.toLocaleString(),
+            amountPrevious: previous.toLocaleString(),
+            isIncreased: current > previous,
+            top: item.top || undefined,
+            chart: {
+              labels: chart.labels,
+              datasets: [{
+                label: '',
+                ...colors,
+                data: chart.data,
+              }],
             },
-          };
-        }, {});
-      };
+          },
+        };
+      }, {});
     },
   },
   methods: {
@@ -204,298 +140,46 @@ export default {
         maxWidth: 1200,
       });
     },
-
-    changePaymentsCount(count) {
-      this.paymentsCount = count;
-      this.fetchLastPayments(count);
-    },
-
-    getProjectName(project) {
-      return get(
-        project,
-        `name.${this.$i18n.locale}`,
-        get(project, 'notify_emails.0', get(project, 'merchant_id')),
-      );
-    },
-
-    getCountryByCode(code) {
-      return get(find(this.countries, ({ value }) => value === code), 'label', code);
-    },
   },
 };
 </script>
 
 <template>
 <div id="dashboard-charts" class="charts">
-  <div class="header">
-    <div class="title">{{ title }}</div>
-    <div class="controls">
-      <UiSelectAsButton
-        color="transparent-gray"
-        size="small"
-        :options="mainPeriods"
-        :value="mainPeriod"
-        :isTransparent="true"
-        @input="changePeriod({ type: 'main', period: $event })"
-      />
-      <UiButton
-        class="print"
-        color="transparent-gray"
-        size="small"
-        :isTransparent="true"
-        @click="printDashboard"
-      >
-        <IconPrint />
-      </UiButton>
-    </div>
-  </div>
+  <ChartsHeader
+    :period="mainPeriod"
+    :title="title"
+    @changePeriod="changePeriod"
+    @printDashboard="printDashboard"
+  />
 
-  <div class="section">
-    <div class="box _payout">
-      <div class="value">1 280 308 {{ currency }}</div>
-      <div class="additional">last<br>payout</div>
-    </div>
-    <div class="box _payout">
-      <div class="value">3 170 406 {{ currency }}</div>
-      <div class="additional">next<br>payout</div>
-    </div>
-  </div>
+  <ChartsMain
+    :chartPeriod="mainChartPeriod"
+    :currency="currency"
+    :data="mainData"
+  />
 
-  <div class="section">
-    <div class="box _main">
-      <div class="value">
-        {{ mainData.gross_revenue.amount }} {{ currency }}
-        <IconArrowBold
-          :class="['arrow', { '_is-decreased': !mainData.gross_revenue.isIncreased }]"
-        />
-      </div>
-      <div class="additional">Gross revenue</div>
-      <Barchart
-        class="main-chart"
-        :data="mainData.gross_revenue.chart"
-        :options="mainOptions"
-      />
-    </div>
-    <div class="box _main">
-      <div class="value">
-        {{ mainData.total_transactions.amount }} {{ currency }}
-        <IconArrowBold
-          :class="['arrow', { '_is-decreased': !mainData.total_transactions.isIncreased }]"
-        />
-      </div>
-      <div class="additional">Total transactions</div>
-      <Barchart
-        class="main-chart"
-        :data="mainData.total_transactions.chart"
-        :options="mainOptions"
-      />
-    </div>
-    <div class="box _main">
-      <div class="value">
-        {{ mainData.arpu.amount }} {{ currency }}
-        <IconArrowBold
-          :class="['arrow', { '_is-decreased': !mainData.arpu.isIncreased }]"
-        />
-      </div>
-      <div class="additional">ARPU</div>
-      <Barchart
-        class="main-chart"
-        :data="mainData.arpu.chart"
-        :options="mainOptions"
-      />
-    </div>
-    <div class="box _main">
-      <div class="value">
-        {{ mainData.vat.amount }} {{ currency }}
-        <IconArrowBold
-          :class="['arrow', { '_is-decreased': !mainData.vat.isIncreased }]"
-        />
-      </div>
-      <div class="additional">VAT</div>
-      <Barchart
-        class="main-chart"
-        :data="mainData.vat.chart"
-        :options="mainOptions"
-      />
-    </div>
-  </div>
+  <ChartsRevenue
+    :chartPeriod="mainChartPeriod"
+    :currency="currency"
+    :data="revenueData"
+  />
 
-  <div class="section">
-    <div class="box _revenue">
-      <div class="box-header">
-        <div class="box-title">Revenue Dynamic</div>
-      </div>
+  <ChartsBasic
+    :chartPeriod="baseChartPeriod"
+    :countries="countries"
+    :currency="currency"
+    :data="baseData"
+    :period="basePeriod"
+    @changePeriod="changePeriod"
+  />
 
-      <Barchart
-        :data="revenueData"
-        :options="revenueOptions"
-      />
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="box _basic">
-      <div class="box-header">
-        <div class="box-title">Basic Reports</div>
-        <UiSelectAsButton
-          color="transparent-gray"
-          size="small"
-          :options="basePeriods"
-          :value="basePeriod"
-          :isTransparent="true"
-          @input="changePeriod({ type: 'base', period: $event })"
-        />
-      </div>
-
-      <div class="basic">
-        <div class="basic-item">
-          <div class="basic-title">Revenue by country</div>
-          <div class="value">
-            {{ baseData.revenue_by_country.amount }} {{ currency }}
-            <IconArrowBold
-              :class="[
-                'arrow',
-                { '_is-decreased': !baseData.revenue_by_country.isIncreased },
-              ]"
-            />
-          </div>
-          <div class="additional">
-            {{ baseData.revenue_by_country.amountPrevious }} {{ currency }} previously
-          </div>
-          <Barchart
-            class="main-chart"
-            :data="baseData.revenue_by_country.chart"
-            :options="mainOptions"
-          />
-          <div class="top">
-            <div class="top-title">Top countries</div>
-            <div
-              v-for="(item, index) in baseData.revenue_by_country.top"
-              :key="index"
-              class="top-item"
-            >
-              <div class="country">{{ getCountryByCode(item.country) }}</div>
-              <div class="amount">{{ item.amount }} {{ currency }}</div>
-            </div>
-          </div>
-        </div>
-        <div class="basic-item">
-          <div class="basic-title">Sources</div>
-          <div class="value">
-            {{ baseData.sources.amount }}
-            <IconArrowBold
-              :class="[
-                'arrow',
-                { '_is-decreased': !baseData.sources.isIncreased },
-              ]"
-            />
-          </div>
-          <div class="additional">
-            {{ baseData.sources.amountPrevious }} previously
-          </div>
-          <Barchart
-            class="main-chart"
-            :data="baseData.sources.chart"
-            :options="baseOptions"
-          />
-          <div class="top">
-            <div class="top-title">Best referrers</div>
-            <div
-              v-for="(item, index) in baseData.sources.top"
-              :key="index"
-              class="top-item"
-            >
-              <div class="country">{{ item.name }}</div>
-              <div class="amount">{{ item.count }}</div>
-            </div>
-          </div>
-        </div>
-        <div class="basic-item">
-          <div class="basic-title">Sales</div>
-          <div class="value">
-            {{ baseData.sales_today.amount }}
-            <IconArrowBold
-              :class="[
-                'arrow',
-                { '_is-decreased': !baseData.sales_today.isIncreased },
-              ]"
-            />
-          </div>
-          <div class="additional">
-            {{ baseData.sales_today.amountPrevious }} previously
-          </div>
-          <Barchart
-            class="main-chart"
-            :data="baseData.sales_today.chart"
-            :options="baseOptions"
-          />
-          <div class="top">
-            <div class="top-title">Top products</div>
-            <div
-              v-for="(item, index) in baseData.sales_today.top"
-              :key="index"
-              class="top-item"
-            >
-              <div class="country">{{ item.name }}</div>
-              <div class="amount">{{ item.count }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="box _payments">
-      <div class="box-header">
-        <div class="box-title">Last payments</div>
-        <UiSelectAsButton
-          color="transparent-gray"
-          size="small"
-          :options="paymentsSettings"
-          :value="paymentsCount"
-          :isTransparent="true"
-          @input="changePaymentsCount"
-        />
-      </div>
-
-      <UiScrollbarBox class="scrollbox">
-        <UiTable class="table">
-          <UiTableRow :isHead="true">
-            <UiTableCell align="left">Transaction</UiTableCell>
-            <UiTableCell align="left">Project</UiTableCell>
-            <UiTableCell align="left">Country</UiTableCell>
-            <UiTableCell align="left">Amount</UiTableCell>
-            <UiTableCell align="left">Date</UiTableCell>
-            <UiTableCell align="left">User</UiTableCell>
-          </UiTableRow>
-          <UiTableRow
-            v-for="order in lastPayments"
-            :key="order.uuid"
-          >
-            <UiTableCell align="left">
-              {{ order.transaction }}
-            </UiTableCell>
-            <UiTableCell align="left">
-              {{ getProjectName(order.project) }}
-            </UiTableCell>
-            <UiTableCell align="left">
-              {{ getCountryByCode(order.country_code) }}
-            </UiTableCell>
-            <UiTableCell align="left">
-              {{ order.total_payment_amount }} {{ currency }}
-            </UiTableCell>
-            <UiTableCell align="left">
-              {{ $formatDate(get(order, 'created_at.seconds')) }}
-            </UiTableCell>
-            <UiTableCell align="left">
-              {{ get(order, 'user.name') || get(order, 'user.email') }}
-            </UiTableCell>
-          </UiTableRow>
-        </UiTable>
-      </UiScrollbarBox>
-    </div>
-  </div>
+  <ChartsLastPayments
+    :countries="countries"
+    :currency="currency"
+    :lastPayments="lastPayments"
+    @fetchLastPayments="fetchLastPayments"
+  />
 </div>
 </template>
 
@@ -503,221 +187,5 @@ export default {
 .charts {
   display: flex;
   flex-direction: column;
-}
-.header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 24px;
-  flex-grow: 1;
-  align-items: center;
-}
-.title {
-  font-family: Quicksand;
-  font-size: 34px;
-  line-height: 42px;
-  letter-spacing: 0.25px;
-  color: #000;
-  padding-right: 16px;
-}
-.controls {
-  display: flex;
-  align-items: center;
-}
-.print {
-  margin-left: 8px;
-}
-.section {
-  display: flex;
-  flex-grow: 1;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  margin-bottom: 8px;
-}
-.box {
-  display: flex;
-  justify-content: space-between;
-  flex-basis: 100%;
-  background-color: #fff;
-  box-shadow: 0px 1px 2px rgba(8, 35, 48, 0.24), 0px 2px 6px rgba(8, 35, 48, 0.16);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-
-  &._payout {
-    padding-bottom: 36px;
-    text-align: right;
-
-    @media screen and (min-width: 768px) {
-      flex-basis: calc(50% - 8px);
-    }
-  }
-  &._main {
-    height: 160px;
-
-    @media screen and (min-width: 768px) {
-      flex-basis: calc(50% - 8px);
-    }
-    @media screen and (min-width: 1170px) {
-      flex-basis: calc(25% - 12px);
-    }
-
-    & > .value,
-    & > .additional {
-      flex-basis: 100%;
-      white-space: nowrap;
-    }
-    & > .value {
-      margin-bottom: 8px;
-    }
-  }
-  &._revenue {
-    height: 430px;
-    padding: 40px 24px;
-  }
-  &._basic {
-    padding: 30px 24px;
-  }
-  &._payments {
-    height: 570px;
-    padding: 24px;
-    overflow: hidden;
-  }
-}
-.value {
-  font-family: Quicksand;
-  color: #000;
-  font-size: 24px;
-  line-height: 30px;
-  padding-right: 16px;
-  display: flex;
-  align-items: center;
-}
-.arrow {
-  margin-left: 10px;
-
-  &._is-decreased {
-    fill: #ea3d2f;
-    transform: rotate(180deg);
-  }
-}
-.additional {
-  color: #919699;
-  font-size: 12px;
-  line-height: 16px;
-  letter-spacing: 0.4px;
-}
-.main-chart {
-  height: 70px;
-}
-.box-header {
-  display: flex;
-  flex-basis: 100%;
-  justify-content: space-between;
-}
-.box-title {
-  color: #000;
-  font-family: Quicksand;
-  font-weight: 500;
-  font-size: 20px;
-  line-height: 28px;
-  letter-spacing: 0.15px;
-  margin-right: 16px;
-}
-.basic {
-  display: flex;
-  justify-content: space-between;
-  flex-basis: 100%;
-  flex-wrap: wrap;
-  margin-top: 20px;
-}
-.basic-item {
-  display: flex;
-  flex-wrap: wrap;
-  flex-basis: calc(33% - 30px);
-  align-self: flex-start;
-
-  & > .value,
-  & > .additional {
-    flex-basis: 100%;
-    white-space: nowrap;
-  }
-  & > .value {
-    margin-bottom: 8px;
-  }
-}
-.basic-title {
-  font-family: Roboto;
-  font-size: 16px;
-  line-height: 24px;
-  letter-spacing: 0.44px;
-  color: #000;
-  margin-bottom: 8px;
-  flex-basis: 100%;
-  white-space: nowrap;
-}
-.top {
-  display: flex;
-  flex-wrap: wrap;
-  flex-basis: 100%;
-  flex-grow: 1;
-}
-.top-title,
-.top-item {
-  display: flex;
-  align-items: center;
-  flex-basis: 100%;
-  height: 40px;
-}
-.top-title {
-  font-family: Roboto;
-  font-size: 12px;
-  line-height: 16px;
-  letter-spacing: 0.4px;
-  color: #919699;
-}
-.top-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 40px;
-  font-family: Roboto;
-  font-size: 14px;
-  line-height: 20px;
-  letter-spacing: 0.25px;
-  color: #000;
-  border-top: 1px solid #e3e5e6;
-}
-.icon-settings {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border-radius: 50%;
-  margin-left: 16px;
-  background-color: transparent;
-  transition: background-color 0.2s ease-out;
-  cursor: pointer;
-  position: relative;
-
-  & > svg {
-    fill: #c6cacc;
-  }
-
-  &._active,
-  &:hover {
-    background-color: #f1f3f4;
-  }
-}
-.scrollbox {
-  width: 100%;
-  height: 100%;
-  margin-top: 12px;
-}
-.table {
-  padding-right: 20px;
-  margin-bottom: 40px;
 }
 </style>

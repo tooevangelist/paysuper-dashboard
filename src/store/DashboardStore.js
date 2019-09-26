@@ -70,7 +70,7 @@ export default function createContactsStore() {
       lastPayments: [],
     },
     getters: {
-      revenueChartPeriod(state) {
+      mainChartPeriod(state) {
         const timeShift = timeShiftByPeriod(state.mainPeriod);
         const period = timePeriod(state.mainPeriod);
 

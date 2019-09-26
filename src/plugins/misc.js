@@ -19,7 +19,7 @@ function $formatPrice(value, currency) {
  * @param {string} mask
  * @return {string}
  */
-function $formatDate(date, mask = 'DD MMM YYYY') {
+function $formatDate(date, mask = 'dd MMM yyyy') {
   if (!date) {
     return '';
   }
