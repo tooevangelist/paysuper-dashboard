@@ -1,6 +1,21 @@
 import axios from 'axios';
 import qs from 'qs';
 import { camelCase, get, upperCase } from 'lodash-es';
+import {
+  getTime,
+  getDaysInMonth,
+  getDaysInYear,
+  startOfDay,
+  endOfDay,
+  startOfWeek,
+  endOfWeek,
+  startOfMonth,
+  endOfMonth,
+  startOfQuarter,
+  endOfQuarter,
+  startOfYear,
+  endOfYear,
+} from 'date-fns';
 
 function getDefaultPeriod(type) {
   return {
@@ -11,49 +26,52 @@ function getDefaultPeriod(type) {
 
 function timeShiftByPeriod(period) {
   const hour = 3600000;
-  const eightHours = hour * 8;
-  const day = eightHours * 3;
+  const day = hour * 24;
   const threeDays = day * 3;
-  const halfMonth = threeDays * 5;
+  const week = day * 7;
+  const month = day * 30;
 
   return {
     // One hour
-    current_day: hour,
-    previous_day: hour,
+    current_day: hour * 6,
+    previous_day: hour * 6,
     // 8 hours
-    current_week: eightHours,
-    previous_week: eightHours,
+    current_week: day,
+    previous_week: day,
     // One day
-    current_month: day,
-    previous_month: day,
+    current_month: threeDays,
+    previous_month: threeDays,
     // three days
-    current_quarter: threeDays,
-    previous_quarter: threeDays,
+    current_quarter: week,
+    previous_quarter: week,
     // half of month
-    current_year: halfMonth,
-    previous_year: halfMonth,
+    current_year: month,
+    previous_year: month,
   }[period];
 }
 
 function timePeriod(period) {
-  const now = (new Date()).getTime();
+  const now = getTime(new Date());
   const day = 86400000;
   const week = day * 7;
-  const month = day * 30;
+  const month = day * getDaysInMonth(now);
   const quarter = day * 91;
-  const year = day * 365;
+  const year = day * getDaysInYear(now);
 
   return {
-    current_day: [now - day, now],
-    previous_day: [now - day * 2, now - day],
-    current_week: [now - week, now],
-    previous_week: [now - week * 2, now - week],
-    current_month: [now - month, now],
-    previous_month: [now - month * 2, now - month],
-    current_quarter: [now - quarter, now],
-    previous_quarter: [now - quarter * 2, now - quarter],
-    current_year: [now - year, now],
-    previous_year: [now - year * 2, now - year],
+    current_day: [getTime(startOfDay(now)), now],
+    previous_day: [getTime(startOfDay(now - day)), getTime(endOfDay(now - day))],
+    current_week: [getTime(startOfWeek(now)), now],
+    previous_week: [getTime(startOfWeek(now - week)), getTime(endOfWeek(now - week))],
+    current_month: [getTime(startOfMonth(now)), now],
+    previous_month: [getTime(startOfMonth(now - month)), getTime(endOfMonth(now - month))],
+    current_quarter: [getTime(startOfQuarter(now)), now],
+    previous_quarter: [
+      getTime(startOfQuarter(now - quarter)),
+      getTime(endOfQuarter(now - quarter)),
+    ],
+    current_year: [getTime(startOfYear(now)), now],
+    previous_year: [getTime(startOfYear(now - year)), getTime(endOfYear(now - year))],
   }[period];
 }
 
