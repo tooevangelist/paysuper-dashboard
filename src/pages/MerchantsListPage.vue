@@ -240,7 +240,7 @@ export default {
             class="cell-text"
             :class="{'_empty': !merchant.created_at}"
           >
-            {{$formatDate(merchant.created_at, 'DD.MM.YY') || '—'}}
+            {{$formatDate(merchant.created_at, 'dd.MM.yy') || '—'}}
           </span>
           <span class="cell-text"></span>
         </UiTableCell>
@@ -249,7 +249,7 @@ export default {
             class="cell-text"
             :class="{'_empty': !get(merchant, 'last_payout.date')}"
           >
-            {{$formatDate(get(merchant, 'last_payout.date'), 'DD.MM.YY') || '—'}}
+            {{$formatDate(get(merchant, 'last_payout.date'), 'dd.MM.yy') || '—'}}
           </span>
         </UiTableCell>
         <UiTableCell align="left">
