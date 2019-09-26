@@ -1,13 +1,13 @@
 <script>
-import LocalisationsModal from '@/components/LocalisationsModal.vue';
-import DeleteLocalisationModal from '@/components/DeleteLocalisationModal.vue';
+import LocalizationsModal from '@/components/LocalizationsModal.vue';
+import DeleteLocalizationModal from '@/components/DeleteLocalizationModal.vue';
 
 export default {
   name: 'UiLangsMainHub',
 
   components: {
-    LocalisationsModal,
-    DeleteLocalisationModal,
+    LocalizationsModal,
+    DeleteLocalizationModal,
   },
 
   props: {
@@ -20,17 +20,17 @@ export default {
   data() {
     return {
       isToReopenAddModal: false,
-      isLocalisationsModalOpened: false,
-      localisationsModalLangs: [],
+      isLocalizationsModalOpened: false,
+      localizationsModalLangs: [],
       isDeleteModalOpened: false,
       langToDelete: '',
     };
   },
 
   methods: {
-    openLocalisationsModal() {
-      this.localisationsModalLangs = this.langs.slice();
-      this.isLocalisationsModalOpened = true;
+    openLocalizationsModal() {
+      this.localizationsModalLangs = this.langs.slice();
+      this.isLocalizationsModalOpened = true;
     },
 
     requestDeleteLang(lang) {
@@ -43,7 +43,7 @@ export default {
 
     requestDeleteLangFromModal(lang) {
       this.langToDelete = lang;
-      this.isLocalisationsModalOpened = false;
+      this.isLocalizationsModalOpened = false;
       this.isToReopenAddModal = true;
       this.isDeleteModalOpened = true;
     },
@@ -52,10 +52,10 @@ export default {
       this.isDeleteModalOpened = false;
 
       if (this.isToReopenAddModal) {
-        this.isLocalisationsModalOpened = true;
+        this.isLocalizationsModalOpened = true;
         this.isToReopenAddModal = false;
-        const newLangs = this.localisationsModalLangs.filter(item => this.langToDelete !== item);
-        this.localisationsModalLangs = newLangs;
+        const newLangs = this.localizationsModalLangs.filter(item => this.langToDelete !== item);
+        this.localizationsModalLangs = newLangs;
       } else {
         const newLangs = this.langs.filter(item => this.langToDelete !== item);
         this.$emit('change', newLangs);
@@ -64,7 +64,7 @@ export default {
 
     handleModalSave(newLangs) {
       this.$emit('change', newLangs);
-      this.isLocalisationsModalOpened = false;
+      this.isLocalizationsModalOpened = false;
     },
   },
 };
@@ -72,11 +72,11 @@ export default {
 
 <template>
 <div class="ui-langs-main-hub">
-  <div class="title">Localisation</div>
+  <div class="title">Localization</div>
   <div>
     <button
       class="add-button"
-      @click="openLocalisationsModal"
+      @click="openLocalizationsModal"
     >
       <IconPlus width="9" height="9" />
       <span>ADD</span>
@@ -95,16 +95,16 @@ export default {
     </button>
   </div>
 
-  <DeleteLocalisationModal
+  <DeleteLocalizationModal
     v-if="isDeleteModalOpened"
     @close="isDeleteModalOpened = false"
     @delete="deleteLang"
   />
 
-  <LocalisationsModal
-    v-if="isLocalisationsModalOpened"
-    v-model="localisationsModalLangs"
-    @close="isLocalisationsModalOpened = false"
+  <LocalizationsModal
+    v-if="isLocalizationsModalOpened"
+    v-model="localizationsModalLangs"
+    @close="isLocalizationsModalOpened = false"
     @delete="requestDeleteLangFromModal"
     @save="handleModalSave"
   />

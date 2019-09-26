@@ -205,6 +205,10 @@ $content-side-padding: 6vw;
 }
 .header {
   flex-shrink: 0;
+
+  @media print {
+    display: none;
+  }
 }
 .sub-header {
   width: 100%;
@@ -216,6 +220,10 @@ $content-side-padding: 6vw;
   flex-shrink: 0;
   background: #fff;
   border-bottom: 1px solid #f1f3f4;
+
+  @media print {
+    display: none;
+  }
 }
 .top-controls,
 .special-nav {
@@ -240,6 +248,10 @@ $content-side-padding: 6vw;
   min-width: 260px;
   max-width: 320px;
   flex-basis: 20%;
+
+  @media print {
+    display: none;
+  }
 }
 .main {
   display: flex;

@@ -6,6 +6,7 @@ export default {
   name: 'LicenseAgreement',
   mixins: [Notifications],
   computed: {
+    ...mapGetters('User/Merchant', ['isOnboardingStepsComplete']),
     ...mapGetters('Company/LicenseAgreement', ['isSigendYou', 'isSigendPS']),
     ...mapState('Company/LicenseAgreement', ['isReject', 'document', 'agreement']),
 
@@ -47,7 +48,7 @@ export default {
   },
   async mounted() {
     try {
-      await this.initState();
+      await this.initState(this.isOnboardingStepsComplete);
     } catch (error) {
       this.$_Notifications_showErrorMessage(error);
     }

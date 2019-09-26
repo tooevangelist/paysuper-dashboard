@@ -8,7 +8,6 @@ import NoResults from '@/components/NoResults.vue';
 import NewProjectModal from '@/components/NewProjectModal.vue';
 import DeactivateProjectModal from '@/components/DeactivateProjectModal.vue';
 import FilterSearchInput from '@/components/FilterSearchInput.vue';
-import FilterSelect from '@/components/FilterSelect.vue';
 
 export default {
   name: 'ProjectsListPage',
@@ -19,7 +18,6 @@ export default {
     NewProjectModal,
     DeactivateProjectModal,
     FilterSearchInput,
-    FilterSelect,
   },
   async asyncData({ store, registerStoreModule, route }) {
     try {
@@ -150,9 +148,11 @@ export default {
         v-model="filters.quickFilter"
         @input="handleQuickSearchInput"
       />
-      <FilterSelect
-        :options="statusFilterOptions"
+      <UiSelectAsButton
         v-model="filters.status"
+        color="transparent-gray"
+        :isTransparent="true"
+        :options="statusFilterOptions"
         @input="searchProjects"
       />
     </div>

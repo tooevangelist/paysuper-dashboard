@@ -75,7 +75,7 @@ export default {
   methods: {
     formatDate(timestamp) {
       const datetime = new Date(timestamp);
-      return isValid(datetime) ? format(datetime, 'DD/MM/YYYY') : '';
+      return isValid(datetime) ? format(datetime, 'dd/MM/yyyy') : '';
     },
     prepareText(text) {
       return this.notifyOpenedID ? text : truncate(text, { length: 100, separator: /,? +/ });
