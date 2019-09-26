@@ -52,7 +52,7 @@ export default {
 
     formatDate(value) {
       const datetime = new Date(value);
-      return format(datetime, 'DD MMM YYYY');
+      return format(datetime, 'dd MMM yyyy');
     },
 
     updateFiltersFromQuery() {

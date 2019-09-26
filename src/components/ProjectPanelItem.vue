@@ -28,7 +28,7 @@ export default {
     },
     date() {
       const datetime = new Date(this.project.updated_at.seconds * 1000);
-      return format(datetime, 'D MMM YYYY, HH:MM');
+      return format(datetime, 'd MMM yyyy, HH:mm');
     },
     isInactive() {
       return this.project.status === 4;

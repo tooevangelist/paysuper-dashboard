@@ -285,7 +285,7 @@ export default {
             class="cell-text"
             :class="{'_empty': !merchant.updated_at}"
           >
-            {{$formatDate(merchant.updated_at, 'DD.MM.YY') || '—'}}
+            {{$formatDate(merchant.updated_at, 'dd.MM.yy') || '—'}}
           </span>
         </UiTableCell>
         <UiTableCell align="left">
