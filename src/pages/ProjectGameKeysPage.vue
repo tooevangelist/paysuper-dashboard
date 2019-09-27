@@ -272,18 +272,18 @@ export default {
             :stayOpenedOnHover="false"
           >
             <UiTooltipMenuItem
-              icon="IconPen"
+              iconComponent="IconPen"
             >
               Edit
             </UiTooltipMenuItem>
             <UiTooltipMenuItem
-              icon="IconDeactivate"
+              iconComponent="IconDeactivate"
               @click.stop.prevent="handleToggleGameKeyEnabled(keyProduct)"
             >
               {{ keyProduct.enabled ? 'Disable': 'Enable' }}
             </UiTooltipMenuItem>
             <UiTooltipMenuItem
-              icon="IconDelete"
+              iconComponent="IconDelete"
               type="delete"
               @click.stop.prevent="handleDeleteGameKey(keyProduct)"
             >

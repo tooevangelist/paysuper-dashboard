@@ -10,7 +10,7 @@ export default {
       default: false,
     },
 
-    icon: {
+    iconComponent: {
       default: '',
       type: String,
     },
@@ -32,8 +32,8 @@ export default {
   :class="[`_type-${type}`, { '_current': isCurrent}]"
   @click="$emit('click', $event)"
 >
-  <span class="menu-icon" v-if="icon">
-    <component :is="icon"></component>
+  <span class="menu-icon" v-if="iconComponent">
+    <component :is="iconComponent"></component>
   </span>
 
   <slot></slot>

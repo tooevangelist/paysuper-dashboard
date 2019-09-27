@@ -253,8 +253,8 @@ export default {
       <td class="cell">
         <UiTooltipMenuItem>Enable</UiTooltipMenuItem>
         <UiTooltipMenuItem>Disable</UiTooltipMenuItem>
-        <UiTooltipMenuItem icon="IconDeactivate">Deactivate</UiTooltipMenuItem>
-        <UiTooltipMenuItem icon="IconDelete" type="delete">Delete</UiTooltipMenuItem>
+        <UiTooltipMenuItem iconComponent="IconDeactivate">Deactivate</UiTooltipMenuItem>
+        <UiTooltipMenuItem iconComponent="IconDelete" type="delete">Delete</UiTooltipMenuItem>
       </td>
     </tr>
     <tr>
