@@ -32,6 +32,7 @@ export default {
       filters: {},
       isSearchRouting: false,
       isInfiniteScrollLocked: false,
+      openedTooltipId: '',
     };
   },
 
@@ -74,6 +75,7 @@ export default {
     ...mapActions(['setIsLoading']),
     ...mapActions('ProjectGameKeys', [
       'submitFilters', 'fetchGameKeys', 'initQuery', 'createGameKey',
+      'deleteGameKey', 'toggleGameKeyEnabled',
     ]),
 
     get,
@@ -84,7 +86,7 @@ export default {
 
     filterMerchants() {
       this.filters.offset = 0;
-      this.searchMerchants();
+      this.searchGameKeys();
     },
 
     initInfiniteScroll() {
@@ -98,12 +100,12 @@ export default {
         this.isInfiniteScrollLocked = true;
 
         this.filters.offset += this.filters.limit;
-        await this.searchMerchants();
+        await this.searchGameKeys();
         this.isInfiniteScrollLocked = false;
       });
     },
 
-    async searchMerchants() {
+    async searchGameKeys() {
       this.isSearchRouting = true;
       this.setIsLoading(true);
       this.submitFilters(this.filters);
@@ -122,22 +124,25 @@ export default {
       });
     },
 
-    getCountry(merchant) {
-      const country = get(merchant, 'company.country');
-      if (!country) {
-        return '—';
-      }
-      return this.$t(`countries.${country}`);
+    async handleAddKeys() {
+      this.setIsLoading(true);
+      await this.createGameKey().catch(this.$_Notifications_showErrorMessage);
+      await this.searchGameKeys();
+      this.setIsLoading(false);
     },
 
-    getLastPayoutValue(merchant) {
-      const amount = get(merchant, 'last_payout.amount');
-      if (!amount) {
-        return '—';
-      }
+    async handleDeleteGameKey(keyProduct) {
+      this.setIsLoading(true);
+      await this.deleteGameKey(keyProduct.id).catch(this.$_Notifications_showErrorMessage);
+      await this.searchGameKeys();
+      this.setIsLoading(false);
+    },
 
-      const currency = get(merchant, 'banking.currency', '');
-      return this.$formatPrice(amount, currency);
+    async handleToggleGameKeyEnabled(keyProduct) {
+      this.setIsLoading(true);
+      await this.toggleGameKeyEnabled(keyProduct).catch(this.$_Notifications_showErrorMessage);
+      await this.searchGameKeys();
+      this.setIsLoading(false);
     },
   },
 };
@@ -155,16 +160,20 @@ export default {
     <PictureGameKeyWithDoor slot="picture" />
   </SimplePageHeader>
 
-  <UiButton @click="createGameKey">createGameKey</UiButton>
-
   <UiPanel>
-
     <div class="filters">
       <UiFilterSearchInput
         :isAlwaysExpanded="true"
         v-model="filters.quickFilter"
         @input="handleQuickSearchInput"
       />
+      <div class="filters-right">
+        <UiButton class="quilin-packages-button" :disabled="true">
+          <IconUpload class="upload-icon" fill="#919699" />
+          QUILIN PACKAGES
+        </UiButton>
+        <UiButton @click="handleAddKeys">ADD KEYS</UiButton>
+      </div>
     </div>
 
     <UiTable
@@ -179,10 +188,11 @@ export default {
         <UiTableCell align="left">Package</UiTableCell>
         <UiTableCell align="left">SKU</UiTableCell>
         <UiTableCell align="left">DRM platform</UiTableCell>
-        <UiTableCell align="left">Available keys</UiTableCell>
-        <UiTableCell align="left">Price</UiTableCell>
-        <UiTableCell align="left">Status</UiTableCell>
-        <UiTableCell align="left">&nbsp;</UiTableCell>
+        <UiTableCell width="10%" align="left">Available keys</UiTableCell>
+        <UiTableCell width="10%" align="left">Price</UiTableCell>
+        <UiTableCell align="left" width="3%">&nbsp;</UiTableCell>
+        <UiTableCell width="12%" align="left">Status</UiTableCell>
+        <UiTableCell width="5%" align="left">&nbsp;</UiTableCell>
       </UiTableRow>
       <UiTableRow
         class="content-row"
@@ -190,35 +200,97 @@ export default {
         :key="keyProduct.id"
         :link="`/gameKeys/${keyProduct.id}`"
       >
-        <UiTableCell align="left">
+        <UiTableCell align="left" valign="top">
           <span class="leading-cell-content">{{ index + 1 }}</span>
         </UiTableCell>
-        <UiTableCell align="left">
+        <UiTableCell align="left" valign="top">
           <IconNoImage class="img" width="18" height="18" fill="#919699" />
         </UiTableCell>
-        <UiTableCell align="left">
-          {{ keyProduct.name.en }}
+        <UiTableCell align="left" valign="top" :title="keyProduct.name.en">
+          <span class="cell-text">{{ keyProduct.name.en }}</span>
         </UiTableCell>
-        <UiTableCell align="left">
-          {{ keyProduct.sku }}
+        <UiTableCell align="left" valign="top" :title="keyProduct.sku">
+          <span class="cell-text">{{ keyProduct.sku }}</span>
         </UiTableCell>
-        <UiTableCell align="left">
-          DRM platform
+        <UiTableCell align="left" :noPadding="true">
+          <UiTableCellUnit
+            v-for="playform in keyProduct.platforms"
+            :key="playform.id"
+             :title="playform.name"
+          >
+            <span class="cell-text">{{ playform.name }}</span>
+          </UiTableCellUnit>
+          <UiNoText v-if="!keyProduct.platforms" />
         </UiTableCell>
-        <UiTableCell align="left">
-          Available keys
+        <UiTableCell align="left" :noPadding="true">
+          <UiTableCellUnit
+            v-for="playform in keyProduct.platforms"
+            :key="playform.id"
+          >
+            <UiNoText v-if="!playform.prices || !playform.prices.length" />
+            <span v-else>{{ playform.prices.length }}</span>
+          </UiTableCellUnit>
+          <UiNoText v-if="!keyProduct.platforms" />
         </UiTableCell>
-        <UiTableCell align="left">
-          Price
+        <UiTableCell align="left" :noPadding="true">
+          <UiTableCellUnit
+            v-for="playform in keyProduct.platforms"
+            :key="playform.id"
+          >
+            {{ $formatPrice(playform.prices[0].amount, playform.prices[0].currency)}}
+          </UiTableCellUnit>
+          <UiNoText v-if="!keyProduct.platforms" />
         </UiTableCell>
-        <UiTableCell align="left">
+        <UiTableCell align="left">&nbsp;</UiTableCell>
+        <UiTableCell align="left" valign="top">
           <UiLabelTag
             :color="keyProduct.enabled ? 'green': 'transparent'"
           >
             {{ keyProduct.enabled ? 'Enabled': 'Disabled' }}
           </UiLabelTag>
         </UiTableCell>
-        <UiTableCell align="left">...</UiTableCell>
+        <UiTableCell
+          class="cell"
+          align="left"
+          valign="top"
+          @mouseenter.native="openedTooltipId = keyProduct.id"
+          @mouseleave.native="() => openedTooltipId = ''"
+          :noPadding="true"
+        >
+          <UiDotsMenuTrigger
+            class="dots-menu-trigger"
+            :isOpened="openedTooltipId === keyProduct.id"
+          />
+
+          <UiTip
+            innerPosition="right"
+            position="bottom"
+            width="180px"
+            :margin="0"
+            :visible="openedTooltipId === keyProduct.id"
+            :closeDelay="0"
+            :stayOpenedOnHover="false"
+          >
+            <UiTooltipMenuItem
+              icon="IconPen"
+            >
+              Edit
+            </UiTooltipMenuItem>
+            <UiTooltipMenuItem
+              icon="IconDeactivate"
+              @click.stop.prevent="handleToggleGameKeyEnabled(keyProduct)"
+            >
+              {{ keyProduct.enabled ? 'Disable': 'Enable' }}
+            </UiTooltipMenuItem>
+            <UiTooltipMenuItem
+              icon="IconDelete"
+              type="delete"
+              @click.stop.prevent="handleDeleteGameKey(keyProduct)"
+            >
+              Delete
+            </UiTooltipMenuItem>
+          </UiTip>
+        </UiTableCell>
       </UiTableRow>
     </UiTable>
     <NoResults
@@ -232,27 +304,22 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+$hover-text-color: #3d7bf5;
+$hover-background-color: rgba($hover-text-color, 0.1);
+$hover-deactivate-text-color: #ea3d2f;
+$hover-deactivate-background-color: rgba($hover-deactivate-text-color, 0.08);
+
+.cell {
+  position: relative;
+}
+
 .cell-text {
-  &:not(._price) {
-    max-width: 100%;
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  &._price {
-    color: #069697;
-    font-weight: 500;
-  }
-
-  &._empty {
-    color: #c6cacc;
-  }
-
-  .content-row:hover & {
-    color: #3d7bf5;
-  }
+  max-width: 100%;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 10px;
 }
 
 .img {
@@ -268,5 +335,18 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-bottom: 32px;
+}
+
+.quilin-packages-button {
+  margin-right: 10px;
+}
+
+.upload-icon {
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.dots-menu-trigger {
+  margin-top: 4px;
 }
 </style>

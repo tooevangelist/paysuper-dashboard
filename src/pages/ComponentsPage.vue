@@ -186,11 +186,99 @@ export default {
     </tr>
     <tr>
       <td class="cell">
+        UiComplexTable<br>
+        UiComplexTableRow<br>
+        UiComplexTableCell<br>
+      </td>
+      <td class="cell">
+        <UiComplexTable>
+          <UiComplexTableRow :isHead="true">
+            <UiComplexTableCell align="left">Company</UiComplexTableCell>
+            <UiComplexTableCell align="left">Last change</UiComplexTableCell>
+            <UiComplexTableCell align="left">Value (editable)</UiComplexTableCell>
+          </UiComplexTableRow>
+          <UiComplexTableRow>
+            <UiComplexTableCell align="left">Roga i copita</UiComplexTableCell>
+            <UiComplexTableCell align="left">29.10.2009</UiComplexTableCell>
+            <UiComplexTableCell align="left" :isEditable="true">123</UiComplexTableCell>
+          </UiComplexTableRow>
+          <UiComplexTableRow :isPainted="true">
+            <UiComplexTableCell align="left">Moya bashenka</UiComplexTableCell>
+            <UiComplexTableCell align="left">13.03.2019</UiComplexTableCell>
+            <UiComplexTableCell align="left" :isEditable="true">321</UiComplexTableCell>
+          </UiComplexTableRow>
+        </UiComplexTable>
+      </td>
+    </tr>
+    <tr>
+      <td class="cell">
         UiLabelTag
       </td>
       <td class="cell">
         <UiLabelTag color="green">Active</UiLabelTag>
         <UiLabelTag color="transparent">Inactive</UiLabelTag>
+      </td>
+    </tr>
+    <tr>
+      <td class="cell">
+        UiDotsMenuTrigger
+      </td>
+      <td class="cell">
+        <UiDotsMenuTrigger />
+        <UiDotsMenuTrigger :isOpened="true" />
+      </td>
+    </tr>
+    <tr>
+      <td class="cell">
+        UiNoText
+      </td>
+      <td class="cell">
+        <UiNoText />
+      </td>
+    </tr>
+    <tr>
+      <td class="cell">
+        UiTableCellUnit
+      </td>
+      <td class="cell">
+        <UiTableCellUnit>111</UiTableCellUnit>
+        <UiTableCellUnit>222</UiTableCellUnit>
+        <UiTableCellUnit>333</UiTableCellUnit>
+      </td>
+    </tr>
+    <tr>
+      <td class="cell">
+        UiTooltipMenuItem
+      </td>
+      <td class="cell">
+        <UiTooltipMenuItem>Enable</UiTooltipMenuItem>
+        <UiTooltipMenuItem>Disable</UiTooltipMenuItem>
+        <UiTooltipMenuItem icon="IconDeactivate">Deactivate</UiTooltipMenuItem>
+        <UiTooltipMenuItem icon="IconDelete" type="delete">Delete</UiTooltipMenuItem>
+      </td>
+    </tr>
+    <tr>
+      <td class="cell">
+        UiFilterAgreementStatus
+      </td>
+      <td class="cell">
+        <UiFilterAgreementStatus />
+      </td>
+    </tr>
+    <tr>
+      <td class="cell">
+        UiFilterDate
+      </td>
+      <td class="cell">
+        <UiFilterDate />
+      </td>
+    </tr>
+        <tr>
+      <td class="cell">
+        UiFilterSearchInput
+      </td>
+      <td class="cell">
+        <UiFilterSearchInput />
       </td>
     </tr>
   </table>

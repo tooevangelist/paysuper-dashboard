@@ -70,6 +70,9 @@ export default {
   max-width: 232px;
 
   /deep/ {
+    .mx-input-wrapper {
+      height: 40px;
+    }
     .mx-input {
       height: 40px;
       border: 1px solid #e3e5e6;

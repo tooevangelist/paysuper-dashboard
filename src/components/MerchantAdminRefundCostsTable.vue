@@ -4,7 +4,6 @@ import ClickOutside from 'vue-click-outside';
 import PaymentMethodsTable from '@/mixins/PaymentMethodsTable';
 import ExpandableCellText from '@/components/ExpandableCellText.vue';
 import OpenerCorner from '@/components/OpenerCorner.vue';
-import SimpleMenuItem from '@/components/SimpleMenuItem.vue';
 
 export default {
   name: 'MerchantAdminRefundCostsTable',
@@ -13,7 +12,6 @@ export default {
   components: {
     ExpandableCellText,
     OpenerCorner,
-    SimpleMenuItem,
   },
 
   directives: {
@@ -224,15 +222,15 @@ export default {
         </div>
 
         <UiTip
-          class="dropdown"
           innerPosition="right"
           position="bottom"
           width="180px"
+          :margin="0"
           :visible="data.isPayoutPartyMenuOpened"
           :closeDelay="0"
           :stayOpenedOnHover="false"
         >
-          <SimpleMenuItem
+          <UiTooltipMenuItem
             v-for="item in payoutPartyList"
             v-text="item.label"
             :key="item.value"
@@ -284,8 +282,5 @@ export default {
   align-items: center;
   justify-content: space-between;
   padding-left: 9px;
-}
-.dropdown {
-  top: calc(100% + 4px);
 }
 </style>

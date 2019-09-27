@@ -33,9 +33,6 @@ export default {
 
   computed: {
     routerComponentName() {
-      if (this.$options.components.NuxtLink) {
-        return 'NuxtLink';
-      }
       if (this.$options.components.RouterLink) {
         return 'RouterLink';
       }

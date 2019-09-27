@@ -1,6 +1,7 @@
 import axios from 'axios';
 import qs from 'qs';
 import assert from 'simple-assert';
+import randomString from 'random-string';
 import SearchBuilder from '@/tools/SearchBuilder/SearchBuilder';
 import projectGameKeysScheme from '@/schemes/projectGameKeysScheme';
 
@@ -85,28 +86,101 @@ export default function createProjectGameKeysStore() {
         commit('gameKeys', gameKeys);
       },
 
-      async createGameKey({
-        state, rootState,
-      }) {
+      async setPlatform({ rootState }, { id, platform }) {
         const response = await axios.post(
-          `${rootState.config.apiUrl}/admin/api/v1/key-products`,
+          `${rootState.config.apiUrl}/admin/api/v1/key-products/${id}/platforms`,
           {
-            name: {
-              en: 'Test1',
-            },
-            description: {
-              en: 'Test2',
-            },
-            sku: 'test2',
-            project_id: state.projectId,
-            default_currency: 'USD',
-            object: 'key_product',
+            platform,
           },
           {
             headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
           },
         );
         console.log(11111, 'response', response);
+      },
+
+      async createGameKey({
+        state, rootState, dispatch,
+      }) {
+        const sku = randomString({ length: 8, special: false });
+        const name = randomString({ length: 8, special: false });
+        const description = randomString({ length: 8, special: false });
+
+        const response = await axios.post(
+          `${rootState.config.apiUrl}/admin/api/v1/key-products`,
+          {
+            name: {
+              en: name,
+            },
+            description: {
+              en: description,
+            },
+            sku,
+            project_id: state.projectId,
+            default_currency: 'USD',
+            object: 'key_product',
+            platforms: [
+              'uplay',
+              'psn',
+              'nintendo',
+            ],
+          },
+          {
+            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
+          },
+        );
+
+        await dispatch('setPlatform', {
+          id: response.data.id,
+          platform: {
+            id: 'gog',
+            name: 'Good old games.com',
+            prices: [
+              {
+                region: 'USD',
+                amount: 29.99,
+                currency: 'USD',
+              },
+            ],
+          },
+        });
+        await dispatch('setPlatform', {
+          id: response.data.id,
+          platform: {
+            id: 'steam',
+            name: 'Steam',
+            prices: [
+              {
+                region: 'USD',
+                amount: 129.99,
+                currency: 'USD',
+              },
+            ],
+          },
+        });
+      },
+
+      async deleteGameKey({ rootState }, id) {
+        await axios.delete(
+          `${rootState.config.apiUrl}/admin/api/v1/key-products/${id}`,
+          {
+            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
+          },
+        );
+      },
+
+      async toggleGameKeyEnabled({ rootState }, keyProduct) {
+        if (keyProduct.enabled) {
+          return;
+        }
+        await axios.post(
+          `${rootState.config.apiUrl}/admin/api/v1/key-products/${keyProduct.id}/publish`,
+          {
+          },
+          {
+            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
+          },
+        );
       },
 
       initQuery({ commit }, query) {
