@@ -4,7 +4,7 @@ import ClickOutside from 'vue-click-outside';
 import merchantStatusScheme from '@/schemes/merchantStatusScheme';
 
 export default {
-  name: 'FilterAgreementStatus',
+  name: 'UiFilterAgreementStatus',
 
   directives: {
     ClickOutside,

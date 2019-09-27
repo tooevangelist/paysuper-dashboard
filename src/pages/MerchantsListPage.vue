@@ -6,8 +6,6 @@ import MerchanstListStore from '@/store/MerchanstListStore';
 import SimplePageHeader from '@/components/SimplePageHeader.vue';
 import NoResults from '@/components/NoResults.vue';
 import PictureDiagramPresentation from '@/components/PictureDiagramPresentation.vue';
-import FilterSearchInput from '@/components/FilterSearchInput.vue';
-import FilterDate from '@/components/FilterDate.vue';
 
 export default {
   mixins: [Notifications],
@@ -16,8 +14,6 @@ export default {
     SimplePageHeader,
     PictureDiagramPresentation,
     NoResults,
-    FilterSearchInput,
-    FilterDate,
   },
 
   async asyncData({ store, registerStoreModule, route }) {
@@ -182,12 +178,12 @@ export default {
   <UiPanel>
 
     <div class="filters">
-      <FilterSearchInput
+      <UiFilterSearchInput
         :isAlwaysExpanded="true"
         v-model="filters.quickFilter"
         @input="handleQuickSearchInput"
       />
-      <FilterDate
+      <UiFilterDate
         v-model="dateFilter"
         @input="filterMerchants"
       />

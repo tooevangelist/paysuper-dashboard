@@ -3,7 +3,7 @@ import randomString from 'random-string';
 import copyTextToClipboard from '@/helpers/copyTextToClipboard';
 
 export default {
-  name: 'FilterSearchInput',
+  name: 'KeyGenerateField',
 
   model: {
     prop: 'value',
@@ -63,7 +63,7 @@ export default {
 
 <template>
 <div
-  class="filter-search-input"
+  class="key-generate-field"
   :class="{ '_error': isVisibleError }"
 >
   <div
@@ -113,7 +113,7 @@ export default {
 <style lang="scss" scoped>
 $hover-background-color: #e6efff;
 
-.filter-search-input {
+.key-generate-field {
   position: relative;
   padding: 6px 0 24px;
 }
@@ -129,7 +129,7 @@ $hover-background-color: #e6efff;
     color: #ea3d2f;
   }
 
-  .filter-search-input._error & {
+  .key-generate-field._error & {
     color: #ea3d2f;
   }
 }

@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: 'ComplexTableRow',
+  name: 'UiComplexTableRow',
 
   props: {
     isHead: {

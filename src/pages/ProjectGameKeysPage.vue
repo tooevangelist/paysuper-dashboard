@@ -6,7 +6,6 @@ import ProjectGameKeysStore from '@/store/ProjectGameKeysStore';
 import SimplePageHeader from '@/components/SimplePageHeader.vue';
 import NoResults from '@/components/NoResults.vue';
 import PictureGameKeyWithDoor from '@/components/PictureGameKeyWithDoor.vue';
-import FilterSearchInput from '@/components/FilterSearchInput.vue';
 
 export default {
   mixins: [Notifications],
@@ -15,7 +14,6 @@ export default {
     SimplePageHeader,
     PictureGameKeyWithDoor,
     NoResults,
-    FilterSearchInput,
   },
 
   async asyncData({ store, registerStoreModule, route }) {
@@ -162,7 +160,7 @@ export default {
   <UiPanel>
 
     <div class="filters">
-      <FilterSearchInput
+      <UiFilterSearchInput
         :isAlwaysExpanded="true"
         v-model="filters.quickFilter"
         @input="handleQuickSearchInput"
@@ -177,7 +175,7 @@ export default {
         <UiTableCell width="5%" align="left">
           <span class="leading-cell-content">№</span>
         </UiTableCell>
-        <UiTableCell align="left">&nbsp;</UiTableCell>
+        <UiTableCell width="5%" align="left">&nbsp;</UiTableCell>
         <UiTableCell align="left">Package</UiTableCell>
         <UiTableCell align="left">SKU</UiTableCell>
         <UiTableCell align="left">DRM platform</UiTableCell>
@@ -196,7 +194,7 @@ export default {
           <span class="leading-cell-content">{{ index + 1 }}</span>
         </UiTableCell>
         <UiTableCell align="left">
-          DRM platform
+          <IconNoImage class="img" width="18" height="18" fill="#919699" />
         </UiTableCell>
         <UiTableCell align="left">
           {{ keyProduct.name.en }}
@@ -255,6 +253,11 @@ export default {
   .content-row:hover & {
     color: #3d7bf5;
   }
+}
+
+.img {
+  display: inline-flex;
+  vertical-align: middle;
 }
 
 .leading-cell-content {

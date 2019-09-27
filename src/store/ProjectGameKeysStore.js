@@ -92,12 +92,12 @@ export default function createProjectGameKeysStore() {
           `${rootState.config.apiUrl}/admin/api/v1/key-products`,
           {
             name: {
-              en: 'Test',
+              en: 'Test1',
             },
             description: {
-              en: 'Test',
+              en: 'Test2',
             },
-            sku: 'test',
+            sku: 'test2',
             project_id: state.projectId,
             default_currency: 'USD',
             object: 'key_product',

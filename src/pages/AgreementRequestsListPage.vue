@@ -9,9 +9,6 @@ import merchantStatusScheme from '@/schemes/merchantStatusScheme';
 import SimplePageHeader from '@/components/SimplePageHeader.vue';
 import NoResults from '@/components/NoResults.vue';
 import PictureBlocksScheme from '@/components/PictureBlocksScheme.vue';
-import FilterSearchInput from '@/components/FilterSearchInput.vue';
-import FilterDate from '@/components/FilterDate.vue';
-import FilterAgreementStatus from '@/components/FilterAgreementStatus.vue';
 
 export default {
   name: 'AgreementRequestsListPage',
@@ -22,9 +19,6 @@ export default {
     SimplePageHeader,
     PictureBlocksScheme,
     NoResults,
-    FilterSearchInput,
-    FilterDate,
-    FilterAgreementStatus,
   },
 
   async asyncData({ store, registerStoreModule, route }) {
@@ -192,21 +186,21 @@ export default {
   <UiPanel>
 
     <div class="filters">
-      <FilterSearchInput
+      <UiFilterSearchInput
         :isAlwaysExpanded="true"
         v-model="filters.quickFilter"
         @input="handleQuickSearchInput"
       />
 
       <div class="filters-right">
-        <FilterAgreementStatus
+        <UiFilterAgreementStatus
           class="agreement-status-filter"
           :countsByStatus="countsByStatus"
           v-model="filters.status"
           @input="filterMerchants"
         />
 
-        <FilterDate
+        <UiFilterDate
           v-model="dateFilter"
           @input="filterMerchants"
         />

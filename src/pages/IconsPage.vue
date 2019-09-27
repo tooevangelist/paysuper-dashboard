@@ -23,10 +23,10 @@ export default {
       :key="item"
     >
       <td class="cell">
-        <component class="icon" :is="item"></component>
+        {{item}}
       </td>
       <td class="cell">
-        {{item}}
+        <component class="icon" :is="item"></component>
       </td>
     </tr>
   </table>
@@ -46,5 +46,6 @@ export default {
 .cell {
   padding: 10px 15px;
   border: 1px solid #ccc;
+  background: rgba(0, 0, 0, 0.05);
 }
 </style>

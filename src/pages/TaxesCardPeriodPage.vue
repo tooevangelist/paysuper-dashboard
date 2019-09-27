@@ -5,14 +5,12 @@ import { format } from 'date-fns';
 import Notifications from '@/mixins/Notifications';
 import TaxesByPeriodStore from '@/store/TaxesByPeriodStore';
 import NoResults from '@/components/NoResults.vue';
-import FilterSearchInput from '@/components/FilterSearchInput.vue';
 
 export default {
   name: 'TaxesCardDetailsPage',
   mixins: [Notifications],
   components: {
     NoResults,
-    FilterSearchInput,
   },
   async asyncData({ store, registerStoreModule, route }) {
     try {
@@ -106,7 +104,7 @@ export default {
   </UiHeader>
   <div class="controls">
     <div class="filters">
-      <FilterSearchInput
+      <UiFilterSearchInput
         v-model="filters.quickFilter"
         @input="handleQuickSearchInput"
       />
