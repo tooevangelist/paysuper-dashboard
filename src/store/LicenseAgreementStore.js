@@ -35,7 +35,7 @@ export default function createLicenseAgreementStore() {
         return getters.status >= 4;
       },
       isUsingHellosign(state, getters) {
-        return getters.status === 0 || state.isReject;
+        return !getters.status || state.isReject;
       },
       status(state, getter, rootState) {
         return rootState.User.Merchant.merchant.status;
@@ -58,7 +58,11 @@ export default function createLicenseAgreementStore() {
     actions: {
       async initState({ commit, dispatch, getters }, isOnboardingStepsComplete) {
         await dispatch('fetchAgreementSignature', isOnboardingStepsComplete);
-        await dispatch('fetchAgreementMetadata');
+        await dispatch('fetchAgreementMetadata', isOnboardingStepsComplete);
+
+        if (getters.status === 3) {
+          dispatch('initWaitingForDocumentSigned');
+        }
 
         if (getters.isUsingHellosign) {
           const helloSign = new HelloSign({
@@ -91,12 +95,11 @@ export default function createLicenseAgreementStore() {
           commit('signature', response.data);
         }
       },
-      async fetchAgreementMetadata({ commit, rootState, rootGetters }) {
-        const isOnboardingStepsComplete = rootGetters['User/Merchant/isOnboardingStepsComplete'];
+      async fetchAgreementMetadata({ commit, rootState, getters }, isOnboardingStepsComplete) {
         const { accessToken, Merchant } = rootState.User;
         const merchantId = get(Merchant, 'merchant.id', 0);
 
-        if (merchantId && isOnboardingStepsComplete) {
+        if (merchantId && isOnboardingStepsComplete && getters.status) {
           const response = await axios.get(
             `${rootState.config.apiUrl}/admin/api/v1/merchants/${merchantId}/agreement`,
             { headers: { Authorization: `Bearer ${accessToken}` } },
@@ -166,7 +169,7 @@ export default function createLicenseAgreementStore() {
 
           if (data.code === 'mr000018') {
             delay(async () => {
-              dispatch('fetchAgreementMetadata');
+              dispatch('fetchAgreementMetadata', true);
             }, 5000);
             dispatch('User/Merchant/updateStatus', 4, { root: true });
             dispatch('User/Merchant/completeStep', 'license', { root: true });
