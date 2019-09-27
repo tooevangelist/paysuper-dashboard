@@ -86,8 +86,12 @@ export default function createProjectGameKeysStore() {
         commit('gameKeys', gameKeys);
       },
 
+      /**
+       * Тестовая гадость
+       * @todo remove
+       */
       async setPlatform({ rootState }, { id, platform }) {
-        const response = await axios.post(
+        await axios.post(
           `${rootState.config.apiUrl}/admin/api/v1/key-products/${id}/platforms`,
           {
             platform,
@@ -96,9 +100,12 @@ export default function createProjectGameKeysStore() {
             headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
           },
         );
-        console.log(11111, 'response', response);
       },
 
+      /**
+       * Тестовая гадость
+       * @todo remove
+       */
       async createGameKey({
         state, rootState, dispatch,
       }) {
