@@ -6,7 +6,6 @@ import { mapState, mapGetters, mapActions } from 'vuex';
 import Notifications from '@/mixins/Notifications';
 import MerchanstListStore from '@/store/MerchanstListStore';
 import merchantStatusScheme from '@/schemes/merchantStatusScheme';
-import SimplePageHeader from '@/components/SimplePageHeader.vue';
 import NoResults from '@/components/NoResults.vue';
 import PictureBlocksScheme from '@/components/PictureBlocksScheme.vue';
 
@@ -16,7 +15,6 @@ export default {
   mixins: [Notifications],
 
   components: {
-    SimplePageHeader,
     PictureBlocksScheme,
     NoResults,
   },
@@ -173,7 +171,7 @@ export default {
 
 <template>
 <div>
-  <SimplePageHeader>
+  <UiPageHeaderFrame>
     <span slot="title">Agreement requests</span>
     <span slot="description">
       Here is the list of active agreement requests from merchants with actual statuses.
@@ -181,7 +179,7 @@ export default {
       You can archive rejected requests from view.
     </span>
     <PictureBlocksScheme slot="picture" />
-  </SimplePageHeader>
+  </UiPageHeaderFrame>
 
   <UiPanel>
 

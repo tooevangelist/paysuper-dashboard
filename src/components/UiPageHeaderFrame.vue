@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: 'SimplePageHeader',
+  name: 'UiPageHeaderFrame',
 };
 </script>
 
@@ -36,6 +36,7 @@ export default {
 }
 
 .text {
-  width: 448px;
+  max-width: 448px;
+  color: #5e6366;
 }
 </style>

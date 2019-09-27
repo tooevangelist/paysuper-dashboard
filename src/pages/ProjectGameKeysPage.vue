@@ -3,7 +3,6 @@ import { debounce, get, isEqual } from 'lodash-es';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import Notifications from '@/mixins/Notifications';
 import ProjectGameKeysStore from '@/store/ProjectGameKeysStore';
-import SimplePageHeader from '@/components/SimplePageHeader.vue';
 import NoResults from '@/components/NoResults.vue';
 import PictureGameKeyWithDoor from '@/components/PictureGameKeyWithDoor.vue';
 
@@ -11,7 +10,6 @@ export default {
   mixins: [Notifications],
 
   components: {
-    SimplePageHeader,
     PictureGameKeyWithDoor,
     NoResults,
   },
@@ -150,7 +148,7 @@ export default {
 
 <template>
 <div>
-  <SimplePageHeader>
+  <UiPageHeaderFrame>
     <span slot="title">Game keys</span>
     <span slot="description">
       This sales method is intended to sell game keys for specific DRM platforms,
@@ -158,7 +156,7 @@ export default {
       but any key activated products.
     </span>
     <PictureGameKeyWithDoor slot="picture" />
-  </SimplePageHeader>
+  </UiPageHeaderFrame>
 
   <UiPanel>
     <div class="filters">
@@ -212,7 +210,7 @@ export default {
         <UiTableCell align="left" valign="top" :title="keyProduct.sku">
           <span class="cell-text">{{ keyProduct.sku }}</span>
         </UiTableCell>
-        <UiTableCell align="left" :noPadding="true">
+        <UiTableCell align="left" valign="top">
           <UiTableCellUnit
             v-for="playform in keyProduct.platforms"
             :key="playform.id"
@@ -222,7 +220,7 @@ export default {
           </UiTableCellUnit>
           <UiNoText v-if="!keyProduct.platforms" />
         </UiTableCell>
-        <UiTableCell align="left" :noPadding="true">
+        <UiTableCell align="left" valign="top">
           <UiTableCellUnit
             v-for="playform in keyProduct.platforms"
             :key="playform.id"
@@ -232,7 +230,7 @@ export default {
           </UiTableCellUnit>
           <UiNoText v-if="!keyProduct.platforms" />
         </UiTableCell>
-        <UiTableCell align="left" :noPadding="true">
+        <UiTableCell align="left" valign="top">
           <UiTableCellUnit
             v-for="playform in keyProduct.platforms"
             :key="playform.id"
@@ -241,7 +239,7 @@ export default {
           </UiTableCellUnit>
           <UiNoText v-if="!keyProduct.platforms" />
         </UiTableCell>
-        <UiTableCell align="left">&nbsp;</UiTableCell>
+        <UiTableCell align="left" valign="top">&nbsp;</UiTableCell>
         <UiTableCell align="left" valign="top">
           <UiLabelTag
             :color="keyProduct.enabled ? 'green': 'transparent'"
@@ -319,7 +317,7 @@ $hover-deactivate-background-color: rgba($hover-deactivate-text-color, 0.08);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  padding-right: 10px;
+  padding-right: 6px;
 }
 
 .img {

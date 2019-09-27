@@ -3,7 +3,6 @@ import { debounce, get, isEqual } from 'lodash-es';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import Notifications from '@/mixins/Notifications';
 import MerchanstListStore from '@/store/MerchanstListStore';
-import SimplePageHeader from '@/components/SimplePageHeader.vue';
 import NoResults from '@/components/NoResults.vue';
 import PictureDiagramPresentation from '@/components/PictureDiagramPresentation.vue';
 
@@ -11,7 +10,6 @@ export default {
   mixins: [Notifications],
 
   components: {
-    SimplePageHeader,
     PictureDiagramPresentation,
     NoResults,
   },
@@ -166,14 +164,14 @@ export default {
 
 <template>
 <div>
-  <SimplePageHeader>
+  <UiPageHeaderFrame>
     <span slot="title">Merchants</span>
     <span slot="description">
       Here is the list of our active merchants with license agreement signed by both sides.
       These clients have full access to Pay Super platform functionality.
     </span>
     <PictureDiagramPresentation slot="picture" />
-  </SimplePageHeader>
+  </UiPageHeaderFrame>
 
   <UiPanel>
 

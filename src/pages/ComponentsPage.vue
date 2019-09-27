@@ -1,6 +1,12 @@
 <script>
+import PictureProfileAndPeople from '@/components/PictureProfileAndPeople.vue';
+
 export default {
   name: 'ComponentsPage',
+
+  components: {
+    PictureProfileAndPeople,
+  },
 };
 </script>
 
@@ -163,6 +169,7 @@ export default {
         UiTable<br>
         UiTableRow<br>
         UiTableCell<br>
+        UiTableCellUnit
       </td>
       <td class="cell">
         <UiTable>
@@ -178,8 +185,16 @@ export default {
           </UiTableRow>
           <UiTableRow>
             <UiTableCell align="left">Moya bashenka</UiTableCell>
-            <UiTableCell align="left">13.03.2019</UiTableCell>
-            <UiTableCell align="left">Inactive</UiTableCell>
+            <UiTableCell align="left">
+              <UiTableCellUnit>13.03.2019</UiTableCellUnit>
+              <UiTableCellUnit>11.03.2019</UiTableCellUnit>
+              <UiTableCellUnit>09.03.2019</UiTableCellUnit>
+            </UiTableCell>
+            <UiTableCell align="left">
+              <UiTableCellUnit>Inactive</UiTableCellUnit>
+              <UiTableCellUnit>Inactive</UiTableCellUnit>
+              <UiTableCellUnit>Inactive</UiTableCellUnit>
+            </UiTableCell>
           </UiTableRow>
         </UiTable>
       </td>
@@ -238,16 +253,6 @@ export default {
     </tr>
     <tr>
       <td class="cell">
-        UiTableCellUnit
-      </td>
-      <td class="cell">
-        <UiTableCellUnit>111</UiTableCellUnit>
-        <UiTableCellUnit>222</UiTableCellUnit>
-        <UiTableCellUnit>333</UiTableCellUnit>
-      </td>
-    </tr>
-    <tr>
-      <td class="cell">
         UiTooltipMenuItem
       </td>
       <td class="cell">
@@ -273,7 +278,7 @@ export default {
         <UiFilterDate />
       </td>
     </tr>
-        <tr>
+    <tr>
       <td class="cell">
         UiFilterSearchInput
       </td>
@@ -281,6 +286,23 @@ export default {
         <UiFilterSearchInput />
       </td>
     </tr>
+    <tr>
+      <td class="cell">
+        UiPageHeaderFrame
+      </td>
+      <td class="cell">
+        <UiPageHeaderFrame>
+          <span slot="title">Personal Profile</span>
+          <span slot="description">
+            Initial onboarding information from merchant about his business
+            and goals to understand how can we help him exactly.
+          </span>
+          <PictureProfileAndPeople slot="picture" />
+        </UiPageHeaderFrame>
+      </td>
+    </tr>
+
+
   </table>
 </div>
 </template>

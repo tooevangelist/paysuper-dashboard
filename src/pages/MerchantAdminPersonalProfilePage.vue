@@ -1,7 +1,6 @@
 <script>
 import { mapState } from 'vuex';
 import { omitBy, map } from 'lodash-es';
-import SimplePageHeader from '@/components/SimplePageHeader.vue';
 import PictureProfileAndPeople from '@/components/PictureProfileAndPeople.vue';
 import MerchantProfileStore from '@/store/MerchantProfileStore';
 
@@ -9,7 +8,6 @@ export default {
   name: 'MerchantAdminPersonalProfilePage',
 
   components: {
-    SimplePageHeader,
     PictureProfileAndPeople,
   },
 
@@ -83,14 +81,14 @@ export default {
 
 <template>
 <div>
-  <SimplePageHeader>
+  <UiPageHeaderFrame>
     <span slot="title">Personal Profile</span>
     <span slot="description">
       Initial onboarding information from merchant about his business
       and goals to understand how can we help him exactly.
     </span>
     <PictureProfileAndPeople slot="picture" />
-  </SimplePageHeader>
+  </UiPageHeaderFrame>
 
   <UiPanel>
     <section class="section">

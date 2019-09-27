@@ -15,6 +15,15 @@ export default {
   display: flex;
   align-items: center;
   height: 38px;
+  margin: 0 -2px;
+  padding: 0 2px;
+
+  &:first-child {
+    margin-top: -9px;
+  }
+  &:last-child {
+    margin-bottom: -9px;
+  }
 
   & + & {
     border-top: 1px dashed #c6cacc;

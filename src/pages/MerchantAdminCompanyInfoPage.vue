@@ -1,14 +1,12 @@
 <script>
 import { mapState } from 'vuex';
 import { get } from 'lodash-es';
-import SimplePageHeader from '@/components/SimplePageHeader.vue';
 import PictureDwellingHouse from '@/components/PictureDwellingHouse.vue';
 
 export default {
   name: 'MerchantAdminCompanyInfoPage',
 
   components: {
-    SimplePageHeader,
     PictureDwellingHouse,
   },
 
@@ -44,7 +42,7 @@ export default {
 
 <template>
 <div>
-  <SimplePageHeader>
+  <UiPageHeaderFrame>
     <span slot="title">Company Info</span>
     <span slot="description">
       Reference information about merchant's company. We need it
@@ -52,7 +50,7 @@ export default {
       in business documentation.
     </span>
     <PictureDwellingHouse slot="picture" />
-  </SimplePageHeader>
+  </UiPageHeaderFrame>
 
   <UiPanel>
     <section class="section">
