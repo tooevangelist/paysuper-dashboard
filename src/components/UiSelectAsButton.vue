@@ -19,7 +19,7 @@ export default {
       default: false,
       type: Boolean,
     },
-    iconName: {
+    iconComponent: {
       default: 'IconArrowDown',
       type: String,
     },
@@ -102,7 +102,7 @@ export default {
     class="selected"
     @click="toggle"
   >
-    <component :is="iconName" class="icon" />
+    <component :is="iconComponent" class="icon" />
 
     <template v-if="!isOnlyIcon">
       {{ label }}
@@ -151,14 +151,14 @@ $hover-background-color: rgba($hover-text-color, 0.08);
   letter-spacing: 0.4px;
   overflow: hidden;
 
-  ._is-only-icon & {
+  .select-as-button._is-only-icon & {
     width: 32px;
     height: 32px;
     border-radius: 50%;
     justify-content: center;
   }
-  ._is-only-icon._opened &,
-  ._is-only-icon &:hover {
+  .select-as-button._is-only-icon._opened &,
+  .select-as-button._is-only-icon &:hover {
     background-color: #f1f3f4;
   }
 }
@@ -166,13 +166,13 @@ $hover-background-color: rgba($hover-text-color, 0.08);
   margin-right: 9px;
   fill: $normal-text-color;
 
-  ._is-only-icon & {
+  .select-as-button._is-only-icon & {
     margin-right: 0;
     width: 16px;
     height: 16px;
   }
 
-  ._opened & {
+  .select-as-button._opened & {
     transform: rotateX(180deg);
   }
 }

@@ -58,7 +58,7 @@ export default {
     <div class="box-header">
       <div class="box-title">Last payments</div>
       <UiSelectAsButton
-        iconName="IconSettings"
+        iconComponent="IconSettings"
         :isOnlyIcon="true"
         :options="paymentsSettings"
         :value="paymentsCount"
