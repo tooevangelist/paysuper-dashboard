@@ -85,8 +85,8 @@ export default {
         },
         {
           ...(cloneDeep(refundCostsItem)),
-          method: 'Webmoney',
-          icon: 'IconWebmoney',
+          method: 'WebMoney',
+          icon: 'IconWebMoney',
           isExpanded: false,
           items: [
             cloneDeep(refundCostsItem),

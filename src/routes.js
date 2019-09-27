@@ -15,7 +15,6 @@ const projectPagesMeta = {
 
 const merchantPagesMeta = {
   layout: 'Layout',
-  isAuthRequired: true,
   specialNav: {
     backLink() {
       return {
@@ -127,6 +126,12 @@ const routes = [
         component: () => import('@/pages/MerchantAdminCompanyInfoPage.vue'),
         meta: merchantPagesMeta,
         name: 'MerchantAdminCompanyInfo',
+      },
+      {
+        path: 'license-agreement/',
+        component: () => import('@/pages/MerchantAdminLicenseAgreementPage.vue'),
+        meta: merchantPagesMeta,
+        name: 'MerchantAdminLicenseAgreement',
       },
       {
         path: 'payment-methods/',

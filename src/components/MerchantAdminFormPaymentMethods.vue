@@ -70,7 +70,7 @@ export default {
         <div>
           <UiSwitchBox class="switch-box" label="Mastercard" />
           <UiSwitchBox class="switch-box" label="Paypal" />
-          <UiSwitchBox class="switch-box" label="Webmoney" />
+          <UiSwitchBox class="switch-box" label="WebMoney" />
         </div>
         <div>
           <UiSwitchBox class="switch-box" label="Union Pay" />

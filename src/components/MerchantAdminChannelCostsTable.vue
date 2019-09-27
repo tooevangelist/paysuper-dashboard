@@ -91,8 +91,8 @@ export default {
         },
         {
           ...(cloneDeep(channelCostsItem)),
-          method: 'Webmoney',
-          icon: 'IconWebmoney',
+          method: 'WebMoney',
+          icon: 'IconWebMoney',
           isExpanded: false,
           items: [
             cloneDeep(channelCostsItem),

@@ -54,6 +54,9 @@ export default function createLicenseAgreementStore() {
       signature(state, data) {
         state.signature = data;
       },
+      isReject(state, data) {
+        state.isReject = data;
+      },
     },
     actions: {
       async initState({ commit, dispatch, getters }, isOnboardingStepsComplete) {
