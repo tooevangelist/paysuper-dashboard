@@ -15,6 +15,14 @@ export default {
       default: false,
       type: Boolean,
     },
+    isOnlyIcon: {
+      default: false,
+      type: Boolean,
+    },
+    iconName: {
+      default: 'IconArrowDown',
+      type: String,
+    },
     options: {
       default: () => [],
       type: Array,
@@ -47,6 +55,9 @@ export default {
         startCase(this.innerValue),
       );
     },
+    componentName() {
+      return this.isOnlyIcon ? 'div' : 'UiButton';
+    },
   },
   methods: {
     hide() {
@@ -77,19 +88,25 @@ export default {
 </script>
 
 <template>
-<UiButton
+<component
   v-clickaway="hide"
   v-bind="$attrs"
-  :class="['select-as-button', { '_opened': isOpened }]"
+  :is="componentName"
+  :class="[
+    'select-as-button',
+    { '_opened': isOpened, '_is-only-icon': isOnlyIcon },
+  ]"
   @click.self="toggle"
 >
   <span
     class="selected"
     @click="toggle"
   >
-    <IconArrowDown />
+    <component :is="iconName" class="icon" />
 
-    {{ label }}
+    <template v-if="!isOnlyIcon">
+      {{ label }}
+    </template>
   </span>
 
   <UiTip
@@ -112,7 +129,7 @@ export default {
       </div>
     </div>
   </UiTip>
-</UiButton>
+</component>
 </template>
 
 <style scoped lang="scss">
@@ -121,6 +138,9 @@ $selected-text-color: #c6cacc;
 $hover-text-color: #3d7bf5;
 $hover-background-color: rgba($hover-text-color, 0.08);
 
+.select-as-button {
+  position: relative;
+}
 .selected {
   font-size: 12px;
   line-height: 16px;
@@ -129,13 +149,30 @@ $hover-background-color: rgba($hover-text-color, 0.08);
   display: flex;
   align-items: center;
   letter-spacing: 0.4px;
+  overflow: hidden;
 
-  svg {
-    margin-right: 9px;
-    fill: $normal-text-color;
+  ._is-only-icon & {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    justify-content: center;
+  }
+  ._is-only-icon._opened &,
+  ._is-only-icon &:hover {
+    background-color: #f1f3f4;
+  }
+}
+.icon {
+  margin-right: 9px;
+  fill: $normal-text-color;
+
+  ._is-only-icon & {
+    margin-right: 0;
+    width: 16px;
+    height: 16px;
   }
 
-  .select-as-button._opened & svg {
+  ._opened & {
     transform: rotateX(180deg);
   }
 }
@@ -145,7 +182,6 @@ $hover-background-color: rgba($hover-text-color, 0.08);
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
   min-width: 200px;
 }
-
 .item {
   font-size: 14px;
   line-height: 20px;
