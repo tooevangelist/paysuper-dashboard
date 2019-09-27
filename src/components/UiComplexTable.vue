@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: 'ComplexTableCell',
+  name: 'UiComplexTableCell',
 };
 </script>
 

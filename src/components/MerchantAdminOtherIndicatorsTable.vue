@@ -2,18 +2,12 @@
 import { some, flatten, cloneDeep } from 'lodash-es';
 import ClickOutside from 'vue-click-outside';
 import ExpandableCellText from '@/components/ExpandableCellText.vue';
-import ComplexTable from '@/components/ComplexTable.vue';
-import ComplexTableRow from '@/components/ComplexTableRow.vue';
-import ComplexTableCell from '@/components/ComplexTableCell.vue';
 
 const activeFieldNames = ['value'];
 export default {
   name: 'MerchantAdminRefundCostsTable',
 
   components: {
-    ComplexTable,
-    ComplexTableRow,
-    ComplexTableCell,
     ExpandableCellText,
   },
 
@@ -143,22 +137,22 @@ export default {
 </script>
 
 <template>
-<ComplexTable>
-  <ComplexTableRow :isHead="true">
-    <ComplexTableCell class="cell _method" align="left">For all methods</ComplexTableCell>
-    <ComplexTableCell class="cell _currency">Payout currency</ComplexTableCell>
-    <ComplexTableCell class="cell _region">Region</ComplexTableCell>
-    <ComplexTableCell class="cell _country">Country</ComplexTableCell>
-    <ComplexTableCell class="cell _value">Fixed value</ComplexTableCell>
-  </ComplexTableRow>
+<UiComplexTable>
+  <UiComplexTableRow :isHead="true">
+    <UiComplexTableCell class="cell _method" align="left">For all methods</UiComplexTableCell>
+    <UiComplexTableCell class="cell _currency">Payout currency</UiComplexTableCell>
+    <UiComplexTableCell class="cell _region">Region</UiComplexTableCell>
+    <UiComplexTableCell class="cell _country">Country</UiComplexTableCell>
+    <UiComplexTableCell class="cell _value">Fixed value</UiComplexTableCell>
+  </UiComplexTableRow>
   <template
     v-for="(data, index) in otherIndicatorsFlattened"
   >
-    <ComplexTableRow
+    <UiComplexTableRow
       :key="index"
       :isPainted="index % 2 === 1"
     >
-      <ComplexTableCell
+      <UiComplexTableCell
         class="cell _method"
         :class="{ '_leading': !data.parent}"
         align="left"
@@ -172,11 +166,11 @@ export default {
         >
           {{ data.name }}
         </ExpandableCellText>
-      </ComplexTableCell>
-      <ComplexTableCell class="cell _currency">USD</ComplexTableCell>
-      <ComplexTableCell class="cell _region">EU</ComplexTableCell>
-      <ComplexTableCell class="cell _country">United States</ComplexTableCell>
-      <ComplexTableCell
+      </UiComplexTableCell>
+      <UiComplexTableCell class="cell _currency">USD</UiComplexTableCell>
+      <UiComplexTableCell class="cell _region">EU</UiComplexTableCell>
+      <UiComplexTableCell class="cell _country">United States</UiComplexTableCell>
+      <UiComplexTableCell
         class="cell _value"
         v-bind="getCellProps(data.value)"
         @toggleFocus="data.value.hasFocus = $event"
@@ -184,10 +178,10 @@ export default {
         mask="NNNNNN"
       >
         {{ getCellText(data.value.value, '$') }}
-      </ComplexTableCell>
-    </ComplexTableRow>
+      </UiComplexTableCell>
+    </UiComplexTableRow>
   </template>
-</ComplexTable>
+</UiComplexTable>
 </template>
 
 <style lang="scss" scoped>

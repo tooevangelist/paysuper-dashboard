@@ -1,30 +1,146 @@
 <script>
-import SimplePageHeader from '@/components/SimplePageHeader.vue';
+import { debounce, get, isEqual } from 'lodash-es';
+import { mapState, mapGetters, mapActions } from 'vuex';
+import Notifications from '@/mixins/Notifications';
+import ProjectGameKeysStore from '@/store/ProjectGameKeysStore';
+import NoResults from '@/components/NoResults.vue';
 import PictureGameKeyWithDoor from '@/components/PictureGameKeyWithDoor.vue';
 
 export default {
-  name: 'ProjectGameKeysPage',
+  mixins: [Notifications],
+
   components: {
-    SimplePageHeader,
     PictureGameKeyWithDoor,
+    NoResults,
   },
-  props: {
-    project: {
-      type: Object,
-      required: true,
+
+  async asyncData({ store, registerStoreModule, route }) {
+    try {
+      await registerStoreModule('ProjectGameKeys', ProjectGameKeysStore, {
+        query: route.query,
+        projectId: route.params.id,
+      });
+    } catch (error) {
+      store.dispatch('setPageError', error);
+    }
+  },
+
+  data() {
+    return {
+      filters: {},
+      isSearchRouting: false,
+      isInfiniteScrollLocked: false,
+      openedTooltipId: '',
+    };
+  },
+
+  async beforeRouteUpdate(to, from, next) {
+    if (!this.isSearchRouting) {
+      this.initQuery(to.query);
+      this.updateFiltersFromQuery();
+      this.setIsLoading(true);
+      await this.fetchGameKeys().catch(this.$_Notifications_showErrorMessage);
+      this.setIsLoading(false);
+    }
+    this.isSearchRouting = false;
+    next();
+  },
+
+  created() {
+    this.updateFiltersFromQuery();
+  },
+
+  mounted() {
+    this.initInfiniteScroll();
+  },
+
+  computed: {
+    ...mapState('ProjectGameKeys', ['gameKeys', 'filterValues', 'query', 'apiQuery']),
+    ...mapGetters('ProjectGameKeys', ['getFilterValues']),
+
+    handleQuickSearchInput() {
+      return debounce(() => {
+        this.filterMerchants();
+      }, 500);
     },
-    uploadImage: {
-      type: Function,
-      required: true,
+
+    isFiltersNotEmpty() {
+      return Boolean(this.filters.quickFilter);
     },
   },
 
   methods: {
-    handleSave() {
-      const isValid = this.$refs.form.chekIsFormValid();
-      if (isValid) {
-        this.$emit('save');
+    ...mapActions(['setIsLoading']),
+    ...mapActions('ProjectGameKeys', [
+      'submitFilters', 'fetchGameKeys', 'initQuery', 'createGameKey',
+      'deleteGameKey', 'toggleGameKeyEnabled',
+    ]),
+
+    get,
+
+    updateFiltersFromQuery() {
+      this.filters = this.getFilterValues(['quickFilter', 'offset', 'limit', 'dateFrom', 'dateTo']);
+    },
+
+    filterMerchants() {
+      this.filters.offset = 0;
+      this.searchGameKeys();
+    },
+
+    initInfiniteScroll() {
+      this.$appEventsOn('contentScrollReachEnd', async () => {
+        if (
+          this.isInfiniteScrollLocked
+          || this.filters.offset + this.filters.limit >= this.gameKeys.count
+        ) {
+          return;
+        }
+        this.isInfiniteScrollLocked = true;
+
+        this.filters.offset += this.filters.limit;
+        await this.searchGameKeys();
+        this.isInfiniteScrollLocked = false;
+      });
+    },
+
+    async searchGameKeys() {
+      this.isSearchRouting = true;
+      this.setIsLoading(true);
+      this.submitFilters(this.filters);
+      this.navigate();
+      await this.fetchGameKeys().catch(this.$_Notifications_showErrorMessage);
+      this.setIsLoading(false);
+    },
+
+    navigate() {
+      if (isEqual(this.$route.query, this.query)) {
+        return;
       }
+      this.$router.push({
+        path: this.$route.path,
+        query: this.query,
+      });
+    },
+
+    async handleAddKeys() {
+      this.setIsLoading(true);
+      await this.createGameKey().catch(this.$_Notifications_showErrorMessage);
+      await this.searchGameKeys();
+      this.setIsLoading(false);
+    },
+
+    async handleDeleteGameKey(keyProduct) {
+      this.setIsLoading(true);
+      await this.deleteGameKey(keyProduct.id).catch(this.$_Notifications_showErrorMessage);
+      await this.searchGameKeys();
+      this.setIsLoading(false);
+    },
+
+    async handleToggleGameKeyEnabled(keyProduct) {
+      this.setIsLoading(true);
+      await this.toggleGameKeyEnabled(keyProduct).catch(this.$_Notifications_showErrorMessage);
+      await this.searchGameKeys();
+      this.setIsLoading(false);
     },
   },
 };
@@ -32,7 +148,7 @@ export default {
 
 <template>
 <div>
-  <SimplePageHeader>
+  <UiPageHeaderFrame>
     <span slot="title">Game keys</span>
     <span slot="description">
       This sales method is intended to sell game keys for specific DRM platforms,
@@ -40,21 +156,195 @@ export default {
       but any key activated products.
     </span>
     <PictureGameKeyWithDoor slot="picture" />
-  </SimplePageHeader>
+  </UiPageHeaderFrame>
 
   <UiPanel>
+    <div class="filters">
+      <UiFilterSearchInput
+        :isAlwaysExpanded="true"
+        v-model="filters.quickFilter"
+        @input="handleQuickSearchInput"
+      />
+      <div class="filters-right">
+        <UiButton class="quilin-packages-button" :disabled="true">
+          <IconUpload class="upload-icon" fill="#919699" />
+          QUILIN PACKAGES
+        </UiButton>
+        <UiButton @click="handleAddKeys">ADD KEYS</UiButton>
+      </div>
+    </div>
+
+    <UiTable
+      v-if="gameKeys.products.length"
+      layout="fixed"
+    >
+      <UiTableRow :isHead="true">
+        <UiTableCell width="5%" align="left">
+          <span class="leading-cell-content">№</span>
+        </UiTableCell>
+        <UiTableCell width="5%" align="left">&nbsp;</UiTableCell>
+        <UiTableCell align="left">Package</UiTableCell>
+        <UiTableCell align="left">SKU</UiTableCell>
+        <UiTableCell align="left">DRM platform</UiTableCell>
+        <UiTableCell width="10%" align="left">Available keys</UiTableCell>
+        <UiTableCell width="10%" align="left">Price</UiTableCell>
+        <UiTableCell align="left" width="3%">&nbsp;</UiTableCell>
+        <UiTableCell width="12%" align="left">Status</UiTableCell>
+        <UiTableCell width="5%" align="left">&nbsp;</UiTableCell>
+      </UiTableRow>
+      <UiTableRow
+        class="content-row"
+        v-for="(keyProduct, index) in gameKeys.products"
+        :key="keyProduct.id"
+        :link="`/gameKeys/${keyProduct.id}`"
+      >
+        <UiTableCell align="left" valign="top">
+          <span class="leading-cell-content">{{ index + 1 }}</span>
+        </UiTableCell>
+        <UiTableCell align="left" valign="top">
+          <IconNoImage class="img" width="18" height="18" fill="#919699" />
+        </UiTableCell>
+        <UiTableCell align="left" valign="top" :title="keyProduct.name.en">
+          <span class="cell-text">{{ keyProduct.name.en }}</span>
+        </UiTableCell>
+        <UiTableCell align="left" valign="top" :title="keyProduct.sku">
+          <span class="cell-text">{{ keyProduct.sku }}</span>
+        </UiTableCell>
+        <UiTableCell align="left" valign="top">
+          <UiTableCellUnit
+            v-for="playform in keyProduct.platforms"
+            :key="playform.id"
+             :title="playform.name"
+          >
+            <span class="cell-text">{{ playform.name }}</span>
+          </UiTableCellUnit>
+          <UiNoText v-if="!keyProduct.platforms" />
+        </UiTableCell>
+        <UiTableCell align="left" valign="top">
+          <UiTableCellUnit
+            v-for="playform in keyProduct.platforms"
+            :key="playform.id"
+          >
+            <UiNoText v-if="!playform.prices || !playform.prices.length" />
+            <span v-else>{{ playform.prices.length }}</span>
+          </UiTableCellUnit>
+          <UiNoText v-if="!keyProduct.platforms" />
+        </UiTableCell>
+        <UiTableCell align="left" valign="top">
+          <UiTableCellUnit
+            v-for="playform in keyProduct.platforms"
+            :key="playform.id"
+          >
+            {{ $formatPrice(playform.prices[0].amount, playform.prices[0].currency)}}
+          </UiTableCellUnit>
+          <UiNoText v-if="!keyProduct.platforms" />
+        </UiTableCell>
+        <UiTableCell align="left" valign="top">&nbsp;</UiTableCell>
+        <UiTableCell align="left" valign="top">
+          <UiLabelTag
+            :color="keyProduct.enabled ? 'green': 'transparent'"
+          >
+            {{ keyProduct.enabled ? 'Enabled': 'Disabled' }}
+          </UiLabelTag>
+        </UiTableCell>
+        <UiTableCell
+          class="cell"
+          align="left"
+          valign="top"
+          @mouseenter.native="openedTooltipId = keyProduct.id"
+          @mouseleave.native="() => openedTooltipId = ''"
+          :noPadding="true"
+        >
+          <UiDotsMenuTrigger
+            class="dots-menu-trigger"
+            :isOpened="openedTooltipId === keyProduct.id"
+          />
+
+          <UiTip
+            innerPosition="right"
+            position="bottom"
+            width="180px"
+            :margin="0"
+            :visible="openedTooltipId === keyProduct.id"
+            :closeDelay="0"
+            :stayOpenedOnHover="false"
+          >
+            <UiTooltipMenuItem
+              iconComponent="IconPen"
+            >
+              Edit
+            </UiTooltipMenuItem>
+            <UiTooltipMenuItem
+              iconComponent="IconDeactivate"
+              @click.stop.prevent="handleToggleGameKeyEnabled(keyProduct)"
+            >
+              {{ keyProduct.enabled ? 'Disable': 'Enable' }}
+            </UiTooltipMenuItem>
+            <UiTooltipMenuItem
+              iconComponent="IconDelete"
+              type="delete"
+              @click.stop.prevent="handleDeleteGameKey(keyProduct)"
+            >
+              Delete
+            </UiTooltipMenuItem>
+          </UiTip>
+        </UiTableCell>
+      </UiTableRow>
+    </UiTable>
+    <NoResults
+      v-else
+      :type="isFiltersNotEmpty ? 'no-results' : 'add-new'"
+    >
+      <span v-if="!isFiltersNotEmpty">You don’t have any items yet</span>
+    </NoResults>
   </UiPanel>
 </div>
 </template>
 
-
 <style lang="scss" scoped>
-.controls {
-  display: flex;
-  justify-content: flex-end;
+$hover-text-color: #3d7bf5;
+$hover-background-color: rgba($hover-text-color, 0.1);
+$hover-deactivate-text-color: #ea3d2f;
+$hover-deactivate-background-color: rgba($hover-deactivate-text-color, 0.08);
+
+.cell {
+  position: relative;
 }
 
-.submit-button {
-  width: 140px;
+.cell-text {
+  max-width: 100%;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 6px;
+}
+
+.img {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.leading-cell-content {
+  padding-left: 10px;
+}
+
+.filters {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.quilin-packages-button {
+  margin-right: 10px;
+}
+
+.upload-icon {
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.dots-menu-trigger {
+  margin-top: 4px;
 }
 </style>

@@ -7,7 +7,6 @@ import ProjectPanelItem from '@/components/ProjectPanelItem.vue';
 import NoResults from '@/components/NoResults.vue';
 import NewProjectModal from '@/components/NewProjectModal.vue';
 import DeactivateProjectModal from '@/components/DeactivateProjectModal.vue';
-import FilterSearchInput from '@/components/FilterSearchInput.vue';
 
 export default {
   name: 'ProjectsListPage',
@@ -17,7 +16,6 @@ export default {
     NoResults,
     NewProjectModal,
     DeactivateProjectModal,
-    FilterSearchInput,
   },
   async asyncData({ store, registerStoreModule, route }) {
     try {
@@ -144,7 +142,7 @@ export default {
       CREATE PROJECT
     </UiButton>
     <div class="filters">
-      <FilterSearchInput
+      <UiFilterSearchInput
         v-model="filters.quickFilter"
         @input="handleQuickSearchInput"
       />

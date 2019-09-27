@@ -8,7 +8,7 @@
 import { includes } from 'lodash-es';
 
 export default {
-  name: 'LabelTag',
+  name: 'UiLabelTag',
 
   props: {
     color: {
@@ -61,6 +61,7 @@ export default {
     background-color: #3acfcf;
   }
   &._color-transparent {
+    background-color: #fff;
     border: 1px solid #e3e5e6;
     color: #919699;
   }

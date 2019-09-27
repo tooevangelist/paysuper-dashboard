@@ -2,8 +2,14 @@
 <div
   class="ui-table-cell"
   :class="[
-    `_${align}`,
-    { '_head': isHead, '_is-sortable': isSortAvailable, ['_' + sortDirection]: sortDirection }
+    `_align-${align}`,
+    `_valign-${valign}`,
+    {
+      '_head': isHead,
+      '_is-sortable': isSortAvailable,
+      ['_' + sortDirection]: sortDirection,
+      '_no-padding': noPadding,
+    }
   ]"
   :style="{ width }"
 >
@@ -39,6 +45,13 @@ export default {
         return includes(['left', 'right', 'center'], value);
       },
     },
+    valign: {
+      default: 'middle',
+      type: String,
+      validator(value) {
+        return includes(['top', 'middle', 'bottom'], value);
+      },
+    },
     isSortable: {
       default: false,
       type: Boolean,
@@ -53,6 +66,10 @@ export default {
     width: {
       default: '',
       type: String,
+    },
+    noPadding: {
+      default: false,
+      type: Boolean,
     },
   },
   data() {
@@ -72,20 +89,35 @@ export default {
 .ui-table-cell {
   display: table-cell;
   padding: 9px 2px;
-  vertical-align: middle;
   border-bottom: 1px solid #e3e5e6;
   text-align: center;
 
-  &._left {
+  &._no-padding {
+    padding: 0;
+  }
+
+  &._align-left {
     text-align: left;
   }
 
-  &._center {
+  &._align-center {
     text-align: center;
   }
 
-  &._right {
+  &._align-right {
     text-align: right;
+  }
+
+  &._valign-top {
+    vertical-align: top;
+  }
+
+  &._valign-middle {
+    vertical-align: middle;
+  }
+
+  &._valign-bottom {
+    vertical-align: bottom;
   }
 
   &._head {

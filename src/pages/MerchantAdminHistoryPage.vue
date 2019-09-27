@@ -2,7 +2,6 @@
 import { debounce } from 'lodash-es';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import MerchantHistoryStore from '@/store/MerchantHistoryStore';
-import SimplePageHeader from '@/components/SimplePageHeader.vue';
 import PictureClock from '@/components/PictureClock.vue';
 import MerchantAdminFormHistory from '@/components/MerchantAdminFormHistory.vue';
 import { toggleSort, getSortDirection } from '@/helpers/handleSort';
@@ -11,7 +10,6 @@ export default {
   name: 'MerchantAdminHistoryPage',
 
   components: {
-    SimplePageHeader,
     PictureClock,
     MerchantAdminFormHistory,
   },
@@ -131,14 +129,14 @@ export default {
 
 <template>
 <div>
-  <SimplePageHeader>
+  <UiPageHeaderFrame>
     <span slot="title">History</span>
     <span slot="description">
       This text log will keep the status change and conversation history with
       merchant for checking the current onboarding status and future reference.
     </span>
     <PictureClock slot="picture" />
-  </SimplePageHeader>
+  </UiPageHeaderFrame>
 
   <MerchantAdminFormHistory :items="history.items" />
 </div>
