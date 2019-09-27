@@ -58,8 +58,8 @@ export default {
     <div class="box-header">
       <div class="box-title">Last payments</div>
       <UiSelectAsButton
-        color="transparent-gray"
-        size="small"
+        iconComponent="IconSettings"
+        :isOnlyIcon="true"
         :options="paymentsSettings"
         :value="paymentsCount"
         :isTransparent="true"
