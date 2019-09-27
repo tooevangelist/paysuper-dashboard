@@ -57,9 +57,7 @@ export default {
   <div class="box">
     <div class="box-header">
       <div class="box-title">Last payments</div>
-      <UiSelectAsButton
-        color="transparent-gray"
-        size="small"
+      <UiSettings
         :options="paymentsSettings"
         :value="paymentsCount"
         :isTransparent="true"
