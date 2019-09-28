@@ -17,6 +17,7 @@ export default new Vuex.Store({
     config: {},
     isLoading: false,
     pageError: null,
+    isStateInited: false,
   },
   mutations: {
     isLoading(state, value) {
@@ -28,17 +29,21 @@ export default new Vuex.Store({
     config(state, value) {
       state.config = value;
     },
+    isStateInited(state, value) {
+      state.isStateInited = value;
+    },
   },
   getters: {
     getUser: state => state.user || null,
   },
   actions: {
-    async initState({ dispatch }) {
+    async initState({ dispatch, commit }) {
       await dispatch('fetchConfig');
       await Promise.all([
         dispatch('Dictionaries/initState'),
         dispatch('User/initState'),
       ]);
+      commit('isStateInited', true);
     },
 
     /**

@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: 'FilterSearchInput',
+  name: 'UiFilterSearchInput',
 
   model: {
     prop: 'value',

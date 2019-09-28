@@ -28,7 +28,7 @@ export default {
     },
     date() {
       const datetime = new Date(this.project.updated_at.seconds * 1000);
-      return format(datetime, 'D MMM YYYY, HH:MM');
+      return format(datetime, 'd MMM yyyy, HH:mm');
     },
     isInactive() {
       return this.project.status === 4;
@@ -65,37 +65,27 @@ export default {
         :closeDelay="0"
         :stayOpenedOnHover="false"
       >
-        <div class="menu-list">
-          <div
-            class="menu-item"
-            @click="$navigate(projectCardUrl)"
-          >
-            <span class="menu-icon">
-              <IconPen />
-            </span>
-            Edit
-          </div>
-          <div
-            v-if="isInactive"
-            class="menu-item"
-            @click="$emit('activate', project.id)"
-          >
-            <span class="menu-icon">
-              <IconPlayTriangle />
-            </span>
-            Activate
-          </div>
-          <div
-            v-else
-            class="menu-item _deactivate"
-            @click="$emit('deactivate', project.id)"
-          >
-            <span class="menu-icon">
-              <IconDeactivate />
-            </span>
-            Deactivate
-          </div>
-        </div>
+        <UiTooltipMenuItem
+          iconComponent="IconPen"
+          @click="$navigate(projectCardUrl)"
+        >
+          Edit
+        </UiTooltipMenuItem>
+        <UiTooltipMenuItem
+          v-if="isInactive"
+          iconComponent="IconPlayTriangle"
+          @click="$emit('activate', project.id)"
+        >
+          Activate
+        </UiTooltipMenuItem>
+        <UiTooltipMenuItem
+          v-else
+          iconComponent="IconDeactivate"
+          type="delete"
+          @click="$emit('deactivate', project.id)"
+        >
+          Deactivate
+        </UiTooltipMenuItem>
       </UiTip>
     </span>
   </span>

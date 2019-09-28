@@ -29,15 +29,6 @@ export default {
   flex-direction: column;
 }
 .template-page-no-layout {
-  a {
-    text-decoration: none;
-    color: #2f6ecd;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
   p {
     margin: 0;
   }

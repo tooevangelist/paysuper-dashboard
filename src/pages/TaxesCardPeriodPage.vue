@@ -5,14 +5,12 @@ import { format } from 'date-fns';
 import Notifications from '@/mixins/Notifications';
 import TaxesByPeriodStore from '@/store/TaxesByPeriodStore';
 import NoResults from '@/components/NoResults.vue';
-import FilterSearchInput from '@/components/FilterSearchInput.vue';
 
 export default {
   name: 'TaxesCardDetailsPage',
   mixins: [Notifications],
   components: {
     NoResults,
-    FilterSearchInput,
   },
   async asyncData({ store, registerStoreModule, route }) {
     try {
@@ -68,12 +66,12 @@ export default {
 
     formatDate(value) {
       const datetime = new Date(value);
-      return format(datetime, 'DD MMM YYYY');
+      return format(datetime, 'dd MMM yyyy');
     },
 
     formatDateAndTime(seconds) {
       const datetime = new Date(seconds * 1000);
-      return format(datetime, 'DD MMM YYYY, HH:MM');
+      return format(datetime, 'dd MMM yyyy, HH:mm');
     },
 
     updateFiltersFromQuery() {
@@ -106,7 +104,7 @@ export default {
   </UiHeader>
   <div class="controls">
     <div class="filters">
-      <FilterSearchInput
+      <UiFilterSearchInput
         v-model="filters.quickFilter"
         @input="handleQuickSearchInput"
       />

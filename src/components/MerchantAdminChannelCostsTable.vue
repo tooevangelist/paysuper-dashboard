@@ -2,9 +2,6 @@
 import { cloneDeep } from 'lodash-es';
 import PaymentMethodsTable from '@/mixins/PaymentMethodsTable';
 import ExpandableCellText from '@/components/ExpandableCellText.vue';
-import ComplexTable from '@/components/ComplexTable.vue';
-import ComplexTableRow from '@/components/ComplexTableRow.vue';
-import ComplexTableCell from '@/components/ComplexTableCell.vue';
 import OpenerCorner from '@/components/OpenerCorner.vue';
 
 export default {
@@ -13,9 +10,6 @@ export default {
   mixins: [PaymentMethodsTable],
 
   components: {
-    ComplexTable,
-    ComplexTableRow,
-    ComplexTableCell,
     ExpandableCellText,
     OpenerCorner,
   },
@@ -140,26 +134,26 @@ export default {
 </script>
 
 <template>
-<ComplexTable>
-  <ComplexTableRow :isHead="true">
-    <ComplexTableCell class="cell _method" align="left">Payment Method</ComplexTableCell>
-    <ComplexTableCell class="cell _currency">Payout currency</ComplexTableCell>
-    <ComplexTableCell class="cell _amount">Payment amount</ComplexTableCell>
-    <ComplexTableCell class="cell _region">Region</ComplexTableCell>
-    <ComplexTableCell class="cell _country">Country</ComplexTableCell>
-    <ComplexTableCell class="cell _fee">Fee, %</ComplexTableCell>
-    <ComplexTableCell class="cell _fee">Fixed fee</ComplexTableCell>
-    <ComplexTableCell class="cell _fee">Overall fee</ComplexTableCell>
-    <ComplexTableCell class="cell _fee">PS general fixed fee</ComplexTableCell>
-  </ComplexTableRow>
+<UiComplexTable>
+  <UiComplexTableRow :isHead="true">
+    <UiComplexTableCell class="cell _method" align="left">Payment Method</UiComplexTableCell>
+    <UiComplexTableCell class="cell _currency">Payout currency</UiComplexTableCell>
+    <UiComplexTableCell class="cell _amount">Payment amount</UiComplexTableCell>
+    <UiComplexTableCell class="cell _region">Region</UiComplexTableCell>
+    <UiComplexTableCell class="cell _country">Country</UiComplexTableCell>
+    <UiComplexTableCell class="cell _fee">Fee, %</UiComplexTableCell>
+    <UiComplexTableCell class="cell _fee">Fixed fee</UiComplexTableCell>
+    <UiComplexTableCell class="cell _fee">Overall fee</UiComplexTableCell>
+    <UiComplexTableCell class="cell _fee">PS general fixed fee</UiComplexTableCell>
+  </UiComplexTableRow>
   <template
     v-for="(data, index) in channelCostsFlattened"
   >
-    <ComplexTableRow
+    <UiComplexTableRow
       :key="index"
       :isPainted="index % 2 === 1"
     >
-      <ComplexTableCell
+      <UiComplexTableCell
         class="cell _method"
         :class="{ '_leading': !data.parent}"
         align="left"
@@ -175,12 +169,12 @@ export default {
           <component :is="data.icon" class="method-icon" />
           {{ data.method }}
         </ExpandableCellText>
-      </ComplexTableCell>
-      <ComplexTableCell class="cell _currency">USD</ComplexTableCell>
-      <ComplexTableCell class="cell _amount">501–1000$</ComplexTableCell>
-      <ComplexTableCell class="cell _region">EU</ComplexTableCell>
-      <ComplexTableCell class="cell _country">United States</ComplexTableCell>
-      <ComplexTableCell
+      </UiComplexTableCell>
+      <UiComplexTableCell class="cell _currency">USD</UiComplexTableCell>
+      <UiComplexTableCell class="cell _amount">501–1000$</UiComplexTableCell>
+      <UiComplexTableCell class="cell _region">EU</UiComplexTableCell>
+      <UiComplexTableCell class="cell _country">United States</UiComplexTableCell>
+      <UiComplexTableCell
         class="cell _fee"
         v-bind="$_PaymentMethodsTable_getEditableCellProps(data.fee)"
         @toggleFocus="data.fee.hasFocus = $event"
@@ -189,8 +183,8 @@ export default {
         mask="###"
       >
         {{ $_PaymentMethodsTable_getCellText(data.fee.value, '%') }}
-      </ComplexTableCell>
-      <ComplexTableCell
+      </UiComplexTableCell>
+      <UiComplexTableCell
         class="cell _fee"
         v-bind="$_PaymentMethodsTable_getEditableCellProps(data.fixedFee)"
         @toggleFocus="data.fixedFee.hasFocus = $event"
@@ -199,8 +193,8 @@ export default {
         mask="NNNNNN"
       >
         {{ $_PaymentMethodsTable_getCellText(data.fixedFee.value, '$') }}
-      </ComplexTableCell>
-      <ComplexTableCell
+      </UiComplexTableCell>
+      <UiComplexTableCell
         class="cell _fee"
         v-bind="$_PaymentMethodsTable_getEditableCellProps(data.overallFee)"
         @toggleFocus="data.overallFee.hasFocus = $event"
@@ -208,8 +202,8 @@ export default {
         @change="$_PaymentMethodsTable_handleCellChange(data.overallFee, $event)"
       >
         {{ $_PaymentMethodsTable_getCellText(data.overallFee.value, '%') }}
-      </ComplexTableCell>
-      <ComplexTableCell
+      </UiComplexTableCell>
+      <UiComplexTableCell
         class="cell _fee"
         v-bind="$_PaymentMethodsTable_getEditableCellProps(data.psGeneralFixedFee)"
         @toggleFocus="data.psGeneralFixedFee.hasFocus = $event"
@@ -217,11 +211,11 @@ export default {
         @change="$_PaymentMethodsTable_handleCellChange(data.psGeneralFixedFee, $event)"
       >
         {{ $_PaymentMethodsTable_getCellText(data.psGeneralFixedFee.value, '$') }}
-      </ComplexTableCell>
-    </ComplexTableRow>
+      </UiComplexTableCell>
+    </UiComplexTableRow>
   </template>
 
-</ComplexTable>
+</UiComplexTable>
 </template>
 
 <style lang="scss" scoped>

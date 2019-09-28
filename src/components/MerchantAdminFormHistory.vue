@@ -26,7 +26,7 @@ export default {
   methods: {
     formatDate(seconds) {
       const datetime = new Date(seconds * 1000);
-      return format(datetime, 'DD MMM YYYY');
+      return format(datetime, 'dd MMM yyyy');
     },
 
     getStatus(statuses) {

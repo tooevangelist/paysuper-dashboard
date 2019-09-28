@@ -1,12 +1,10 @@
 <script>
 import ProjectFormSettings from '@/components/ProjectFormSettings.vue';
-import SimplePageHeader from '@/components/SimplePageHeader.vue';
 
 export default {
   name: 'ProjectSettingsPage',
   components: {
     ProjectFormSettings,
-    SimplePageHeader,
   },
   props: {
     project: {
@@ -32,13 +30,13 @@ export default {
 
 <template>
 <div>
-  <SimplePageHeader>
+  <UiPageHeaderFrame>
     <span slot="title">Settings</span>
     <span slot="description">
       Setup main scope of project parameters here.
     </span>
     <!-- <PictureClock slot="picture" /> -->
-  </SimplePageHeader>
+  </UiPageHeaderFrame>
 
   <UiPanel>
     <ProjectFormSettings

@@ -33,9 +33,6 @@ export default {
 
   computed: {
     routerComponentName() {
-      if (this.$options.components.NuxtLink) {
-        return 'NuxtLink';
-      }
       if (this.$options.components.RouterLink) {
         return 'RouterLink';
       }
@@ -81,6 +78,16 @@ export default {
     background: rgba(61, 123, 245, 0.08);
     cursor: pointer;
     color: #3d7bf5;
+
+    /deep/ {
+      .ui-table-cell-unit {
+        border-top-color: #3d7bf5;
+      }
+
+      .ui-no-text {
+        color: #3d7bf5;
+      }
+    }
   }
 }
 </style>

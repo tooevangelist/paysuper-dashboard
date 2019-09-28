@@ -25,6 +25,7 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-param-reassign': ['error', { ignorePropertyModificationsFor: ['state'] }],
     'no-nested-ternary': 'off',
+    'no-underscore-dangle': ['error', { allow: ['_chart', '_view'] }],
   },
   parserOptions: {
     parser: 'babel-eslint',

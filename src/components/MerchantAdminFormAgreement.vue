@@ -9,7 +9,6 @@ import moment from 'moment';
 import StatusIcon from '@/components/StatusIcon.vue';
 import FileDownload from '@/components/FileDownload.vue';
 import MerchantStatusChanger from '@/components/MerchantStatusChanger.vue';
-import LabelTag from '@/components/LabelTag.vue';
 import MerchantExtendingMenu from '@/components/MerchantExtendingMenu.vue';
 
 export default {
@@ -23,7 +22,6 @@ export default {
     StatusIcon,
     FileDownload,
     MerchantStatusChanger,
-    LabelTag,
     MerchantExtendingMenu,
   },
 
@@ -78,12 +76,12 @@ export default {
           })"
         />
 
-        <LabelTag
+        <UiLabelTag
           v-if="merchant.status === 3"
           color="aqua"
           v-text="'Signing'"
         />
-        <LabelTag
+        <UiLabelTag
           v-if="merchant.status === 4"
           color="green"
           v-text="'Signed'"

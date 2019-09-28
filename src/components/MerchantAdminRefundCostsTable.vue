@@ -3,23 +3,15 @@ import { find, cloneDeep } from 'lodash-es';
 import ClickOutside from 'vue-click-outside';
 import PaymentMethodsTable from '@/mixins/PaymentMethodsTable';
 import ExpandableCellText from '@/components/ExpandableCellText.vue';
-import ComplexTable from '@/components/ComplexTable.vue';
-import ComplexTableRow from '@/components/ComplexTableRow.vue';
-import ComplexTableCell from '@/components/ComplexTableCell.vue';
 import OpenerCorner from '@/components/OpenerCorner.vue';
-import SimpleMenuItem from '@/components/SimpleMenuItem.vue';
 
 export default {
   name: 'MerchantAdminRefundCostsTable',
   mixins: [PaymentMethodsTable],
 
   components: {
-    ComplexTable,
-    ComplexTableRow,
-    ComplexTableCell,
     ExpandableCellText,
     OpenerCorner,
-    SimpleMenuItem,
   },
 
   directives: {
@@ -163,24 +155,24 @@ export default {
 </script>
 
 <template>
-<ComplexTable>
-  <ComplexTableRow :isHead="true">
-    <ComplexTableCell class="cell _method" align="left">Payment Method</ComplexTableCell>
-    <ComplexTableCell class="cell _currency">Payout currency</ComplexTableCell>
-    <ComplexTableCell class="cell _region">Region</ComplexTableCell>
-    <ComplexTableCell class="cell _country">Country</ComplexTableCell>
-    <ComplexTableCell class="cell _fee">Fee, %</ComplexTableCell>
-    <ComplexTableCell class="cell _fee">Fixed fee</ComplexTableCell>
-    <ComplexTableCell class="cell _fee">Refund fee payout party</ComplexTableCell>
-  </ComplexTableRow>
+<UiComplexTable>
+  <UiComplexTableRow :isHead="true">
+    <UiComplexTableCell class="cell _method" align="left">Payment Method</UiComplexTableCell>
+    <UiComplexTableCell class="cell _currency">Payout currency</UiComplexTableCell>
+    <UiComplexTableCell class="cell _region">Region</UiComplexTableCell>
+    <UiComplexTableCell class="cell _country">Country</UiComplexTableCell>
+    <UiComplexTableCell class="cell _fee">Fee, %</UiComplexTableCell>
+    <UiComplexTableCell class="cell _fee">Fixed fee</UiComplexTableCell>
+    <UiComplexTableCell class="cell _fee">Refund fee payout party</UiComplexTableCell>
+  </UiComplexTableRow>
   <template
     v-for="(data, index) in refundCostsFlattened"
   >
-    <ComplexTableRow
+    <UiComplexTableRow
       :key="index"
       :isPainted="index % 2 === 1"
     >
-      <ComplexTableCell
+      <UiComplexTableCell
         class="cell _method"
         :class="{ '_leading': !data.parent}"
         align="left"
@@ -195,11 +187,11 @@ export default {
           <component :is="data.icon" class="method-icon" />
           {{ data.method }}
         </ExpandableCellText>
-      </ComplexTableCell>
-      <ComplexTableCell class="cell _currency">USD</ComplexTableCell>
-      <ComplexTableCell class="cell _region">EU</ComplexTableCell>
-      <ComplexTableCell class="cell _country">United States</ComplexTableCell>
-      <ComplexTableCell
+      </UiComplexTableCell>
+      <UiComplexTableCell class="cell _currency">USD</UiComplexTableCell>
+      <UiComplexTableCell class="cell _region">EU</UiComplexTableCell>
+      <UiComplexTableCell class="cell _country">United States</UiComplexTableCell>
+      <UiComplexTableCell
         class="cell _fee"
         v-bind="$_PaymentMethodsTable_getEditableCellProps(data.fee)"
         @toggleFocus="data.fee.hasFocus = $event"
@@ -208,8 +200,8 @@ export default {
         mask="###"
       >
         {{ $_PaymentMethodsTable_getCellText(data.fee.value, '%') }}
-      </ComplexTableCell>
-      <ComplexTableCell
+      </UiComplexTableCell>
+      <UiComplexTableCell
         class="cell _fee"
         v-bind="$_PaymentMethodsTable_getEditableCellProps(data.fixedFee)"
         @toggleFocus="data.fixedFee.hasFocus = $event"
@@ -218,8 +210,8 @@ export default {
         mask="NNNNNN"
       >
         {{ $_PaymentMethodsTable_getCellText(data.fixedFee.value, '$') }}
-      </ComplexTableCell>
-      <ComplexTableCell
+      </UiComplexTableCell>
+      <UiComplexTableCell
         class="cell _payout-party"
         @click.native="data.isPayoutPartyMenuOpened = !data.isPayoutPartyMenuOpened"
         v-click-outside="() => closePayoutPartyMenu(data)"
@@ -230,15 +222,15 @@ export default {
         </div>
 
         <UiTip
-          class="dropdown"
           innerPosition="right"
           position="bottom"
           width="180px"
+          :margin="0"
           :visible="data.isPayoutPartyMenuOpened"
           :closeDelay="0"
           :stayOpenedOnHover="false"
         >
-          <SimpleMenuItem
+          <UiTooltipMenuItem
             v-for="item in payoutPartyList"
             v-text="item.label"
             :key="item.value"
@@ -246,11 +238,11 @@ export default {
             @click.native.stop="handlePayoutPartyMenuItemClick(data, item)"
           />
         </UiTip>
-      </ComplexTableCell>
-    </ComplexTableRow>
+      </UiComplexTableCell>
+    </UiComplexTableRow>
   </template>
 
-</ComplexTable>
+</UiComplexTable>
 </template>
 
 <style lang="scss" scoped>
@@ -290,8 +282,5 @@ export default {
   align-items: center;
   justify-content: space-between;
   padding-left: 9px;
-}
-.dropdown {
-  top: calc(100% + 4px);
 }
 </style>

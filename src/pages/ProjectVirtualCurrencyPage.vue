@@ -1,13 +1,11 @@
 <script>
 import { required } from 'vuelidate/lib/validators';
-import SimplePageHeader from '@/components/SimplePageHeader.vue';
 import PictureLetterGLandscape from '@/components/PictureLetterGLandscape.vue';
 import ImageUpload from '@/components/ImageUpload.vue';
 
 export default {
   name: 'ProjectVirtualCurrencyPage',
   components: {
-    SimplePageHeader,
     PictureLetterGLandscape,
     ImageUpload,
   },
@@ -64,7 +62,7 @@ export default {
 
 <template>
 <div>
-  <SimplePageHeader tag="testing">
+  <UiPageHeaderFrame tag="testing">
     <template slot="title">
       Virtual currency
       <span class="tag">
@@ -82,7 +80,7 @@ export default {
       Integration webhook testing is obligatory requirement for this sales option.
     </span>
     <PictureLetterGLandscape slot="picture" />
-  </SimplePageHeader>
+  </UiPageHeaderFrame>
 
   <UiPanel>
     <section class="section">

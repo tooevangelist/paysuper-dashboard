@@ -1,23 +1,12 @@
 <script>
+import PictureProfileAndPeople from '@/components/PictureProfileAndPeople.vue';
+
 export default {
   name: 'ComponentsPage',
 
-  computed: {
-    components() {
-      return {
-        UiTable: {
-          props: {},
-        },
-        UiTableCell: {
-          props: {},
-        },
-        UiTableRow: {
-          props: {},
-        },
-      };
-    },
+  components: {
+    PictureProfileAndPeople,
   },
-
 };
 </script>
 
@@ -180,6 +169,7 @@ export default {
         UiTable<br>
         UiTableRow<br>
         UiTableCell<br>
+        UiTableCellUnit
       </td>
       <td class="cell">
         <UiTable>
@@ -195,12 +185,124 @@ export default {
           </UiTableRow>
           <UiTableRow>
             <UiTableCell align="left">Moya bashenka</UiTableCell>
-            <UiTableCell align="left">13.03.2019</UiTableCell>
-            <UiTableCell align="left">Inactive</UiTableCell>
+            <UiTableCell align="left">
+              <UiTableCellUnit>13.03.2019</UiTableCellUnit>
+              <UiTableCellUnit>11.03.2019</UiTableCellUnit>
+              <UiTableCellUnit>09.03.2019</UiTableCellUnit>
+            </UiTableCell>
+            <UiTableCell align="left">
+              <UiTableCellUnit>Inactive</UiTableCellUnit>
+              <UiTableCellUnit>Inactive</UiTableCellUnit>
+              <UiTableCellUnit>Inactive</UiTableCellUnit>
+            </UiTableCell>
           </UiTableRow>
         </UiTable>
       </td>
     </tr>
+    <tr>
+      <td class="cell">
+        UiComplexTable<br>
+        UiComplexTableRow<br>
+        UiComplexTableCell<br>
+      </td>
+      <td class="cell">
+        <UiComplexTable>
+          <UiComplexTableRow :isHead="true">
+            <UiComplexTableCell align="left">Company</UiComplexTableCell>
+            <UiComplexTableCell align="left">Last change</UiComplexTableCell>
+            <UiComplexTableCell align="left">Value (editable)</UiComplexTableCell>
+          </UiComplexTableRow>
+          <UiComplexTableRow>
+            <UiComplexTableCell align="left">Roga i copita</UiComplexTableCell>
+            <UiComplexTableCell align="left">29.10.2009</UiComplexTableCell>
+            <UiComplexTableCell align="left" :isEditable="true">123</UiComplexTableCell>
+          </UiComplexTableRow>
+          <UiComplexTableRow :isPainted="true">
+            <UiComplexTableCell align="left">Moya bashenka</UiComplexTableCell>
+            <UiComplexTableCell align="left">13.03.2019</UiComplexTableCell>
+            <UiComplexTableCell align="left" :isEditable="true">321</UiComplexTableCell>
+          </UiComplexTableRow>
+        </UiComplexTable>
+      </td>
+    </tr>
+    <tr>
+      <td class="cell">
+        UiLabelTag
+      </td>
+      <td class="cell">
+        <UiLabelTag color="green">Active</UiLabelTag>
+        <UiLabelTag color="transparent">Inactive</UiLabelTag>
+      </td>
+    </tr>
+    <tr>
+      <td class="cell">
+        UiDotsMenuTrigger
+      </td>
+      <td class="cell">
+        <UiDotsMenuTrigger />
+        <UiDotsMenuTrigger :isOpened="true" />
+      </td>
+    </tr>
+    <tr>
+      <td class="cell">
+        UiNoText
+      </td>
+      <td class="cell">
+        <UiNoText />
+      </td>
+    </tr>
+    <tr>
+      <td class="cell">
+        UiTooltipMenuItem
+      </td>
+      <td class="cell">
+        <UiTooltipMenuItem>Enable</UiTooltipMenuItem>
+        <UiTooltipMenuItem>Disable</UiTooltipMenuItem>
+        <UiTooltipMenuItem iconComponent="IconDeactivate">Deactivate</UiTooltipMenuItem>
+        <UiTooltipMenuItem iconComponent="IconDelete" type="delete">Delete</UiTooltipMenuItem>
+      </td>
+    </tr>
+    <tr>
+      <td class="cell">
+        UiFilterAgreementStatus
+      </td>
+      <td class="cell">
+        <UiFilterAgreementStatus />
+      </td>
+    </tr>
+    <tr>
+      <td class="cell">
+        UiFilterDate
+      </td>
+      <td class="cell">
+        <UiFilterDate />
+      </td>
+    </tr>
+    <tr>
+      <td class="cell">
+        UiFilterSearchInput
+      </td>
+      <td class="cell">
+        <UiFilterSearchInput />
+      </td>
+    </tr>
+    <tr>
+      <td class="cell">
+        UiPageHeaderFrame
+      </td>
+      <td class="cell">
+        <UiPageHeaderFrame>
+          <span slot="title">Personal Profile</span>
+          <span slot="description">
+            Initial onboarding information from merchant about his business
+            and goals to understand how can we help him exactly.
+          </span>
+          <PictureProfileAndPeople slot="picture" />
+        </UiPageHeaderFrame>
+      </td>
+    </tr>
+
+
   </table>
 </div>
 </template>

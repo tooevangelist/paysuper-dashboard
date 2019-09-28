@@ -1,14 +1,12 @@
 <script>
 import ClickOutside from 'vue-click-outside';
 import ExpandableCellText from '@/components/ExpandableCellText.vue';
-import SimpleMenuItem from '@/components/SimpleMenuItem.vue';
 
 export default {
   name: 'CurrencyConverter',
 
   components: {
     ExpandableCellText,
-    SimpleMenuItem,
   },
 
   directives: {
@@ -80,7 +78,7 @@ export default {
         :closeDelay="0"
         :stayOpenedOnHover="false"
       >
-        <SimpleMenuItem
+        <UiTooltipMenuItem
           v-for="(item, index) in currencies"
           v-text="item"
           :key="index"
@@ -114,7 +112,7 @@ export default {
         :closeDelay="0"
         :stayOpenedOnHover="false"
       >
-        <SimpleMenuItem
+        <UiTooltipMenuItem
           v-for="(item, index) in currencies"
           v-text="item"
           :key="index"

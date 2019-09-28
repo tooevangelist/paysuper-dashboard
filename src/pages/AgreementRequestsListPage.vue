@@ -6,13 +6,8 @@ import { mapState, mapGetters, mapActions } from 'vuex';
 import Notifications from '@/mixins/Notifications';
 import MerchanstListStore from '@/store/MerchanstListStore';
 import merchantStatusScheme from '@/schemes/merchantStatusScheme';
-import SimplePageHeader from '@/components/SimplePageHeader.vue';
 import NoResults from '@/components/NoResults.vue';
 import PictureBlocksScheme from '@/components/PictureBlocksScheme.vue';
-import FilterSearchInput from '@/components/FilterSearchInput.vue';
-import FilterDate from '@/components/FilterDate.vue';
-import LabelTag from '@/components/LabelTag.vue';
-import FilterAgreementStatus from '@/components/FilterAgreementStatus.vue';
 
 export default {
   name: 'AgreementRequestsListPage',
@@ -20,13 +15,8 @@ export default {
   mixins: [Notifications],
 
   components: {
-    SimplePageHeader,
     PictureBlocksScheme,
     NoResults,
-    FilterSearchInput,
-    FilterDate,
-    FilterAgreementStatus,
-    LabelTag,
   },
 
   async asyncData({ store, registerStoreModule, route }) {
@@ -107,7 +97,7 @@ export default {
   methods: {
     ...mapActions(['setIsLoading']),
     ...mapActions('AgreementRequestsList', [
-      'submitFilters', 'fetchMerchants', 'initQuery', 'sendNotification',
+      'submitFilters', 'fetchMerchants', 'initQuery',
     ]),
 
     get,
@@ -158,21 +148,6 @@ export default {
       });
     },
 
-    async handleSendNotification(merchant, notification) {
-      this.setIsLoading(true);
-      try {
-        await this.sendNotification({
-          notification,
-          merchantId: merchant.id,
-        });
-        this.$_Notifications_showSuccessMessage('Notification sent successfully');
-      } catch (error) {
-        console.warn(error);
-        this.$_Notifications_showErrorMessage('Failed to send notification');
-      }
-      this.setIsLoading(false);
-    },
-
     getCountry(merchant) {
       const country = get(merchant, 'company.country');
       if (!country) {
@@ -196,7 +171,7 @@ export default {
 
 <template>
 <div>
-  <SimplePageHeader>
+  <UiPageHeaderFrame>
     <span slot="title">Agreement requests</span>
     <span slot="description">
       Here is the list of active agreement requests from merchants with actual statuses.
@@ -204,26 +179,26 @@ export default {
       You can archive rejected requests from view.
     </span>
     <PictureBlocksScheme slot="picture" />
-  </SimplePageHeader>
+  </UiPageHeaderFrame>
 
   <UiPanel>
 
     <div class="filters">
-      <FilterSearchInput
+      <UiFilterSearchInput
         :isAlwaysExpanded="true"
         v-model="filters.quickFilter"
         @input="handleQuickSearchInput"
       />
 
       <div class="filters-right">
-        <FilterAgreementStatus
+        <UiFilterAgreementStatus
           class="agreement-status-filter"
           :countsByStatus="countsByStatus"
           v-model="filters.status"
           @input="filterMerchants"
         />
 
-        <FilterDate
+        <UiFilterDate
           v-model="dateFilter"
           @input="filterMerchants"
         />
@@ -285,16 +260,16 @@ export default {
             class="cell-text"
             :class="{'_empty': !merchant.updated_at}"
           >
-            {{$formatDate(merchant.updated_at, 'DD.MM.YY') || '—'}}
+            {{$formatDate(merchant.updated_at, 'dd.MM.yy') || '—'}}
           </span>
         </UiTableCell>
         <UiTableCell align="left">
           <div class="label-tag-holder">
-            <LabelTag
+            <UiLabelTag
               :color="merchantStatusScheme[merchant.status].color"
             >
               {{merchantStatusScheme[merchant.status].text}}
-            </LabelTag>
+            </UiLabelTag>
           </div>
         </UiTableCell>
       </UiTableRow>

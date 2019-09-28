@@ -26,7 +26,16 @@ export default {
       default: 'blue',
       type: String,
       validator(value) {
-        return includes(['blue', 'orange', 'purple', 'green', 'gray', 'light-gray', 'red'], value);
+        return includes([
+          'blue',
+          'orange',
+          'purple',
+          'green',
+          'gray',
+          'light-gray',
+          'red',
+          'transparent-gray',
+        ], value);
       },
     },
     disabled: {
@@ -45,7 +54,7 @@ export default {
       default: 'default',
       type: String,
       validator(value) {
-        return includes(['default'], value);
+        return includes(['small', 'default'], value);
       },
     },
     text: {
@@ -112,6 +121,9 @@ $light-gray-transparent-border-color: #e3e5e6;
 $light-gray-transparent-hover-font-color: #3d7bf5;
 $light-gray-transparent-hover-box-color: rgba(#3d7bf5, 0.08);
 $red-button-color: #ea3d2f;
+$transparent-gray-font-color: #78909c;
+$transparent-gray-transparent-font-color: #78909c;
+$transparent-gray-transparent-hover-box-color: #f7f9fa;
 $disabled-button-color: #f1f3f4;
 $disabled-font-color: #919699;
 
@@ -193,6 +205,12 @@ $primary-button-size: 14px;
       color: $transparentHoverColor;
     }
   }
+
+  &._small {
+    padding: 8px 16px;
+    line-height: 16px;
+    height: 32px;
+  }
 }
 
 .base-button {
@@ -218,12 +236,23 @@ $primary-button-size: 14px;
       normal,
       $light-gray-transparent-font-color,
       $light-gray-transparent-border-color,
-      $light-gray-transparent-hover-font-color,
+      $light-gray-button-color,
       $light-gray-transparent-hover-box-color
     );
   }
   &._red {
     @include base-button($red-button-color);
+  }
+  &._transparent-gray {
+    @include base-button(
+      $light-gray-button-color,
+      $transparent-gray-font-color,
+      normal,
+      $transparent-gray-transparent-font-color,
+      $light-gray-transparent-border-color,
+      $transparent-gray-transparent-font-color,
+      $transparent-gray-transparent-hover-box-color
+    );
   }
 }
 

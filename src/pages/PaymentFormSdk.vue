@@ -15,7 +15,7 @@ export default {
     document.head.appendChild(script);
     let request = {
       project: '5cd5620f06ae110001509185',
-      products: ['5cda8d3938e0e2000176988b', '5cda8e6738e0e2000176988c'],
+      products: ['5d848f484dd6a50001970479', '5d8c7a219e362100013de214'],
     };
     if (this.$route.query.productsCount) {
       request.products = request.products.slice(0, this.$route.query.productsCount);
@@ -23,7 +23,7 @@ export default {
     if (this.$route.query.pay) {
       const [amount, currency] = this.$route.query.pay.split('-');
       request = {
-        project: '5cda856f38e0e20001769886',
+        project: '5cd5624a06ae110001509186',
         amount: Number(amount),
         currency,
       };

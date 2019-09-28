@@ -4,14 +4,12 @@ import { debounce } from 'lodash-es';
 import { format } from 'date-fns';
 import Notifications from '@/mixins/Notifications';
 import NoResults from '@/components/NoResults.vue';
-import FilterSearchInput from '@/components/FilterSearchInput.vue';
 
 export default {
   name: 'TaxesCardCountryPage',
   mixins: [Notifications],
   components: {
     NoResults,
-    FilterSearchInput,
   },
   data() {
     return {
@@ -52,7 +50,7 @@ export default {
 
     formatDate(value) {
       const datetime = new Date(value);
-      return format(datetime, 'DD MMM YYYY');
+      return format(datetime, 'dd MMM yyyy');
     },
 
     updateFiltersFromQuery() {
@@ -82,7 +80,7 @@ export default {
   </UiHeader>
   <div class="controls">
     <div class="filters">
-      <FilterSearchInput
+      <UiFilterSearchInput
         v-model="filters.quickFilter"
         @input="handleQuickSearchInput"
       />

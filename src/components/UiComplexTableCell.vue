@@ -4,7 +4,7 @@ import { directive as clickaway } from 'vue-clickaway';
 import { TheMask } from 'vue-the-mask';
 
 export default {
-  name: 'ComplexTableCell',
+  name: 'UiComplexTableCell',
   components: {
     TheMask,
   },

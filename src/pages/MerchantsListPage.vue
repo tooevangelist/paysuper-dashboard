@@ -3,21 +3,15 @@ import { debounce, get, isEqual } from 'lodash-es';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import Notifications from '@/mixins/Notifications';
 import MerchanstListStore from '@/store/MerchanstListStore';
-import SimplePageHeader from '@/components/SimplePageHeader.vue';
 import NoResults from '@/components/NoResults.vue';
 import PictureDiagramPresentation from '@/components/PictureDiagramPresentation.vue';
-import FilterSearchInput from '@/components/FilterSearchInput.vue';
-import FilterDate from '@/components/FilterDate.vue';
 
 export default {
   mixins: [Notifications],
 
   components: {
-    SimplePageHeader,
     PictureDiagramPresentation,
     NoResults,
-    FilterSearchInput,
-    FilterDate,
   },
 
   async asyncData({ store, registerStoreModule, route }) {
@@ -170,24 +164,24 @@ export default {
 
 <template>
 <div>
-  <SimplePageHeader>
+  <UiPageHeaderFrame>
     <span slot="title">Merchants</span>
     <span slot="description">
       Here is the list of our active merchants with license agreement signed by both sides.
       These clients have full access to Pay Super platform functionality.
     </span>
     <PictureDiagramPresentation slot="picture" />
-  </SimplePageHeader>
+  </UiPageHeaderFrame>
 
   <UiPanel>
 
     <div class="filters">
-      <FilterSearchInput
+      <UiFilterSearchInput
         :isAlwaysExpanded="true"
         v-model="filters.quickFilter"
         @input="handleQuickSearchInput"
       />
-      <FilterDate
+      <UiFilterDate
         v-model="dateFilter"
         @input="filterMerchants"
       />
@@ -240,7 +234,7 @@ export default {
             class="cell-text"
             :class="{'_empty': !merchant.created_at}"
           >
-            {{$formatDate(merchant.created_at, 'DD.MM.YY') || '—'}}
+            {{$formatDate(merchant.created_at, 'dd.MM.yy') || '—'}}
           </span>
           <span class="cell-text"></span>
         </UiTableCell>
@@ -249,7 +243,7 @@ export default {
             class="cell-text"
             :class="{'_empty': !get(merchant, 'last_payout.date')}"
           >
-            {{$formatDate(get(merchant, 'last_payout.date'), 'DD.MM.YY') || '—'}}
+            {{$formatDate(get(merchant, 'last_payout.date'), 'dd.MM.yy') || '—'}}
           </span>
         </UiTableCell>
         <UiTableCell align="left">

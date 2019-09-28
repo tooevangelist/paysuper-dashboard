@@ -3746,10 +3746,10 @@ data-urls@^1.0.0:
     whatwg-mimetype "^2.2.0"
     whatwg-url "^7.0.0"
 
-date-fns@^1.30.1:
-  version "1.30.1"
-  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.30.1.tgz#2e71bf0b119153dbb4cc4e88d9ea5acfb50dc05c"
-  integrity sha512-hBSVCvSmWC+QypYObzwGOd9wqdDpOt+0wl0KbU+R+uuZBS1jN8VsD1ss3irQDknRj5NvxiTF6oj/nDRnN/UQNw==
+date-fns@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.3.0.tgz#017eae725d0c46173b572da025fb5e4e534270fd"
+  integrity sha512-A8o+iXBVqQayl9Z39BHgb7m/zLOfhF7LK82t+n9Fq1adds1vaUn8ByVoADqWLe4OTc6BZYc/FdbdTwufNYqkJw==
 
 date-fns@^v2.0.0-alpha.27:
   version "2.0.0-beta.2"
@@ -9541,6 +9541,11 @@ pretty@2.0.0:
     condense-newlines "^0.2.1"
     extend-shallow "^2.0.1"
     js-beautify "^1.6.12"
+
+print-js@^1.0.61:
+  version "1.0.61"
+  resolved "https://registry.yarnpkg.com/print-js/-/print-js-1.0.61.tgz#6e6079f636c04fc34f23fa561f0b8fced32e36d3"
+  integrity sha512-H/GhVZMroI7qqXH+6LrtFacLOcapRIUrcJD4F4BONZFTk6VtmGC2dqQydzW4RYJpfsCxNUg2Tyi7A46zKC3wmQ==
 
 private@^0.1.6, private@^0.1.8:
   version "0.1.8"

@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: 'FilterDate',
+  name: 'UiFilterDate',
 
   props: {
     /**
@@ -53,7 +53,7 @@ export default {
 
 <template>
 <v-datepicker
-  class="datepicker"
+  class="ui-filter-date"
   format="MMM DD YYYY"
   lang="en"
   rangeSeparator="·"
@@ -66,10 +66,13 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.datepicker {
+.ui-filter-date {
   max-width: 232px;
 
   /deep/ {
+    .mx-input-wrapper {
+      height: 40px;
+    }
     .mx-input {
       height: 40px;
       border: 1px solid #e3e5e6;

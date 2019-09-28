@@ -15,9 +15,10 @@ export default {
   },
   async created() {
     window.PAYSUPER_ORDER_PARAMS = {
-      project: '5cda856f38e0e20001769886',
-      amount: 20,
-      currency: 'USD',
+      currency: 'EUR',
+      project: '5cd5624a06ae110001509186',
+      amount: 100,
+      type: 'simple',
     };
 
     const { data } = await axios.get('https://static.protocol.one/paysuper/form/dev/paysuper-form.js');

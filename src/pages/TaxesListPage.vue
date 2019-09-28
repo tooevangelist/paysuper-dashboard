@@ -3,14 +3,12 @@ import { mapState, mapGetters, mapActions } from 'vuex';
 import Notifications from '@/mixins/Notifications';
 import TaxesListStore from '@/store/TaxesListStore';
 import NoResults from '@/components/NoResults.vue';
-import FilterSearchInput from '@/components/FilterSearchInput.vue';
 
 export default {
   name: 'TaxesListPage',
   mixins: [Notifications],
   components: {
     NoResults,
-    FilterSearchInput,
   },
   async asyncData({ store, registerStoreModule, route }) {
     try {
@@ -73,7 +71,7 @@ export default {
   <UiHeader level="2" :hasMargin="true">Taxes</UiHeader>
   <div class="controls">
     <div class="filters">
-      <FilterSearchInput
+      <UiFilterSearchInput
         v-model="filters.quickFilter"
         @input="searchTaxes"
       />
