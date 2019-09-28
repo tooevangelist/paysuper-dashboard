@@ -6,6 +6,7 @@ import { get } from 'lodash-es';
 import DictionariesStore from './DictionariesStore';
 import LeaveFeedbackStore from './LeaveFeedbackStore';
 import UserStore from './UserStore';
+import ProductStore from './ProductStore';
 import resources from '@/resources';
 
 Vue.use(Vuex);
@@ -83,5 +84,6 @@ export default new Vuex.Store({
     Dictionaries: DictionariesStore(resources),
     LeaveFeedback: LeaveFeedbackStore(resources),
     User: UserStore(resources),
+    Products: ProductStore(resources),
   },
 });

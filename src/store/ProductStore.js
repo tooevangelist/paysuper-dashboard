@@ -80,6 +80,22 @@ export default function createProductStore() {
         commit('product', mapDataApiToForm(response.data));
       },
 
+      /**
+       * Get list of Virtual items
+       * @param rootState
+       * @param params
+       * @returns {Promise<AxiosResponse<T>>}
+       */
+      fetchProducts({ rootState }, params) {
+        return axios.get(
+          `${rootState.config.apiUrl}/admin/api/v1/products/`,
+          {
+            params,
+            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
+          },
+        ).then(response => response.data);
+      },
+
       async updateProduct({
         state, commit, rootState,
       }) {

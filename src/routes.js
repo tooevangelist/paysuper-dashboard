@@ -65,6 +65,15 @@ const routes = [
         name: 'ProjectVirtualCurrency',
       },
       {
+        path: 'virtual-items/',
+        component: () => import('@/pages/ProjectVirtualItemsPage.vue'),
+        meta: {
+          ...projectPagesMeta,
+          topControls: () => import('@/components/LayoutTopControlsProjectSalesOptions.vue'),
+        },
+        name: 'ProjectVirtualItems',
+      },
+      {
         path: 'game-keys/',
         component: () => import('@/pages/ProjectGameKeysPage.vue'),
         meta: {
