@@ -37,6 +37,7 @@ export default function getBarchartOptionsByType(type) {
           ticks: { padding: 1 },
           gridLines: { drawOnChartArea: false },
           categoryPercentage: 1,
+          maxBarThickness: 25,
         }],
       },
       layout: {
@@ -75,6 +76,7 @@ export default function getBarchartOptionsByType(type) {
           },
           gridLines: { display: false },
           categoryPercentage: 1,
+          maxBarThickness: 6,
         }],
       },
       tooltips: {

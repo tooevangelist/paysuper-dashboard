@@ -176,7 +176,7 @@ export default function createContactsStore() {
           merchant: [merchantId],
           sort: ['-created_at'],
           limit: count,
-        });
+        }, { arrayFormat: 'brackets' });
 
         const response = await axios.get(
           `${apiUrl}/admin/api/v1/order?${queryString}`,
