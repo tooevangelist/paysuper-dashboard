@@ -88,6 +88,7 @@ export default {
         <div class="value">
           {{ data.revenue_by_country.amount }} {{ currency }}
           <IconArrowBold
+            v-if="data.revenue_by_country.hasIncreasedArrow"
             :class="[
               'arrow',
               { '_is-decreased': !data.revenue_by_country.isIncreased },
@@ -98,11 +99,15 @@ export default {
           {{ data.revenue_by_country.amountPrevious }} {{ currency }} previously
         </div>
         <Barchart
+          v-if="data.revenue_by_country.hasChart"
           class="chart"
           :data="data.revenue_by_country.chart"
           :options="mainOptions"
         />
-        <div class="top">
+        <div
+          v-if="data.revenue_by_country.hasTop"
+          class="top"
+        >
           <div class="top-title">Top countries</div>
           <div
             v-for="(item, index) in data.revenue_by_country.top"
@@ -119,6 +124,7 @@ export default {
         <div class="value">
           {{ data.sources.amount }}
           <IconArrowBold
+            v-if="data.sources.hasIncreasedArrow"
             :class="[
               'arrow',
               { '_is-decreased': !data.sources.isIncreased },
@@ -129,11 +135,15 @@ export default {
           {{ data.sources.amountPrevious }} previously
         </div>
         <Barchart
+          v-if="data.sources.hasChart"
           class="chart"
           :data="data.sources.chart"
           :options="chartOptions"
         />
-        <div class="top">
+        <div
+          v-if="data.sources.hasTop"
+          class="top"
+        >
           <div class="top-title">Best referrers</div>
           <div
             v-for="(item, index) in data.sources.top"
@@ -150,6 +160,7 @@ export default {
         <div class="value">
           {{ data.sales_today.amount }}
           <IconArrowBold
+            v-if="data.sales_today.hasIncreasedArrow"
             :class="[
               'arrow',
               { '_is-decreased': !data.sales_today.isIncreased },
@@ -160,11 +171,15 @@ export default {
           {{ data.sales_today.amountPrevious }} previously
         </div>
         <Barchart
+          v-if="data.sales_today.hasChart"
           class="chart"
           :data="data.sales_today.chart"
           :options="chartOptions"
         />
-        <div class="top">
+        <div
+          v-if="data.sales_today.hasTop"
+          class="top"
+        >
           <div class="top-title">Top products</div>
           <div
             v-for="(item, index) in data.sales_today.top"

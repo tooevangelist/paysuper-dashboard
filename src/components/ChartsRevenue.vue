@@ -35,7 +35,10 @@ export default {
 </script>
 
 <template>
-<div class="charts-revenue">
+<div
+  v-if="data.hasChart"
+  class="charts-revenue"
+>
   <div class="box">
     <div class="box-header">
       <div class="box-title">Revenue Dynamic</div>
