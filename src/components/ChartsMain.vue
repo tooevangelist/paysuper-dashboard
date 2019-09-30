@@ -37,26 +37,17 @@ export default {
 <template>
 <div class="charts-main">
   <div class="section">
-    <div class="box _payout">
-      <div class="value">1 280 308 {{ currency }}</div>
-      <div class="additional">last<br>payout</div>
-    </div>
-    <div class="box _payout">
-      <div class="value">3 170 406 {{ currency }}</div>
-      <div class="additional">next<br>payout</div>
-    </div>
-  </div>
-
-  <div class="section">
     <div class="box _main">
       <div class="value">
         {{ data.gross_revenue.amount }} {{ currency }}
         <IconArrowBold
+          v-if="data.gross_revenue.hasIncreasedArrow"
           :class="['arrow', { '_is-decreased': !data.gross_revenue.isIncreased }]"
         />
       </div>
       <div class="additional">Gross revenue</div>
       <Barchart
+        v-if="data.gross_revenue.hasChart"
         class="chart"
         :data="data.gross_revenue.chart"
         :options="chartOptions"
@@ -66,11 +57,13 @@ export default {
       <div class="value">
         {{ data.total_transactions.amount }} {{ currency }}
         <IconArrowBold
+          v-if="data.total_transactions.hasIncreasedArrow"
           :class="['arrow', { '_is-decreased': !data.total_transactions.isIncreased }]"
         />
       </div>
       <div class="additional">Total transactions</div>
       <Barchart
+        v-if="data.total_transactions.hasChart"
         class="chart"
         :data="data.total_transactions.chart"
         :options="chartOptions"
@@ -80,11 +73,13 @@ export default {
       <div class="value">
         {{ data.arpu.amount }} {{ currency }}
         <IconArrowBold
+          v-if="data.arpu.hasIncreasedArrow"
           :class="['arrow', { '_is-decreased': !data.arpu.isIncreased }]"
         />
       </div>
       <div class="additional">ARPU</div>
       <Barchart
+        v-if="data.arpu.hasChart"
         class="chart"
         :data="data.arpu.chart"
         :options="chartOptions"
@@ -94,11 +89,13 @@ export default {
       <div class="value">
         {{ data.vat.amount }} {{ currency }}
         <IconArrowBold
+          v-if="data.vat.hasIncreasedArrow"
           :class="['arrow', { '_is-decreased': !data.vat.isIncreased }]"
         />
       </div>
       <div class="additional">VAT</div>
       <Barchart
+        v-if="data.vat.hasChart"
         class="chart"
         :data="data.vat.chart"
         :options="chartOptions"
@@ -140,7 +137,7 @@ export default {
     }
   }
   &._main {
-    height: 160px;
+    max-height: 160px;
 
     @media screen and (min-width: 768px) {
       flex-basis: calc(50% - 8px);

@@ -72,6 +72,7 @@ export default {
 
       return {
         labels: revenue.labels,
+        hasChart: Boolean(revenue.labels.length),
         datasets: [{
           label: '',
           ...revenueColors,
@@ -112,8 +113,11 @@ export default {
           [key]: {
             amount: current.toLocaleString(),
             amountPrevious: previous.toLocaleString(),
+            hasIncreasedArrow: Boolean(current || previous),
             isIncreased: current > previous,
+            hasTop: Boolean((item.top || []).length),
             top: item.top || undefined,
+            hasChart: Boolean(chart.labels.length),
             chart: {
               labels: chart.labels,
               datasets: [{
