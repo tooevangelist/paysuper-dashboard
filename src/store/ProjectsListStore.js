@@ -82,16 +82,12 @@ export default function createProjectsListStore() {
           merchant_id: rootState.User.Merchant.merchant.id,
         }, { arrayFormat: 'brackets' });
 
-        const { data } = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/projects?${query}`, {
-          headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-        });
+        const { data } = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/projects?${query}`);
         commit('projects', data);
       },
 
       deactivateProject({ rootState }, id) {
-        return axios.delete(`${rootState.config.apiUrl}/admin/api/v1/projects/${id}`, {
-          headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-        });
+        return axios.delete(`${rootState.config.apiUrl}/admin/api/v1/projects/${id}`);
       },
 
       activateProject({ rootState }, id) {
@@ -99,9 +95,6 @@ export default function createProjectsListStore() {
           `${rootState.config.apiUrl}/admin/api/v1/projects/${id}`,
           {
             status: 0,
-          },
-          {
-            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
           },
         );
       },

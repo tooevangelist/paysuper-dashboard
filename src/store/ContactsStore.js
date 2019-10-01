@@ -33,12 +33,9 @@ export default function createContactsStore() {
         }
       },
       async submitContacts({ dispatch, state, rootState }) {
-        const { accessToken } = rootState.User;
-
         const response = await axios.put(
           `${rootState.config.apiUrl}/admin/api/v1/merchants/contacts`,
           { ...state.contacts },
-          { headers: { Authorization: `Bearer ${accessToken}` } },
         );
 
         if (response.data) {

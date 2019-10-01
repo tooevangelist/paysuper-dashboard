@@ -88,9 +88,6 @@ export default function createProjectsListStore() {
 
         const { data } = await axios.get(
           `${rootState.config.apiUrl}/admin/api/v1/vat_reports/details/${state.periodId}?${query}`,
-          {
-            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-          },
         );
         commit('periodTaxes', data);
       },

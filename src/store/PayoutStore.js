@@ -21,9 +21,6 @@ export default function createUserStore() {
 
         const response = await axios.get(
           url,
-          {
-            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-          },
         );
         commit('payout', response.data);
       },
