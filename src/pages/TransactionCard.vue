@@ -16,7 +16,6 @@ export default {
 
     // return axios.get(
     //   url,
-    //   { headers: { Authorization: `Bearer ${context.store.state.user.accessToken}` } }
     // )
     //   .then((response) => {
     //     if (!response.data) {

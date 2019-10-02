@@ -38,12 +38,9 @@ export default function createBankingStore() {
         }
       },
       async submitBankingInfo({ dispatch, state, rootState }) {
-        const { accessToken } = rootState.User;
-
         const response = await axios.put(
           `${rootState.config.apiUrl}/admin/api/v1/merchants/banking`,
           { ...state.bankingInfo },
-          { headers: { Authorization: `Bearer ${accessToken}` } },
         );
 
         if (response.data) {

@@ -130,7 +130,7 @@ export default function createContactsStore() {
         rootGetters,
       }, type) {
         const isOnboardingComplete = rootGetters['User/Merchant/isOnboardingComplete'];
-        const { accessToken, Merchant } = rootState.User;
+        const { Merchant } = rootState.User;
         const merchantId = Merchant.merchant.id;
 
         if (!merchantId || !isOnboardingComplete) {
@@ -143,7 +143,6 @@ export default function createContactsStore() {
 
         const response = await axios.get(
           `${apiUrl}/admin/api/v1/merchants/${merchantId}/dashboard/${type}?${queryString}`,
-          { headers: { Authorization: `Bearer ${accessToken}` } },
         );
 
         if (response.data) {
@@ -164,7 +163,7 @@ export default function createContactsStore() {
         localStorage.setItem(`${upperCase(type)}_PERIOD`, JSON.stringify(period));
       },
       async fetchLastPayments({ commit, rootState }, count = 30) {
-        const { accessToken, Merchant } = rootState.User;
+        const { Merchant } = rootState.User;
         const merchantId = Merchant.merchant.id;
 
         if (!merchantId) {
@@ -180,7 +179,6 @@ export default function createContactsStore() {
 
         const response = await axios.get(
           `${apiUrl}/admin/api/v1/order?${queryString}`,
-          { headers: { Authorization: `Bearer ${accessToken}` } },
         );
 
         if (response.data) {

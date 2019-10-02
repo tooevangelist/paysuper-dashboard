@@ -82,27 +82,25 @@ export default function createLicenseAgreementStore() {
         }
       },
       async fetchAgreementSignature({ commit, getters, rootState }, isOnboardingStepsComplete) {
-        const { accessToken, Merchant } = rootState.User;
+        const { Merchant } = rootState.User;
         const merchantId = get(Merchant, 'merchant.id', 0);
 
         if (merchantId && isOnboardingStepsComplete && getters.isUsingHellosign) {
           const response = await axios.put(
             `${rootState.config.apiUrl}/admin/api/v1/merchants/${merchantId}/agreement/signature`,
             { signer_type: 0 },
-            { headers: { Authorization: `Bearer ${accessToken}` } },
           );
 
           commit('signature', response.data);
         }
       },
       async fetchAgreementMetadata({ commit, rootState, getters }, isOnboardingStepsComplete) {
-        const { accessToken, Merchant } = rootState.User;
+        const { Merchant } = rootState.User;
         const merchantId = get(Merchant, 'merchant.id', 0);
 
         if (merchantId && isOnboardingStepsComplete && getters.status) {
           const response = await axios.get(
             `${rootState.config.apiUrl}/admin/api/v1/merchants/${merchantId}/agreement`,
-            { headers: { Authorization: `Bearer ${accessToken}` } },
           );
           const agreement = get(response, 'data', getDefaultAgreementDocument());
 
@@ -120,8 +118,7 @@ export default function createLicenseAgreementStore() {
           );
         }
       },
-      async fetchDocument({ commit, state, rootState }) {
-        const { accessToken } = rootState.User;
+      async fetchDocument({ commit, state }) {
         const { url } = state.agreement;
         const { size, extension } = state.agreement.metadata;
 
@@ -130,7 +127,7 @@ export default function createLicenseAgreementStore() {
         }
 
         const response = await axios.get(url, {
-          headers: { Authorization: `Bearer ${accessToken}`, Accept: `application/${extension}` },
+          headers: { Accept: `application/${extension}` },
           responseType: 'blob',
         });
 

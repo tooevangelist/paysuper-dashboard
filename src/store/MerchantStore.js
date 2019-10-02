@@ -169,9 +169,8 @@ export default function createMerchantStore() {
       },
 
       async fetchMerchantById({ commit, rootState }, id) {
-        const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/merchants/${id}`, {
-          headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-        }).catch(error => console.warn(error));
+        const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/merchants/${id}`)
+          .catch(error => console.warn(error));
 
         commit('merchant', mapDataApiToForm(get(response, 'data', {})));
       },
@@ -182,7 +181,6 @@ export default function createMerchantStore() {
         if (merchantId) {
           const response = await axios.get(
             `${rootState.config.apiUrl}/admin/api/v1/merchants/${merchantId}/status`,
-            { headers: { Authorization: `Bearer ${rootState.User.accessToken}` } },
           );
 
           if (response.data) {
@@ -223,7 +221,6 @@ export default function createMerchantStore() {
         if (merchantId) {
           const response = await axios.get(
             `${rootState.config.apiUrl}/admin/api/v1/projects?merchant_id=${merchantId}&limit=1`,
-            { headers: { Authorization: `Bearer ${rootState.User.accessToken}` } },
           );
 
           const projectsCount = get(response, 'data.count', 0);
@@ -254,15 +251,14 @@ export default function createMerchantStore() {
       },
 
       async fetchMerchant({ commit, dispatch, rootState }) {
-        const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/merchants/user`, {
-          headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-        }).catch((error) => {
-          const errorCode = get(error, 'response.status');
-          if (errorCode === 401) {
-            throw UNAUTHORIZED;
-          }
-          console.warn(error);
-        });
+        const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/merchants/user`)
+          .catch((error) => {
+            const errorCode = get(error, 'response.status');
+            if (errorCode === 401) {
+              throw UNAUTHORIZED;
+            }
+            console.warn(error);
+          });
 
         commit('merchant', mapDataApiToForm(get(response, 'data', {})));
 
@@ -281,9 +277,6 @@ export default function createMerchantStore() {
         try {
           const response = await axios.get(
             url,
-            {
-              headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-            },
           );
           commit('paymentMethods', response.data);
         } catch (error) {
@@ -299,9 +292,6 @@ export default function createMerchantStore() {
         const response = await axios.put(
           `${rootState.config.apiUrl}/admin/api/v1/merchants`,
           state.merchant,
-          {
-            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-          },
         );
         commit('merchant', mapDataApiToForm(response.data));
       },
@@ -310,9 +300,6 @@ export default function createMerchantStore() {
         const response = await axios.patch(
           `${rootState.config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}`,
           props,
-          {
-            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-          },
         );
         commit('merchant', mapDataApiToForm(response.data));
       },
@@ -370,9 +357,6 @@ export default function createMerchantStore() {
             status,
             message,
           },
-          {
-            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-          },
         );
         commit('merchant', mapDataApiToForm(response.data));
       },
@@ -386,9 +370,6 @@ export default function createMerchantStore() {
         try {
           const response = await axios.get(
             `${rootState.config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}/agreement`,
-            {
-              headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-            },
           );
 
           commit('agreementDocument', response.data);
@@ -401,9 +382,6 @@ export default function createMerchantStore() {
         await axios.post(
           `${rootState.config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}/notifications`,
           notification,
-          {
-            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-          },
         );
       },
     },

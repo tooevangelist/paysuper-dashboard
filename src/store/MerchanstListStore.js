@@ -63,9 +63,7 @@ export default function createMerchantListStore() {
         }, { arrayFormat: 'brackets' });
         const url = `${rootState.config.apiUrl}/admin/api/v1/merchants?${query}`;
 
-        const response = await axios.get(url, {
-          headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-        });
+        const response = await axios.get(url);
         const merchants = !isEmpty(response.data) ? response.data : {
           items: [],
           count: 0,
@@ -106,9 +104,6 @@ export default function createMerchantListStore() {
         await axios.post(
           `${rootState.config.apiUrl}/admin/api/v1/merchants/${merchantId}/notifications`,
           notification,
-          {
-            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-          },
         );
       },
     },

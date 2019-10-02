@@ -70,9 +70,7 @@ export default function createUserStore() {
 
       async fetchProfile({ dispatch, commit, rootState }) {
         try {
-          const { data } = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/user/profile`, {
-            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-          });
+          const { data } = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/user/profile`);
           if (data.email.confirmed) {
             dispatch('redirectToDashboard');
             return;
@@ -94,9 +92,6 @@ export default function createUserStore() {
           const { data } = await axios.patch(
             `${rootState.config.apiUrl}/admin/api/v1/user/profile`,
             props,
-            {
-              headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-            },
           );
           commit('profile', data);
         } catch (error) {

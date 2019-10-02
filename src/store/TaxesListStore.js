@@ -83,9 +83,7 @@ export default function createProjectsListStore() {
       },
 
       async fetchTaxes({ commit, rootState }) {
-        const { data } = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/vat_reports`, {
-          headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-        });
+        const { data } = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/vat_reports`);
         commit('taxes', data.items);
       },
     },
