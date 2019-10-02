@@ -74,6 +74,12 @@ const routes = [
         name: 'ProjectVirtualItems',
       },
       {
+        path: 'virtual-items/:itemId/',
+        component: () => import('@/pages/ProjectVirtualItemEditPage.vue'),
+        meta: projectPagesMeta,
+        name: 'ProjectVirtualItemEdit',
+      },
+      {
         path: 'game-keys/',
         component: () => import('@/pages/ProjectGameKeysPage.vue'),
         meta: {
