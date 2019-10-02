@@ -3,11 +3,11 @@ import qs from 'qs';
 import assert from 'simple-assert';
 import randomString from 'random-string';
 import SearchBuilder from '@/tools/SearchBuilder/SearchBuilder';
-import projectGameKeysScheme from '@/schemes/projectGameKeysScheme';
+import projectKeyProductsScheme from '@/schemes/projectKeyProductsScheme';
 
-const searchBuilder = new SearchBuilder(projectGameKeysScheme);
+const searchBuilder = new SearchBuilder(projectKeyProductsScheme);
 
-export default function createProjectGameKeysStore() {
+export default function createProjectKeyProductsListStore() {
   return {
     state: () => ({
       gameKeys: {
@@ -55,15 +55,15 @@ export default function createProjectGameKeysStore() {
 
     actions: {
       async initState({ getters, dispatch, commit }, { projectId, query }) {
-        assert(projectId, 'ProjectGameKeysStore requires projectId param');
+        assert(projectId, 'ProjectKeyProductsListStore requires projectId param');
         const filters = getters.getFilterValues();
         commit('projectId', projectId);
         dispatch('submitFilters', filters);
         dispatch('initQuery', query);
-        await dispatch('fetchGameKeys');
+        await dispatch('fetchKeyProducts');
       },
 
-      async fetchGameKeys({ state, commit, rootState }) {
+      async fetchKeyProducts({ state, commit, rootState }) {
         const query = qs.stringify({
           ...state.apiQuery,
         }, { arrayFormat: 'brackets' });
@@ -101,7 +101,7 @@ export default function createProjectGameKeysStore() {
        * Тестовая гадость
        * @todo remove
        */
-      async createGameKey({
+      async createKeyProduct({
         state, rootState, dispatch,
       }) {
         const sku = randomString({ length: 8, special: false });
@@ -159,13 +159,13 @@ export default function createProjectGameKeysStore() {
         });
       },
 
-      async deleteGameKey({ rootState }, id) {
+      async deleteKeyProduct({ rootState }, id) {
         await axios.delete(
           `${rootState.config.apiUrl}/admin/api/v1/key-products/${id}`,
         );
       },
 
-      async toggleGameKeyEnabled({ rootState }, keyProduct) {
+      async toggleKeyProductEnabled({ rootState }, keyProduct) {
         if (keyProduct.enabled) {
           return;
         }

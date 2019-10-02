@@ -2,7 +2,7 @@
 import { debounce, get, isEqual } from 'lodash-es';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import Notifications from '@/mixins/Notifications';
-import ProjectGameKeysStore from '@/store/ProjectGameKeysStore';
+import ProjectKeyProductsListStore from '@/store/ProjectKeyProductsListStore';
 import NoResults from '@/components/NoResults.vue';
 import PictureGameKeyWithDoor from '@/components/PictureGameKeyWithDoor.vue';
 
@@ -16,7 +16,7 @@ export default {
 
   async asyncData({ store, registerStoreModule, route }) {
     try {
-      await registerStoreModule('ProjectGameKeys', ProjectGameKeysStore, {
+      await registerStoreModule('ProjectKeyProductsList', ProjectKeyProductsListStore, {
         query: route.query,
         projectId: route.params.id,
       });
@@ -39,7 +39,7 @@ export default {
       this.initQuery(to.query);
       this.updateFiltersFromQuery();
       this.setIsLoading(true);
-      await this.fetchGameKeys().catch(this.$_Notifications_showErrorMessage);
+      await this.fetchKeyProducts().catch(this.$_Notifications_showErrorMessage);
       this.setIsLoading(false);
     }
     this.isSearchRouting = false;
@@ -55,8 +55,8 @@ export default {
   },
 
   computed: {
-    ...mapState('ProjectGameKeys', ['gameKeys', 'filterValues', 'query', 'apiQuery']),
-    ...mapGetters('ProjectGameKeys', ['getFilterValues']),
+    ...mapState('ProjectKeyProductsList', ['gameKeys', 'filterValues', 'query', 'apiQuery']),
+    ...mapGetters('ProjectKeyProductsList', ['getFilterValues']),
 
     handleQuickSearchInput() {
       return debounce(() => {
@@ -71,9 +71,9 @@ export default {
 
   methods: {
     ...mapActions(['setIsLoading']),
-    ...mapActions('ProjectGameKeys', [
-      'submitFilters', 'fetchGameKeys', 'initQuery', 'createGameKey',
-      'deleteGameKey', 'toggleGameKeyEnabled',
+    ...mapActions('ProjectKeyProductsList', [
+      'submitFilters', 'fetchKeyProducts', 'initQuery', 'createKeyProduct',
+      'deleteKeyProduct', 'toggleKeyProductEnabled',
     ]),
 
     get,
@@ -84,7 +84,7 @@ export default {
 
     filterMerchants() {
       this.filters.offset = 0;
-      this.searchGameKeys();
+      this.searchKeyProducts();
     },
 
     initInfiniteScroll() {
@@ -98,17 +98,17 @@ export default {
         this.isInfiniteScrollLocked = true;
 
         this.filters.offset += this.filters.limit;
-        await this.searchGameKeys();
+        await this.searchKeyProducts();
         this.isInfiniteScrollLocked = false;
       });
     },
 
-    async searchGameKeys() {
+    async searchKeyProducts() {
       this.isSearchRouting = true;
       this.setIsLoading(true);
       this.submitFilters(this.filters);
       this.navigate();
-      await this.fetchGameKeys().catch(this.$_Notifications_showErrorMessage);
+      await this.fetchKeyProducts().catch(this.$_Notifications_showErrorMessage);
       this.setIsLoading(false);
     },
 
@@ -124,22 +124,22 @@ export default {
 
     async handleAddKeys() {
       this.setIsLoading(true);
-      await this.createGameKey().catch(this.$_Notifications_showErrorMessage);
-      await this.searchGameKeys();
+      await this.createKeyProduct().catch(this.$_Notifications_showErrorMessage);
+      await this.searchKeyProducts();
       this.setIsLoading(false);
     },
 
-    async handleDeleteGameKey(keyProduct) {
+    async handleDeleteKeyProduct(keyProduct) {
       this.setIsLoading(true);
-      await this.deleteGameKey(keyProduct.id).catch(this.$_Notifications_showErrorMessage);
-      await this.searchGameKeys();
+      await this.deleteKeyProduct(keyProduct.id).catch(this.$_Notifications_showErrorMessage);
+      await this.searchKeyProducts();
       this.setIsLoading(false);
     },
 
-    async handleToggleGameKeyEnabled(keyProduct) {
+    async handleToggleKeyProductEnabled(keyProduct) {
       this.setIsLoading(true);
-      await this.toggleGameKeyEnabled(keyProduct).catch(this.$_Notifications_showErrorMessage);
-      await this.searchGameKeys();
+      await this.toggleKeyProductEnabled(keyProduct).catch(this.$_Notifications_showErrorMessage);
+      await this.searchKeyProducts();
       this.setIsLoading(false);
     },
   },
@@ -276,14 +276,14 @@ export default {
             </UiTooltipMenuItem>
             <UiTooltipMenuItem
               iconComponent="IconDeactivate"
-              @click.stop.prevent="handleToggleGameKeyEnabled(keyProduct)"
+              @click.stop.prevent="handleToggleKeyProductEnabled(keyProduct)"
             >
               {{ keyProduct.enabled ? 'Disable': 'Enable' }}
             </UiTooltipMenuItem>
             <UiTooltipMenuItem
               iconComponent="IconDelete"
               type="delete"
-              @click.stop.prevent="handleDeleteGameKey(keyProduct)"
+              @click.stop.prevent="handleDeleteKeyProduct(keyProduct)"
             >
               Delete
             </UiTooltipMenuItem>
