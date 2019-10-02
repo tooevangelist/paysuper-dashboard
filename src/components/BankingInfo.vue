@@ -11,7 +11,6 @@ export default {
       accountNumber: { integer, maxLength: maxLength(30), required },
       address: { maxLength: maxLength(60), required },
       correspondentAccount: { integer, maxLength: maxLength(30) },
-      currency: { required },
       name: { maxLength: maxLength(60), required },
       swift: { required },
     },
@@ -19,10 +18,14 @@ export default {
   computed: {
     ...mapGetters('Dictionaries', ['currenciesThreeLetters']),
     ...mapGetters('Company/BankingInfo', ['bankingInfo']),
-    ...mapState('User/Merchant', ['merchant']),
+    ...mapState('Company/Tariff', ['currency']),
+    ...mapState('User/Merchant', ['merchant', 'onboardingSteps']),
 
     status() {
       return this.merchant.status;
+    },
+    hasTariffCompleted() {
+      return this.onboardingSteps.tariff;
     },
   },
   async mounted() {
@@ -73,13 +76,17 @@ export default {
       @blur="$v.bankingInfo.swift.$touch()"
     />
     <UiSelect
-      v-bind="$getValidatedFieldProps('bankingInfo.currency')"
+      v-if="hasTariffCompleted"
       label="Account Currency"
       :options="currenciesThreeLetters"
-      :value="bankingInfo.currency"
+      :value="currency"
       @input="updateField('currency', $event)"
-      @blur="$v.bankingInfo.currency.$touch()"
     />
+    <div class="info">
+      Please only use account with currency,
+      matching your desired payout currency: USD\EUR\RUB\GBP.
+      You will choose payout currency in Payment Methods section below.
+    </div>
     <UiTextField
       v-bind="$getValidatedFieldProps('bankingInfo.accountNumber')"
       label="Beneficiary’s bank account"
@@ -144,7 +151,7 @@ export default {
   letter-spacing: 0.25px;
   color: #5e6366;
   margin-bottom: 20px;
-  max-width: 548px;
+  max-width: 420px;
 }
 .submit {
   min-width: 180px;

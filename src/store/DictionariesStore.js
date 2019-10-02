@@ -9,16 +9,20 @@ export default function createDictionariesStore() {
     state: () => ({
       currencies: [
         {
-          name: { en: 'Rubles' },
-          code_a3: 'RUB',
+          name: { en: 'USD' },
+          code_a3: 'USD',
         },
         {
-          name: { en: 'Euro' },
+          name: { en: 'EUR' },
           code_a3: 'EUR',
         },
         {
-          name: { en: 'American Dollar' },
-          code_a3: 'USD',
+          name: { en: 'RUB' },
+          code_a3: 'RUB',
+        },
+        {
+          name: { en: 'GBP' },
+          code_a3: 'GBP',
         },
       ],
       countries: [],
