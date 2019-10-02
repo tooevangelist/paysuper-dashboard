@@ -1,56 +1,76 @@
 <script>
 import { get, find } from 'lodash-es';
-import StatusIcon from '@/components/StatusIcon.vue';
-import FileDownload from '@/components/FileDownload.vue';
-import MerchantStatusChanger from '@/components/MerchantStatusChanger.vue';
+import MerchantAdminModal from '@/components/MerchantAdminModal.vue';
+import getStatusByKey from '@/helpers/getStatusByKey';
 
 export default {
   name: 'MerchantAdminLicenseAgreement',
-  components: { MerchantStatusChanger },
+  components: { MerchantAdminModal },
   props: {
     agreement: {
-      default: () => ({}),
-      type: Object,
-    },
-    document: {
-      default: () => ({}),
+      required: true,
       type: Object,
     },
     merchantStatus: {
-      default: 0,
-      type: Number,
+      default: 'new',
+      type: String,
     },
   },
   data() {
     return {
-      currentStatus: 'new',
+      newStatus: this.merchantStatus,
       modalOpened: false,
+      modalType: 'contact',
     };
   },
   computed: {
     statuses() {
       return [
         { color: 'blue', label: 'New', value: 'new' },
-        { color: 'purple', label: 'Singing', value: 'singing' },
-        { color: 'green', label: 'Singed', value: 'singed' },
+        { color: 'purple', label: 'Signing', value: 'signing' },
+        { color: 'green', label: 'Signed', value: 'signed' },
         { color: 'red', label: 'Rejected', value: 'rejected' },
       ];
     },
-    currentStatusColor() {
-      return get(find(this.statuses, { value: this.currentStatus }), 'color', 'blue');
+    actualStatusColor() {
+      return get(find(this.statuses, { value: this.newStatus }), 'color', 'blue');
     },
     isNoAgreement() {
-      return this.merchantStatus === 0;
+      return this.merchantStatus === 'new';
+    },
+    statusFrom() {
+      return find(this.statuses, { value: this.merchantStatus });
+    },
+    statusTo() {
+      return find(this.statuses, { value: this.newStatus });
     },
   },
   methods: {
-    changeStatus(status) {
-      this.currentStatus = status;
-      this.$emit('changeStatus', status);
+    sendMessage(message) {
+      if (this.modalType === 'changeStatus') {
+        this.changeStatus(message);
+      } else {
+        this.$emit('sendMessage', message);
+      }
+      this.modalOpened = false;
+    },
+    openChangeStatusModal(status) {
+      this.newStatus = status;
+      this.modalType = 'changeStatus';
+      this.modalOpened = true;
+    },
+    changeStatus(message) {
+      this.$emit('changeStatus', { status: this.newStatus, message });
     },
     openContactModal() {
+      this.modalType = 'contact';
       this.modalOpened = true;
-      console.error('open contact modal');
+    },
+    closeModal() {
+      if (this.modalType === 'changeStatus') {
+        this.newStatus = this.merchantStatus;
+      }
+      this.modalOpened = false
     },
     uploadDocument() {
       this.$emit('uploadDocument');
@@ -75,7 +95,10 @@ export default {
       When merchant signs the license agreement it can be dowloaded here
       for future reference and sending it to risk manager for KYC.
     </UiText>
-    <div class="agreement">
+    <div
+      v-if="merchantStatus === 'signed'"
+      class="agreement"
+    >
       <IconFile v-if="agreement.metadata.size" />
       <IconFileLoader v-else />
       <div class="agreement-text">
@@ -92,7 +115,7 @@ export default {
         DOWNLOAD
       </a>
       <div
-        v-if="merchantStatus === 3"
+        v-if="merchantStatus === 'signing'"
         class="link"
         @click="openLicense"
       >
@@ -118,11 +141,11 @@ export default {
       v-else
       tipInnerPosition="left"
       textColor="white"
-      :color="currentStatusColor"
+      :color="actualStatusColor"
       :isRounded="true"
       :options="statuses"
-      :value="currentStatus"
-      @input="changeStatus"
+      :value="merchantStatus"
+      @input="openChangeStatusModal"
     />
   </section>
   <section class="footer">
@@ -134,7 +157,14 @@ export default {
       Contact merchant
     </div>
   </section>
-  <MerchantStatusChanger v-if="modalOpened" />
+  <MerchantAdminModal
+    v-if="modalOpened"
+    :statusFrom="statusFrom"
+    :statusTo="statusTo"
+    :type="modalType"
+    @close="closeModal"
+    @send="sendMessage"
+  />
 </UiPanel>
 </template>
 
@@ -152,8 +182,6 @@ export default {
 .agreement {
   display: flex;
   margin-bottom: 16px;
-  margin-right: 48px;
-  border-right: 1px solid #e3e5e6;
 }
 .no-agreement{
   display: inline-flex;

@@ -1,10 +1,11 @@
 <script>
-import { mapState, mapGetters, mapActions } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import MerchantLicenseAgreementStore from '@/store/MerchantLicenseAgreementStore';
-import MerchantProfileStore from '@/store/MerchantProfileStore';
 import PictureLicensePage from '@/components/PictureLicensePage.vue';
 import MerchantAdminLicenseAgreement from '@/components/MerchantAdminLicenseAgreement.vue';
-import { toggleSort, getSortDirection } from '@/helpers/handleSort';
+import getStatusByKey from '@/helpers/getStatusByKey';
+import getStatusKey from '@/helpers/getStatusKey';
+import { showSuccessMessage, showErrorMessage } from '@/helpers/notifications';
 
 export default {
   name: 'MerchantLicenseAgreementPage',
@@ -14,7 +15,6 @@ export default {
   },
   async asyncData({ store, registerStoreModule, route }) {
     try {
-      await registerStoreModule('MerchantProfile', MerchantProfileStore, route.params.id);
       await registerStoreModule(
         'MerchantLicenseAgreement',
         MerchantLicenseAgreementStore,
@@ -25,15 +25,40 @@ export default {
     }
   },
   computed: {
-    ...mapState('MerchantLicenseAgreement', ['agreement', 'document', 'status']),
+    ...mapState('Merchant', ['merchant']),
+    ...mapState('MerchantLicenseAgreement', ['agreement']),
+
+    status() {
+      return getStatusKey(this.merchant.status);
+    },
+  },
+  mounted() {
+    this.initHellosign();
   },
   methods: {
-    ...mapActions('MerchantLicenseAgreement', [
-      'initLicense',
-      'uploadDocument',
-      'openLicense',
-      'changeStatus',
-    ]),
+    ...mapActions('Merchant', ['changeMerchantStatus', 'sendNotification']),
+    ...mapActions('MerchantLicenseAgreement', ['uploadDocument', 'openLicense', 'initHellosign']),
+
+    async sendMessage(message) {
+      const success = await this.sendNotification({
+        title: 'Message from PaySuper',
+        message,
+      });
+
+      if (success) {
+        showSuccessMessage('Message was sent', { position: 'bottom-center' });
+      }
+    },
+    async changeStatus({ status, message }) {
+      const success = await this.changeMerchantStatus({
+        status: getStatusByKey(status),
+        message,
+      });
+
+      if (success) {
+        showSuccessMessage('Status changed', { position: 'bottom-center' });
+      }
+    },
   },
 };
 </script>
@@ -52,8 +77,8 @@ export default {
 
   <MerchantAdminLicenseAgreement
     :agreement="agreement"
-    :document="document"
-    :status="status"
+    :merchantStatus="status"
+    @sendMessage="sendMessage"
     @changeStatus="changeStatus"
     @openLicense="openLicense"
     @uploadDocument="uploadDocument"

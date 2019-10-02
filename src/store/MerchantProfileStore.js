@@ -1,6 +1,5 @@
-
-import axios from 'axios';
-import { get } from 'lodash-es';
+// import axios from 'axios';
+// import { get } from 'lodash-es';
 import mergeApiValuesWithDefaults from '@/helpers/mergeApiValuesWithDefaults';
 
 function mapDataApiToForm(data = {}) {
@@ -78,20 +77,21 @@ export default function createUserStore() {
         return dispatch('fetchProfile', merchantId);
       },
 
-      async fetchProfile({ commit, rootState }, merchantId) {
-        const { accessToken } = rootState.User;
-        const { apiUrl } = rootState.config;
+      // async fetchProfile({ commit, rootState }, merchantId) {
+      async fetchProfile({ commit }) {
+        // const { accessToken } = rootState.User;
+        // const { apiUrl } = rootState.config;
 
-        try {
-          const response = await axios.get(`${apiUrl}/admin/api/v1/merchants/${merchantId}`, {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          }).catch(error => console.warn(error));
+        // try {
+        //   const response = await axios.get(
+        //    `${apiUrl}/admin/api/v1/merchants/${merchantId}/profile`,
+        //   ).catch(console.warn);
 
-          commit('profile', mapDataApiToForm(get(response, 'data', {})));
-        } catch (error) {
-          console.error(error);
-          commit('profile', mapDataApiToForm());
-        }
+        //   commit('profile', mapDataApiToForm(get(response, 'data', {})));
+        // } catch (error) {
+        //   commit('profile', mapDataApiToForm());
+        // }
+        commit('profile', mapDataApiToForm());
       },
     },
     namespaced: true,

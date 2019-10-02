@@ -1,7 +1,6 @@
 <script>
 import { mapState } from 'vuex';
 import {
-  camelCase,
   findIndex,
   get,
   includes,

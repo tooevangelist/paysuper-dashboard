@@ -3,15 +3,13 @@ import { extend } from 'lodash-es';
 import getMessageFromError from '@/helpers/getMessageFromError';
 
 export function notify(type, message, opts = {}) {
-  let options = {
+  const options = {
     position: 'top-right',
     type,
     duration: 5000,
   };
 
-  options = extend({}, options, opts);
-
-  const toast = Vue.toasted.show(message, options);
+  const toast = Vue.toasted.show(message, extend({}, options, opts));
 
   toast.el.addEventListener('click', () => {
     toast.goAway(0);

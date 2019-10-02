@@ -11,13 +11,10 @@ export default {
     } catch (error) {
       store.dispatch('setPageError', error);
     }
-    // return store.dispatch('Merchant/fetchMerchantPaymentMethods', route.params.id);
   },
 
   computed: {
-    ...mapState('Merchant', [
-      'merchant', 'paymentMethods', 'agreementDocument', 'paymentMethodsSort',
-    ]),
+    ...mapState('Merchant', ['paymentMethodsSort']),
   },
 
   beforeRouteUpdate(to, from, next) {

@@ -15,6 +15,7 @@ const projectPagesMeta = {
 
 const merchantPagesMeta = {
   layout: 'Layout',
+  isAuthRequired: true,
   specialNav: {
     backLink() {
       return {

@@ -113,7 +113,7 @@ export default {
 <template>
 <component
   v-clickaway="hide"
-  v-bind="{ ...$attrs }"
+  v-bind="$attrs"
   :is="componentName"
   :class="[
     'select-as-button',

@@ -1,8 +1,6 @@
 import axios from 'axios';
-import qs from 'qs';
 import { saveAs } from 'file-saver';
 import { delay, get } from 'lodash-es';
-import Centrifuge from 'centrifuge';
 import HelloSign from 'hellosign-embedded';
 
 const HELLOSIGN_CLIENT_ID = '2599245f066de53be8e5837360edf3ac';
@@ -18,16 +16,6 @@ function getDefaultAgreementDocument() {
   };
 }
 
-function statusByKey(key) {
-  return {
-    new: 0,
-    rejected: 0,
-    singing: 3,
-    singed: 4,
-    deleted: 5,
-  }[key];
-}
-
 export default function createMerchantLicenseAgreementStore() {
   return {
     namespaced: true,
@@ -37,21 +25,25 @@ export default function createMerchantLicenseAgreementStore() {
       signature: null,
       agreement: getDefaultAgreementDocument(),
       document: null,
-      status: 0,
     },
     getters: {
-      isUsingHellosign(state) {
-        return state.status === 3;
+      isUsingHellosign(state, getters) {
+        return getters.status === 3;
+      },
+      status(state, getters, rootState) {
+        return get(rootState, 'Merchant.merchant.status', 0);
       },
     },
     actions: {
-      async initState({ commit, dispatch, rootGetters }, merchantId) {
+      async initState({ commit }, merchantId) {
         commit('merchantId', merchantId);
-        commit('status', rootGetters['MerchantProfile/status']);
-        dispatch('initHellosign');
       },
       async initHellosign({ commit, dispatch, getters }) {
+        dispatch('fetchAgreementMetadata');
+
         if (getters.isUsingHellosign) {
+          dispatch('fetchAgreementSignature');
+
           const helloSign = new HelloSign({
             clientId: HELLOSIGN_CLIENT_ID,
             // TODO: remove 3 lines below for production
@@ -61,14 +53,16 @@ export default function createMerchantLicenseAgreementStore() {
           });
 
           helloSign.on('sign', () => {
-            dispatch('changeStatus', 'signed');
+            dispatch('Merchant/updateMerchant', null, { root: true });
+            delay(async () => {
+              dispatch('fetchAgreementMetadata', true);
+            }, 5000);
           });
 
           commit('helloSign', helloSign);
         }
       },
       async fetchAgreementSignature({ commit, state, rootState }) {
-        const { accessToken } = rootState.User;
         const { apiUrl } = rootState.config;
         const { merchantId } = state;
 
@@ -76,7 +70,6 @@ export default function createMerchantLicenseAgreementStore() {
           const response = await axios.put(
             `${apiUrl}/admin/api/v1/merchants/${merchantId}/agreement/signature`,
             { signer_type: 1 },
-            { headers: { Authorization: `Bearer ${accessToken}` } },
           );
 
           commit('signature', response.data);
@@ -88,7 +81,6 @@ export default function createMerchantLicenseAgreementStore() {
         rootState,
         state,
       }) {
-        const { accessToken } = rootState.User;
         const { apiUrl } = rootState.config;
         const { merchantId } = state;
         const { status } = getters;
@@ -96,29 +88,10 @@ export default function createMerchantLicenseAgreementStore() {
         if (merchantId && status >= 3) {
           const response = await axios.get(
             `${apiUrl}/admin/api/v1/merchants/${merchantId}/agreement`,
-            { headers: { Authorization: `Bearer ${accessToken}` } },
           );
           const agreement = get(response, 'data', getDefaultAgreementDocument());
 
           commit('agreement', agreement);
-        }
-      },
-      async changeStatus({ commit, rootState, state }, statusKey) {
-        const { accessToken } = rootState.User;
-        const { apiUrl } = rootState.config;
-        const { merchantId } = state;
-        const status = statusByKey(statusKey);
-
-        if (merchantId) {
-          const response = await axios.put(
-            `${apiUrl}/admin/api/v1/merchants/${merchantId}/change-status`,
-            { status },
-            { headers: { Authorization: `Bearer ${accessToken}` } },
-          );
-
-          if (response.status === 200) {
-            commit('status', status);
-          }
         }
       },
       async uploadDocument({ dispatch, state }) {
@@ -133,7 +106,8 @@ export default function createMerchantLicenseAgreementStore() {
         }
       },
       async fetchDocument({ commit, state, rootState }) {
-        const { accessToken } = rootState.User;
+        const { apiUrl } = rootState.config;
+        const { merchantId } = state;
         const { url } = state.agreement;
         const { size, extension } = state.agreement.metadata;
 
@@ -141,10 +115,13 @@ export default function createMerchantLicenseAgreementStore() {
           return false;
         }
 
-        const response = await axios.get(url, {
-          headers: { Authorization: `Bearer ${accessToken}`, Accept: `application/${extension}` },
-          responseType: 'blob',
-        });
+        const response = await axios.get(
+          `${apiUrl}/admin/api/v1/merchants/${merchantId}/agreement/document`,
+          {
+            headers: { Accept: `application/${extension}` },
+            responseType: 'blob',
+          },
+        );
 
         if (response.status === 200) {
           commit('document', response.data);

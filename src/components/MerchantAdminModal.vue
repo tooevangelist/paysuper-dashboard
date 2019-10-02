@@ -1,8 +1,10 @@
 <script>
-import { isEmpty } from 'lodash-es';
+import { includes, debounce } from 'lodash-es';
+import TextareaAutosize from 'vue-textarea-autosize/src/components/TextareaAutosize.vue';
 
 export default {
   name: 'MerchantAdminModal',
+  components: { TextareaAutosize },
   props: {
     statusFrom: {
       default: () => ({}),
@@ -12,6 +14,13 @@ export default {
       default: () => ({}),
       type: Object,
     },
+    type: {
+      default: 'contact',
+      type: String,
+      validator(value) {
+        return includes(['contact', 'changeStatus'], value);
+      },
+    },
   },
   data() {
     return {
@@ -20,14 +29,13 @@ export default {
   },
   computed: {
     isChangeStatus() {
-      return !isEmpty(this.statusFrom);
+      return this.type === 'changeStatus';
+    },
+    headerText() {
+      return this.isChangeStatus ? 'Confirm transition' : 'Contact merchant';
     },
   },
   methods: {
-    /**
-     * To fix the issue with scrollbar is not going away
-     * after the textarea is cleared
-     */
     handleTextareaInput() {
       const updateScrollbar = debounce(() => {
         if (this.$refs.scrollbar) {
@@ -49,22 +57,22 @@ export default {
     align="center"
     :hasMargin="true"
   >
-
+    {{ headerText }}
   </UiHeader>
   <div
     v-if="isChangeStatus"
     class="status-transition"
   >
     <UiLabelTag
-      v-if="codeFrom !== undefined"
+      v-if="statusFrom !== undefined"
       :color="statusFrom.color"
-      v-text="statusFrom.text"
+      v-text="statusFrom.label"
     />
-    <IconBigArrow class="arrow" />
+    <IconArrowDown class="arrow" />
     <UiLabelTag
-      v-if="codeTo !== undefined"
+      v-if="statusTo !== undefined"
       :color="statusTo.color"
-      v-text="statusTo.text"
+      v-text="statusTo.label"
     />
   </div>
   <UiScrollbarBox class="content" ref="scrollbar">
@@ -73,6 +81,7 @@ export default {
       rows="1"
       maxlength="500"
       ref="textarea"
+      placeholder="Message *"
       v-model="message"
       @input="handleTextareaInput"
     />
@@ -100,9 +109,16 @@ export default {
 .status-transition {
   display: flex;
   align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.arrow {
+  transform: rotate(-90deg);
+  margin: 0 12px;
+  fill: #000;
 }
 .textarea {
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: 16px;
   line-height: 24px;
   letter-spacing: 0.44px;
