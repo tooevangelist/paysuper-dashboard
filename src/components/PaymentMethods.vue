@@ -1,5 +1,5 @@
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapGetters, mapActions } from 'vuex';
 import { required } from 'vuelidate/lib/validators';
 import Notifications from '@/mixins/Notifications';
 
@@ -27,17 +27,10 @@ export default {
       'regions',
     ]),
     ...mapState('User/Merchant', ['merchant', 'onboardingSteps']),
+    ...mapGetters('Dictionaries', ['currenciesThreeLetters']),
 
     status() {
       return this.merchant.status;
-    },
-    currencies() {
-      return [
-        { label: 'USD', value: 'USD' },
-        { label: 'EUR', value: 'EUR' },
-        { label: 'GBP', value: 'GBP' },
-        { label: 'RUB', value: 'RUB' },
-      ];
     },
     amounts() {
       return [
@@ -178,11 +171,15 @@ export default {
       </div>
     </div>
 
+    <div class="info">
+      Your chosen payout currency must match the currency of your bank account in
+      <span class="blue-text">Banking Info</span> section.
+    </div>
     <div class="select">
       <UiSelect
         v-bind="$getValidatedFieldProps('currency')"
         label="Payout Currency"
-        :options="currencies"
+        :options="currenciesThreeLetters"
         :value="currency"
         :errorText="currencyErrorText"
         :hasError="$isFieldInvalid('currency') || !isHomeDefaultCurrency"
@@ -416,7 +413,7 @@ export default {
   letter-spacing: 0.25px;
   color: #5e6366;
   margin-bottom: 20px;
-  max-width: 548px;
+  max-width: 420px;
 }
 .select {
   position: relative;
@@ -492,6 +489,9 @@ export default {
 }
 .bolder {
   font-weight: 500;
+}
+.blue-text {
+  color: #3d7bf5;
 }
 .row-indent {
   &::before {
