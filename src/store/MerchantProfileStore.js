@@ -1,10 +1,9 @@
-
 // import axios from 'axios';
 // import { get } from 'lodash-es';
 import mergeApiValuesWithDefaults from '@/helpers/mergeApiValuesWithDefaults';
 
-function getDefaultProfileData() {
-  return {
+function mapDataApiToForm(data = {}) {
+  const defaultData = {
     personal: {
       first_name: 'John',
       last_name: 'Doe',
@@ -46,7 +45,16 @@ function getDefaultProfileData() {
     last_step: '',
     created_at: null,
     updated_at: null,
+    status: 0,
   };
+
+  const newData = mergeApiValuesWithDefaults(defaultData, data);
+
+  if (newData.country) {
+    newData.country = newData.country.code_a2;
+  }
+
+  return newData;
 }
 
 export default function createUserStore() {
@@ -54,33 +62,38 @@ export default function createUserStore() {
     state: {
       profile: null,
     },
-
+    getters: {
+      status(state) {
+        return state.profile.status;
+      },
+    },
     mutations: {
       profile(state, value) {
-        const defaultProfile = getDefaultProfileData();
-        const profile = mergeApiValuesWithDefaults(defaultProfile, value);
-        state.profile = profile;
+        state.profile = value;
       },
     },
-
     actions: {
-      async initState({ dispatch }) {
-        return dispatch('fetchProfile');
+      async initState({ dispatch }, merchantId) {
+        return dispatch('fetchProfile', merchantId);
       },
 
+      // async fetchProfile({ commit, rootState }, merchantId) {
       async fetchProfile({ commit }) {
-        try {
-          // const { data } = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/user/prof`, {
-          //   headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-          // });
-          commit('profile', {});
-        } catch (error) {
-          console.error(error);
-          commit('profile', {});
-        }
+        // const { accessToken } = rootState.User;
+        // const { apiUrl } = rootState.config;
+
+        // try {
+        //   const response = await axios.get(
+        //    `${apiUrl}/admin/api/v1/merchants/${merchantId}/profile`,
+        //   ).catch(console.warn);
+
+        //   commit('profile', mapDataApiToForm(get(response, 'data', {})));
+        // } catch (error) {
+        //   commit('profile', mapDataApiToForm());
+        // }
+        commit('profile', mapDataApiToForm());
       },
     },
-
     namespaced: true,
   };
 }

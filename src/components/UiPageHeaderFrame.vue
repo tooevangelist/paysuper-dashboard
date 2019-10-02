@@ -25,16 +25,15 @@ export default {
   margin-bottom: 32px;
   display: flex;
 }
-
-.header-texts {
-}
-
 .header-picture {
+  display: none;
   flex-grow: 1;
-  display: flex;
   justify-content: center;
-}
 
+  @media screen and (min-width: 768px) {
+    display: flex;
+  }
+}
 .text {
   max-width: 448px;
   color: #5e6366;

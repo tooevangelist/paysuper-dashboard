@@ -129,6 +129,12 @@ const routes = [
         name: 'MerchantAdminCompanyInfo',
       },
       {
+        path: 'license-agreement/',
+        component: () => import('@/pages/MerchantAdminLicenseAgreementPage.vue'),
+        meta: merchantPagesMeta,
+        name: 'MerchantAdminLicenseAgreement',
+      },
+      {
         path: 'payment-methods/',
         component: () => import('@/pages/MerchantAdminPaymentMethodsPage.vue'),
         meta: merchantPagesMeta,
