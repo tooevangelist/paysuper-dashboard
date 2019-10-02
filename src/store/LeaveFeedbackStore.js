@@ -15,9 +15,6 @@ export default function createLeaveFeedbackStore() {
               review,
               page_id: 'primary_onboarding',
             },
-            {
-              headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-            },
           );
         } catch (error) {
           console.error(error);

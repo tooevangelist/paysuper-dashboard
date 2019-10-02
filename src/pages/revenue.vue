@@ -24,13 +24,13 @@ export default {
       ],
     };
   },
-  asyncData(context) {
+  asyncData() {
     const from = moment().subtract(7, 'days').unix();
     const to = moment().unix();
 
     const url = `${process.env.VUE_APP_P1PAYAPI_URL}/api/v1/s/order/revenue_dynamic/day?from=${from}&to=${to}`;
 
-    return axios.get(url, { headers: { Authorization: `Bearer ${context.store.state.user.accessToken}` } })
+    return axios.get(url)
       .then((response) => {
         if (!response.data || !response.data.points
                         || !Array.isArray(response.data.points)) {
@@ -74,7 +74,7 @@ export default {
 
       const url = `${process.env.VUE_APP_P1PAYAPI_URL}/api/v1/s/order/revenue_dynamic/${this.groupBy}?from=${from}&to=${to}`;
 
-      axios.get(url, { headers: { Authorization: `Bearer ${this.$store.state.user.accessToken}` } })
+      axios.get(url)
         .then((response) => {
           if (!response.data || !response.data.points
                             || !Array.isArray(response.data.points)) {

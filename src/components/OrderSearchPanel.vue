@@ -217,7 +217,7 @@ export default {
 
       const url = `${process.env.VUE_APP_P1PAYAPI_URL}/admin/api/v1/projects/filters`;
 
-      axios.get(url, { headers: { Authorization: `Bearer ${this.$store.state.user.accessToken}` } })
+      axios.get(url)
         .then((response) => {
           if (!response.data) {
             return;
@@ -240,7 +240,7 @@ export default {
 
       const url = `${process.env.VUE_APP_P1PAYAPI_URL}/api/v1/s/payment_method/merchant`;
 
-      axios.get(url, { headers: { Authorization: `Bearer ${this.$store.state.user.accessToken}` } })
+      axios.get(url)
         .then((response) => {
           if (!response.data) {
             return;

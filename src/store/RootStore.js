@@ -53,7 +53,7 @@ export default new Vuex.Store({
      * duplicating the service through vue.config.js
      */
     async fetchConfig({ commit }) {
-      const { data } = await axios.get('/conf');
+      const { data } = await axios.get('/conf', {});
       commit('config', data);
     },
 

@@ -35,7 +35,7 @@ export default function createLicenseAgreementStore() {
         return getters.status >= 4;
       },
       isUsingHellosign(state, getters) {
-        return getters.status === 0 || state.isReject;
+        return !getters.status || state.isReject;
       },
       status(state, getter, rootState) {
         return rootState.User.Merchant.merchant.status;
@@ -58,7 +58,11 @@ export default function createLicenseAgreementStore() {
     actions: {
       async initState({ commit, dispatch, getters }, isOnboardingStepsComplete) {
         await dispatch('fetchAgreementSignature', isOnboardingStepsComplete);
-        await dispatch('fetchAgreementMetadata');
+        await dispatch('fetchAgreementMetadata', isOnboardingStepsComplete);
+
+        if (getters.status === 3) {
+          dispatch('initWaitingForDocumentSigned');
+        }
 
         if (getters.isUsingHellosign) {
           const helloSign = new HelloSign({
@@ -78,28 +82,25 @@ export default function createLicenseAgreementStore() {
         }
       },
       async fetchAgreementSignature({ commit, getters, rootState }, isOnboardingStepsComplete) {
-        const { accessToken, Merchant } = rootState.User;
+        const { Merchant } = rootState.User;
         const merchantId = get(Merchant, 'merchant.id', 0);
 
         if (merchantId && isOnboardingStepsComplete && getters.isUsingHellosign) {
           const response = await axios.put(
             `${rootState.config.apiUrl}/admin/api/v1/merchants/${merchantId}/agreement/signature`,
             { signer_type: 0 },
-            { headers: { Authorization: `Bearer ${accessToken}` } },
           );
 
           commit('signature', response.data);
         }
       },
-      async fetchAgreementMetadata({ commit, rootState, rootGetters }) {
-        const isOnboardingStepsComplete = rootGetters['User/Merchant/isOnboardingStepsComplete'];
-        const { accessToken, Merchant } = rootState.User;
+      async fetchAgreementMetadata({ commit, rootState, getters }, isOnboardingStepsComplete) {
+        const { Merchant } = rootState.User;
         const merchantId = get(Merchant, 'merchant.id', 0);
 
-        if (merchantId && isOnboardingStepsComplete) {
+        if (merchantId && isOnboardingStepsComplete && getters.status) {
           const response = await axios.get(
             `${rootState.config.apiUrl}/admin/api/v1/merchants/${merchantId}/agreement`,
-            { headers: { Authorization: `Bearer ${accessToken}` } },
           );
           const agreement = get(response, 'data', getDefaultAgreementDocument());
 
@@ -117,8 +118,7 @@ export default function createLicenseAgreementStore() {
           );
         }
       },
-      async fetchDocument({ commit, state, rootState }) {
-        const { accessToken } = rootState.User;
+      async fetchDocument({ commit, state }) {
         const { url } = state.agreement;
         const { size, extension } = state.agreement.metadata;
 
@@ -127,7 +127,7 @@ export default function createLicenseAgreementStore() {
         }
 
         const response = await axios.get(url, {
-          headers: { Authorization: `Bearer ${accessToken}`, Accept: `application/${extension}` },
+          headers: { Accept: `application/${extension}` },
           responseType: 'blob',
         });
 
@@ -166,7 +166,7 @@ export default function createLicenseAgreementStore() {
 
           if (data.code === 'mr000018') {
             delay(async () => {
-              dispatch('fetchAgreementMetadata');
+              dispatch('fetchAgreementMetadata', true);
             }, 5000);
             dispatch('User/Merchant/updateStatus', 4, { root: true });
             dispatch('User/Merchant/completeStep', 'license', { root: true });

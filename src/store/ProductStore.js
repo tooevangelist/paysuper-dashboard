@@ -61,9 +61,6 @@ export default function createProductStore() {
         const response = await axios.post(
           `${rootState.config.apiUrl}/admin/api/v1/products/${state.productId}`,
           state.product,
-          {
-            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-          },
         );
         commit('product', mapDataApiToForm(response.data));
       },
@@ -73,9 +70,6 @@ export default function createProductStore() {
       }) {
         const response = await axios.get(
           `${rootState.config.apiUrl}/admin/api/v1/products/${state.productId}`,
-          {
-            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-          },
         );
         commit('product', mapDataApiToForm(response.data));
       },
@@ -102,9 +96,6 @@ export default function createProductStore() {
         const response = await axios.put(
           `${rootState.config.apiUrl}/admin/api/v1/products/${state.productId}`,
           state.product,
-          {
-            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-          },
         );
         commit('product', response.data);
       },

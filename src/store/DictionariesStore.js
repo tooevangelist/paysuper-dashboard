@@ -39,12 +39,6 @@ export default function createDictionariesStore() {
       currenciesCode(state) {
         return state.currencies.map(item => ({ label: item.name.en, value: item.code_a3 }));
       },
-      countriesInt(state) {
-        return state.countries.map(item => ({ label: item.name.en, value: item.code_int }));
-      },
-      countriesTwoLetters(state) {
-        return state.countries.map(item => ({ label: item.name.en, value: item.code_a2 }));
-      },
       currenciesThreeLetters(state) {
         return state.currencies.map(item => ({ label: item.name.en, value: item.code_a3 }));
       },

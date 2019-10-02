@@ -114,7 +114,6 @@ export default function createTariffStore() {
       },
       async fetchTariffs({ commit, state, rootState }, region) {
         const actualRegion = region || state.region;
-        const { accessToken } = rootState.User;
         const amount = map(state.amount.split('-'), toNumber);
 
         const queryString = qs.stringify({
@@ -126,7 +125,6 @@ export default function createTariffStore() {
 
         const response = await axios.get(
           `${rootState.config.apiUrl}/admin/api/v1/merchants/tariffs?${queryString}`,
-          { headers: { Authorization: `Bearer ${accessToken}` } },
         );
 
         if (response.data) {
@@ -137,7 +135,7 @@ export default function createTariffStore() {
         }
       },
       async submitTariffs({ dispatch, state, rootState }) {
-        const { accessToken, Merchant } = rootState.User;
+        const { Merchant } = rootState.User;
         const merchantId = Merchant.merchant.id;
         const amount = map(state.amount.split('-'), toNumber);
 
@@ -149,7 +147,6 @@ export default function createTariffStore() {
             amount_from: amount[0],
             amount_to: amount[1],
           },
-          { headers: { Authorization: `Bearer ${accessToken}` } },
         );
 
         if (response.status === 200) {

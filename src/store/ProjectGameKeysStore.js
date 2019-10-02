@@ -69,9 +69,7 @@ export default function createProjectGameKeysStore() {
         }, { arrayFormat: 'brackets' });
         const url = `${rootState.config.apiUrl}/admin/api/v1/key-products?${query}`;
 
-        const response = await axios.get(url, {
-          headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-        });
+        const response = await axios.get(url);
         const gameKeys = {
           ...response.data,
           products: response.data.products || [],
@@ -95,9 +93,6 @@ export default function createProjectGameKeysStore() {
           `${rootState.config.apiUrl}/admin/api/v1/key-products/${id}/platforms`,
           {
             platform,
-          },
-          {
-            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
           },
         );
       },
@@ -131,9 +126,6 @@ export default function createProjectGameKeysStore() {
               'psn',
               'nintendo',
             ],
-          },
-          {
-            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
           },
         );
 
@@ -170,9 +162,6 @@ export default function createProjectGameKeysStore() {
       async deleteGameKey({ rootState }, id) {
         await axios.delete(
           `${rootState.config.apiUrl}/admin/api/v1/key-products/${id}`,
-          {
-            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-          },
         );
       },
 
@@ -183,9 +172,6 @@ export default function createProjectGameKeysStore() {
         await axios.post(
           `${rootState.config.apiUrl}/admin/api/v1/key-products/${keyProduct.id}/publish`,
           {
-          },
-          {
-            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
           },
         );
       },

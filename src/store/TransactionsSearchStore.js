@@ -116,7 +116,7 @@ export default function createTransactionsSearchStore() {
 
         dispatch('setIsLoading', true, { root: true });
 
-        await axios.get(url, { headers: { Authorization: `Bearer ${rootState.User.accessToken}` } })
+        await axios.get(url)
           .then((response) => {
             if (!response.data || !response.data.count || !response.data.items) {
               commit('transactions', {
@@ -139,10 +139,7 @@ export default function createTransactionsSearchStore() {
       async fetchPaymentMethods({ commit, rootState }) {
         const url = `${rootState.config.apiUrl}/api/v1/s/payment_method/merchant`;
 
-        await axios.get(
-          url,
-          { headers: { Authorization: `Bearer ${rootState.User.accessToken}` } },
-        )
+        await axios.get(url)
           .then((response) => {
             if (isEmpty(response.data)) {
               return;
@@ -159,11 +156,11 @@ export default function createTransactionsSearchStore() {
         const query = qs.stringify({
           merchant_id: rootState.User.Merchant.merchant.id,
         });
-        return axios.get(`${rootState.config.apiUrl}/admin/api/v1/projects?${query}`, {
-          headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-        }).then((response) => {
-          commit('projects', response.data.items);
-        }).catch(() => { });
+        return axios.get(`${rootState.config.apiUrl}/admin/api/v1/projects?${query}`)
+          .then((response) => {
+            commit('projects', response.data.items);
+          })
+          .catch(console.error);
       },
 
       submitFilters({ state, commit }, filters) {

@@ -102,9 +102,7 @@ export default function createProjectStore() {
       },
 
       async fetchProject({ state, commit, rootState }, id) {
-        const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/projects/${id}`, {
-          headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-        });
+        const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/projects/${id}`);
         commit('project', mapDataApiToForm(response.data.item));
         commit('projectPublicName', state.project.name);
       },
@@ -116,9 +114,7 @@ export default function createProjectStore() {
 
         let url = `${rootState.config.apiUrl}/admin/api/v1/products`;
         url += `?${qs.stringify(params)}`;
-        const response = await axios.get(url, {
-          headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-        });
+        const response = await axios.get(url);
         console.log(11111, 'response.data', response.data);
         // commit('project', mapDataApiToForm(response.data));
       },
@@ -132,9 +128,6 @@ export default function createProjectStore() {
             merchant_id: rootState.User.Merchant.merchant.id,
             ...project,
           }),
-          {
-            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-          },
         );
 
         commit('project', mapDataApiToForm(response.data.item));
@@ -145,9 +138,6 @@ export default function createProjectStore() {
         await axios.patch(
           `${rootState.config.apiUrl}/admin/api/v1/projects/${state.project.id}`,
           mapDataFormToApi(project),
-          {
-            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-          },
         );
         commit('projectPublicName', state.project.name);
       },

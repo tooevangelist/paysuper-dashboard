@@ -53,7 +53,6 @@ export default {
         url: fileUrl,
         method: 'GET',
         responseType: 'blob', // important
-        headers: { Authorization: `Bearer ${this.$store.state.User.accessToken}` },
       }).then((response) => {
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');

@@ -50,12 +50,9 @@ export default function createAccountInfoStore() {
         }
       },
       async submitAccountInfo({ dispatch, state, rootState }) {
-        const { accessToken } = rootState.User;
-
         const response = await axios.put(
           `${rootState.config.apiUrl}/admin/api/v1/merchants/company`,
           { ...state.accountInfo },
-          { headers: { Authorization: `Bearer ${accessToken}` } },
         );
 
         if (response.data) {

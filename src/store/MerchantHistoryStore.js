@@ -67,9 +67,7 @@ export default function createMerchantHistoryStore() {
         }, { arrayFormat: 'brackets' });
         const url = `${rootState.config.apiUrl}/admin/api/v1/merchants/${state.merchantId}/notifications?${query}`;
 
-        const response = await axios.get(url, {
-          headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-        });
+        const response = await axios.get(url);
         const history = !isEmpty(response.data) ? response.data : {
           items: [],
           count: 0,
