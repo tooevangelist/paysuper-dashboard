@@ -17,7 +17,7 @@
           :isAlwaysExpanded="true"
           v-model="filters.quickFilter"
           @input="handleQuickSearchInput" />
-        <UiButton text="ADD ITEM" @click.prevent="createItem"></UiButton>
+        <UiButton text="ADD ITEM" @click.prevent="createNew"></UiButton>
       </div>
 
       <div class="items-list">
@@ -30,14 +30,13 @@
             <UiTableCell align="left">Virtual item</UiTableCell>
             <UiTableCell align="left">SKU</UiTableCell>
             <UiTableCell align="left">Price</UiTableCell>
-            <UiTableCell align="left">Status</UiTableCell>
+            <UiTableCell width="15%" align="left">Status</UiTableCell>
             <UiTableCell width="5%" align="left"></UiTableCell>
           </UiTableRow>
           <UiTableRow
             class="content-row"
             v-for="(item, index) in virtualItems.items"
-            :key="item.id"
-            :link="`/virtualItems/${item.id}`">
+            :key="item.id">
             <UiTableCell align="left" valign="top">
               <span class="leading-cell-content">{{ index + 1 }}</span>
             </UiTableCell>
@@ -50,11 +49,17 @@
             <UiTableCell align="left" valign="top" :title="item.sku">
               <span class="cell-text">{{ item.sku }}</span>
             </UiTableCell>
-            <UiTableCell align="left" valign="top" :title="item.price">
-              <span class="cell-text">{{ item.price }}</span>
+            <UiTableCell align="left" valign="top" :title="item.prices">
+              <span class="cell-text">
+                {{ $formatPrice(item.prices[0].amount, item.prices[0].currency)}}
+              </span>
             </UiTableCell>
             <UiTableCell align="left" valign="top">
-              Status
+              <UiLabelTag
+                :color="item.enabled ? 'green': 'transparent'"
+              >
+                {{ item.enabled ? 'Enabled': 'Disabled' }}
+              </UiLabelTag>
             </UiTableCell>
             <UiTableCell
               class="cell"
@@ -80,17 +85,19 @@
               >
                 <UiTooltipMenuItem
                   iconComponent="IconPen"
+                  @click="editItem(item)"
                 >
                   Edit
                 </UiTooltipMenuItem>
                 <UiTooltipMenuItem
                   iconComponent="IconDeactivate"
                 >
-                  {{ keyProduct.enabled ? 'Disable': 'Enable' }}
+                  {{ item.enabled ? 'Disable': 'Enable' }}
                 </UiTooltipMenuItem>
                 <UiTooltipMenuItem
                   iconComponent="IconDelete"
                   type="delete"
+                  @click="showConfirm(item)"
                 >
                   Delete
                 </UiTooltipMenuItem>
@@ -102,18 +109,33 @@
         <NoResults type="add-new" v-else>You don’t have any item yet</NoResults>
       </div>
     </UiPanel>
+
+    <UiConfirm
+      v-if="showDeleteConfirm && selectedItem"
+      title="Delete item"
+      buttonText="DELETE"
+      buttonColor="red"
+      @close="showDeleteConfirm=false"
+      @confirm="deleteSeletedItem">
+      Are you sure you want to delete {{ selectedItem.name.en }}?
+    </UiConfirm>
   </div>
 </template>
 
 <script>
-import { debounce } from 'lodash-es';
-import { mapState, mapGetters, mapActions } from 'vuex';
+import { debounce, isEqual } from 'lodash-es';
+import {
+  mapState, mapGetters, mapActions, mapMutations,
+} from 'vuex';
 import PictureWoomanLooking from '@/components/PictureWomanLooking.vue';
 import NoResults from '@/components/NoResults.vue';
 import ProjectVirtualItemsStore from '@/store/ProjectVirtualItemsStore';
+import Notifications from '@/mixins/Notifications';
 
 export default {
   name: 'ProjectVirtualItemsPage',
+
+  mixins: [Notifications],
 
   components: {
     NoResults,
@@ -133,6 +155,8 @@ export default {
       isSearchRouting: false,
       isInfiniteScrollLocked: false,
       openedTooltipId: '',
+      showDeleteConfirm: false,
+      selectedItem: null,
     };
   },
 
@@ -148,7 +172,7 @@ export default {
   },
 
   computed: {
-    ...mapState('ProjectVirtualItems', ['virtualItems', 'filterValues', 'query', 'apiQuery']),
+    ...mapState('ProjectVirtualItems', ['virtualItems', 'filterValues', 'query', 'apiQuery', 'currentItem']),
     ...mapGetters('ProjectVirtualItems', ['getFilterValues']),
 
     handleQuickSearchInput() {
@@ -164,7 +188,62 @@ export default {
 
   methods: {
     ...mapActions(['setIsLoading']),
-    ...mapActions('ProjectVirtualItems', ['initQuery', 'createItem']),
+    ...mapActions('ProjectVirtualItems', ['initQuery', 'createItem', 'submitFilters', 'fetchItems', 'deleteItem']),
+    ...mapMutations('ProjectVirtualItems', ['setCurrentItem']),
+
+    filterMerchants() {
+      this.filters.offset = 0;
+      this.searchItems();
+    },
+
+    async searchItems() {
+      this.isSearchRouting = true;
+      this.setIsLoading(true);
+      this.submitFilters(this.filters);
+      this.navigate();
+      await this.fetchItems().catch(this.$_Notifications_showErrorMessage);
+      this.setIsLoading(false);
+    },
+
+    navigate() {
+      if (isEqual(this.$route.query, this.query)) {
+        return;
+      }
+      this.$router.push({
+        path: this.$route.path,
+        query: this.query,
+      });
+    },
+
+    createNew() {
+      this.$router.push({
+        name: 'ProjectVirtualItemEdit',
+        params: { itemId: 'new' },
+      });
+    },
+
+    editItem(item) {
+      this.setCurrentItem(item);
+      this.setIsLoading(true);
+      this.$router.push({
+        name: 'ProjectVirtualItemEdit',
+        params: { itemId: item.id },
+      });
+    },
+
+    showConfirm(item) {
+      this.selectedItem = item;
+      this.showDeleteConfirm = true;
+    },
+
+    async deleteSeletedItem() {
+      this.showDeleteConfirm = false;
+      this.setIsLoading(true);
+      await this.deleteItem(this.selectedItem.id).catch(this.$_Notifications_showErrorMessage);
+      await this.searchItems();
+      this.selectedItem = null;
+      this.setIsLoading(false);
+    },
   },
 };
 </script>
@@ -173,5 +252,17 @@ export default {
 .control-bar {
   display: flex;
   justify-content: space-between;
+}
+
+.items-list {
+  margin-top: 32px;
+}
+
+.cell {
+  position: relative;
+}
+
+.dots-menu-trigger {
+  margin-top: 4px;
 }
 </style>

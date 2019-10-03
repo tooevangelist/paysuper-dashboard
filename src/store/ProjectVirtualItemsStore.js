@@ -16,6 +16,7 @@ export default function createProjectVirtualItemsStore() {
       filterValues: {},
       query: {},
       apiQuery: {},
+      currentItem: {},
     }),
 
     getters: {
@@ -50,6 +51,9 @@ export default function createProjectVirtualItemsStore() {
       apiQuery(store, value) {
         store.apiQuery = value;
       },
+      setCurrentItem(store, value) {
+        store.currentItem = value;
+      },
     },
 
     actions: {
@@ -68,9 +72,7 @@ export default function createProjectVirtualItemsStore() {
         }, { arrayFormat: 'brackets' });
         const url = `${rootState.config.apiUrl}/admin/api/v1/products?${query}`;
 
-        const response = await axios.get(url, {
-          headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-        });
+        const response = await axios.get(url);
         const virtualItems = {
           ...response.data,
           items: response.data.items || [],
@@ -107,30 +109,38 @@ export default function createProjectVirtualItemsStore() {
       },
 
       async deleteItem({ rootState }, id) {
-        await axios.delete(
-          `${rootState.config.apiUrl}/admin/api/v1/products/${id}`,
-          {
-            headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-          },
-        );
+        await axios.delete(`${rootState.config.apiUrl}/admin/api/v1/products/${id}`);
       },
 
+      /**
+       * Get Virtual item info by id
+       * @param rootState
+       * @param id
+       * @returns {Promise<void>}
+       */
+      async getProductInfo({ rootState }, id) {
+        await axios.get(`${rootState.config.apiUrl}/admin/api/v1/products/${id}`);
+      },
+
+      /**
+       * Test poop
+       * @param rootState
+       * @returns {Promise<void>}
+       */
       async createItem({ rootState }) {
         const poop = {
           object: 'product',
           type: 'simple_product',
-          sku: 'ru_0_doom_2',
-          name: { en: 'Doom II' },
+          sku: 'Bobba_Fett_helm_eu',
+          name: { en: 'Bobba Fett Helment' },
           default_currency: 'USD',
           enabled: true,
-          prices: [{ amount: 12.93, currency: 'USD', region: 'north_america' }],
+          prices: [{ amount: 99.50, currency: 'USD', region: 'USD' }],
           description: { en: '' },
           long_description: {},
           project_id: rootState.Project.project.id,
         };
-        await axios.post(`${rootState.config.apiUrl}/admin/api/v1/products`, poop, {
-          headers: { Authorization: `Bearer ${rootState.User.accessToken}` },
-        });
+        await axios.post(`${rootState.config.apiUrl}/admin/api/v1/products`, poop);
       },
     },
 

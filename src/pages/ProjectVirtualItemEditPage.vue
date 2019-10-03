@@ -100,6 +100,7 @@
 </template>
 
 <script>
+// import { mapActions } from 'vuex';
 import ImageUpload from '@/components/ImageUpload.vue';
 
 export default {
