@@ -1,4 +1,5 @@
 <script>
+import { mapState, mapMutations } from 'vuex';
 import ProjectFormSettings from '@/components/ProjectFormSettings.vue';
 
 export default {
@@ -7,21 +8,19 @@ export default {
     ProjectFormSettings,
   },
   props: {
-    project: {
-      type: Object,
-      required: true,
-    },
     uploadImage: {
       type: Function,
       required: true,
     },
-    currencies: {
-      required: true,
-      type: Array,
-    },
+  },
+
+  computed: {
+    ...mapState('Project', ['project', 'currencies']),
   },
 
   methods: {
+    ...mapMutations('Project', { setCurrencies: 'currencies' }),
+
     handleSave() {
       const isValid = this.$refs.form.chekIsFormValid();
       if (isValid) {
@@ -45,8 +44,13 @@ export default {
   <UiPanel>
     <ProjectFormSettings
       ref="form"
-      v-bind="$props"
+      v-bind="{
+        uploadImage,
+        currencies,
+        project
+      }"
       v-on="$listeners"
+      @currenciesChange="setCurrencies"
     />
 
     <div class="controls">

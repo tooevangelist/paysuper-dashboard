@@ -38,6 +38,24 @@ export default function createProjectStore() {
       currencies: ['USD'],
     },
 
+    getters: {
+      currenciesDetailed(state) {
+        return state.currencies.map((item) => {
+          const [currency, region] = item.split('-');
+          if (region) {
+            return {
+              currency,
+              region,
+            };
+          }
+          return {
+            currency,
+            region: currency,
+          };
+        });
+      },
+    },
+
     mutations: {
       project(state, value) {
         state.project = value;
