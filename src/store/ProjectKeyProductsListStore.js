@@ -9,7 +9,7 @@ const searchBuilder = new SearchBuilder(projectKeyProductsScheme);
 
 export default function createProjectKeyProductsListStore() {
   return {
-    state: () => ({
+    state: {
       gameKeys: {
         products: [],
         count: 0,
@@ -17,7 +17,7 @@ export default function createProjectKeyProductsListStore() {
       filterValues: {},
       query: {},
       apiQuery: {},
-    }),
+    },
 
     getters: {
       getFilterValues(state) {
@@ -122,9 +122,17 @@ export default function createProjectKeyProductsListStore() {
             default_currency: 'USD',
             object: 'key_product',
             platforms: [
-              'uplay',
-              'psn',
-              'nintendo',
+              {
+                id: 'gog',
+                name: 'Good old games.com',
+                prices: [
+                  {
+                    region: 'west_asia',
+                    amount: 29.99,
+                    currency: 'USD',
+                  },
+                ],
+              },
             ],
           },
         );
@@ -166,13 +174,9 @@ export default function createProjectKeyProductsListStore() {
       },
 
       async toggleKeyProductEnabled({ rootState }, keyProduct) {
-        if (keyProduct.enabled) {
-          return;
-        }
+        const action = keyProduct.enabled ? 'unpublish' : 'publish';
         await axios.post(
-          `${rootState.config.apiUrl}/admin/api/v1/key-products/${keyProduct.id}/publish`,
-          {
-          },
+          `${rootState.config.apiUrl}/admin/api/v1/key-products/${keyProduct.id}/${action}`,
         );
       },
 

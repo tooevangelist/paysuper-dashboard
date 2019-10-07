@@ -74,6 +74,12 @@ const routes = [
         name: 'ProjectKeyProductsList',
       },
       {
+        path: 'game-keys/:keyProductId',
+        component: () => import('@/pages/ProjectKeyProductPage.vue'),
+        meta: projectPagesMeta,
+        name: 'ProjectKeyProduct',
+      },
+      {
         path: 'settings/',
         component: () => import('@/pages/ProjectSettingsPage.vue'),
         meta: projectPagesMeta,

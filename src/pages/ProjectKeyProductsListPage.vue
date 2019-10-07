@@ -1,14 +1,11 @@
 <script>
 import { debounce, get, isEqual } from 'lodash-es';
 import { mapState, mapGetters, mapActions } from 'vuex';
-import Notifications from '@/mixins/Notifications';
 import ProjectKeyProductsListStore from '@/store/ProjectKeyProductsListStore';
 import NoResults from '@/components/NoResults.vue';
 import PictureGameKeyWithDoor from '@/components/PictureGameKeyWithDoor.vue';
 
 export default {
-  mixins: [Notifications],
-
   components: {
     PictureGameKeyWithDoor,
     NoResults,
@@ -31,6 +28,8 @@ export default {
       isSearchRouting: false,
       isInfiniteScrollLocked: false,
       openedTooltipId: '',
+      isDeleteKeyProductConfirmOpened: false,
+      deleteKeyProductCallback: () => {},
     };
   },
 
@@ -39,7 +38,7 @@ export default {
       this.initQuery(to.query);
       this.updateFiltersFromQuery();
       this.setIsLoading(true);
-      await this.fetchKeyProducts().catch(this.$_Notifications_showErrorMessage);
+      await this.fetchKeyProducts().catch(this.$showErrorMessage);
       this.setIsLoading(false);
     }
     this.isSearchRouting = false;
@@ -55,6 +54,7 @@ export default {
   },
 
   computed: {
+    ...mapState('Project', ['project']),
     ...mapState('ProjectKeyProductsList', ['gameKeys', 'filterValues', 'query', 'apiQuery']),
     ...mapGetters('ProjectKeyProductsList', ['getFilterValues']),
 
@@ -108,7 +108,7 @@ export default {
       this.setIsLoading(true);
       this.submitFilters(this.filters);
       this.navigate();
-      await this.fetchKeyProducts().catch(this.$_Notifications_showErrorMessage);
+      await this.fetchKeyProducts().catch(this.$showErrorMessage);
       this.setIsLoading(false);
     },
 
@@ -122,23 +122,20 @@ export default {
       });
     },
 
-    async handleAddKeys() {
-      this.setIsLoading(true);
-      await this.createKeyProduct().catch(this.$_Notifications_showErrorMessage);
-      await this.searchKeyProducts();
-      this.setIsLoading(false);
-    },
-
-    async handleDeleteKeyProduct(keyProduct) {
-      this.setIsLoading(true);
-      await this.deleteKeyProduct(keyProduct.id).catch(this.$_Notifications_showErrorMessage);
-      await this.searchKeyProducts();
-      this.setIsLoading(false);
+    handleDeleteKeyProduct(keyProduct) {
+      this.isDeleteKeyProductConfirmOpened = true;
+      this.deleteKeyProductCallback = async () => {
+        this.isDeleteKeyProductConfirmOpened = false;
+        this.setIsLoading(true);
+        await this.deleteKeyProduct(keyProduct.id).catch(this.$showErrorMessage);
+        await this.searchKeyProducts();
+        this.setIsLoading(false);
+      };
     },
 
     async handleToggleKeyProductEnabled(keyProduct) {
       this.setIsLoading(true);
-      await this.toggleKeyProductEnabled(keyProduct).catch(this.$_Notifications_showErrorMessage);
+      await this.toggleKeyProductEnabled(keyProduct).catch(this.$showErrorMessage);
       await this.searchKeyProducts();
       this.setIsLoading(false);
     },
@@ -170,7 +167,9 @@ export default {
           <IconUpload class="upload-icon" fill="#919699" />
           QUILIN PACKAGES
         </UiButton>
-        <UiButton @click="handleAddKeys">ADD KEYS</UiButton>
+        <RouterLink :to="`/projects/${project.id}/game-keys/new/`">
+          <UiButton>ADD KEYS</UiButton>
+        </RouterLink>
       </div>
     </div>
 
@@ -196,7 +195,7 @@ export default {
         class="content-row"
         v-for="(keyProduct, index) in gameKeys.products"
         :key="keyProduct.id"
-        :link="`/gameKeys/${keyProduct.id}`"
+        :link="`/projects/${project.id}/game-keys/${keyProduct.id}`"
       >
         <UiTableCell align="left" valign="top">
           <span class="leading-cell-content">{{ index + 1 }}</span>
@@ -298,6 +297,17 @@ export default {
       <span v-if="!isFiltersNotEmpty">You don’t have any items yet</span>
     </NoResults>
   </UiPanel>
+
+  <UiDeleteModal
+    v-if="isDeleteKeyProductConfirmOpened"
+    title="Delete game key"
+    closeButtonText="Cancel"
+    submitButtonText="Delete"
+    @close="isDeleteKeyProductConfirmOpened = false"
+    @submit="deleteKeyProductCallback"
+  >
+    Are you sure you want to delete the game key?
+  </UiDeleteModal>
 </div>
 </template>
 
