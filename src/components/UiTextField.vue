@@ -144,6 +144,7 @@ export default {
     <slot name="label">{{ label }}</slot>
   </label>
   <UiTip
+    class="suggest"
     innerPosition="left"
     position="bottom"
     width="100%"
@@ -189,7 +190,6 @@ $left-indent: 12px;
   padding: 24px 0;
   position: relative;
   width: 100%;
-  z-index: 3;
 }
 .input {
   background-color: $input-background-color;
@@ -271,5 +271,11 @@ $left-indent: 12px;
   display: block;
   font-size: $secondary-input-size;
   position: absolute;
+}
+
+.suggest {
+  &:empty {
+    display: none;
+  }
 }
 </style>
