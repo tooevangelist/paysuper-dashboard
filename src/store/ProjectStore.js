@@ -29,13 +29,14 @@ function mapDataApiToForm(data) {
 }
 
 export default function createProjectStore() {
+  const localStorageCurrencies = localStorage.getItem('projectCurrencies');
   return {
     state: {
       project: null,
       projectPublicName: '',
 
       // @todo remove after adding real param to API
-      currencies: ['USD'],
+      currencies: localStorageCurrencies ? JSON.parse(localStorageCurrencies) : ['USD'],
     },
 
     getters: {
@@ -64,6 +65,7 @@ export default function createProjectStore() {
         state.projectPublicName = value.en;
       },
       currencies(state, value) {
+        localStorage.setItem('projectCurrencies', JSON.stringify(value));
         state.currencies = value;
       },
     },
