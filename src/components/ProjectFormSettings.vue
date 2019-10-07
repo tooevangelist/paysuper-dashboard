@@ -1,14 +1,12 @@
 <script>
 import { forEach, get, set } from 'lodash-es';
 import { required, minLength } from 'vuelidate/lib/validators';
-import ImageUpload from '@/components/ImageUpload.vue';
 import KeyGenerateField from '@/components/KeyGenerateField.vue';
 
 export default {
   name: 'ProjectFormSettings',
 
   components: {
-    ImageUpload,
     KeyGenerateField,
   },
 
@@ -20,6 +18,10 @@ export default {
     uploadImage: {
       type: Function,
       required: true,
+    },
+    currencies: {
+      required: true,
+      type: Array,
     },
   },
 
@@ -95,7 +97,7 @@ export default {
 
 <template>
 <div class="project-form-settings">
-  <ImageUpload
+  <UiImageUpload
     class="section"
     :uploadImage="uploadImage"
     v-model="project.image"
@@ -145,6 +147,24 @@ export default {
       :langs="langs"
       label="Short description"
       v-bind="$getValidatedFieldProps('shortDescription.en')"
+    />
+  </div>
+
+  <div class="section">
+    <UiHeader
+      :hasMargin="true"
+      level="3"
+    >
+      Currencies
+    </UiHeader>
+    <p class="text">
+      Choose a fixed set of currencies which will be actual for all products in this project.
+      <b>USD is default currency</b>.
+    </p>
+
+    <UiCurrenciesMainHub
+      :currencies="currencies"
+      @change="$emit('currenciesChange', $event)"
     />
   </div>
 

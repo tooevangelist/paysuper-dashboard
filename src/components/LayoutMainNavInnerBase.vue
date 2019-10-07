@@ -68,15 +68,16 @@ export default {
     <RouterLink
       v-for="(item, index) in items"
       :key="index"
-      :class="['item', { '_current': currentItemIndex === index }]"
+      :class="[
+        'item',
+        { '_current': currentItemIndex === index, '_not-available': !item.available },
+      ]"
       :to="item.url"
     >
       <div class="icon">
         <component :is="item.icon" />
       </div>
-      <div class="text">
-        <div class="title">{{ item.title }}</div>
-      </div>
+      <div class="title">{{ item.title }}</div>
     </RouterLink>
   </div>
 </div>
@@ -150,6 +151,19 @@ export default {
   &._current {
     cursor: default;
   }
+  &._not-available {
+    cursor: default;
+
+    & > .title::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -26px;
+      right: -4px;
+      height: 0;
+      border-top: 1px solid #c6cacc;
+    }
+  }
 }
 .icon {
   display: flex;
@@ -169,22 +183,24 @@ export default {
     fill: #3d7bf5;
   }
 
-  .item._current & > svg {
+  .item._current & > svg,
+  .item._not-available & > svg {
     fill: #c6cacc;
   }
 }
 .title {
+  position: relative;
   color: #000;
   font-size: 14px;
   line-height: 20px;
   transition: color 0.2s ease-out;
-  margin-top: 2px;
 
   .item:hover & {
     color: #3d7bf5;
   }
 
-  .item._current & {
+  .item._current &,
+  .item._not-available & {
     color: #c6cacc;
   }
 }

@@ -15,6 +15,10 @@ export default {
       type: Function,
       required: true,
     },
+    currencies: {
+      required: true,
+      type: Array,
+    },
   },
 
   methods: {

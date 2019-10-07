@@ -1,5 +1,7 @@
 <script>
-import { find, get, startCase } from 'lodash-es';
+import {
+  find, get, includes, startCase,
+} from 'lodash-es';
 import { directive as clickaway } from 'vue-clickaway';
 
 export default {
@@ -23,6 +25,13 @@ export default {
       default: 'IconArrowDown',
       type: String,
     },
+    textColor: {
+      default: 'gray',
+      type: String,
+      validator(value) {
+        return includes(['gray', 'white'], value);
+      },
+    },
     options: {
       default: () => [],
       type: Array,
@@ -39,6 +48,20 @@ export default {
     value: {
       default: '',
       type: [String, Number],
+    },
+    tipInnerPosition: {
+      default: 'right',
+      type: String,
+      validator(value) {
+        return includes(['left', 'right'], value);
+      },
+    },
+    tipPosition: {
+      default: 'bottom',
+      type: String,
+      validator(value) {
+        return includes(['bottom', 'top'], value);
+      },
     },
   },
   data() {
@@ -99,7 +122,7 @@ export default {
   @click.self="toggle"
 >
   <span
-    class="selected"
+    :class="['selected', `_${textColor}`]"
     @click="toggle"
   >
     <component :is="iconComponent" class="icon" />
@@ -110,8 +133,8 @@ export default {
   </span>
 
   <UiTip
-    innerPosition="right"
-    position="bottom"
+    :position="tipPosition"
+    :innerPosition="tipInnerPosition"
     :margin="2"
     :closeDelay="0"
     :visible="isOpened"
@@ -120,9 +143,15 @@ export default {
     <div class="list">
       <div
         v-for="(option, index) in options"
-        class="item"
         :key="index"
-        :class="{ '_selected': option.value === value }"
+        :class="[
+          'item',
+          {
+            '_selected': option.value === value,
+            '_has-color': option.color,
+            [`_${option.color}`]: option.color,
+          },
+        ]"
         @click="emitChange(option.value)"
       >
         {{ option.label }}
@@ -133,7 +162,8 @@ export default {
 </template>
 
 <style scoped lang="scss">
-$normal-text-color: #78909c;
+$gray-text-color: #78909c;
+$white-text-color: #fff;
 $selected-text-color: #c6cacc;
 $hover-text-color: #3d7bf5;
 $hover-background-color: rgba($hover-text-color, 0.08);
@@ -144,12 +174,24 @@ $hover-background-color: rgba($hover-text-color, 0.08);
 .selected {
   font-size: 12px;
   line-height: 16px;
-  color: $normal-text-color;
   cursor: pointer;
   display: flex;
   align-items: center;
   letter-spacing: 0.4px;
   overflow: hidden;
+
+  &._gray {
+    color: $gray-text-color;
+    & > .icon {
+      fill: $gray-text-color;
+    }
+  }
+  &._white {
+    color: $white-text-color;
+    & > .icon {
+      fill: $white-text-color;
+    }
+  }
 
   .select-as-button._is-only-icon & {
     width: 32px;
@@ -164,7 +206,6 @@ $hover-background-color: rgba($hover-text-color, 0.08);
 }
 .icon {
   margin-right: 9px;
-  fill: $normal-text-color;
 
   .select-as-button._is-only-icon & {
     margin-right: 0;
@@ -183,6 +224,7 @@ $hover-background-color: rgba($hover-text-color, 0.08);
   min-width: 200px;
 }
 .item {
+  position: relative;
   font-size: 14px;
   line-height: 20px;
   color: #000000;
@@ -192,6 +234,7 @@ $hover-background-color: rgba($hover-text-color, 0.08);
   transition: all 0.2s ease-out;
   display: flex;
   align-items: center;
+  letter-spacing: 0.25px;
 
   &:not(._selected):hover {
     background: $hover-background-color;
@@ -199,6 +242,46 @@ $hover-background-color: rgba($hover-text-color, 0.08);
 
     .icon > svg {
       fill: $hover-text-color;
+    }
+  }
+
+  &._has-color {
+    padding: 8px 16px 8px 32px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      left: 13px;
+      top: calc(50% - 3px);
+    }
+
+    &._blue {
+      &::before {
+        background-color: #3d7bf5;
+      }
+    }
+    &._yellow {
+      &::before {
+        background-color: #f3aa18;
+      }
+    }
+    &._purple {
+      &::before {
+        background-color: #7e57c2;
+      }
+    }
+    &._green {
+      &::before {
+        background-color: #2fa84f;
+      }
+    }
+    &._red {
+      &::before {
+        background-color: #ea3d2f;
+      }
     }
   }
 

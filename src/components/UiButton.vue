@@ -29,6 +29,7 @@ export default {
         return includes([
           'blue',
           'orange',
+          'yellow',
           'purple',
           'green',
           'gray',
@@ -54,7 +55,7 @@ export default {
       default: 'default',
       type: String,
       validator(value) {
-        return includes(['small', 'default'], value);
+        return includes(['tiny', 'small', 'default'], value);
       },
     },
     text: {
@@ -108,6 +109,7 @@ export default {
 <style scoped lang="scss">
 /** @TODO - move to gui consts, fix color and typographics consts */
 $blue-button-color: #3d7bf5;
+$yellow-button-color: #f3aa18;
 $orange-button-color: #ff6f6f;
 $purple-button-color: #8077e7;
 $green-button-color: #2fa84f;
@@ -206,6 +208,11 @@ $primary-button-size: 14px;
     }
   }
 
+  &._tiny {
+    padding: 4px 16px;
+    line-height: 16px;
+    height: 24px;
+  }
   &._small {
     padding: 8px 16px;
     line-height: 16px;
@@ -219,6 +226,9 @@ $primary-button-size: 14px;
   }
   &._orange {
     @include base-button($orange-button-color);
+  }
+  &._yellow {
+    @include base-button($yellow-button-color);
   }
   &._purple {
     @include base-button($purple-button-color);

@@ -3,6 +3,7 @@ import { OpenFileDialog } from '@/helpers/uploader';
 import getMessageFromError from '@/helpers/getMessageFromError';
 
 export default {
+  name: 'UiImageUpload',
   model: {
     prop: 'value',
     event: 'change',
@@ -10,7 +11,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: 'Update cover',
+      default: 'cover',
     },
     description: {
       type: String,
@@ -23,6 +24,10 @@ export default {
     value: {
       type: String,
       required: true,
+    },
+    tag: {
+      type: String,
+      default: '',
     },
   },
   data() {
@@ -81,6 +86,12 @@ export default {
     :class="{'_no-image': !value}"
     :style="{backgroundImage: `url(${value})`}"
   >
+    <span
+      class="tag"
+      v-if="tag"
+    >
+      {{ tag }}
+    </span>
     <IconNoImage v-if="!value" width="22" height="22" fill="#C6CACC" />
   </div>
   <div
@@ -94,22 +105,11 @@ export default {
       </div>
     </template>
     <template v-else>
-      <div class="controls">
-        <span
-          class="upload-button"
-        >
-          <IconUpload />
-          {{ title }}
-        </span>
-        <span
-          v-if="value"
-          class="delete-button"
-          @click.stop="removeImage"
-        >
-          <IconDelete />
-          Delete
-        </span>
-      </div>
+      <UiUploadControls
+        :title="title"
+        :isFilled="Boolean(value)"
+        @delete.stop="removeImage"
+      />
       <div class="description">
         {{ description }}
       </div>
@@ -133,9 +133,29 @@ $error-text-color: #ea3d2f;
   justify-content: center;
   align-items: center;
   background-size: cover;
+  position: relative;
+  border-radius: 4px;
 
   &._no-image {
     background-color: #f1f3f4;
+  }
+}
+
+.tag {
+  position: absolute;
+  font-size: 8px;
+  line-height: 14px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  color: #fff;
+  background: #000000;
+  border-radius: 0 4px 0 4px;
+  padding: 0 3px;
+  top: 0;
+  right: 0;
+
+  .image._no-image & {
+    background-color: #c6cacc;
   }
 }
 

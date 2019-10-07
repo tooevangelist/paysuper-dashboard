@@ -1,7 +1,35 @@
 <script>
 import { mapState } from 'vuex';
-import { get, findIndex, includes } from 'lodash-es';
+import {
+  findIndex,
+  get,
+  includes,
+  kebabCase,
+  map,
+  startCase,
+  upperFirst,
+} from 'lodash-es';
 import LayoutMainNavInnerBase from '@/components/LayoutMainNavInnerBase.vue';
+
+function getItemIcon(item) {
+  return {
+    personalProfile: 'IconProfile',
+    companyInfo: 'IconBusinessCase',
+    licenseAgreement: 'IconBlank',
+    paymentMethods: 'IconMoney',
+    history: 'IconSandglass',
+  }[item];
+}
+
+function getItemAvailable(item, status) {
+  return {
+    personalProfile: true,
+    companyInfo: true,
+    licenseAgreement: status !== 'archive',
+    paymentMethods: status !== 'archive',
+    history: true,
+  }[item];
+}
 
 export default {
   name: 'LayoutMainNavProject',
@@ -14,42 +42,22 @@ export default {
     ...mapState('Merchant', ['merchant']),
 
     items() {
-      return [
-        {
-          title: 'Personal Profile',
-          value: 'personalProfile',
-          icon: 'IconProfile',
-          url: `/merchants/${this.merchant.id || 'new'}/personal-profile/`,
-          routeNames: ['MerchantAdminPersonalProfile'],
-        },
-        {
-          title: 'Company Info',
-          value: 'companyInfo',
-          icon: 'IconBusinessCase',
-          url: `/merchants/${this.merchant.id || 'new'}/company-info/`,
-          routeNames: ['MerchantAdminCompanyInfo'],
-        },
-        // {
-        //   title: 'Licence Agreement',
-        //   value: 'licenseAgreement',
-        //   icon: 'IconMoney',
-        //   url: `/merchants/${this.merchant.id || 'new'}?step=licenseAgreement`,
-        // },
-        {
-          title: 'Payment Methods',
-          value: 'paymentMethods',
-          icon: 'IconMoney',
-          url: `/merchants/${this.merchant.id || 'new'}/payment-methods/`,
-          routeNames: ['MerchantAdminPaymentMethods'],
-        },
-        {
-          title: 'History',
-          value: 'history',
-          icon: 'IconSandglass',
-          url: `/merchants/${this.merchant.id || 'new'}/history/`,
-          routeNames: ['MerchantAdminHistory'],
-        },
+      const navItems = [
+        'personalProfile',
+        'companyInfo',
+        'licenseAgreement',
+        'paymentMethods',
+        'history',
       ];
+
+      return map(navItems, item => ({
+        title: startCase(item),
+        value: item,
+        icon: getItemIcon(item),
+        url: `/merchants/${this.merchant.id || 'new'}/${kebabCase(item)}/`,
+        routeNames: [`MerchantAdmin${upperFirst(item)}`],
+        available: getItemAvailable(item, this.status),
+      }));
     },
 
     currentItemIndex() {

@@ -46,6 +46,7 @@ export default {
     },
     value: {
       required: true,
+      type: Object,
     },
     isMoney: {
       default: false,

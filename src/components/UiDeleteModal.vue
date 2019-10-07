@@ -1,20 +1,35 @@
 <script>
 export default {
-  name: 'DeactivateProjectModal',
+  name: 'UiDeleteModal',
+
+  props: {
+    title: {
+      type: String,
+      default: 'Delete',
+    },
+    closeButtonText: {
+      type: String,
+      default: 'Close',
+    },
+    submitButtonText: {
+      type: String,
+      default: 'Delete',
+    },
+  },
 };
 </script>
 
 <template>
-<UiModal width="448px">
+<UiModal width="458px">
   <UiHeader
     slot="header"
     level="3"
     align="center"
   >
-    Deactivation
+    {{ title }}
   </UiHeader>
   <p class="description">
-    You can deactivate the project, if you want to stop all activities in it.
+    <slot />
   </p>
   <div class="controls">
     <UiButton
@@ -23,14 +38,14 @@ export default {
       :isTransparent="true"
       @click="$emit('close')"
     >
-      CLOSE
+      {{ closeButtonText }}
     </UiButton>
     <UiButton
       class="submit-button"
       color="red"
-      @click="$emit('deactivate')"
+      @click="$emit('submit')"
     >
-      DEACTIVATE
+      {{ submitButtonText }}
     </UiButton>
   </div>
 </UiModal>
@@ -49,6 +64,10 @@ export default {
 
 .controls {
   display: flex;
+}
+.submit-button,
+.close-button {
+  text-transform: uppercase;
 }
 .submit-button {
   flex-grow: 1;

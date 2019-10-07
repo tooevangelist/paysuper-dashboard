@@ -2,7 +2,6 @@
 import { cloneDeep } from 'lodash-es';
 import PaymentMethodsTable from '@/mixins/PaymentMethodsTable';
 import ExpandableCellText from '@/components/ExpandableCellText.vue';
-import OpenerCorner from '@/components/OpenerCorner.vue';
 
 export default {
   name: 'MerchantAdminChannelCostsTable',
@@ -11,7 +10,6 @@ export default {
 
   components: {
     ExpandableCellText,
-    OpenerCorner,
   },
 
   props: {
@@ -91,8 +89,8 @@ export default {
         },
         {
           ...(cloneDeep(channelCostsItem)),
-          method: 'Webmoney',
-          icon: 'IconWebmoney',
+          method: 'WebMoney',
+          icon: 'IconWebMoney',
           isExpanded: false,
           items: [
             cloneDeep(channelCostsItem),
