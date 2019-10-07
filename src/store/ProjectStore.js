@@ -30,10 +30,13 @@ function mapDataApiToForm(data) {
 
 export default function createProjectStore() {
   return {
-    state: () => ({
+    state: {
       project: null,
       projectPublicName: '',
-    }),
+
+      // @todo remove after adding real param to API
+      currencies: ['USD'],
+    },
 
     mutations: {
       project(state, value) {
@@ -41,6 +44,9 @@ export default function createProjectStore() {
       },
       projectPublicName(state, value) {
         state.projectPublicName = value.en;
+      },
+      currencies(state, value) {
+        state.currencies = value;
       },
     },
 

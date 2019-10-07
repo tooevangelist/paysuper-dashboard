@@ -1,11 +1,17 @@
 <script>
-import LocalizationsModal from '@/components/LocalizationsModal.vue';
+import { upperFirst } from 'lodash-es';
+import EntityManagementModal from '@/components/EntityManagementModal.vue';
 
 export default {
   name: 'UiLangsMainHub',
 
   components: {
-    LocalizationsModal,
+    EntityManagementModal,
+  },
+
+  model: {
+    prop: 'langs',
+    event: 'change',
   },
 
   props: {
@@ -17,22 +23,68 @@ export default {
 
   data() {
     return {
+      defaultOptionCode: 'en',
       isToReopenAddModal: false,
-      isLocalizationsModalOpened: false,
+      isEntityManagementModalOpened: false,
       localizationsModalLangs: [],
       isDeleteModalOpened: false,
       langToDelete: '',
+      localizationOptions: [
+        { label: 'Английский', code: 'en' },
+        { label: 'Испанский', code: 'es' },
+        { label: 'Арабский', code: 'ar' },
+        { label: 'Русский', code: 'ru' },
+        { label: 'Традиционный китайский', code: 'zh-Hant' },
+        { label: 'Упрощенный китайский', code: 'zh-Hans' },
+        { label: 'Бразильский португальский', code: 'pt-BR' },
+        { label: 'Португальский', code: 'pt-PT' },
+        { label: 'Французский', code: 'fr' },
+        { label: 'Немецкий', code: 'de' },
+        { label: 'Итальянский', code: 'it' },
+        { label: 'Польский', code: 'pl' },
+        { label: 'Турецкий', code: 'tr' },
+        { label: 'Греческий', code: 'el' },
+        { label: 'Корейский', code: 'ko' },
+        { label: 'Вьетнамский', code: 'vi' },
+        { label: 'Японский', code: 'ja' },
+        { label: 'Иврит', code: 'he' },
+        { label: 'Тайский', code: 'th' },
+        { label: 'Чешский', code: 'cs' },
+        { label: 'Болгарский', code: 'bg' },
+        { label: 'Финский', code: 'fi' },
+        { label: 'Шведский', code: 'sv' },
+        { label: 'Датский', code: 'da' },
+      ],
     };
   },
 
+  computed: {
+    localizationOptionsPrepared() {
+      return this.localizationOptions.map((item) => {
+        let iconComponent = 'IconLangNoIcon';
+        const [name] = item.code.split('-');
+        const componentName = `IconLang${upperFirst(name)}`;
+
+        if (this.$options.components[componentName]) {
+          iconComponent = componentName;
+        }
+        return {
+          label: `${item.label} (${item.code.toUpperCase()})`,
+          code: item.code,
+          iconComponent,
+        };
+      });
+    },
+  },
+
   methods: {
-    openLocalizationsModal() {
+    openEntityManagementModal() {
       this.localizationsModalLangs = this.langs.slice();
-      this.isLocalizationsModalOpened = true;
+      this.isEntityManagementModalOpened = true;
     },
 
     requestDeleteLang(lang) {
-      if (lang === 'en') {
+      if (lang === this.defaultOptionCode) {
         return;
       }
       this.isDeleteModalOpened = true;
@@ -41,7 +93,7 @@ export default {
 
     requestDeleteLangFromModal(lang) {
       this.langToDelete = lang;
-      this.isLocalizationsModalOpened = false;
+      this.isEntityManagementModalOpened = false;
       this.isToReopenAddModal = true;
       this.isDeleteModalOpened = true;
     },
@@ -50,7 +102,7 @@ export default {
       this.isDeleteModalOpened = false;
 
       if (this.isToReopenAddModal) {
-        this.isLocalizationsModalOpened = true;
+        this.isEntityManagementModalOpened = true;
         this.isToReopenAddModal = false;
         const newLangs = this.localizationsModalLangs.filter(item => this.langToDelete !== item);
         this.localizationsModalLangs = newLangs;
@@ -62,36 +114,21 @@ export default {
 
     handleModalSave(newLangs) {
       this.$emit('change', newLangs);
-      this.isLocalizationsModalOpened = false;
+      this.isEntityManagementModalOpened = false;
     },
   },
 };
 </script>
 
 <template>
-<div class="ui-langs-main-hub">
-  <div class="title">Localization</div>
-  <div>
-    <button
-      class="add-button"
-      @click="openLocalizationsModal"
-    >
-      <IconPlus width="9" height="9" />
-      <span>ADD</span>
-    </button>
-    <button
-      class="lang-button"
-      :class="{ '_undeletable': lang === 'en' }"
-      v-for="lang in langs"
-      :key="lang"
-      @click="requestDeleteLang(lang)"
-    >
-      {{ lang }}
-      <IconClose
-        class="close-button"
-      />
-    </button>
-  </div>
+<div>
+  <UiEntityMainHub
+    label="Localization"
+    :value="langs"
+    :defaultOption="defaultOptionCode"
+    @add="openEntityManagementModal"
+    @delete="requestDeleteLang"
+  />
 
   <UiDeleteModal
     v-if="isDeleteModalOpened"
@@ -103,92 +140,16 @@ export default {
     Are you sure you want to delete? All texts and descriptions for this language will be lost.
   </UiDeleteModal>
 
-  <LocalizationsModal
-    v-if="isLocalizationsModalOpened"
+  <EntityManagementModal
+    v-if="isEntityManagementModalOpened"
     v-model="localizationsModalLangs"
-    @close="isLocalizationsModalOpened = false"
+    title="Localizations"
+    :value="langs"
+    :options="localizationOptionsPrepared"
+    :defaultOptionCode="defaultOptionCode"
+    @close="isEntityManagementModalOpened = false"
     @delete="requestDeleteLangFromModal"
     @save="handleModalSave"
   />
 </div>
 </template>
-
-<style scoped lang="scss">
-.ui-langs-main-hub {
-  padding-top: 6px;
-}
-
-.title {
-  font-size: 12px;
-  line-height: 16px;
-  color: #5e6366;
-  padding-left: 12px;
-  margin-bottom: 8px;
-}
-
-.add-button,
-.lang-button {
-  position: relative;
-  border-radius: 14px;
-  font-size: 12px;
-  cursor: pointer;
-  outline: none;
-  height: 28px;
-  line-height: 28px;
-  text-transform: uppercase;
-  display: inline-flex;
-  transition: background-color 0.2s ease-out, color 0.2s ease-out;
-  border: 0;
-  margin-bottom: 2px;
-
-  & + & {
-    margin-left: 2px;
-  }
-}
-
-.add-button {
-  padding: 0 14px 0 12px;
-  background-color: #3d7bf5;
-  color: #fff;
-  align-items: baseline;
-
-  &:hover {
-    background-color: rgba(#3d7bf5, 0.85);
-  }
-
-  & > svg {
-    margin-right: 3px;
-  }
-}
-
-.lang-button {
-  padding: 0 20px;
-  background-color: #f7f9fa;
-
-  &:not(._undeletable):hover {
-    color: #ea3d2f;
-    background-color: rgba(#ea3d2f, 0.1);
-
-    .close-button {
-      stroke: #ea3d2f;
-    }
-  }
-
-  &._undeletable {
-    cursor: default;
-
-    .close-button {
-      display: none;
-    }
-  }
-}
-
-.close-button {
-  position: absolute;
-  top: 9px;
-  right: 9px;
-  width: 7px;
-  height: 7px;
-  stroke: #919699;
-}
-</style>

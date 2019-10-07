@@ -1,6 +1,6 @@
 <script>
 import { cloneDeep, isEqual } from 'lodash-es';
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapMutations, mapActions } from 'vuex';
 import ProjectStore from '@/store/ProjectStore';
 import SaveDataWarningModal from '@/components/SaveDataWarningModal.vue';
 
@@ -35,7 +35,7 @@ export default {
   },
 
   computed: {
-    ...mapState('Project', ['project']),
+    ...mapState('Project', ['project', 'currencies']),
   },
 
   async beforeRouteUpdate(to, from, next) {
@@ -74,6 +74,7 @@ export default {
       'saveProject',
     ]),
     ...mapActions('User/Merchant', ['completeStep']),
+    ...mapMutations('Project', { setCurrencies: 'currencies' }),
 
     updateProjectLocal() {
       this.projectLocal = cloneDeep(this.project);
@@ -126,8 +127,10 @@ export default {
     v-bind="{
       uploadImage,
       project: projectLocal,
+      currencies,
     }"
     @save="handleSaveProject"
+    @currenciesChange="setCurrencies"
   />
   <SaveDataWarningModal
     v-show="isUnsavedDataModalOpened"
