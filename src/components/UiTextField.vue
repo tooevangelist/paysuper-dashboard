@@ -104,10 +104,12 @@ export default {
   methods: {
     openSuggest() {
       this.isSuggestVisible = true;
+      this.$emit('suggestOpened');
     },
 
     closeSuggest() {
       this.isSuggestVisible = false;
+      this.$emit('suggestClosed');
     },
   },
 };
@@ -116,7 +118,7 @@ export default {
 <template>
 <div
   class="text-field"
-  v-click-outside="() => (isSuggestVisible = false)"
+  v-click-outside="closeSuggest"
 >
   <Money
     v-if="isMoney"
