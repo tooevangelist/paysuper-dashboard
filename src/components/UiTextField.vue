@@ -102,8 +102,7 @@ export default {
   },
 
   methods: {
-    handleInputFocus() {
-      this.$emit('focus');
+    openSuggest() {
       this.isSuggestVisible = true;
     },
 
@@ -126,16 +125,16 @@ export default {
     :class="inputClasses"
     @blur="$emit('blur')"
     @focus="$emit('focus')"
-    @input="$emit('input', inputValue)"
+    @input="openSuggest(), $emit('input', inputValue)"
   />
   <input
     v-else
     v-model="inputValue"
     v-bind="{ ...$attrs, type, required, disabled }"
     :class="inputClasses"
-    @focus="handleInputFocus"
+    @focus="$emit('focus')"
     @blur="$emit('blur')"
-    @input="$emit('input', inputValue)"
+    @input="openSuggest(), $emit('input', inputValue)"
   />
   <label
     class="label"
@@ -154,7 +153,7 @@ export default {
     :closeDelay="0"
     :stayOpenedOnHover="false"
   >
-    <slot name="dropdown" v-bind="{ closeSuggest }"></slot>
+    <slot name="suggest" v-bind="{ closeSuggest }"></slot>
   </UiTip>
   <span
     v-if="isVisibleError"
