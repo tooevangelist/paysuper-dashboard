@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { sortBy } from 'lodash-es';
+import { sortBy, flatten } from 'lodash-es';
 import i18n from '@/plugins/i18n';
 
 export default function createDictionariesStore() {
@@ -25,6 +25,7 @@ export default function createDictionariesStore() {
           code_a3: 'GBP',
         },
       ],
+      regionsCurrencies: [],
       countries: [],
     }),
 
@@ -46,6 +47,13 @@ export default function createDictionariesStore() {
       currenciesThreeLetters(state) {
         return state.currencies.map(item => ({ label: item.name.en, value: item.code_a3 }));
       },
+
+      currenciesWithRegions(state) {
+        return flatten(state.regionsCurrencies.map(item => item.regions.map(region => ({
+          currency: item.currency,
+          region: region.region,
+        }))));
+      },
     },
 
     mutations: {
@@ -55,12 +63,15 @@ export default function createDictionariesStore() {
       countries(store, value) {
         store.countries = value;
       },
+      regionsCurrencies(store, value) {
+        store.regionsCurrencies = value;
+      },
     },
 
     actions: {
       initState({ dispatch }) {
         return Promise.all([
-          // dispatch('fetchCurrencies'),
+          dispatch('fetchRegionsCurrencies'),
           dispatch('fetchCountries'),
         ]);
       },
@@ -79,6 +90,18 @@ export default function createDictionariesStore() {
 
             commit('currencies', response.data);
           }).catch(() => { });
+      },
+
+      async fetchRegionsCurrencies({ commit, rootState }) {
+        const url = `${rootState.config.apiUrl}/api/v1/price_group/currencies`;
+
+        const result = await axios.get(url)
+          .then(response => response.data)
+          .catch(() => ({
+            regions: [],
+          }));
+
+        commit('regionsCurrencies', result.regions);
       },
 
       getCountries({ rootState }) {

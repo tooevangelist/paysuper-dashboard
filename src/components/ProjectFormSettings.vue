@@ -19,6 +19,10 @@ export default {
       type: Function,
       required: true,
     },
+    currencies: {
+      required: true,
+      type: Array,
+    },
   },
 
   data() {
@@ -143,6 +147,24 @@ export default {
       :langs="langs"
       label="Short description"
       v-bind="$getValidatedFieldProps('shortDescription.en')"
+    />
+  </div>
+
+  <div class="section">
+    <UiHeader
+      :hasMargin="true"
+      level="3"
+    >
+      Currencies
+    </UiHeader>
+    <p class="text">
+      Choose a fixed set of currencies which will be actual for all products in this project.
+      <b>USD is default currency</b>.
+    </p>
+
+    <UiCurrenciesMainHub
+      :currencies="currencies"
+      @change="$emit('currenciesChange', $event)"
     />
   </div>
 
