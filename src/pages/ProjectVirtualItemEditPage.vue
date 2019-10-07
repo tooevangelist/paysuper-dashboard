@@ -2,7 +2,7 @@
   <div>
     <UiPageHeaderFrame>
       <template slot="title">
-        Adding item
+        {{ virtualItem === null ? 'Adding item' : 'Edit item' }}
       </template>
       <span slot="description">
         Here you can add a new item to your project, specify localised text descriptions,
@@ -56,12 +56,13 @@
         </p>
 
         <div class="radio-group">
-          <UiRadio class="radio">
-            Real currency
-            <IconQuestion fill="#919699" />
-          </UiRadio>
-          <UiRadio class="radio">
-            Virtual currency
+          <UiRadio
+            class="radio"
+            v-model="pricingMethod"
+            v-for="(method, index) in pricingMethodOptions"
+            :key="index"
+            :value="method.value">
+            {{ method.label }}
             <IconQuestion fill="#919699" />
           </UiRadio>
         </div>
@@ -128,6 +129,17 @@ export default {
         ru: '',
       },
       sku: '',
+      pricingMethod: 'real',
+      pricingMethodOptions: {
+        real: {
+          label: 'Real currency',
+          value: 'real',
+        },
+        virtual: {
+          label: 'Virtual currency',
+          value: 'virtual',
+        },
+      },
       singleUnitPrice: {
         USD: 0,
         EUR: 0,
