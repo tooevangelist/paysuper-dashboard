@@ -1,7 +1,6 @@
 <script>
 import { get, find } from 'lodash-es';
 import MerchantAdminModal from '@/components/MerchantAdminModal.vue';
-import getStatusByKey from '@/helpers/getStatusByKey';
 
 export default {
   name: 'MerchantAdminLicenseAgreement',
@@ -70,7 +69,7 @@ export default {
       if (this.modalType === 'changeStatus') {
         this.newStatus = this.merchantStatus;
       }
-      this.modalOpened = false
+      this.modalOpened = false;
     },
     uploadDocument() {
       this.$emit('uploadDocument');
@@ -183,7 +182,7 @@ export default {
   display: flex;
   margin-bottom: 16px;
 }
-.no-agreement{
+.no-agreement {
   display: inline-flex;
   align-items: center;
   border: 1px solid #e3e5e6;

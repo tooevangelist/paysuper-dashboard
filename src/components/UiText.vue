@@ -17,5 +17,9 @@ export default {
   font-size: 14px;
   line-height: 20px;
   color: #5e6366;
+
+  a {
+    color: #3d7bf5;
+  }
 }
 </style>

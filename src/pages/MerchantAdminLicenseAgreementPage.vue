@@ -5,7 +5,7 @@ import PictureLicensePage from '@/components/PictureLicensePage.vue';
 import MerchantAdminLicenseAgreement from '@/components/MerchantAdminLicenseAgreement.vue';
 import getStatusByKey from '@/helpers/getStatusByKey';
 import getStatusKey from '@/helpers/getStatusKey';
-import { showSuccessMessage, showErrorMessage } from '@/helpers/notifications';
+import { showSuccessMessage } from '@/helpers/notifications';
 
 export default {
   name: 'MerchantLicenseAgreementPage',

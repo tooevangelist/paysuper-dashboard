@@ -1,13 +1,11 @@
 <script>
 import LocalizationsModal from '@/components/LocalizationsModal.vue';
-import DeleteLocalizationModal from '@/components/DeleteLocalizationModal.vue';
 
 export default {
   name: 'UiLangsMainHub',
 
   components: {
     LocalizationsModal,
-    DeleteLocalizationModal,
   },
 
   props: {
@@ -95,11 +93,15 @@ export default {
     </button>
   </div>
 
-  <DeleteLocalizationModal
+  <UiDeleteModal
     v-if="isDeleteModalOpened"
+    title="Delete localization"
+    closeButtonText="Cancel"
     @close="isDeleteModalOpened = false"
-    @delete="deleteLang"
-  />
+    @submit="deleteLang"
+  >
+    Are you sure you want to delete? All texts and descriptions for this language will be lost.
+  </UiDeleteModal>
 
   <LocalizationsModal
     v-if="isLocalizationsModalOpened"

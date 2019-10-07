@@ -1,11 +1,6 @@
 <script>
-import OpenerCorner from '@/components/OpenerCorner.vue';
-
 export default {
   name: 'ExpandableCellText',
-  components: {
-    OpenerCorner,
-  },
   props: {
     isOpened: {
       type: Boolean,
@@ -20,7 +15,7 @@ export default {
   <div class="head">
     <slot></slot>
   </div>
-  <OpenerCorner :isOpened="isOpened" />
+  <UiOpenerCorner :isOpened="isOpened" />
 </div>
 </template>
 

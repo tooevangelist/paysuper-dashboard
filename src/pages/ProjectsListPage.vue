@@ -6,7 +6,6 @@ import ProjectsListStore from '@/store/ProjectsListStore';
 import ProjectPanelItem from '@/components/ProjectPanelItem.vue';
 import NoResults from '@/components/NoResults.vue';
 import NewProjectModal from '@/components/NewProjectModal.vue';
-import DeactivateProjectModal from '@/components/DeactivateProjectModal.vue';
 
 export default {
   name: 'ProjectsListPage',
@@ -15,7 +14,6 @@ export default {
     ProjectPanelItem,
     NoResults,
     NewProjectModal,
-    DeactivateProjectModal,
   },
   async asyncData({ store, registerStoreModule, route }) {
     try {
@@ -173,11 +171,15 @@ export default {
     </NoResults>
   </div>
 
-  <DeactivateProjectModal
+  <UiDeleteModal
     v-if="isDeactivationModalOpened"
+    title="Deactivation"
+    submitButtonText="Deactivate"
     @close="isDeactivationModalOpened = false"
-    @deactivate="tryToDeactivateProject"
-  />
+    @submit="tryToDeactivateProject"
+  >
+    You can deactivate the project, if you want to stop all activities in it.
+  </UiDeleteModal>
 
   <NewProjectModal
     v-if="isNewProjectModalOpened"

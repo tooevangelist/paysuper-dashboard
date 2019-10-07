@@ -40,8 +40,10 @@ export default {
 
   async beforeRouteUpdate(to, from, next) {
     if (to.params.id !== from.params.id) {
+      this.setIsLoading(true);
       await this.initState({ id: to.params.id });
       this.updateProjectLocal();
+      this.setIsLoading(false);
     }
     next();
   },
@@ -75,10 +77,6 @@ export default {
 
     updateProjectLocal() {
       this.projectLocal = cloneDeep(this.project);
-    },
-
-    handleSectionChange(step) {
-      this.$router.push({ query: { step } });
     },
 
     async handleSaveProject() {

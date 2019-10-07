@@ -3,7 +3,6 @@ import { find, cloneDeep } from 'lodash-es';
 import ClickOutside from 'vue-click-outside';
 import PaymentMethodsTable from '@/mixins/PaymentMethodsTable';
 import ExpandableCellText from '@/components/ExpandableCellText.vue';
-import OpenerCorner from '@/components/OpenerCorner.vue';
 
 export default {
   name: 'MerchantAdminRefundCostsTable',
@@ -11,7 +10,6 @@ export default {
 
   components: {
     ExpandableCellText,
-    OpenerCorner,
   },
 
   directives: {
@@ -210,7 +208,7 @@ export default {
         >
           <div class="payout-party">
             {{getPayoutPartyLabel(data)}}
-            <OpenerCorner :isOpened="data.isPayoutPartyMenuOpened" />
+            <UiOpenerCorner :isOpened="data.isPayoutPartyMenuOpened" />
           </div>
 
           <UiTip
