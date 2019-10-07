@@ -1,10 +1,21 @@
 <script>
 import { Money } from 'v-money';
+import ClickOutside from 'vue-click-outside';
 
 export default {
   components: {
     Money,
   },
+
+  /**
+   * We can't just close suggest on blur
+   * if we do so, the tip will be closed before a click is handled by suggest item
+   * So we're closing th suggest on the click to outside
+   */
+  directives: {
+    ClickOutside,
+  },
+
   props: {
     additionalInfo: {
       default: '',
@@ -58,6 +69,7 @@ export default {
         precision: 0,
         masked: false,
       },
+      isSuggestVisible: false,
     };
   },
   computed: {
@@ -88,11 +100,25 @@ export default {
       this.inputValue = val;
     },
   },
+
+  methods: {
+    handleInputFocus() {
+      this.$emit('focus');
+      this.isSuggestVisible = true;
+    },
+
+    closeSuggest() {
+      this.isSuggestVisible = false;
+    },
+  },
 };
 </script>
 
 <template>
-<div class="text-field">
+<div
+  class="text-field"
+  v-click-outside="() => (isSuggestVisible = false)"
+>
   <Money
     v-if="isMoney"
     v-model="inputValue"
@@ -107,16 +133,28 @@ export default {
     v-model="inputValue"
     v-bind="{ ...$attrs, type, required, disabled }"
     :class="inputClasses"
+    @focus="handleInputFocus"
     @blur="$emit('blur')"
-    @focus="$emit('focus')"
     @input="$emit('input', inputValue)"
   />
   <label
     class="label"
     :title="label"
   >
-    {{ label }}
+    <slot name="label">{{ label }}</slot>
   </label>
+  <UiTip
+    innerPosition="left"
+    position="bottom"
+    width="100%"
+    :margin="-20"
+    :visible="isSuggestVisible"
+    :frameless="true"
+    :closeDelay="0"
+    :stayOpenedOnHover="false"
+  >
+    <slot name="dropdown" v-bind="{ closeSuggest }"></slot>
+  </UiTip>
   <span
     v-if="isVisibleError"
     class="error"
@@ -151,6 +189,7 @@ $left-indent: 12px;
   padding: 24px 0;
   position: relative;
   width: 100%;
+  z-index: 3;
 }
 .input {
   background-color: $input-background-color;
@@ -172,11 +211,6 @@ $left-indent: 12px;
     border-color: $focus-input-color;
   }
 
-  &:focus ~ .label,
-  &:not(:focus):not(._empty) ~ .label {
-    width: 50%;
-    transform: translateY(-24px) scale(0.75, 0.75);
-  }
   &:focus ~ .label {
     pointer-events: auto;
     color: $focus-input-color;
@@ -209,20 +243,16 @@ $left-indent: 12px;
   color: $secondary-input-color;
   line-height: 32px;
   margin: 0;
-  overflow: hidden;
   position: absolute;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 .label {
   font-size: $primary-input-size;
   left: 0;
-  pointer-events: none;
-  top: 24px;
-  transform-origin: left;
-  transition: transform 0.2s ease-out, color 0.2s linear, width 0.1s ease-out;
+  top: 6px;
   width: 100%;
   margin-left: 12px;
+  font-size: 12px;
+  line-height: 16px;
 
   &:after {
     color: #ea3d2f;

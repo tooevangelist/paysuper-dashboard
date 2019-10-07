@@ -9,7 +9,7 @@
     class="label"
     :title="label"
   >
-    {{ label }}
+    <slot name="label">{{ label }}</slot>
   </span>
 </div>
 </template>
@@ -86,20 +86,14 @@ $left-indent: 12px;
 }
 .label {
   color: $secondary-input-color;
-  line-height: 32px;
   margin: 0;
-  overflow: hidden;
   position: absolute;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   font-size: $primary-input-size;
-  color: $secondary-input-color;
   left: 0;
-  pointer-events: none;
-  top: 24px;
+  top: 6px;
+  width: 100%;
   margin-left: 12px;
-  width: 50%;
-  transform-origin: left;
-  transform: translateY(-24px) scale(0.75, 0.75);
+  font-size: 12px;
+  line-height: 16px;
 }
 </style>
