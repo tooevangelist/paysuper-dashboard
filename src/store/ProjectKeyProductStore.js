@@ -115,6 +115,12 @@ export default function createProjectKeyProductStore() {
           [platformId]: response.data.total_count,
         });
       },
+
+      async setPlatformPricesRecommendedBySteam({ rootState }, { platformId, amount }) {
+        const path = `/api/v1/pricing/recommended/steam?amount=${amount}`;
+        const response = await axios.get(`${rootState.config.apiUrl}${path}`);
+        console.log(11111, 'response', response);
+      },
     },
 
     namespaced: true,

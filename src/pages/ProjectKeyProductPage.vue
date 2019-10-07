@@ -1,12 +1,17 @@
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions, mapGetters } from 'vuex';
 import { required } from 'vuelidate/lib/validators';
 import { find, cloneDeep } from 'lodash-es';
 import ProjectKeyProductStore from '@/store/ProjectKeyProductStore';
 import { OpenFileDialog } from '@/helpers/uploader';
+import PriceSuggestTable from '@/components/PriceSuggestTable.vue';
 
 export default {
   name: 'ProjectKeyProductPage',
+
+  components: {
+    PriceSuggestTable,
+  },
 
   async asyncData({ store, registerStoreModule, route }) {
     try {
@@ -40,12 +45,34 @@ export default {
           name: 'Steam recommended prices',
         },
       ],
+
+      priceSuggestList: [
+        {
+          text: 'Continue manual input for all currencies',
+        },
+        {
+          text: 'Use auto-conversion from default currency',
+        },
+        {
+          text: 'Select Steam recommended prices',
+        },
+      ],
     };
   },
 
   computed: {
     ...mapState('Project', ['project']),
+    ...mapGetters('Project', ['currenciesDetailed']),
     ...mapState('ProjectKeyProduct', ['keyProductId', 'keyProduct', 'platforms', 'keyCounts']),
+
+    currenciesPrimary() {
+      return this.currenciesDetailed
+        .filter(item => item.currency === item.region)
+        .filter(item => item.currency !== 'USD');
+    },
+    currenciesSecondary() {
+      return this.currenciesDetailed.filter(item => item.currency !== item.region);
+    },
   },
 
   validations() {
@@ -81,6 +108,7 @@ export default {
     ...mapActions(['setIsLoading', 'uploadImage']),
     ...mapActions('ProjectKeyProduct', [
       'initState', 'uploadKey', 'updateKeyProduct', 'createKeyProduct',
+      'setPlatformPricesRecommendedBySteam',
     ]),
 
     updateKeyProductLocal() {
@@ -157,12 +185,30 @@ export default {
       }
       this.setIsLoading(false);
     },
+    handleSuggestClick(lol) {
+      console.log(111, 11);
+      // this.$refs.usdField.closeSuggest();
+    },
+
+    async handleSteamPriceSelect(amount, closeSuggest) {
+      this.setIsLoading(true);
+      await this.setPlatformPricesRecommendedBySteam({
+        amount,
+        platformId: 'steam',
+      });
+      closeSuggest();
+      this.setIsLoading(false);
+    },
   },
 };
 </script>
 
 <template>
 <div>
+  primary
+  <pre>{{currenciesPrimary}}</pre>
+  secondary
+  <pre>{{currenciesSecondary}}</pre>
   <UiPageHeaderFrame>
     <span slot="title">
       {{ keyProductId ? 'Editing' : 'Adding' }} key package
@@ -177,152 +223,154 @@ export default {
   </UiPageHeaderFrame>
 
   <UiPanel>
-    <section class="section">
-      <UiSwitchBox
-        class="localization-switch"
-        v-model="isSingleCoverImage"
-      >
-        Use single cover for all localizations
-      </UiSwitchBox>
-
-      <UiLangsImageUpload
-        :uploadImage="uploadImage"
-        :isLocalizationEnabled="!isSingleCoverImage"
-        v-model="keyProductLocal.long_description"
-      />
-
-      <UiLangTextField
-        label="Game title"
-        v-model="keyProductLocal.name"
-        v-bind="$getValidatedFieldProps('keyProductLocal.name.en')"
-      />
-      <UiTextField
-        label="SKU"
-        v-bind="$getValidatedFieldProps('keyProductLocal.sku')"
-        v-model="keyProductLocal.sku"
-      />
-    </section>
-
-    <section class="section">
-      <UiHeader level="3" :hasMargin="true">DRM platforms</UiHeader>
-      <UiText>
-        Choose a set of DRM platforms you plan to use with this package.
-        Each platform associated with it's own pack of keys.
-      </UiText>
-      <div
-        class="platform-item"
-        v-for="(platform, index) in platforms"
-        :key="index"
-      >
+    <form autocomplete="off">
+      <section class="section">
         <UiSwitchBox
-          :checked="isPlatformEnabled(platform.id)"
-          @change="togglePlatform(platform.id, $event)"
+          class="localization-switch"
+          v-model="isSingleCoverImage"
         >
-          {{ platform.name }}
+          Use single cover for all localizations
         </UiSwitchBox>
-      </div>
-    </section>
 
-    <section class="section">
-      <UiHeader level="3" :hasMargin="true">Package price</UiHeader>
-      <UiText>
-        Setup the price for every platform in all your currencies.
-        If you need to add more currencies to the list you can do this in
-        <a :href="`/projects/${project.id}/settings/`">project settings</a>.
-      </UiText>
-      <UiTextField
-        label="USD, Default currency"
-        :required="true"
-      />
-      <div class="currencies">
-        <UiTextField
-          label="GBP"
-          :required="true"
+        <UiLangsImageUpload
+          :uploadImage="uploadImage"
+          :isLocalizationEnabled="!isSingleCoverImage"
+          v-model="keyProductLocal.long_description"
+        />
+
+        <UiLangTextField
+          label="Game title"
+          v-model="keyProductLocal.name"
+          v-bind="$getValidatedFieldProps('keyProductLocal.name.en')"
         />
         <UiTextField
-          label="EUR"
-          :required="true"
+          label="SKU"
+          v-bind="$getValidatedFieldProps('keyProductLocal.sku')"
+          v-model="keyProductLocal.sku"
         />
+      </section>
+
+      <section class="section">
+        <UiHeader level="3" :hasMargin="true">DRM platforms</UiHeader>
+        <UiText>
+          Choose a set of DRM platforms you plan to use with this package.
+          Each platform associated with it's own pack of keys.
+        </UiText>
+        <div
+          class="platform-item"
+          v-for="(platform, index) in platforms"
+          :key="index"
+        >
+          <UiSwitchBox
+            :checked="isPlatformEnabled(platform.id)"
+            @change="togglePlatform(platform.id, $event)"
+          >
+            {{ platform.name }}
+          </UiSwitchBox>
+        </div>
+      </section>
+
+      <section class="section">
+        <UiHeader level="3" :hasMargin="true">Package price</UiHeader>
+        <UiText>
+          Setup the price for every platform in all your currencies.
+          If you need to add more currencies to the list you can do this in
+          <a :href="`/projects/${project.id}/settings/`">project settings</a>.
+        </UiText>
         <UiTextField
-          label="RUB"
+          label="USD, Default currency"
           :required="true"
-        />
-        <UiTextField
-          label="BRL"
-          :required="true"
-        />
-        <UiTextField
-          label="JPY"
-          :required="true"
-        />
-        <UiTextField
-          label="IDR"
-          :required="true"
-        />
-        <UiTextField
-          label="MYR"
-          :required="true"
-        />
-        <UiTextField
-          label="PHP"
-          :required="true"
-        />
-      </div>
-      <!-- <div
-        class="radio-row"
-        v-for="item in pricingList"
-        :key="item.id"
-      >
-        <UiRadio>{{ item.name }}</UiRadio>
-      </div>
+          autocomplete="new-password"
+        >
+          <template v-slot:dropdown="{ closeSuggest }">
+            <PriceSuggestTable
+              @close="closeSuggest"
+              @select="handleSteamPriceSelect($event, closeSuggest)"
+            />
+            <!-- <UiSuggestItem
+              v-for="(item, index) in priceSuggestList"
+              :key="index"
+              v-text="item.text"
+              @click="handleSuggestClick(), closeSuggest()"
+            /> -->
+          </template>
+        </UiTextField>
+        <div class="currencies">
+          <UiTextField
+            v-for="(item, index) in currenciesPrimary"
+            :label="item.currency"
+            :key="index"
+            :required="true"
+            autocomplete="off"
+          />
+        </div>
+        <template v-if="currenciesSecondary.length">
+          <UiHeader level="4" :hasMargin="true">Prices for regions</UiHeader>
+          <div class="currencies">
+            <UiTextField
+              v-for="(item, index) in currenciesSecondary"
+              :key="index"
+              :required="true"
+              autocomplete="off"
+            >
+              <span slot="label">
+                <IconQuestionInCircle class="field-label-icon" />
+                {{ `${item.region}, ${item.currency}` }}
+              </span>
+            </UiTextField>
+          </div>
+        </template>
+
+        <!-- <div
+          class="radio-row"
+          v-for="item in pricingList"
+          :key="item.id"
+        >
+          <UiRadio>{{ item.name }}</UiRadio>
+        </div>
+
+        <div
+          v-for="platform in keyProductLocal.platforms"
+          :key="platform.id"
+        >
+          <UiHeader level="4" :hasMargin="true">{{ platform.name }}</UiHeader>
+          <UiSelect label="Price (USD, Default currency)" :required="true"></UiSelect>
+          <UiTextField label="Price (EUR)" />
+          <UiTextField label="Price (HKD)" />
+        </div> -->
+      </section>
+      <section class="section">
+        <UiHeader level="3" :hasMargin="true">Keys</UiHeader>
+        <UiText>
+          Upload a pack of game keys for each DRM platform you selected before.
+          Use CSV or TXT file format and a line break ("Enter" key) as a separator for key strings.
+        </UiText>
+      </section>
 
       <div
+        class="key-item"
         v-for="platform in keyProductLocal.platforms"
         :key="platform.id"
+        :class="{ '_empty': !keyCounts[platform.id] }"
+        @click="handleUploadKey(platform.id)"
       >
-        <UiHeader level="4" :hasMargin="true">{{ platform.name }}</UiHeader>
-        <UiSelect label="Price (USD, Default currency)" :required="true"></UiSelect>
-        <UiTextField label="Price (EUR)" />
-        <UiTextField label="Price (HKD)" />
-      </div> -->
-    </section>
-    <section class="section">
-      <UiHeader level="3" :hasMargin="true">Keys</UiHeader>
-      <UiText>
-        Upload a pack of game keys for each DRM platform you selected before.
-        Use CSV or TXT file format and a line break ("Enter" key) as a separator for key strings.
-      </UiText>
-    </section>
+        <span>{{ platform.name }} — {{ keyCounts[platform.id] || 'no' }} keys</span>
+        <UiUploadControls
+          title="keys"
+        />
+      </div>
 
-    <div
-      class="key-item"
-      v-for="platform in keyProductLocal.platforms"
-      :key="platform.id"
-      :class="{ '_empty': !keyCounts[platform.id] }"
-      @click="handleUploadKey(platform.id)"
-    >
-      <span>{{ platform.name }} — {{ keyCounts[platform.id] || 'no' }} keys</span>
-      <UiUploadControls
-        title="keys"
-      />
-    </div>
-
-    <div class="controls">
-      <UiSwitchBox v-model="keyProductLocal.enabled">
-        Enable package
-      </UiSwitchBox>
-      <UiButton
-        class="submit-button"
-        text="SAVE"
-        @click="handleKeyProductSave"
-      />
-    </div>
-
-    <details>
-      <pre>{{keyProductLocal}}</pre>
-      <pre>{{platforms}}</pre>
-    </details>
-
+      <div class="controls">
+        <UiSwitchBox v-model="keyProductLocal.enabled">
+          Enable package
+        </UiSwitchBox>
+        <UiButton
+          class="submit-button"
+          text="SAVE"
+          @click="handleKeyProductSave"
+        />
+      </div>
+    </form>
   </UiPanel>
 
   <UiDeleteModal
@@ -395,5 +443,11 @@ export default {
 .submit-button {
   width: 140px;
   margin-left: 32px;
+}
+
+.field-label-icon {
+  position: absolute;
+  margin: 1px 0 0 -16px;
+  cursor: pointer;
 }
 </style>
