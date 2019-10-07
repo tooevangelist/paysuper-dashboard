@@ -13,6 +13,10 @@ function replaceDataEmptyValuesWithDefaults(defaultData, data) {
       return defaultValue;
     }
 
+    if (value === '') {
+      return defaultValue;
+    }
+
     return value;
   });
 }

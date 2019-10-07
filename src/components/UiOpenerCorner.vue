@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: 'OpenerCorner',
+  name: 'UiOpenerCorner',
 
   props: {
     isOpened: {
@@ -32,6 +32,7 @@ export default {
     transition: transform 0.2s ease-out, border-color 0.2s ease-out;
     transform-origin: center 2px;
     margin-top: 2px;
+    box-sizing: border-box;
   }
 
   &._opened::after {

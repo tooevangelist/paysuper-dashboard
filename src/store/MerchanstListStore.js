@@ -1,6 +1,6 @@
 import axios from 'axios';
 import qs from 'qs';
-import { isEmpty } from 'lodash-es';
+import { get } from 'lodash-es';
 import SearchBuilder from '@/tools/SearchBuilder/SearchBuilder';
 import merchantsListScheme from '@/schemes/merchantsListScheme';
 
@@ -64,7 +64,7 @@ export default function createMerchantListStore() {
         const url = `${rootState.config.apiUrl}/admin/api/v1/merchants?${query}`;
 
         const response = await axios.get(url);
-        const merchants = !isEmpty(response.data) ? response.data : {
+        const merchants = get(response, 'data.items') ? response.data : {
           items: [],
           count: 0,
         };

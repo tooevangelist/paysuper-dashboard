@@ -1,14 +1,12 @@
 <script>
 import { forEach, get, set } from 'lodash-es';
 import { required, minLength } from 'vuelidate/lib/validators';
-import ImageUpload from '@/components/ImageUpload.vue';
 import KeyGenerateField from '@/components/KeyGenerateField.vue';
 
 export default {
   name: 'ProjectFormSettings',
 
   components: {
-    ImageUpload,
     KeyGenerateField,
   },
 
@@ -95,7 +93,7 @@ export default {
 
 <template>
 <div class="project-form-settings">
-  <ImageUpload
+  <UiImageUpload
     class="section"
     :uploadImage="uploadImage"
     v-model="project.image"

@@ -301,6 +301,45 @@ export default {
         </UiPageHeaderFrame>
       </td>
     </tr>
+    <tr>
+      <td class="cell">
+        UiOpenerCorner
+      </td>
+      <td class="cell">
+        <UiOpenerCorner />
+        <UiOpenerCorner :isOpened="true" />
+      </td>
+    </tr>
+    <tr>
+      <td class="cell">
+        UiUploadControls
+      </td>
+      <td class="cell">
+        <UiUploadControls />
+        <br>
+        <UiUploadControls :isFilled="true" />
+      </td>
+    </tr>
+    <tr>
+      <td class="cell">
+        UiImageUpload
+      </td>
+      <td class="cell">
+        <UiImageUpload :value="''" :uploadImage="() => {}" />
+      </td>
+    </tr>
+    <tr>
+      <td class="cell">
+        UiLangsImageUpload
+      </td>
+      <td class="cell">
+        <UiLangsImageUpload
+          :value="{en: '', ru: ''}"
+          :uploadImage="() => {}"
+          :isLocalizationOpened="true"
+        />
+      </td>
+    </tr>
 
 
   </table>

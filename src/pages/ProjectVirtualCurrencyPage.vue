@@ -1,13 +1,11 @@
 <script>
 import { required } from 'vuelidate/lib/validators';
 import PictureLetterGLandscape from '@/components/PictureLetterGLandscape.vue';
-import ImageUpload from '@/components/ImageUpload.vue';
 
 export default {
   name: 'ProjectVirtualCurrencyPage',
   components: {
     PictureLetterGLandscape,
-    ImageUpload,
   },
   props: {
     project: {
@@ -84,9 +82,9 @@ export default {
 
   <UiPanel>
     <section class="section">
-      <ImageUpload
+      <UiImageUpload
         class="section"
-        title="Update logo"
+        title="logo"
         description="200x200 px, .png, .jpg"
         :uploadImage="uploadImage"
         v-model="image"

@@ -6,9 +6,9 @@ export default {
     /** Header level (h1-h4) */
     level: {
       required: true,
-      type: String,
+      type: [String, Number],
       validator(value) {
-        return includes(['1', '2', '3', '4'], value);
+        return includes(['1', '2', '3', '4'], String(value));
       },
     },
 
@@ -65,9 +65,10 @@ export default {
   }
 
   &._h4 {
-    font-weight: 900;
+    font-weight: 500;
     line-height: normal;
     font-size: 16px;
+    line-height: 24px;
   }
 
   &._has-margin {
