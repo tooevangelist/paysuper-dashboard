@@ -34,6 +34,8 @@
 </template>
 
 <script>
+import { includes } from 'lodash-es';
+
 export default {
   name: 'UiConfirm',
 
@@ -49,6 +51,18 @@ export default {
     buttonColor: {
       type: String,
       default: 'red',
+      validator(value) {
+        return includes([
+          'blue',
+          'orange',
+          'purple',
+          'green',
+          'gray',
+          'light-gray',
+          'red',
+          'transparent-gray',
+        ], value);
+      },
     },
     buttonText: {
       type: String,

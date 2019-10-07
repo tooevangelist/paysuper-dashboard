@@ -23,7 +23,6 @@
           :value="name"
           :langs="langs"
           label="Item name"
-          v-bind="$getValidatedFieldProps('name.en')"
         />
         <UiLangTextField
           :value="description"
@@ -37,17 +36,11 @@
           :required="true"
           label="Full description"
         />
-        <UiLangTextField
-          :value="successfulMessage"
-          :langs="langs"
-          :required="true"
-          label="Custom message on successful payment"
-        />
 
         <p class="text">
           Use SKU to identify this item. Item SKU is unique within parent project.
         </p>
-        <UiTextField label="SKU" :required="true"></UiTextField>
+        <UiTextField label="SKU" :value="sku" :required="true"></UiTextField>
       </section>
       <section class="section">
         <UiHeader
@@ -63,16 +56,12 @@
         </p>
 
         <div class="radio-group">
-          <UiRadio class="radio" :disabled="true">
-            Currency conversion
+          <UiRadio class="radio">
+            Real currency
             <IconQuestion fill="#919699" />
           </UiRadio>
           <UiRadio class="radio">
-            Manual input
-            <IconQuestion fill="#919699" />
-          </UiRadio>
-          <UiRadio class="radio">
-            Default currency only
+            Virtual currency
             <IconQuestion fill="#919699" />
           </UiRadio>
         </div>
@@ -83,7 +72,6 @@
           :isMoney="true"
           :money="{ precision: 2 }"
           label="Price"
-          v-bind="$getValidatedFieldProps('singleUnitPrice.USD')"
         />
       </section>
 
@@ -100,8 +88,9 @@
 </template>
 
 <script>
-// import { mapActions } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import ImageUpload from '@/components/ImageUpload.vue';
+import ProjectVirtualItemPageStore from '@/store/ProjectVirtualItemPageStore';
 
 export default {
   name: 'ProjectVirtualItemEditPage',
@@ -138,10 +127,7 @@ export default {
         en: '',
         ru: '',
       },
-      successfulMessage: {
-        en: '',
-        ru: '',
-      },
+      sku: '',
       singleUnitPrice: {
         USD: 0,
         EUR: 0,
@@ -150,9 +136,61 @@ export default {
     };
   },
 
+  computed: {
+    ...mapState('ProjectVirtualItemPage', ['virtualItem']),
+  },
+
+  async asyncData({ store, registerStoreModule, route }) {
+    try {
+      await registerStoreModule('ProjectVirtualItemPage', ProjectVirtualItemPageStore, {
+        projectId: route.params.id,
+        itemId: route.params.itemId,
+      });
+    } catch (error) {
+      store.dispatch('setPageError', error);
+    }
+  },
+
+  created() {
+    if (this.virtualItem !== null) {
+      if (this.virtualItem.images !== null) {
+        // eslint-disable-next-line
+        this.image = this.virtualItem.images[0];
+      }
+      this.name = this.virtualItem.name;
+      this.description = this.virtualItem.description;
+      this.long_description = this.virtualItem.long_description;
+      this.sku = this.virtualItem.sku;
+      this.enabled = this.virtualItem.enabled;
+    }
+  },
+
   methods: {
-    saveItem() {
-      //
+    ...mapActions(['setIsLoading']),
+    ...mapActions('ProjectVirtualItemPage', ['editItem', 'createItem']),
+
+    async saveItem() {
+      this.setIsLoading(true);
+      const data = {
+        image: [this.image],
+        name: this.name,
+        description: this.description,
+        long_description: this.long_description,
+        sku: this.sku,
+        enabled: this.enabled,
+        object: 'product',
+        type: 'simple_product',
+        default_currency: 'USD',
+        prices: [{ amount: 99.50, currency: 'USD', region: 'USD' }],
+      };
+      if (this.virtualItem === null) {
+        await this.createItem(data);
+      } else {
+        data.id = this.virtualItem.id;
+        await this.editItem(data);
+      }
+      this.setIsLoading(false);
+      console.log(this.$route);
     },
   },
 };

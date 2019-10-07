@@ -113,13 +113,15 @@ export default function createProjectVirtualItemsStore() {
       },
 
       /**
-       * Get Virtual item info by id
+       * Edit Virtual item
        * @param rootState
-       * @param id
+       * @param data
        * @returns {Promise<void>}
        */
-      async getProductInfo({ rootState }, id) {
-        await axios.get(`${rootState.config.apiUrl}/admin/api/v1/products/${id}`);
+      async editItem({ rootState }, data) {
+        data.project_id = rootState.Project.project.id;
+        console.log(data);
+        await axios.put(`${rootState.config.apiUrl}/admin/api/v1/products/${data.id}`, data);
       },
 
       /**
@@ -131,11 +133,11 @@ export default function createProjectVirtualItemsStore() {
         const poop = {
           object: 'product',
           type: 'simple_product',
-          sku: 'Bobba_Fett_helm_eu',
-          name: { en: 'Bobba Fett Helment' },
+          sku: 'Bobba_Fett_helm_eu_2',
+          name: { en: 'Bobba Fett Helment_2' },
           default_currency: 'USD',
           enabled: true,
-          prices: [{ amount: 99.50, currency: 'USD', region: 'USD' }],
+          prices: [{ amount: 199.50, currency: 'USD', region: 'USD' }],
           description: { en: '' },
           long_description: {},
           project_id: rootState.Project.project.id,

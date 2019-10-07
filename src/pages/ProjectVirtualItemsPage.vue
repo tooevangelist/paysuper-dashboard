@@ -7,6 +7,8 @@
       <span slot="description">
         This sales option will allow you to sell your Virtual Items, like <b>swords, guns,
           helmets</b> and virtual currency packs.
+
+        <button @click="createItem">test</button>
       </span>
       <PictureWoomanLooking slot="picture"/>
     </UiPageHeaderFrame>
@@ -85,12 +87,13 @@
               >
                 <UiTooltipMenuItem
                   iconComponent="IconPen"
-                  @click="editItem(item)"
+                  @click="goToItemPage(item)"
                 >
                   Edit
                 </UiTooltipMenuItem>
                 <UiTooltipMenuItem
                   iconComponent="IconDeactivate"
+                  @click.prevent="toggleItemStatus(item)"
                 >
                   {{ item.enabled ? 'Disable': 'Enable' }}
                 </UiTooltipMenuItem>
@@ -188,7 +191,14 @@ export default {
 
   methods: {
     ...mapActions(['setIsLoading']),
-    ...mapActions('ProjectVirtualItems', ['initQuery', 'createItem', 'submitFilters', 'fetchItems', 'deleteItem']),
+    ...mapActions('ProjectVirtualItems', [
+      'initQuery',
+      'createItem',
+      'submitFilters',
+      'fetchItems',
+      'deleteItem',
+      'editItem',
+    ]),
     ...mapMutations('ProjectVirtualItems', ['setCurrentItem']),
 
     filterMerchants() {
@@ -222,7 +232,7 @@ export default {
       });
     },
 
-    editItem(item) {
+    goToItemPage(item) {
       this.setCurrentItem(item);
       this.setIsLoading(true);
       this.$router.push({
@@ -242,6 +252,13 @@ export default {
       await this.deleteItem(this.selectedItem.id).catch(this.$_Notifications_showErrorMessage);
       await this.searchItems();
       this.selectedItem = null;
+      this.setIsLoading(false);
+    },
+
+    async toggleItemStatus(item) {
+      this.setIsLoading(true);
+      await this.editItem(Object.assign(item, { enabled: !item.enabled }));
+      await this.searchItems();
       this.setIsLoading(false);
     },
   },
