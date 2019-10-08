@@ -66,12 +66,18 @@ const routes = [
       },
       {
         path: 'game-keys/',
-        component: () => import('@/pages/ProjectGameKeysPage.vue'),
+        component: () => import('@/pages/ProjectKeyProductsListPage.vue'),
         meta: {
           ...projectPagesMeta,
           topControls: () => import('@/components/LayoutTopControlsProjectSalesOptions.vue'),
         },
-        name: 'ProjectGameKeysPage',
+        name: 'ProjectKeyProductsList',
+      },
+      {
+        path: 'game-keys/:keyProductId',
+        component: () => import('@/pages/ProjectKeyProductPage.vue'),
+        meta: projectPagesMeta,
+        name: 'ProjectKeyProduct',
       },
       {
         path: 'settings/',

@@ -1,15 +1,14 @@
 import axios from 'axios';
 import qs from 'qs';
 import assert from 'simple-assert';
-import randomString from 'random-string';
 import SearchBuilder from '@/tools/SearchBuilder/SearchBuilder';
-import projectGameKeysScheme from '@/schemes/projectGameKeysScheme';
+import projectKeyProductsScheme from '@/schemes/projectKeyProductsScheme';
 
-const searchBuilder = new SearchBuilder(projectGameKeysScheme);
+const searchBuilder = new SearchBuilder(projectKeyProductsScheme);
 
-export default function createProjectGameKeysStore() {
+export default function createProjectKeyProductsListStore() {
   return {
-    state: () => ({
+    state: {
       gameKeys: {
         products: [],
         count: 0,
@@ -17,7 +16,7 @@ export default function createProjectGameKeysStore() {
       filterValues: {},
       query: {},
       apiQuery: {},
-    }),
+    },
 
     getters: {
       getFilterValues(state) {
@@ -55,15 +54,15 @@ export default function createProjectGameKeysStore() {
 
     actions: {
       async initState({ getters, dispatch, commit }, { projectId, query }) {
-        assert(projectId, 'ProjectGameKeysStore requires projectId param');
+        assert(projectId, 'ProjectKeyProductsListStore requires projectId param');
         const filters = getters.getFilterValues();
         commit('projectId', projectId);
         dispatch('submitFilters', filters);
         dispatch('initQuery', query);
-        await dispatch('fetchGameKeys');
+        await dispatch('fetchKeyProducts');
       },
 
-      async fetchGameKeys({ state, commit, rootState }) {
+      async fetchKeyProducts({ state, commit, rootState }) {
         const query = qs.stringify({
           ...state.apiQuery,
         }, { arrayFormat: 'brackets' });
@@ -84,95 +83,16 @@ export default function createProjectGameKeysStore() {
         commit('gameKeys', gameKeys);
       },
 
-      /**
-       * Тестовая гадость
-       * @todo remove
-       */
-      async setPlatform({ rootState }, { id, platform }) {
-        await axios.post(
-          `${rootState.config.apiUrl}/admin/api/v1/key-products/${id}/platforms`,
-          {
-            platform,
-          },
-        );
-      },
-
-      /**
-       * Тестовая гадость
-       * @todo remove
-       */
-      async createGameKey({
-        state, rootState, dispatch,
-      }) {
-        const sku = randomString({ length: 8, special: false });
-        const name = randomString({ length: 8, special: false });
-        const description = randomString({ length: 8, special: false });
-
-        const response = await axios.post(
-          `${rootState.config.apiUrl}/admin/api/v1/key-products`,
-          {
-            name: {
-              en: name,
-            },
-            description: {
-              en: description,
-            },
-            sku,
-            project_id: state.projectId,
-            default_currency: 'USD',
-            object: 'key_product',
-            platforms: [
-              'uplay',
-              'psn',
-              'nintendo',
-            ],
-          },
-        );
-
-        await dispatch('setPlatform', {
-          id: response.data.id,
-          platform: {
-            id: 'gog',
-            name: 'Good old games.com',
-            prices: [
-              {
-                region: 'USD',
-                amount: 29.99,
-                currency: 'USD',
-              },
-            ],
-          },
-        });
-        await dispatch('setPlatform', {
-          id: response.data.id,
-          platform: {
-            id: 'steam',
-            name: 'Steam',
-            prices: [
-              {
-                region: 'USD',
-                amount: 129.99,
-                currency: 'USD',
-              },
-            ],
-          },
-        });
-      },
-
-      async deleteGameKey({ rootState }, id) {
+      async deleteKeyProduct({ rootState }, id) {
         await axios.delete(
           `${rootState.config.apiUrl}/admin/api/v1/key-products/${id}`,
         );
       },
 
-      async toggleGameKeyEnabled({ rootState }, keyProduct) {
-        if (keyProduct.enabled) {
-          return;
-        }
+      async toggleKeyProductEnabled({ rootState }, keyProduct) {
+        const action = keyProduct.enabled ? 'unpublish' : 'publish';
         await axios.post(
-          `${rootState.config.apiUrl}/admin/api/v1/key-products/${keyProduct.id}/publish`,
-          {
-          },
+          `${rootState.config.apiUrl}/admin/api/v1/key-products/${keyProduct.id}/${action}`,
         );
       },
 
