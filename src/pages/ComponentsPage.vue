@@ -340,8 +340,23 @@ export default {
         />
       </td>
     </tr>
-
-
+    <tr>
+      <td class="cell">
+        UiSuggestItem
+      </td>
+      <td class="cell">
+        <UiSuggestItem>Lalalley topoley</UiSuggestItem>
+        <UiSuggestItem>Mama ama criminal</UiSuggestItem>
+      </td>
+    </tr>
+    <tr>
+      <td class="cell">
+        UiTabs
+      </td>
+      <td class="cell">
+        <UiTabs />
+      </td>
+    </tr>
   </table>
 </div>
 </template>

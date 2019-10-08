@@ -36,7 +36,7 @@ export default {
     },
     isLocalizationOpened: {
       type: Boolean,
-      default: false,
+      default: true,
     },
   },
 

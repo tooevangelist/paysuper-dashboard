@@ -1,7 +1,6 @@
 import axios from 'axios';
 import qs from 'qs';
 import assert from 'simple-assert';
-import randomString from 'random-string';
 import SearchBuilder from '@/tools/SearchBuilder/SearchBuilder';
 import projectKeyProductsScheme from '@/schemes/projectKeyProductsScheme';
 
@@ -82,89 +81,6 @@ export default function createProjectKeyProductsListStore() {
           ];
         }
         commit('gameKeys', gameKeys);
-      },
-
-      /**
-       * Тестовая гадость
-       * @todo remove
-       */
-      async setPlatform({ rootState }, { id, platform }) {
-        await axios.post(
-          `${rootState.config.apiUrl}/admin/api/v1/key-products/${id}/platforms`,
-          {
-            platform,
-          },
-        );
-      },
-
-      /**
-       * Тестовая гадость
-       * @todo remove
-       */
-      async createKeyProduct({
-        state, rootState, dispatch,
-      }) {
-        const sku = randomString({ length: 8, special: false });
-        const name = randomString({ length: 8, special: false });
-        const description = randomString({ length: 8, special: false });
-
-        const response = await axios.post(
-          `${rootState.config.apiUrl}/admin/api/v1/key-products`,
-          {
-            name: {
-              en: name,
-            },
-            description: {
-              en: description,
-            },
-            sku,
-            project_id: state.projectId,
-            default_currency: 'USD',
-            object: 'key_product',
-            platforms: [
-              {
-                id: 'gog',
-                name: 'Good old games.com',
-                prices: [
-                  {
-                    region: 'west_asia',
-                    amount: 29.99,
-                    currency: 'USD',
-                  },
-                ],
-              },
-            ],
-          },
-        );
-
-        await dispatch('setPlatform', {
-          id: response.data.id,
-          platform: {
-            id: 'gog',
-            name: 'Good old games.com',
-            prices: [
-              {
-                region: 'USD',
-                amount: 29.99,
-                currency: 'USD',
-              },
-            ],
-          },
-        });
-        await dispatch('setPlatform', {
-          id: response.data.id,
-          platform: {
-            id: 'steam',
-            name: 'Steam',
-            prices: [
-              {
-                region: 'USD',
-                amount: 129.99,
-                currency: 'USD',
-              },
-            ],
-          },
-        });
       },
 
       async deleteKeyProduct({ rootState }, id) {

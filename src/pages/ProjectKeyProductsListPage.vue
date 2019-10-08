@@ -1,5 +1,7 @@
 <script>
-import { debounce, get, isEqual } from 'lodash-es';
+import {
+  debounce, get, isEqual, find,
+} from 'lodash-es';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import ProjectKeyProductsListStore from '@/store/ProjectKeyProductsListStore';
 import NoResults from '@/components/NoResults.vue';
@@ -72,7 +74,7 @@ export default {
   methods: {
     ...mapActions(['setIsLoading']),
     ...mapActions('ProjectKeyProductsList', [
-      'submitFilters', 'fetchKeyProducts', 'initQuery', 'createKeyProduct',
+      'submitFilters', 'fetchKeyProducts', 'initQuery',
       'deleteKeyProduct', 'toggleKeyProductEnabled',
     ]),
 
@@ -139,6 +141,14 @@ export default {
       await this.searchKeyProducts();
       this.setIsLoading(false);
     },
+
+    getPlatformPrice(platform) {
+      const price = find(platform.prices, { currency: 'USD', region: 'USD' });
+      if (!price) {
+        return '';
+      }
+      return this.$formatPrice(price.amount, price.currency);
+    },
   },
 };
 </script>
@@ -201,7 +211,18 @@ export default {
           <span class="leading-cell-content">{{ index + 1 }}</span>
         </UiTableCell>
         <UiTableCell align="left" valign="top">
-          <IconNoImage class="img" width="18" height="18" fill="#919699" />
+          <span
+            v-if="keyProduct.cover && keyProduct.cover.images.en"
+            class="img"
+            :style="{ backgroundImage: `url(${keyProduct.cover.images.en})` }"
+          ></span>
+          <IconNoImage
+            v-else
+            class="no-img"
+            width="18"
+            height="18"
+            fill="#919699"
+          />
         </UiTableCell>
         <UiTableCell align="left" valign="top" :title="keyProduct.name.en">
           <span class="cell-text">{{ keyProduct.name.en }}</span>
@@ -211,30 +232,30 @@ export default {
         </UiTableCell>
         <UiTableCell align="left" valign="top">
           <UiTableCellUnit
-            v-for="playform in keyProduct.platforms"
-            :key="playform.id"
-             :title="playform.name"
+            v-for="platform in keyProduct.platforms"
+            :key="platform.id"
+             :title="platform.name"
           >
-            <span class="cell-text">{{ playform.name }}</span>
+            <span class="cell-text">{{ platform.name }}</span>
           </UiTableCellUnit>
           <UiNoText v-if="!keyProduct.platforms" />
         </UiTableCell>
         <UiTableCell align="left" valign="top">
           <UiTableCellUnit
-            v-for="playform in keyProduct.platforms"
-            :key="playform.id"
+            v-for="platform in keyProduct.platforms"
+            :key="platform.id"
           >
-            <UiNoText v-if="!playform.prices || !playform.prices.length" />
-            <span v-else>{{ playform.prices.length }}</span>
+            <UiNoText v-if="!platform.count" />
+            <span v-else>{{ platform.count }}</span>
           </UiTableCellUnit>
           <UiNoText v-if="!keyProduct.platforms" />
         </UiTableCell>
         <UiTableCell align="left" valign="top">
           <UiTableCellUnit
-            v-for="playform in keyProduct.platforms"
-            :key="playform.id"
+            v-for="platform in keyProduct.platforms"
+            :key="platform.id"
           >
-            {{ $formatPrice(playform.prices[0].amount, playform.prices[0].currency)}}
+            {{ getPlatformPrice(platform) }}
           </UiTableCellUnit>
           <UiNoText v-if="!keyProduct.platforms" />
         </UiTableCell>
@@ -330,9 +351,17 @@ $hover-deactivate-background-color: rgba($hover-deactivate-text-color, 0.08);
   padding-right: 6px;
 }
 
-.img {
+.no-img {
   display: inline-flex;
   vertical-align: middle;
+}
+
+.img {
+  width: 18px;
+  height: 18px;
+  border-radius: 2px;
+  display: block;
+  background-size: cover;
 }
 
 .leading-cell-content {

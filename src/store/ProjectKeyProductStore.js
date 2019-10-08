@@ -1,11 +1,15 @@
 import axios from 'axios';
+import assert from 'simple-assert';
 import mergeApiValuesWithDefaults from '@/helpers/mergeApiValuesWithDefaults';
 
 function mapDataApiToForm(data) {
   return mergeApiValuesWithDefaults({
-    long_description: {
-      ru: '',
-      en: '',
+    cover: {
+      images: {
+        en: '',
+        ru: '',
+      },
+      use_one_for_all: true,
     },
     name: {
       ru: '',
@@ -22,6 +26,20 @@ function mapDataApiToForm(data) {
 
   }, data);
 }
+
+function mapDataFormToApi(data) {
+  return {
+    ...data,
+    platforms: data.platforms.map(platform => ({
+      ...platform,
+      prices: platform.prices.map(price => ({
+        ...price,
+        amount: Number(price.amount),
+      })),
+    })),
+  };
+}
+
 
 export default function createProjectKeyProductStore() {
   return {
@@ -74,15 +92,25 @@ export default function createProjectKeyProductStore() {
       async createKeyProduct({ commit, rootState }, { keyProduct, projectId }) {
         const url = `${rootState.config.apiUrl}/admin/api/v1/key-products`;
         const response = await axios.post(url, {
-          ...keyProduct,
+          ...mapDataFormToApi(keyProduct),
           project_id: projectId,
         });
         commit('keyProductId', response.data.id);
       },
 
-      async updateKeyProduct({ state, rootState }, keyProduct) {
+      async updateKeyProduct({ state, dispatch, rootState }, keyProduct) {
         const url = `${rootState.config.apiUrl}/admin/api/v1/key-products/${state.keyProductId}`;
-        await axios.put(url, keyProduct);
+        await axios.put(url, mapDataFormToApi(keyProduct));
+        if (state.keyProduct.enabled !== keyProduct.enabled) {
+          await dispatch('updateKeyProductEnabled', keyProduct);
+        }
+      },
+
+      async updateKeyProductEnabled({ rootState }, keyProduct) {
+        const action = keyProduct.enabled ? 'publish' : 'unpublish';
+        await axios.post(
+          `${rootState.config.apiUrl}/admin/api/v1/key-products/${keyProduct.id}/${action}`,
+        );
       },
 
       async fetchPlatforms({ commit, rootState }) {
@@ -99,10 +127,13 @@ export default function createProjectKeyProductStore() {
         }
       },
 
-      async getKeysCountByPlatform({ state, rootState }, id) {
+      async getKeysCountByPlatform({ state, commit, rootState }, id) {
         const path = `/admin/api/v1/key-products/${state.keyProductId}/platforms/${id}/count`;
         const response = await axios.get(`${rootState.config.apiUrl}${path}`);
-        console.log(11111, 'response', response);
+        commit('keyCounts', {
+          ...state.keyCounts,
+          [id]: response.data.count,
+        });
       },
 
       async uploadKey({ state, commit, rootState }, { platformId, file }) {
@@ -116,10 +147,11 @@ export default function createProjectKeyProductStore() {
         });
       },
 
-      async setPlatformPricesRecommendedBySteam({ rootState }, { platformId, amount }) {
-        const path = `/api/v1/pricing/recommended/steam?amount=${amount}`;
+      async getRecommendedPrices({ rootState }, { type, amount }) {
+        assert(type === 'steam' || type === 'conversion');
+        const path = `/api/v1/pricing/recommended/${type}?amount=${amount}`;
         const response = await axios.get(`${rootState.config.apiUrl}${path}`);
-        console.log(11111, 'response', response);
+        return response.data.recommended_price;
       },
     },
 
