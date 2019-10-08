@@ -7,8 +7,6 @@
       <span slot="description">
         This sales option will allow you to sell your Virtual Items, like <b>swords, guns,
           helmets</b> and virtual currency packs.
-
-        <button @click="createItem">test</button>
       </span>
       <PictureWoomanLooking slot="picture"/>
     </UiPageHeaderFrame>
@@ -43,7 +41,8 @@
               <span class="leading-cell-content">{{ index + 1 }}</span>
             </UiTableCell>
             <UiTableCell align="left" valign="top">
-              <IconNoImage class="img" width="18" height="18" fill="#919699" />
+              <img v-if="item.images !== null" :src="item.images[0]" class="item-image">
+              <IconNoImage v-else class="img" width="18" height="18" fill="#919699" />
             </UiTableCell>
             <UiTableCell align="left" valign="top" :title="item.name.en">
               <span class="cell-text">{{ item.name.en }}</span>
@@ -281,5 +280,10 @@ export default {
 
 .dots-menu-trigger {
   margin-top: 4px;
+}
+
+.item-image {
+  width: 18px;
+  height: 18px;
 }
 </style>

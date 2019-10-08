@@ -123,27 +123,6 @@ export default function createProjectVirtualItemsStore() {
         console.log(data);
         await axios.put(`${rootState.config.apiUrl}/admin/api/v1/products/${data.id}`, data);
       },
-
-      /**
-       * Test poop
-       * @param rootState
-       * @returns {Promise<void>}
-       */
-      async createItem({ rootState }) {
-        const poop = {
-          object: 'product',
-          type: 'simple_product',
-          sku: 'Bobba_Fett_helm_eu_2',
-          name: { en: 'Bobba Fett Helment_2' },
-          default_currency: 'USD',
-          enabled: true,
-          prices: [{ amount: 199.50, currency: 'USD', region: 'USD' }],
-          description: { en: '' },
-          long_description: {},
-          project_id: rootState.Project.project.id,
-        };
-        await axios.post(`${rootState.config.apiUrl}/admin/api/v1/products`, poop);
-      },
     },
 
     namespaced: true,

@@ -13,7 +13,7 @@
     "test:dev": "vue-cli-service test:unit --watchAll",
     "coverage": "vue-cli-service test:unit --coverage --coverageReporters=lcov",
     "coverage:publish": "npm run coverage && codecov",
-    "serve:be": "cross-env NODE_ENV=local nodemon ./index.js --watch './backend/**/*.js'"
+    "serve:be": "cross-env NODE_ENV=local S3_ACCESS_KEY_ID=AKIAUNKE3CS4SGSBEY5B S3_SECRET_ACCESS_KEY=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 S3_BUCKET_NAME=paysupermgmt.img.dev S3_REGION=eu-west-1 nodemon ./index.js --watch './backend/**/*.js'"
   },
   "dependencies": {
     "@protocol-one/ui-kit": "^1.25.2",
