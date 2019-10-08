@@ -1,9 +1,7 @@
 <script>
 import { mapState, mapActions, mapGetters } from 'vuex';
 import { required } from 'vuelidate/lib/validators';
-import {
-  find, cloneDeep, merge, debounce,
-} from 'lodash-es';
+import { find, cloneDeep, debounce } from 'lodash-es';
 import { OpenFileDialog } from '@/helpers/uploader';
 import ProjectKeyProductStore from '@/store/ProjectKeyProductStore';
 import ProjectKeyProductPriceBlock from '@/components/ProjectKeyProductPriceBlock.vue';
@@ -103,13 +101,15 @@ export default {
     updateKeyProductLocal() {
       this.keyProductLocal = cloneDeep(this.keyProduct);
 
-      const currenciesWithAmount = this.currenciesDetailed.map(item => ({
-        ...item,
-        amount: '',
-      }));
-
       this.keyProductLocal.platforms.forEach((platform) => {
-        platform.prices = merge(currenciesWithAmount, platform.prices);
+        platform.prices = this.currenciesDetailed.map(({ currency, region }) => {
+          const match = find(platform.prices, { currency, region });
+          return {
+            currency,
+            region,
+            amount: match ? match.amount : '',
+          };
+        });
       });
     },
 
