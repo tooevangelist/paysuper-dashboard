@@ -303,13 +303,6 @@ export default {
         @fillConvertedPrices="handleRecommendedPricesSelect($event, 'conversion')"
       />
 
-      <!-- <div
-        class="radio-row"
-        v-for="item in pricingList"
-        :key="item.id"
-      >
-        <UiRadio>{{ item.name }}</UiRadio>
-      </div> -->
     </section>
     <section class="section">
       <UiHeader level="3" :hasMargin="true">Keys</UiHeader>
@@ -372,10 +365,6 @@ export default {
   & + & {
     border-top: 1px solid #e3e5e6;
   }
-}
-
-.radio-row {
-  margin-bottom: 12px;
 }
 
 .key-item {
