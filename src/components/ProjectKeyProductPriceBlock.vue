@@ -148,12 +148,10 @@ export default {
     v-model="currentPlatformPricingIndex"
   />
 
-  <!-- <pre>{{$v.platforms.$each[0]}}</pre> -->
-
   <UiTextField
     label="USD, Default currency"
     autocomplete="new-password"
-    v-bind="$getValidatedFieldProps('priceModel[\'USD-USD\'].amount')"
+    v-bind="$getValidatedFieldProps('priceModel[USD-USD].amount')"
     v-model="priceModel['USD-USD'].amount"
     @suggestClosed="isSteamSuggestOpened = false"
   >
@@ -179,7 +177,7 @@ export default {
       v-for="(item, index) in currenciesPrimary"
       :label="item.currency"
       :key="index"
-      v-bind="$getValidatedFieldProps(`priceModel[\'${getPriceId(item)}\'].amount`)"
+      v-bind="$getValidatedFieldProps(`priceModel[${getPriceId(item)}].amount`)"
       v-model="priceModel[`${getPriceId(item)}`].amount"
     />
   </div>
@@ -191,7 +189,7 @@ export default {
         :key="index"
         :required="true"
         autocomplete="off"
-        v-bind="$getValidatedFieldProps(`priceModel[\'${getPriceId(item)}\'].amount`)"
+        v-bind="$getValidatedFieldProps(`priceModel[${getPriceId(item)}].amount`)"
         v-model="priceModel[`${getPriceId(item)}`].amount"
       >
         <span slot="label">

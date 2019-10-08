@@ -74,8 +74,6 @@ export default {
     }
   }
   &._error {
-    // color: #ea3d2f;
-
     &::before {
       position: absolute;
       content: "";
