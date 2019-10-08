@@ -53,6 +53,10 @@ export default {
       default: true,
       type: Boolean,
     },
+    frameless: {
+      default: false,
+      type: Boolean,
+    },
   },
   data() {
     return {
@@ -110,7 +114,8 @@ export default {
     $style[`_inner-${innerPosition}`],
     { [$style._caret]: hasCaret },
     { [$style._shown]: visible || innerVisible },
-    { [$style['_opened-on-hover']]: stayOpenedOnHover }
+    { [$style['_opened-on-hover']]: stayOpenedOnHover },
+    { [$style._framed]: !frameless }
   ]"
   :style="{
     height: height || undefined,
@@ -138,10 +143,13 @@ export default {
   transition: all 0.2s ease-out;
   z-index: 20;
   background-color: #fff;
-  border: 1px solid #f1f3f4;
-  box-shadow: 0px 8px 16px rgba(8, 35, 48, 0.1),
-    0px 24px 32px rgba(8, 35, 48, 0.06);
   cursor: auto;
+
+  &._framed {
+    border: 1px solid #f1f3f4;
+    box-shadow: 0px 8px 16px rgba(8, 35, 48, 0.1),
+      0px 24px 32px rgba(8, 35, 48, 0.06);
+  }
 
   @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
     cursor: default;
@@ -216,7 +224,7 @@ export default {
   }
 
   &::after {
-    content: '';
+    content: "";
     display: none;
     width: 0;
     height: 0;
