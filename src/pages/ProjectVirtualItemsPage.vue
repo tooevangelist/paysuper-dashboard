@@ -173,7 +173,7 @@ export default {
       openedTooltipId: '',
       showDeleteConfirm: false,
       selectedItem: null,
-      scheme: projectProductsStatusScheme
+      scheme: projectProductsStatusScheme,
     };
   },
 
@@ -274,7 +274,6 @@ export default {
 
     handleStatusInput(value) {
       this.filters.enabled = value;
-      console.log(this.filters)
       this.filterMerchants();
     },
   },
