@@ -8,6 +8,10 @@ const filters = {
     defaultValue: () => [],
   },
 
+  enabled: {
+    defaultValue: () => [],
+  },
+
   limit: {
     isPassingToQueryDisabled: true,
     defaultValue: 30,

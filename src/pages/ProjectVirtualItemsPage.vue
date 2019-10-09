@@ -13,11 +13,24 @@
 
     <UiPanel>
       <div class="control-bar">
-        <UiFilterSearchInput
-          :isAlwaysExpanded="true"
-          v-model="filters.quickFilter"
-          @input="handleQuickSearchInput" />
-        <UiButton text="ADD ITEM" @click.prevent="createNew"></UiButton>
+        <div class="control-bar__left">
+          <UiFilterSearchInput
+            :isAlwaysExpanded="true"
+            v-model="filters.quickFilter"
+            @input="handleQuickSearchInput" />
+          <UiFilterAgreementStatus
+            @input="handleStatusInput"
+            :scheme="scheme"
+            :value="filters.enabled" />
+        </div>
+
+        <div class="control-bar__right">
+          <UiButton class="quilin-packages-button" :disabled="true">
+            <IconUpload class="upload-icon" fill="#919699" />
+            QUILIN PACKAGES
+          </UiButton>
+          <UiButton text="ADD ITEM" @click.prevent="createNew"></UiButton>
+        </div>
       </div>
 
       <div class="items-list">
@@ -133,6 +146,7 @@ import PictureWoomanLooking from '@/components/PictureWomanLooking.vue';
 import NoResults from '@/components/NoResults.vue';
 import ProjectVirtualItemsStore from '@/store/ProjectVirtualItemsStore';
 import Notifications from '@/mixins/Notifications';
+import projectProductsStatusScheme from '@/schemes/projectProductsStatusScheme';
 
 export default {
   name: 'ProjectVirtualItemsPage',
@@ -159,6 +173,7 @@ export default {
       openedTooltipId: '',
       showDeleteConfirm: false,
       selectedItem: null,
+      scheme: projectProductsStatusScheme
     };
   },
 
@@ -181,10 +196,6 @@ export default {
       return debounce(() => {
         this.filterMerchants();
       }, 500);
-    },
-
-    isFiltersNotEmpty() {
-      return Boolean(this.filters.quickFilter);
     },
   },
 
@@ -260,6 +271,12 @@ export default {
       await this.searchItems();
       this.setIsLoading(false);
     },
+
+    handleStatusInput(value) {
+      this.filters.enabled = value;
+      console.log(this.filters)
+      this.filterMerchants();
+    },
   },
 };
 </script>
@@ -268,6 +285,10 @@ export default {
 .control-bar {
   display: flex;
   justify-content: space-between;
+
+  &__right button {
+    margin-left: 10px;
+  }
 }
 
 .items-list {
@@ -285,5 +306,11 @@ export default {
 .item-image {
   width: 18px;
   height: 18px;
+}
+
+.filter-agreement-status {
+  margin-left: 4px;
+  position: relative;
+  top: 1px;
 }
 </style>

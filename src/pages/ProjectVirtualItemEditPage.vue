@@ -40,7 +40,11 @@
         <p class="text">
           Use SKU to identify this item. Item SKU is unique within parent project.
         </p>
-        <UiTextField label="SKU" v-model="sku" :required="true"></UiTextField>
+        <UiTextField
+          label="SKU"
+          v-model="sku"
+          @input="handleSkuFieldInput"
+          :required="true"></UiTextField>
       </section>
       <section class="section">
         <UiHeader
@@ -76,12 +80,33 @@
             :money="{ precision: 2 }"
             label="Price"
             :required="true"
+            v-show="price.region === price.currency"
           >
           <span slot="label">
           <IconQuestionInCircle class="field-label-icon" />
             {{ getCurrencyName(price, index) }}
           </span>
           </UiTextField>
+
+          <!-- Show prices for regions if available -->
+          <div class="region-prices" v-if="hasRegionPrice">
+            <UiHeader level="4" :hasMargin="true">Prices for regions</UiHeader>
+            <UiTextField
+              v-for="(price, index) in prices"
+              :key="index"
+              v-model="price.amount"
+              :isMoney="true"
+              :money="{ precision: 2 }"
+              label="Price"
+              :required="true"
+              v-show="price.region !== price.currency"
+            >
+              <span slot="label">
+              <IconQuestionInCircle class="field-label-icon" />
+                {{ getCurrencyName(price, index) }}
+              </span>
+            </UiTextField>
+          </div>
         </div>
       </section>
 
@@ -99,6 +124,7 @@
 
 <script>
 import { mapActions, mapState } from 'vuex';
+import { debounce } from 'lodash-es';
 import UiImageUpload from '@/components/UiImageUpload.vue';
 import ProjectVirtualItemPageStore from '@/store/ProjectVirtualItemPageStore';
 
@@ -122,6 +148,7 @@ export default {
 
   data() {
     return {
+      isSkuUnique: true,
       langs: ['en', 'ru'],
       image: '',
       name: {
@@ -193,11 +220,12 @@ export default {
   methods: {
     ...mapActions(['setIsLoading']),
     ...mapActions('ProjectVirtualItemPage', ['editItem', 'createItem']),
+    ...mapActions('Project', ['checkIsSkuUnique']),
 
     async saveItem() {
       this.setIsLoading(true);
       const data = {
-        images: [this.image],
+        images: this.image.length ? [this.image] : null,
         name: this.name,
         description: this.description,
         long_description: this.long_description,
@@ -244,6 +272,18 @@ export default {
       }
 
       return `${currency.currency}, ${currency.region}`;
+    },
+
+    handleSkuFieldInput: debounce(
+      async function handleSkuFieldInput(value) {
+        this.isSkuUnique = await this.checkIsSkuUnique(value).catch(this.$showErrorMessage);
+        this.$v.sku.$touch();
+      },
+      200,
+    ),
+
+    hasRegionPrice() {
+      return this.prices.some(price => price.currency !== price.region);
     },
   },
 };
@@ -294,6 +334,14 @@ a {
     &:first-child {
       width: 100%;
     }
+  }
+}
+
+.region-prices {
+  width: 100%;
+
+  h4 {
+    margin-left: 12px;
   }
 }
 </style>

@@ -19,22 +19,31 @@ export default {
       type: Object,
       default: null,
     },
+    scheme: {
+      type: Object,
+      default: null,
+    },
   },
 
   data() {
     return {
       isDropdownOpened: false,
-      statusesList: [
-        {
-          text: 'All requests',
-          value: 'all',
-        },
-        ...map(merchantStatusScheme, (item, key) => ({
+    };
+  },
+
+  computed: {
+    statusScheme() {
+      return this.scheme !== null ? this.scheme : merchantStatusScheme;
+    },
+
+    statusesList() {
+      return [
+        ...map(this.statusScheme, (item, key) => ({
           ...item,
           code: key,
         })),
-      ],
-    };
+      ];
+    },
   },
 
   methods: {
