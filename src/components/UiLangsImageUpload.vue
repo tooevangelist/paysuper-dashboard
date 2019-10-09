@@ -72,7 +72,7 @@ export default {
   <UiImageUpload
     v-bind="{ title, description, uploadImage }"
     v-model="value.en"
-    tag="EN"
+    :tag="isLocalizationEnabled ? 'EN' : ''"
     @change="updateValue('en', $event)"
   />
 

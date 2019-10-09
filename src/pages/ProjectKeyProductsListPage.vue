@@ -362,6 +362,7 @@ $hover-deactivate-background-color: rgba($hover-deactivate-text-color, 0.08);
   border-radius: 2px;
   display: block;
   background-size: cover;
+  background-position: center;
 }
 
 .leading-cell-content {
