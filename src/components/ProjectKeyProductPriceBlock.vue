@@ -151,6 +151,8 @@ export default {
   <UiTextField
     label="USD, Default currency"
     autocomplete="new-password"
+    :isNumeric="true"
+    :decimalLength="2"
     v-bind="$getValidatedFieldProps('priceModel[USD-USD].amount')"
     v-model="priceModel['USD-USD'].amount"
     @suggestClosed="isSteamSuggestOpened = false"
@@ -177,8 +179,11 @@ export default {
       v-for="(item, index) in currenciesPrimary"
       :label="item.currency"
       :key="index"
+      :isNumeric="true"
+      :decimalLength="2"
       v-bind="$getValidatedFieldProps(`priceModel[${getPriceId(item)}].amount`)"
       v-model="priceModel[`${getPriceId(item)}`].amount"
+      autocomplete="off"
     />
   </div>
   <template v-if="currenciesSecondary.length">
@@ -188,9 +193,11 @@ export default {
         v-for="(item, index) in currenciesSecondary"
         :key="index"
         :required="true"
-        autocomplete="off"
+        :isNumeric="true"
+        :decimalLength="2"
         v-bind="$getValidatedFieldProps(`priceModel[${getPriceId(item)}].amount`)"
         v-model="priceModel[`${getPriceId(item)}`].amount"
+        autocomplete="off"
       >
         <span slot="label">
           <IconQuestionInCircle class="field-label-icon" />
