@@ -21,12 +21,14 @@ export default {
           icon: 'IconMoney',
           url: `/projects/${projectId}/virtual-currency/`,
           routeNames: ['ProjectVirtualCurrency', 'ProjectKeyProductsList'],
+          available: true,
         },
         {
           title: 'Settings',
           icon: 'IconSettings',
           url: `/projects/${projectId}/settings/`,
           routeNames: ['ProjectSettings'],
+          available: true,
         },
 
         // {
