@@ -34,7 +34,7 @@ export default {
         {
           title: 'Game keys',
           url: `/projects/${projectId}/game-keys`,
-          routeNames: ['ProjectGameKeysPage'],
+          routeNames: ['ProjectKeyProductsList'],
         },
       ];
     },

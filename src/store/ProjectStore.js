@@ -1,5 +1,6 @@
 import axios from 'axios';
 import qs from 'qs';
+import { get } from 'lodash-es';
 
 function mapDataFormToApi(data) {
   // eslint-disable-next-line
@@ -166,6 +167,24 @@ export default function createProjectStore() {
           mapDataFormToApi(project),
         );
         commit('projectPublicName', state.project.name);
+      },
+
+      async checkIsSkuUnique({ state, rootState }, sku) {
+        try {
+          await axios.post(
+            `${rootState.config.apiUrl}/admin/api/v1/projects/${state.project.id}/sku`,
+            {
+              sku,
+            },
+          );
+        } catch (error) {
+          // (sku+project id already exist)
+          if (get(error, 'response.data.code') === 'kp000006') {
+            return false;
+          }
+          throw error;
+        }
+        return true;
       },
     },
 

@@ -20,7 +20,7 @@ export default {
           title: 'Sales options',
           icon: 'IconMoney',
           url: `/projects/${projectId}/virtual-currency/`,
-          routeNames: ['ProjectVirtualCurrency', 'ProjectGameKeysPage'],
+          routeNames: ['ProjectVirtualCurrency', 'ProjectKeyProductsList'],
         },
         {
           title: 'Settings',
