@@ -115,13 +115,15 @@ export default function createProjectVirtualItemsStore() {
       /**
        * Edit Virtual item
        * @param rootState
-       * @param data
+       * @param data {Object}
+       * @param projectId {String}
        * @returns {Promise<void>}
        */
-      async editItem({ rootState }, data) {
-        data.project_id = rootState.Project.project.id;
-        console.log(data);
-        await axios.put(`${rootState.config.apiUrl}/admin/api/v1/products/${data.id}`, data);
+      async editItem({ rootState }, data, projectId) {
+        await axios.put(`${rootState.config.apiUrl}/admin/api/v1/products/${data.id}`, {
+          ...data,
+          project_id: projectId,
+        });
       },
     },
 

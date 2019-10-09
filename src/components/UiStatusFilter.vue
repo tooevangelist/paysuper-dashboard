@@ -1,10 +1,8 @@
 <script>
-import { map } from 'lodash-es';
 import ClickOutside from 'vue-click-outside';
-import merchantStatusScheme from '@/schemes/merchantStatusScheme';
 
 export default {
-  name: 'UiFilterAgreementStatus',
+  name: 'UiStatusFilter',
 
   directives: {
     ClickOutside,
@@ -19,21 +17,16 @@ export default {
       type: Object,
       default: null,
     },
+    scheme: {
+      type: Object,
+      required: true,
+    },
   },
 
   data() {
     return {
       isDropdownOpened: false,
-      statusesList: [
-        {
-          text: 'All requests',
-          value: 'all',
-        },
-        ...map(merchantStatusScheme, (item, key) => ({
-          ...item,
-          code: key,
-        })),
-      ],
+      statusesList: this.scheme,
     };
   },
 
@@ -50,48 +43,48 @@ export default {
 </script>
 
 <template>
-<div class="filter-agreement-status">
-  <div
-    class="button"
-    :class="{ '_opened': isDropdownOpened }"
-    v-click-outside="() => isDropdownOpened = false"
-    @click="isDropdownOpened = !isDropdownOpened"
-  >
-    <IconDropdownMenu />
-  </div>
-  <UiTip
-    class="dropdown"
-    innerPosition="right"
-    position="bottom"
-    width="200px"
-    :visible="isDropdownOpened"
-    :closeDelay="0"
-    :stayOpenedOnHover="false"
-  >
-    <div class="dropdown-content">
-      <div
-        class="status"
-        v-for="(item, index) in statusesList"
-        :key="index"
-        :class="getItemClass(item, value)"
-        @click="$emit('input', item.value)"
-      >
-        <component
-          class="status-icon"
-          v-if="item.icon"
-          :is="item.icon"
-        />
-        {{item.text}}
-        <span
-          class="status-count"
-          v-if="countsByStatus"
+  <div class="filter-agreement-status">
+    <div
+      class="button"
+      :class="{ '_opened': isDropdownOpened }"
+      v-click-outside="() => isDropdownOpened = false"
+      @click="isDropdownOpened = !isDropdownOpened"
+    >
+      <IconDropdownMenu />
+    </div>
+    <UiTip
+      class="dropdown"
+      innerPosition="right"
+      position="bottom"
+      width="200px"
+      :visible="isDropdownOpened"
+      :closeDelay="0"
+      :stayOpenedOnHover="false"
+    >
+      <div class="dropdown-content">
+        <div
+          class="status"
+          v-for="(item, index) in statusesList"
+          :key="index"
+          :class="getItemClass(item, value)"
+          @click="$emit('input', item.value)"
         >
+          <component
+            class="status-icon"
+            v-if="item.icon"
+            :is="item.icon"
+          />
+          {{item.text}}
+          <span
+            class="status-count"
+            v-if="countsByStatus"
+          >
           ({{ countsByStatus[item.value] || 0 }})
         </span>
+        </div>
       </div>
-    </div>
-  </UiTip>
-</div>
+    </UiTip>
+  </div>
 
 </template>
 

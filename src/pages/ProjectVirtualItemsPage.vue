@@ -1,3 +1,171 @@
+<script>
+import { debounce, isEqual, find } from 'lodash-es';
+import {
+  mapState, mapGetters, mapActions, mapMutations,
+} from 'vuex';
+import PictureWoomanLooking from '@/components/PictureWomanLooking.vue';
+import NoResults from '@/components/NoResults.vue';
+import ProjectVirtualItemsStore from '@/store/ProjectVirtualItemsStore';
+import Notifications from '@/mixins/Notifications';
+import projectProductsStatusScheme from '@/schemes/projectProductsStatusScheme';
+
+export default {
+  name: 'ProjectVirtualItemsPage',
+
+  mixins: [Notifications],
+
+  components: {
+    NoResults,
+    PictureWoomanLooking,
+  },
+
+  props: {
+    project: {
+      type: Object,
+      required: true,
+    },
+  },
+
+  data() {
+    return {
+      filters: {},
+      isSearchRouting: false,
+      isInfiniteScrollLocked: false,
+      openedTooltipId: '',
+      showDeleteConfirm: false,
+      selectedItem: null,
+      scheme: projectProductsStatusScheme,
+    };
+  },
+
+  async asyncData({ store, registerStoreModule, route }) {
+    try {
+      await registerStoreModule('ProjectVirtualItems', ProjectVirtualItemsStore, {
+        query: route.query,
+        projectId: route.params.id,
+      });
+    } catch (error) {
+      store.dispatch('setPageError', error);
+    }
+  },
+
+  computed: {
+    ...mapState('ProjectVirtualItems', ['virtualItems', 'filterValues', 'query', 'apiQuery', 'currentItem']),
+    ...mapGetters('ProjectVirtualItems', ['getFilterValues']),
+
+    handleQuickSearchInput() {
+      return debounce(() => {
+        this.filterItems();
+      }, 500);
+    },
+  },
+
+  async beforeRouteUpdate(to, from, next) {
+    if (!this.isSearchRouting) {
+      this.initQuery(to.query);
+      this.updateFiltersFromQuery();
+      this.setIsLoading(true);
+      await this.fetchItems().catch(this.$showErrorMessage);
+      this.setIsLoading(false);
+    }
+    this.isSearchRouting = false;
+    next();
+  },
+
+  created() {
+    this.updateFiltersFromQuery();
+  },
+
+  methods: {
+    ...mapActions(['setIsLoading']),
+    ...mapActions('ProjectVirtualItems', [
+      'initQuery',
+      'createItem',
+      'submitFilters',
+      'fetchItems',
+      'deleteItem',
+      'editItem',
+    ]),
+    ...mapMutations('ProjectVirtualItems', ['setCurrentItem']),
+
+    updateFiltersFromQuery() {
+      this.filters = this.getFilterValues(['quickFilter', 'offset', 'limit']);
+    },
+
+    filterItems() {
+      this.filters.offset = 0;
+      this.searchItems();
+    },
+
+    async searchItems() {
+      this.isSearchRouting = true;
+      this.setIsLoading(true);
+      this.submitFilters(this.filters);
+      this.navigate();
+      await this.fetchItems().catch(this.$showErrorMessage);
+      this.setIsLoading(false);
+    },
+
+    navigate() {
+      if (isEqual(this.$route.query, this.query)) {
+        return;
+      }
+      this.$router.push({
+        path: this.$route.path,
+        query: this.query,
+      });
+    },
+
+    createNew() {
+      this.$router.push({
+        name: 'ProjectVirtualItemEdit',
+        params: { itemId: 'new' },
+      });
+    },
+
+    goToItemPage(item) {
+      this.setCurrentItem(item);
+      this.setIsLoading(true);
+      this.$router.push({
+        name: 'ProjectVirtualItemEdit',
+        params: { itemId: item.id },
+      });
+    },
+
+    showConfirm(item) {
+      this.selectedItem = item;
+      this.showDeleteConfirm = true;
+    },
+
+    async deleteSeletedItem() {
+      this.showDeleteConfirm = false;
+      this.setIsLoading(true);
+      await this.deleteItem(this.selectedItem.id).catch(this.$showErrorMessage);
+      await this.searchItems();
+      this.selectedItem = null;
+      this.setIsLoading(false);
+    },
+
+    async toggleItemStatus(item) {
+      this.setIsLoading(true);
+      await this.editItem(Object.assign(item, { enabled: !item.enabled }), this.$route.params.id);
+      await this.searchItems();
+      this.setIsLoading(false);
+    },
+
+    handleStatusInput(value) {
+      this.filters.enabled = value;
+      this.filterMerchants();
+    },
+
+    getUsdPrice(item) {
+      const price = find(item.prices, { currency: 'USD', region: 'USD' }) || '';
+      return this.$formatPrice(price.amount, price.currency);
+    },
+  },
+};
+</script>
+
 <template>
   <div>
     <UiPageHeaderFrame>
@@ -18,7 +186,7 @@
             :isAlwaysExpanded="true"
             v-model="filters.quickFilter"
             @input="handleQuickSearchInput" />
-          <UiFilterAgreementStatus
+          <UiStatusFilter
             @input="handleStatusInput"
             :scheme="scheme"
             :value="filters.enabled" />
@@ -65,7 +233,7 @@
             </UiTableCell>
             <UiTableCell align="left" valign="top" :title="item.prices">
               <span class="cell-text">
-                {{ $formatPrice(item.prices[0].amount, item.prices[0].currency)}}
+                {{ getUsdPrice(item) }}
               </span>
             </UiTableCell>
             <UiTableCell align="left" valign="top">
@@ -137,156 +305,13 @@
   </div>
 </template>
 
-<script>
-import { debounce, isEqual } from 'lodash-es';
-import {
-  mapState, mapGetters, mapActions, mapMutations,
-} from 'vuex';
-import PictureWoomanLooking from '@/components/PictureWomanLooking.vue';
-import NoResults from '@/components/NoResults.vue';
-import ProjectVirtualItemsStore from '@/store/ProjectVirtualItemsStore';
-import Notifications from '@/mixins/Notifications';
-import projectProductsStatusScheme from '@/schemes/projectProductsStatusScheme';
-
-export default {
-  name: 'ProjectVirtualItemsPage',
-
-  mixins: [Notifications],
-
-  components: {
-    NoResults,
-    PictureWoomanLooking,
-  },
-
-  props: {
-    project: {
-      type: Object,
-      required: true,
-    },
-  },
-
-  data() {
-    return {
-      filters: {},
-      isSearchRouting: false,
-      isInfiniteScrollLocked: false,
-      openedTooltipId: '',
-      showDeleteConfirm: false,
-      selectedItem: null,
-      scheme: projectProductsStatusScheme,
-    };
-  },
-
-  async asyncData({ store, registerStoreModule, route }) {
-    try {
-      await registerStoreModule('ProjectVirtualItems', ProjectVirtualItemsStore, {
-        query: route.query,
-        projectId: route.params.id,
-      });
-    } catch (error) {
-      store.dispatch('setPageError', error);
-    }
-  },
-
-  computed: {
-    ...mapState('ProjectVirtualItems', ['virtualItems', 'filterValues', 'query', 'apiQuery', 'currentItem']),
-    ...mapGetters('ProjectVirtualItems', ['getFilterValues']),
-
-    handleQuickSearchInput() {
-      return debounce(() => {
-        this.filterMerchants();
-      }, 500);
-    },
-  },
-
-  methods: {
-    ...mapActions(['setIsLoading']),
-    ...mapActions('ProjectVirtualItems', [
-      'initQuery',
-      'createItem',
-      'submitFilters',
-      'fetchItems',
-      'deleteItem',
-      'editItem',
-    ]),
-    ...mapMutations('ProjectVirtualItems', ['setCurrentItem']),
-
-    filterMerchants() {
-      this.filters.offset = 0;
-      this.searchItems();
-    },
-
-    async searchItems() {
-      this.isSearchRouting = true;
-      this.setIsLoading(true);
-      this.submitFilters(this.filters);
-      this.navigate();
-      await this.fetchItems().catch(this.$_Notifications_showErrorMessage);
-      this.setIsLoading(false);
-    },
-
-    navigate() {
-      if (isEqual(this.$route.query, this.query)) {
-        return;
-      }
-      this.$router.push({
-        path: this.$route.path,
-        query: this.query,
-      });
-    },
-
-    createNew() {
-      this.$router.push({
-        name: 'ProjectVirtualItemEdit',
-        params: { itemId: 'new' },
-      });
-    },
-
-    goToItemPage(item) {
-      this.setCurrentItem(item);
-      this.setIsLoading(true);
-      this.$router.push({
-        name: 'ProjectVirtualItemEdit',
-        params: { itemId: item.id },
-      });
-    },
-
-    showConfirm(item) {
-      this.selectedItem = item;
-      this.showDeleteConfirm = true;
-    },
-
-    async deleteSeletedItem() {
-      this.showDeleteConfirm = false;
-      this.setIsLoading(true);
-      await this.deleteItem(this.selectedItem.id).catch(this.$_Notifications_showErrorMessage);
-      await this.searchItems();
-      this.selectedItem = null;
-      this.setIsLoading(false);
-    },
-
-    async toggleItemStatus(item) {
-      this.setIsLoading(true);
-      await this.editItem(Object.assign(item, { enabled: !item.enabled }));
-      await this.searchItems();
-      this.setIsLoading(false);
-    },
-
-    handleStatusInput(value) {
-      this.filters.enabled = value;
-      this.filterMerchants();
-    },
-  },
-};
-</script>
-
 <style lang="scss" scoped>
 .control-bar {
   display: flex;
   justify-content: space-between;
 
-  &__right button {
-    margin-left: 10px;
+  .quilin-packages-button {
+    margin-right: 10px;
   }
 }
 

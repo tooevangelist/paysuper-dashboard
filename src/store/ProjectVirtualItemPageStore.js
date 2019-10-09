@@ -3,10 +3,10 @@ import assert from 'simple-assert';
 
 export default function createProjectVirtualItemPageStore() {
   return {
-    state: () => ({
+    state:{
       virtualItem: null,
       itemId: null,
-    }),
+    },
 
     mutations: {
       projectId(store, data) {
@@ -38,23 +38,32 @@ export default function createProjectVirtualItemPageStore() {
       /**
        * Edit Virtual item
        * @param rootState
-       * @param data
+       * @param commit
+       * @param data {Object}
+       * @param projectId {String}
        * @returns {Promise<void>}
        */
-      async editItem({ rootState }, data) {
-        data.project_id = rootState.Project.project.id;
-        await axios.put(`${rootState.config.apiUrl}/admin/api/v1/products/${data.id}`, data);
+      async editItem({ rootState, commit }, data, projectId) {
+        const response = await axios.put(`${rootState.config.apiUrl}/admin/api/v1/products/${data.id}`, {
+          ...data,
+          project_id: projectId,
+        });
+        commit('setVirtualItem', response.data);
       },
 
       /**
        * Create new Virtual item
        * @param rootState
-       * @param data
+       * @param data {Object}
+       * @param projectId {String}
        * @returns {Promise<void>}
        */
-      async createItem({ rootState }, data) {
+      async createItem({ rootState }, data, projectId) {
         data.project_id = rootState.Project.project.id;
-        await axios.post(`${rootState.config.apiUrl}/admin/api/v1/products`, data);
+        await axios.post(`${rootState.config.apiUrl}/admin/api/v1/products`, {
+          ...data,
+          project_id: projectId,
+        });
       },
     },
 

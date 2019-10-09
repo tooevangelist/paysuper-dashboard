@@ -1,132 +1,23 @@
-<template>
-  <div>
-    <UiPageHeaderFrame>
-      <template slot="title">
-        {{ virtualItem === null ? 'Adding item' : 'Edit item' }}
-      </template>
-      <span slot="description">
-        Here you can add a new item to your project, specify localised text descriptions,
-        prices and currencies, using the tabs.
-      </span>
-    </UiPageHeaderFrame>
-
-    <UiPanel>
-      <section class="section">
-        <UiImageUpload
-          class="section"
-          title="Update logo"
-          description="200x200 px, .png, .jpg"
-          :uploadImage="uploadImage"
-          v-model="image"
-        />
-        <UiLangTextField
-          :value="name"
-          :langs="langs"
-          label="Item name"
-        />
-        <UiLangTextField
-          :value="description"
-          :langs="langs"
-          :required="true"
-          label="Short description"
-        />
-        <UiLangTextField
-          :value="long_description"
-          :langs="langs"
-          :required="true"
-          label="Full description"
-        />
-
-        <p class="text">
-          Use SKU to identify this item. Item SKU is unique within parent project.
-        </p>
-        <UiTextField
-          label="SKU"
-          v-model="sku"
-          @input="handleSkuFieldInput"
-          :required="true"></UiTextField>
-      </section>
-      <section class="section">
-        <UiHeader
-          :hasMargin="true"
-          level="3"
-        >
-          Pricing
-        </UiHeader>
-        <p class="text">
-          Setup the price for one virtual currency unit in all your <br> currencies.
-          If you need to add more currencies to the list you can do this in
-          <a :href="`/projects/${project.id}/settings/`">project settings</a>.
-        </p>
-
-        <div class="radio-group">
-          <UiRadio
-            class="radio"
-            v-model="pricingMethod"
-            v-for="(method, index) in pricingMethodOptions"
-            :key="index"
-            :value="method.value">
-            {{ method.label }}
-            <IconQuestion fill="#919699" />
-          </UiRadio>
-        </div>
-
-        <div class="price-group">
-          <UiTextField
-            v-for="(price, index) in prices"
-            :key="index"
-            v-model="price.amount"
-            :isMoney="true"
-            :money="{ precision: 2 }"
-            label="Price"
-            :required="true"
-            v-show="price.region === price.currency"
-          >
-          <span slot="label">
-          <IconQuestionInCircle class="field-label-icon" />
-            {{ getCurrencyName(price, index) }}
-          </span>
-          </UiTextField>
-
-          <!-- Show prices for regions if available -->
-          <div class="region-prices" v-if="hasRegionPrice">
-            <UiHeader level="4" :hasMargin="true">Prices for regions</UiHeader>
-            <UiTextField
-              v-for="(price, index) in prices"
-              :key="index"
-              v-model="price.amount"
-              :isMoney="true"
-              :money="{ precision: 2 }"
-              label="Price"
-              :required="true"
-              v-show="price.region !== price.currency"
-            >
-              <span slot="label">
-              <IconQuestionInCircle class="field-label-icon" />
-                {{ getCurrencyName(price, index) }}
-              </span>
-            </UiTextField>
-          </div>
-        </div>
-      </section>
-
-      <div class="controls">
-        <UiSwitchBox v-model="enabled">Enabled</UiSwitchBox>
-        <UiButton
-          class="submit-button"
-          @click="saveItem"
-          text="SAVE"
-        />
-      </div>
-    </UiPanel>
-  </div>
-</template>
-
 <script>
 import { mapActions, mapState } from 'vuex';
-import { debounce } from 'lodash-es';
+import { debounce, get } from 'lodash-es';
 import UiImageUpload from '@/components/UiImageUpload.vue';
 import ProjectVirtualItemPageStore from '@/store/ProjectVirtualItemPageStore';
+
+const DEFAULTS = {
+  name: {
+    en: '',
+    ru: '',
+  },
+  description: {
+    en: '',
+    ru: '',
+  },
+  long_description: {
+    en: '',
+    ru: '',
+  },
+};
 
 export default {
   name: 'ProjectVirtualItemEditPage',
@@ -150,21 +41,8 @@ export default {
     return {
       isSkuUnique: true,
       langs: ['en', 'ru'],
-      image: '',
-      name: {
-        en: '',
-        ru: '',
-      },
-      description: {
-        en: '',
-        ru: '',
-      },
-      long_description: {
-        en: '',
-        ru: '',
-      },
-      sku: '',
-      pricingMethod: 'manual',
+      image: null,
+      item: {},
       pricingMethodOptions: {
         real: {
           label: 'Real currency',
@@ -175,8 +53,6 @@ export default {
           value: 'currency',
         },
       },
-      prices: [],
-      enabled: true,
     };
   },
 
@@ -186,6 +62,29 @@ export default {
 
     isNewItem() {
       return this.$route.params.itemId === 'new';
+    },
+
+    mapCurrencies() {
+      return this.currencies.map((name) => {
+        let currency = name;
+        let region = name;
+        if (name.indexOf('-') > -1) {
+          [currency, region] = name.split('-');
+        }
+        return {
+          amount: 0,
+          currency,
+          region,
+        };
+      });
+    },
+
+    hasRegionPrice() {
+      return this.item.prices.some(price => price.currency !== price.region);
+    },
+
+    projectId() {
+      return this.$route.params.id;
     },
   },
 
@@ -202,19 +101,13 @@ export default {
 
   created() {
     if (!this.isNewItem) {
-      if (this.virtualItem.images !== null) {
-        // eslint-disable-next-line
-        this.image = this.virtualItem.images[0];
-      }
-      this.name = this.virtualItem.name;
-      this.description = this.virtualItem.description;
-      this.long_description = this.virtualItem.long_description;
-      this.sku = this.virtualItem.sku;
-      this.enabled = this.virtualItem.enabled;
-      this.prices = this.virtualItem.prices;
+      this.item = this.virtualItem;
     } else {
-      this.prices = this.mapCurrencies(this.currencies);
+      Object.assign(this.item, DEFAULTS)
+      this.item.prices = this.mapCurrencies;
+      this.item.pricingMethod = 'manual';
     }
+    this.image = get(this.item, 'images.0', '');
   },
 
   methods: {
@@ -225,41 +118,20 @@ export default {
     async saveItem() {
       this.setIsLoading(true);
       const data = {
+        ...this.item,
         images: this.image.length ? [this.image] : null,
-        name: this.name,
-        description: this.description,
-        long_description: this.long_description,
-        sku: this.sku,
-        enabled: this.enabled,
         object: 'product',
         type: 'simple_product',
         default_currency: 'USD',
-        prices: this.prices,
-        pricing: this.pricingMethod,
       };
       if (this.isNewItem) {
-        await this.createItem(data).catch(this.$showErrorMessage);
+        await this.createItem(data, this.projectId).catch(this.$showErrorMessage);
       } else {
         data.id = this.virtualItem.id;
-        await this.editItem(data).catch(this.$showErrorMessage);
+        await this.editItem(data, this.projectId).catch(this.$showErrorMessage);
       }
       this.setIsLoading(false);
       this.$showSuccessMessage('Saved successfully');
-    },
-
-    mapCurrencies(currencies) {
-      return currencies.map((name) => {
-        let currency = name;
-        let region = name;
-        if (name.indexOf('-') > -1) {
-          [currency, region] = name.split('-');
-        }
-        return {
-          amount: 0,
-          currency,
-          region,
-        };
-      });
     },
 
     getCurrencyName(currency, index) {
@@ -277,17 +149,137 @@ export default {
     handleSkuFieldInput: debounce(
       async function handleSkuFieldInput(value) {
         this.isSkuUnique = await this.checkIsSkuUnique(value).catch(this.$showErrorMessage);
-        this.$v.sku.$touch();
+        this.$v.item.sku.$touch();
       },
       200,
     ),
-
-    hasRegionPrice() {
-      return this.prices.some(price => price.currency !== price.region);
-    },
   },
 };
 </script>
+
+<template>
+  <div>
+    <UiPageHeaderFrame>
+      <template slot="title">
+        {{ virtualItem === null ? 'Adding item' : 'Edit item' }}
+      </template>
+      <span slot="description">
+        Here you can add a new item to your project, specify localised text descriptions,
+        prices and currencies, using the tabs.
+      </span>
+    </UiPageHeaderFrame>
+
+    <UiPanel>
+      <section class="section">
+        <UiImageUpload
+          class="section"
+          title="Update logo"
+          description="200x200 px, .png, .jpg"
+          :uploadImage="uploadImage"
+          v-model="image"
+        />
+        <UiLangTextField
+          :value="item.name"
+          :langs="langs"
+          label="Item name"
+        />
+        <UiLangTextField
+          :value="item.description"
+          :langs="langs"
+          :required="true"
+          label="Short description"
+        />
+        <UiLangTextField
+          :value="item.long_description"
+          :langs="langs"
+          :required="true"
+          label="Full description"
+        />
+
+        <p class="text">
+          Use SKU to identify this item. Item SKU is unique within parent project.
+        </p>
+        <UiTextField
+          label="SKU"
+          v-model="item.sku"
+          @input="handleSkuFieldInput"
+          :required="true"></UiTextField>
+      </section>
+      <section class="section">
+        <UiHeader
+          :hasMargin="true"
+          level="3"
+        >
+          Pricing
+        </UiHeader>
+        <p class="text">
+          Setup the price for one virtual currency unit in all your <br> currencies.
+          If you need to add more currencies to the list you can do this in
+          <a :href="`/projects/${project.id}/settings/`">project settings</a>.
+        </p>
+
+        <div class="radio-group">
+          <UiRadio
+            class="radio"
+            v-model="item.pricingMethod"
+            v-for="(method, index) in pricingMethodOptions"
+            :key="index"
+            :value="method.value">
+            {{ method.label }}
+            <IconQuestion fill="#919699" />
+          </UiRadio>
+        </div>
+
+        <div class="price-group">
+          <UiTextField
+            v-for="(price, index) in item.prices"
+            :key="index"
+            v-model="price.amount"
+            :isMoney="true"
+            :money="{ precision: 2 }"
+            label="Price"
+            :required="true"
+            v-show="price.region === price.currency"
+          >
+          <span slot="label">
+          <IconQuestionInCircle class="field-label-icon" />
+            {{ getCurrencyName(price, index) }}
+          </span>
+          </UiTextField>
+
+          <!-- Show prices for regions if available -->
+          <div class="region-prices" v-if="hasRegionPrice">
+            <UiHeader level="4" :hasMargin="true">Prices for regions</UiHeader>
+            <UiTextField
+              v-for="(price, index) in item.prices"
+              :key="index"
+              v-model="price.amount"
+              :isMoney="true"
+              :money="{ precision: 2 }"
+              label="Price"
+              :required="true"
+              v-show="price.region !== price.currency"
+            >
+              <span slot="label">
+              <IconQuestionInCircle class="field-label-icon" />
+                {{ getCurrencyName(price, index) }}
+              </span>
+            </UiTextField>
+          </div>
+        </div>
+      </section>
+
+      <div class="controls">
+        <UiSwitchBox v-model="item.enabled">Enabled</UiSwitchBox>
+        <UiButton
+          class="submit-button"
+          @click="saveItem"
+          text="SAVE"
+        />
+      </div>
+    </UiPanel>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .section {
@@ -298,9 +290,9 @@ export default {
   width: 416px;
   margin-bottom: 12px;
 
-a {
-  color: #3d7bf5;
-}
+  & > a {
+    color: #3d7bf5;
+  }
 }
 
 .radio-group {
@@ -308,7 +300,7 @@ a {
 }
 
 .radio {
-& + & {
+  & + & {
     margin-top: 12px;
   }
 }
@@ -317,7 +309,7 @@ a {
   display: flex;
   justify-content: flex-end;
 
-  &> button {
+  .submit-button {
     margin-left: 32px;
   }
 }
@@ -340,7 +332,7 @@ a {
 .region-prices {
   width: 100%;
 
-  h4 {
+  & > .ui-header {
     margin-left: 12px;
   }
 }

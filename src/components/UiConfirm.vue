@@ -1,38 +1,3 @@
-<template>
-  <UiModal :width="width">
-    <UiHeader
-      slot="header"
-      level="3"
-      align="center"
-    >
-      {{ title }}
-    </UiHeader>
-
-    <div class="content">
-      <slot></slot>
-    </div>
-
-    <div class="controls">
-      <UiButton
-        class="close-button"
-        color="gray"
-        :isTransparent="true"
-        @click="$emit('close')"
-      >
-        CLOSE
-      </UiButton>
-      <UiButton
-        class="submit-button"
-        :color="buttonColor"
-        @click="$emit('confirm')"
-      >
-        {{ buttonText }}
-      </UiButton>
-    </div>
-
-  </UiModal>
-</template>
-
 <script>
 import { includes } from 'lodash-es';
 
@@ -71,6 +36,41 @@ export default {
   },
 };
 </script>
+
+<template>
+  <UiModal :width="width">
+    <UiHeader
+      slot="header"
+      level="3"
+      align="center"
+    >
+      {{ title }}
+    </UiHeader>
+
+    <div class="content">
+      <slot></slot>
+    </div>
+
+    <div class="controls">
+      <UiButton
+        class="close-button"
+        color="gray"
+        :isTransparent="true"
+        @click="$emit('close')"
+      >
+        CLOSE
+      </UiButton>
+      <UiButton
+        class="submit-button"
+        :color="buttonColor"
+        @click="$emit('confirm')"
+      >
+        {{ buttonText }}
+      </UiButton>
+    </div>
+
+  </UiModal>
+</template>
 
 <style scoped>
 .content {
