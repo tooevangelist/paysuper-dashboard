@@ -102,11 +102,12 @@ export default {
       v-for="(price, index) in prices"
       :key="index"
       v-model="price.amount"
-      :isMoney="true"
-      :money="{ precision: 2 }"
+      :isNumeric="true"
+      :decimalLength="2"
       :label="getCurrencyName(price, index)"
       :required="true"
       v-show="price.region === price.currency"
+      @suggestClosed="isSteamSuggestOpened = false"
     >
       <template v-slot:suggest="{ closeSuggest }" v-if="isDefault(price)">
         <div>
@@ -128,8 +129,8 @@ export default {
         v-for="(price, index) in prices"
         :key="index"
         v-model="price.amount"
-        :isMoney="true"
-        :money="{ precision: 2 }"
+        :isNumeric="true"
+        :decimalLength="2"
         label="Price"
         :required="true"
         v-show="price.region !== price.currency"
