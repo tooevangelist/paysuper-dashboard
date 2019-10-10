@@ -3,7 +3,7 @@ import assert from 'simple-assert';
 
 export default function createProjectVirtualItemPageStore() {
   return {
-    state:{
+    state: {
       virtualItem: null,
       itemId: null,
     },
@@ -59,11 +59,22 @@ export default function createProjectVirtualItemPageStore() {
        * @returns {Promise<void>}
        */
       async createItem({ rootState }, data, projectId) {
-        data.project_id = rootState.Project.project.id;
         await axios.post(`${rootState.config.apiUrl}/admin/api/v1/products`, {
           ...data,
           project_id: projectId,
         });
+      },
+
+      /**
+       * Return the converted prices
+       * @param rootState
+       * @param amount
+       * @returns {Promise<*>}
+       */
+      async getPrices({ rootState }, amount) {
+        const path = `/api/v1/pricing/recommended/conversion?amount=${amount}`;
+        const response = await axios.get(`${rootState.config.apiUrl}${path}`);
+        return response.data.recommended_price;
       },
     },
 

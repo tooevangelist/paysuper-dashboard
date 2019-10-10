@@ -1,8 +1,10 @@
 <script>
 import { mapActions, mapState } from 'vuex';
-import { debounce, get } from 'lodash-es';
+import { required } from 'vuelidate/lib/validators';
+import { debounce, get, find } from 'lodash-es';
 import UiImageUpload from '@/components/UiImageUpload.vue';
 import ProjectVirtualItemPageStore from '@/store/ProjectVirtualItemPageStore';
+import ProjectVirtualItemPrice from '@/components/ProjectVirtualItemPrice.vue';
 
 const DEFAULTS = {
   name: {
@@ -23,6 +25,7 @@ export default {
   name: 'ProjectVirtualItemEditPage',
 
   components: {
+    ProjectVirtualItemPrice,
     UiImageUpload,
   },
 
@@ -43,16 +46,6 @@ export default {
       langs: ['en', 'ru'],
       image: null,
       item: {},
-      pricingMethodOptions: {
-        real: {
-          label: 'Real currency',
-          value: 'manual',
-        },
-        virtual: {
-          label: 'Virtual currency',
-          value: 'currency',
-        },
-      },
     };
   },
 
@@ -79,13 +72,37 @@ export default {
       });
     },
 
-    hasRegionPrice() {
-      return this.item.prices.some(price => price.currency !== price.region);
-    },
-
     projectId() {
       return this.$route.params.id;
     },
+  },
+
+  validations() {
+    return {
+      item: {
+        name: {
+          en: {
+            required,
+          },
+        },
+        description: {
+          en: {
+            required,
+          },
+        },
+        long_description: {
+          en: {
+            required,
+          },
+        },
+        sku: {
+          required,
+          uniqueSku() {
+            return this.isSkuUnique;
+          },
+        },
+      },
+    };
   },
 
   async asyncData({ store, registerStoreModule, route }) {
@@ -103,7 +120,7 @@ export default {
     if (!this.isNewItem) {
       this.item = this.virtualItem;
     } else {
-      Object.assign(this.item, DEFAULTS)
+      Object.assign(this.item, DEFAULTS);
       this.item.prices = this.mapCurrencies;
       this.item.pricingMethod = 'manual';
     }
@@ -112,10 +129,15 @@ export default {
 
   methods: {
     ...mapActions(['setIsLoading']),
-    ...mapActions('ProjectVirtualItemPage', ['editItem', 'createItem']),
+    ...mapActions('ProjectVirtualItemPage', ['editItem', 'createItem', 'getPrices']),
     ...mapActions('Project', ['checkIsSkuUnique']),
 
     async saveItem() {
+      this.$v.$touch();
+      if (this.$v.$invalid) {
+        this.$showErrorMessage('The form is not filled right');
+        return;
+      }
       this.setIsLoading(true);
       const data = {
         ...this.item,
@@ -134,18 +156,6 @@ export default {
       this.$showSuccessMessage('Saved successfully');
     },
 
-    getCurrencyName(currency, index) {
-      if (index === 0) {
-        return 'USD, Default currency';
-      }
-
-      if (currency.currency === currency.region) {
-        return currency.currency;
-      }
-
-      return `${currency.currency}, ${currency.region}`;
-    },
-
     handleSkuFieldInput: debounce(
       async function handleSkuFieldInput(value) {
         this.isSkuUnique = await this.checkIsSkuUnique(value).catch(this.$showErrorMessage);
@@ -153,6 +163,20 @@ export default {
       },
       200,
     ),
+
+    async handleFillPrice({ amount, closeSuggest }) {
+      this.setIsLoading(true);
+      const prices = await this.getPrices(amount).catch(this.$showErrorMessage);
+      prices.forEach((price) => {
+        const item = find(this.item.prices, { region: price.region, currency: price.currency });
+        if (item) {
+          item.amount = price.amount;
+        }
+      });
+
+      closeSuggest();
+      this.setIsLoading(false);
+    },
   },
 };
 </script>
@@ -182,18 +206,21 @@ export default {
           :value="item.name"
           :langs="langs"
           label="Item name"
+          v-bind="$getValidatedFieldProps('item.name.en')"
         />
         <UiLangTextField
           :value="item.description"
           :langs="langs"
           :required="true"
           label="Short description"
+          v-bind="$getValidatedFieldProps('item.description.en')"
         />
         <UiLangTextField
           :value="item.long_description"
           :langs="langs"
           :required="true"
           label="Full description"
+          v-bind="$getValidatedFieldProps('item.long_description.en')"
         />
 
         <p class="text">
@@ -203,14 +230,15 @@ export default {
           label="SKU"
           v-model="item.sku"
           @input="handleSkuFieldInput"
-          :required="true"></UiTextField>
+          :required="true"
+          v-bind="$getValidatedFieldProps('item.sku')"/>
       </section>
       <section class="section">
         <UiHeader
           :hasMargin="true"
           level="3"
         >
-          Pricing
+          Item price
         </UiHeader>
         <p class="text">
           Setup the price for one virtual currency unit in all your <br> currencies.
@@ -218,55 +246,10 @@ export default {
           <a :href="`/projects/${project.id}/settings/`">project settings</a>.
         </p>
 
-        <div class="radio-group">
-          <UiRadio
-            class="radio"
-            v-model="item.pricingMethod"
-            v-for="(method, index) in pricingMethodOptions"
-            :key="index"
-            :value="method.value">
-            {{ method.label }}
-            <IconQuestion fill="#919699" />
-          </UiRadio>
-        </div>
-
-        <div class="price-group">
-          <UiTextField
-            v-for="(price, index) in item.prices"
-            :key="index"
-            v-model="price.amount"
-            :isMoney="true"
-            :money="{ precision: 2 }"
-            label="Price"
-            :required="true"
-            v-show="price.region === price.currency"
-          >
-          <span slot="label">
-          <IconQuestionInCircle class="field-label-icon" />
-            {{ getCurrencyName(price, index) }}
-          </span>
-          </UiTextField>
-
-          <!-- Show prices for regions if available -->
-          <div class="region-prices" v-if="hasRegionPrice">
-            <UiHeader level="4" :hasMargin="true">Prices for regions</UiHeader>
-            <UiTextField
-              v-for="(price, index) in item.prices"
-              :key="index"
-              v-model="price.amount"
-              :isMoney="true"
-              :money="{ precision: 2 }"
-              label="Price"
-              :required="true"
-              v-show="price.region !== price.currency"
-            >
-              <span slot="label">
-              <IconQuestionInCircle class="field-label-icon" />
-                {{ getCurrencyName(price, index) }}
-              </span>
-            </UiTextField>
-          </div>
-        </div>
+        <ProjectVirtualItemPrice
+          :method="item.pricingMethod"
+          :prices="item.prices"
+          @fillConvertedPrices="handleFillPrice"/>
       </section>
 
       <div class="controls">
@@ -292,16 +275,6 @@ export default {
 
   & > a {
     color: #3d7bf5;
-  }
-}
-
-.radio-group {
-  margin: 22px 0 20px;
-}
-
-.radio {
-  & + & {
-    margin-top: 12px;
   }
 }
 

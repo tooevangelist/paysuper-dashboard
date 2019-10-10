@@ -6,13 +6,10 @@ import {
 import PictureWoomanLooking from '@/components/PictureWomanLooking.vue';
 import NoResults from '@/components/NoResults.vue';
 import ProjectVirtualItemsStore from '@/store/ProjectVirtualItemsStore';
-import Notifications from '@/mixins/Notifications';
 import projectProductsStatusScheme from '@/schemes/projectProductsStatusScheme';
 
 export default {
   name: 'ProjectVirtualItemsPage',
-
-  mixins: [Notifications],
 
   components: {
     NoResults,
