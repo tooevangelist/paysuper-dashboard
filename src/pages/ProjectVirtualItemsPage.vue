@@ -219,7 +219,10 @@ export default {
               <span class="leading-cell-content">{{ index + 1 }}</span>
             </UiTableCell>
             <UiTableCell align="left" valign="top">
-              <img v-if="item.images !== null" :src="item.images[0]" class="item-image">
+              <div
+                v-if="item.images !== null"
+                :style="{ backgroundImage: `url(${item.images[0]})` }"
+                class="item-image"></div>
               <IconNoImage v-else class="img" width="18" height="18" fill="#919699" />
             </UiTableCell>
             <UiTableCell align="left" valign="top" :title="item.name.en">
@@ -327,6 +330,7 @@ export default {
 .item-image {
   width: 18px;
   height: 18px;
+  background-size: contain;
 }
 
 .filter-agreement-status {
