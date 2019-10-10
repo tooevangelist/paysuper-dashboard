@@ -2014,7 +2014,7 @@ atob@^2.1.1:
   version "1.1.0"
   resolved "https://codeload.github.com/ProtocolONE/authone-jwt-verifier-node/tar.gz/9074728db24a0da9f6bb77ad6985be8db9fb6066"
   dependencies:
-    axios "^0.18.0"
+    axios "^0.19.0"
     lru-cache "^5.1.1"
     querystring "^0.2.0"
     string-template "^1.0.0"
@@ -12068,6 +12068,11 @@ vue-clickaway@^2.2.2:
   integrity sha512-25SpjXKetL06GLYoLoC8pqAV6Cur9cQ//2g35GRFBV4FgoljbZZjTINR8g2NuVXXDMLSUXaKx5dutgO4PaDE7A==
   dependencies:
     loose-envify "^1.2.0"
+
+vue-currency-input@^1.10.1:
+  version "1.10.1"
+  resolved "https://registry.yarnpkg.com/vue-currency-input/-/vue-currency-input-1.10.1.tgz#fe608122343506209986e41572ee903654fa95e1"
+  integrity sha512-w0eTi42SxVVB5f4ZX3hKOAqRuQH4af4iPvdr9vo+FxdiitrEoBbEgSwFp4/A/SUqiZGyQOPn3VX1M6CaknsW6A==
 
 vue-eslint-parser@^2.0.3:
   version "2.0.3"

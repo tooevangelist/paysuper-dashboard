@@ -56,6 +56,14 @@ export default {
       type: Object,
       default: () => {},
     },
+    isNumeric: {
+      default: false,
+      type: Boolean,
+    },
+    decimalLength: {
+      default: 0,
+      type: Number,
+    },
   },
 
   data() {

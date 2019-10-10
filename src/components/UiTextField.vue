@@ -1,10 +1,12 @@
 <script>
 import { Money } from 'v-money';
 import ClickOutside from 'vue-click-outside';
+import { CurrencyInput } from 'vue-currency-input';
 
 export default {
   components: {
     Money,
+    CurrencyInput,
   },
 
   model: {
@@ -62,6 +64,14 @@ export default {
       type: Object,
       default: () => {},
     },
+    isNumeric: {
+      default: false,
+      type: Boolean,
+    },
+    decimalLength: {
+      default: 0,
+      type: Number,
+    },
   },
   data() {
     return {
@@ -73,6 +83,15 @@ export default {
         suffix: '',
         precision: 0,
         masked: false,
+      },
+      // https://dm4t2.github.io/vue-currency-input/config/
+      numericOptions: {
+        currency: null,
+        distractionFree: false,
+        locale: 'en',
+        autoDecimalMode: false,
+        min: null,
+        max: null,
       },
       isSuggestVisible: false,
     };
@@ -99,6 +118,18 @@ export default {
         this.required ? '_required' : '',
       ];
     },
+
+    numericValue: {
+      get() {
+        if (!this.inputValue) {
+          return null;
+        }
+        return this.inputValue;
+      },
+      set(value) {
+        this.inputValue = value;
+      },
+    },
   },
   watch: {
     value(val) {
@@ -115,6 +146,14 @@ export default {
     closeSuggest() {
       this.isSuggestVisible = false;
       this.$emit('suggestClosed');
+    },
+
+    handleNumericInput() {
+      const value = this.inputValue ? this.inputValue : '';
+      if (value !== this.value) {
+        this.$emit('input', value, this.value);
+        this.openSuggest();
+      }
     },
   },
 };
@@ -134,8 +173,17 @@ export default {
     @focus="$emit('focus')"
     @input="openSuggest(), $emit('input', inputValue)"
   />
+  <CurrencyInput
+    v-if="isNumeric"
+    v-model="numericValue"
+    v-bind="{ ...$attrs, ...numericOptions, required, disabled, decimalLength }"
+    :class="inputClasses"
+    @blur="$emit('blur')"
+    @focus="$emit('focus')"
+    @input="handleNumericInput()"
+  />
   <input
-    v-else
+    v-if="!isMoney && !isNumeric"
     v-model="inputValue"
     v-bind="{ ...$attrs, type, required, disabled }"
     :class="inputClasses"

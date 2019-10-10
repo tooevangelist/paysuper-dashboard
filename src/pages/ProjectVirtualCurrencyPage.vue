@@ -132,8 +132,8 @@ export default {
       <UiLangTextField
         :value="singleUnitPrice"
         :langs="currencies"
-        :isMoney="true"
-        :money="{ precision: 2 }"
+        :isNumeric="true"
+        :decimalLength="2"
         label="Virtual currency single unit price"
         v-bind="$getValidatedFieldProps('singleUnitPrice.USD')"
       />
@@ -147,12 +147,12 @@ export default {
       <UiTextField
         :value="1"
         label="Minimum purchase value"
-        :isMoney="true"
+        :isNumeric="true"
       />
       <UiTextField
         :value="100"
         label="Maximum purchase value"
-        :isMoney="true"
+        :isNumeric="true"
       />
     </section>
 

@@ -196,6 +196,13 @@ export default {
       const prices = await this.getRecommendedPrices({ amount, type })
         .catch(this.$showErrorMessage);
 
+      this.setIsLoading(false);
+      closeSuggest();
+
+      if (!prices) {
+        return;
+      }
+
       const platformData = find(this.keyProductLocal.platforms, { id: platformId });
 
       const defaultPrice = find(platformData.prices, { region: 'USD', currency: 'USD' });
@@ -207,8 +214,6 @@ export default {
           item.amount = price.amount;
         }
       });
-      closeSuggest();
-      this.setIsLoading(false);
     },
 
     handleSkuFieldInput: debounce(

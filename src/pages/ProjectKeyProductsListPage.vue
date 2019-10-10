@@ -275,39 +275,40 @@ export default {
           @mouseleave.native="() => openedTooltipId = ''"
           :noPadding="true"
         >
-          <UiDotsMenuTrigger
-            class="dots-menu-trigger"
-            :isOpened="openedTooltipId === keyProduct.id"
-          />
-
-          <UiTip
-            innerPosition="right"
-            position="bottom"
-            width="180px"
-            :margin="0"
-            :visible="openedTooltipId === keyProduct.id"
-            :closeDelay="0"
-            :stayOpenedOnHover="false"
-          >
-            <UiTooltipMenuItem
-              iconComponent="IconPen"
+          <div class="dots-menu">
+            <UiDotsMenuTrigger
+              class="dots-menu-trigger"
+              :isOpened="openedTooltipId === keyProduct.id"
+            />
+            <UiTip
+              innerPosition="right"
+              position="bottom"
+              width="180px"
+              :margin="0"
+              :visible="openedTooltipId === keyProduct.id"
+              :closeDelay="0"
+              :stayOpenedOnHover="false"
             >
-              Edit
-            </UiTooltipMenuItem>
-            <UiTooltipMenuItem
-              iconComponent="IconDeactivate"
-              @click.stop.prevent="handleToggleKeyProductEnabled(keyProduct)"
-            >
-              {{ keyProduct.enabled ? 'Disable': 'Enable' }}
-            </UiTooltipMenuItem>
-            <UiTooltipMenuItem
-              iconComponent="IconDelete"
-              type="delete"
-              @click.stop.prevent="handleDeleteKeyProduct(keyProduct)"
-            >
-              Delete
-            </UiTooltipMenuItem>
-          </UiTip>
+              <UiTooltipMenuItem
+                iconComponent="IconPen"
+              >
+                Edit
+              </UiTooltipMenuItem>
+              <UiTooltipMenuItem
+                iconComponent="IconDeactivate"
+                @click.stop.prevent="handleToggleKeyProductEnabled(keyProduct)"
+              >
+                {{ keyProduct.enabled ? 'Disable': 'Enable' }}
+              </UiTooltipMenuItem>
+              <UiTooltipMenuItem
+                iconComponent="IconDelete"
+                type="delete"
+                @click.stop.prevent="handleDeleteKeyProduct(keyProduct)"
+              >
+                Delete
+              </UiTooltipMenuItem>
+            </UiTip>
+          </div>
         </UiTableCell>
       </UiTableRow>
     </UiTable>
@@ -362,6 +363,11 @@ $hover-deactivate-background-color: rgba($hover-deactivate-text-color, 0.08);
   border-radius: 2px;
   display: block;
   background-size: cover;
+  background-position: center;
+}
+
+.dots-menu {
+  position: relative;
 }
 
 .leading-cell-content {
