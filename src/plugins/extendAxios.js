@@ -16,4 +16,25 @@ export default function extendAxios(store) {
   };
   const setAuthCb = createSetAuthInterceptor();
   axios.interceptors.request.use(setAuthCb);
+
+  let refreshTokenPromise;
+  const createUpdateAuthInterceptor = http => async (error) => {
+    if (error.response.status !== 401) {
+      return Promise.reject(error);
+    }
+    if (!refreshTokenPromise) {
+      refreshTokenPromise = store.dispatch('User/refreshToken');
+    }
+    try {
+      await refreshTokenPromise;
+      refreshTokenPromise = null;
+      return http(error.config);
+    } catch {
+      refreshTokenPromise = null;
+      await store.dispatch('User/logout');
+      return Promise.reject(error);
+    }
+  };
+  const updateAuthCb = createUpdateAuthInterceptor(axios);
+  axios.interceptors.response.use(null, updateAuthCb);
 }
