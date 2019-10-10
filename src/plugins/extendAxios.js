@@ -2,8 +2,11 @@ import axios from 'axios';
 import { get } from 'lodash-es';
 
 export default function extendAxios(store) {
-  const createSetAuthInterceptor = state => (config) => {
-    const accessToken = get(state, 'User.accessToken');
+  const createSetAuthInterceptor = () => (config) => {
+    if (!config.url.includes('/api/v1')) {
+      return config;
+    }
+    const accessToken = get(store.state, 'User.accessToken');
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     } else {
@@ -11,7 +14,6 @@ export default function extendAxios(store) {
     }
     return config;
   };
-
-  const setAuthCb = createSetAuthInterceptor(store.state);
+  const setAuthCb = createSetAuthInterceptor();
   axios.interceptors.request.use(setAuthCb);
 }
