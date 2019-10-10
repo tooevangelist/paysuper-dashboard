@@ -258,6 +258,10 @@ const routes = [
     component: () => import('@/pages/ConfirmEmail.vue'),
   },
   {
+    path: '/payment-receipt/',
+    component: () => import('@/pages/PaymentReceiptPage.vue'),
+  },
+  {
     path: '/icons/',
     component: () => import('@/pages/IconsPage.vue'),
     meta: { isStoreInitDisabled: true },
