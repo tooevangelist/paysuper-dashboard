@@ -1,14 +1,22 @@
 <script>
+import SlideUpDown from 'vue-slide-up-down';
+
 export default {
   name: 'PaymentReceiptPage',
 
+  components: {
+    SlideUpDown,
+  },
+
   data() {
     return {
+      isAdditionalInfoExpanded: false,
+      isRefunded: false,
       items: [
         {
           amount: 27,
           currency: 'USD',
-          name: 'BioShock: The Collection',
+          name: 'BioShock: The Collection fsd fsd fsdf sdf sdf sdfs',
         },
         {
           amount: 16,
@@ -30,11 +38,30 @@ export default {
 <div class="payment-receipt-page">
   <div class="window">
     <header class="header">
-      <span class="status-icon-holder">
-        <span class="status-icon"></span>
-      </span>
-      <h2>Thanks for the purchase</h2>
-      <p>The transaction was successful, enjoy the game!</p>
+      <template v-if="isRefunded">
+        <span class="status-icon-holder">
+          <span class="status-icon _refund">
+            <IconTurnBack />
+          </span>
+        </span>
+        <h2>The purchase was refunded</h2>
+        <p>Upon your request, we have issued a refund
+for this purchase.</p>
+      </template>
+      <template v-else>
+        <span class="status-icon-holder">
+          <span class="status-icon _success">
+            <IconCheck
+              width="14"
+              height="12"
+              stroke="#fff"
+              stroke-width="1.8"
+            />
+          </span>
+        </span>
+        <h2>Thanks for the purchase</h2>
+        <p>The transaction was successful, enjoy the game!</p>
+      </template>
     </header>
     <div class="decoration-row">
       <span class="corner _top-left"></span>
@@ -46,14 +73,14 @@ export default {
       <span class="decoration-body _bottom"></span>
       <span class="corner _bottom-right"></span>
     </div>
-    <main class="content">
+    <div class="content">
       <h1 class="game-title">
         World of Warships
       </h1>
 
       <div class="billing-row _total">
-        <span class="billing-name">Total</span>
-        <span class="billing-value">{{ $formatPrice(112, 'USD') }}</span>
+        <span class="billing-name">Total:</span>
+        <span class="billing-value" v-if="!isRefunded">{{ $formatPrice(112, 'USD') }}</span>
       </div>
       <div
         class="billing-row"
@@ -63,11 +90,67 @@ export default {
         <span class="billing-name">
           {{ item.name }}
         </span>
-        <span class="billing-value">
+        <span class="billing-value _refund" v-if="isRefunded">
+          Refund
+        </span>
+        <span class="billing-value" v-else>
           {{ $formatPrice(item.amount, item.currency) }}
         </span>
       </div>
-    </main>
+
+      <div class="additional-toggler">
+        <a
+          href="#"
+          @click.prevent="isAdditionalInfoExpanded = !isAdditionalInfoExpanded"
+        >Additional Info</a>
+        <UiOpenerCorner
+          colorClosed="gray-blue"
+          colorOpened="gray-blue"
+          :isOpened="isAdditionalInfoExpanded"
+        />
+      </div>
+
+      <SlideUpDown :active="isAdditionalInfoExpanded" :duration="300">
+        <div class="billing-row">
+          <span class="billing-name">Transaction date</span>
+          <span class="billing-value">
+            31.01.2040
+          </span>
+        </div>
+        <div class="billing-row">
+          <span class="billing-name">Transaction ID</span>
+          <span class="billing-value">
+            897632299
+          </span>
+        </div>
+        <div class="billing-row">
+          <span class="billing-name">Merchant ID</span>
+          <span class="billing-value">
+            5913435132
+          </span>
+        </div>
+        <div class="billing-row">
+          <span class="billing-name">DRM platform</span>
+          <span class="billing-value">
+            Steam
+          </span>
+        </div>
+        <div class="billing-row">
+          <span class="billing-name">Payment partner</span>
+          <span class="billing-value">
+            PaySuper
+          </span>
+        </div>
+      </SlideUpDown>
+
+      <div class="footer">
+        <p>The receipt was sent to example@gmail.com</p>
+        <div class="footer-links">
+          <a href="#">PaySuper</a>
+          <a href="#">Terms of Use</a>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 </template>
@@ -79,10 +162,17 @@ export default {
   min-height: 100vh;
   display: flex;
   font-family: Quicksand;
+  padding: 48px 16px 32px;
+
+  a {
+    color: #5b88de;
+    text-decoration: none;
+  }
 }
 .window {
-  width: 640px;
+  max-width: 640px;
   margin: auto;
+  flex-grow: 1;
 }
 .header {
   background: #f7f8fa;
@@ -92,7 +182,7 @@ export default {
   justify-content: center;
   flex-direction: column;
   box-sizing: border-box;
-  padding-top: 20px;
+  padding: 20px 16px 0;
   position: relative;
 
   h2 {
@@ -132,7 +222,17 @@ export default {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #2bd982;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &._success {
+    background: #2bd982;
+  }
+
+  &._refund {
+    background: #fa7f56;
+  }
 }
 .content {
   background: #fff;
@@ -156,23 +256,48 @@ export default {
   color: #1a1a1a;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  height: 45px;
+  padding: 10px 0 10px;
   border-bottom: 1px dashed #ebedf0;
 
   &._total {
     font-weight: bold;
+    border-bottom: 1px solid #1a1a1a;
   }
 }
 
-.billing-name {
+.billing-value {
+  &._refund {
+    color: #fa7f56;
+  }
 }
 
-.billing-value {
+.additional-toggler {
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 22px;
+  padding: 11px 0 0px;
+}
+
+.footer {
+  text-align: center;
+  padding: 24px 32px 0px;
+  font-size: 14px;
+  line-height: 22px;
+
+  p {
+    margin: 0 0 8px;
+  }
+}
+
+.footer-links {
+  a {
+    margin: 0 6px;
+  }
 }
 
 .decoration-row {
   display: flex;
+  align-items: center;
 }
 .decoration-body {
   height: 11px;
@@ -227,5 +352,27 @@ export default {
       #ffffff 10.5px
     );
   }
+}
+
+.slide-enter-active {
+  transition-duration: 0.3s;
+  transition-timing-function: ease-in;
+}
+
+.slide-leave-active {
+  transition-duration: 0.3s;
+  transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+}
+
+.slide-enter-to,
+.slide-leave {
+  max-height: 100px;
+  overflow: hidden;
+}
+
+.slide-enter,
+.slide-leave-to {
+  overflow: hidden;
+  max-height: 0;
 }
 </style>
