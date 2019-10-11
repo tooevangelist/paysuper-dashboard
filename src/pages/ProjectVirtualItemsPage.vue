@@ -336,7 +336,7 @@ export default {
   background-size: contain;
 }
 
-.filter-agreement-status {
+.status-filter {
   margin-left: 4px;
   position: relative;
   top: 1px;

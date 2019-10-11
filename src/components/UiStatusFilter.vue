@@ -43,7 +43,7 @@ export default {
 </script>
 
 <template>
-  <div class="filter-agreement-status">
+  <div class="status-filter">
     <div
       class="button"
       :class="{ '_opened': isDropdownOpened }"
@@ -89,7 +89,7 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.filter-agreement-status {
+.status-filter {
   display: inline-flex;
   position: relative;
 }

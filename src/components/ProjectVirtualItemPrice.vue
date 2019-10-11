@@ -150,6 +150,7 @@ export default {
       :label="getCurrencyName(price, index)"
       :required="true"
       v-show="price.region === price.currency"
+      v-bind="$getValidatedFieldProps('priceData[index].amount')"
       @suggestClosed="isSteamSuggestOpened = false"
     >
       <template v-slot:suggest="{ closeSuggest }" v-if="isDefault(price)">
@@ -177,6 +178,7 @@ export default {
         label="Price"
         :required="true"
         v-show="price.region !== price.currency"
+        v-bind="$getValidatedFieldProps('priceData[index].amount')"
       >
         <span slot="label">
         <IconQuestionInCircle class="field-label-icon" />
