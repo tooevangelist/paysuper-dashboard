@@ -258,7 +258,7 @@ const routes = [
     component: () => import('@/pages/ConfirmEmail.vue'),
   },
   {
-    path: '/payment-receipt/',
+    path: '/receipt/:receiptType/:receiptId/:orderId',
     component: () => import('@/pages/PaymentReceiptPage.vue'),
   },
   {

@@ -1,5 +1,8 @@
 <script>
+import { mapState } from 'vuex';
+import { includes } from 'lodash-es';
 import SlideUpDown from 'vue-slide-up-down';
+import PaymentReceiptStore from '@/store/PaymentReceiptStore';
 
 export default {
   name: 'PaymentReceiptPage',
@@ -8,28 +11,37 @@ export default {
     SlideUpDown,
   },
 
+  async asyncData({ store, registerStoreModule, route }) {
+    if (!includes(['purchase', 'refund'], route.params.receiptType)) {
+      store.dispatch('setPageError', 404);
+      return;
+    }
+
+    try {
+      await registerStoreModule('PaymentReceipt', PaymentReceiptStore, {
+        receiptType: route.params.receiptType,
+        receiptId: route.params.receiptId,
+        orderId: route.params.orderId,
+      });
+    } catch (error) {
+      store.dispatch('setPageError', error);
+    }
+  },
+
   data() {
     return {
       isAdditionalInfoExpanded: false,
-      isRefunded: false,
-      items: [
-        {
-          amount: 27,
-          currency: 'USD',
-          name: 'BioShock: The Collection fsd fsd fsdf sdf sdf sdfs',
-        },
-        {
-          amount: 16,
-          currency: 'USD',
-          name: 'Call of duty Ghosts',
-        },
-        {
-          amount: 77.8,
-          currency: 'USD',
-          name: 'The Elder Scrolls5: Skyrim',
-        },
-      ],
     };
+  },
+
+  computed: {
+    ...mapState('PaymentReceipt', ['receipt', 'receiptType']),
+
+    computed: {
+      isRefunded() {
+        return this.receiptType === 'refund';
+      },
+    },
   },
 };
 </script>
@@ -75,28 +87,30 @@ for this purchase.</p>
     </div>
     <div class="content">
       <h1 class="game-title">
-        World of Warships
+        {{ receipt.project_name }}
       </h1>
 
       <div class="billing-row _total">
         <span class="billing-name">Total:</span>
-        <span class="billing-value" v-if="!isRefunded">{{ $formatPrice(112, 'USD') }}</span>
+        <span class="billing-value" v-if="!isRefunded">{{ receipt.total_price }}</span>
       </div>
-      <div
-        class="billing-row"
-        v-for="(item, index) in items"
-        :key="index"
-      >
-        <span class="billing-name">
-          {{ item.name }}
-        </span>
-        <span class="billing-value _refund" v-if="isRefunded">
-          Refund
-        </span>
-        <span class="billing-value" v-else>
-          {{ $formatPrice(item.amount, item.currency) }}
-        </span>
-      </div>
+      <template v-if="receipt.items">
+        <div
+          class="billing-row"
+          v-for="(item, index) in items"
+          :key="index"
+        >
+          <span class="billing-name">
+            {{ item.name }}
+          </span>
+          <span class="billing-value _refund" v-if="isRefunded">
+            Refund
+          </span>
+          <span class="billing-value" v-else>
+            {{ $formatPrice(item.amount, item.currency) }}
+          </span>
+        </div>
+      </template>
 
       <div class="additional-toggler">
         <a
@@ -114,40 +128,42 @@ for this purchase.</p>
         <div class="billing-row">
           <span class="billing-name">Transaction date</span>
           <span class="billing-value">
-            31.01.2040
+            {{ receipt.transaction_date }}
           </span>
         </div>
         <div class="billing-row">
           <span class="billing-name">Transaction ID</span>
           <span class="billing-value">
-            897632299
+            {{ receipt.transaction_id }}
           </span>
         </div>
         <div class="billing-row">
-          <span class="billing-name">Merchant ID</span>
+          <span class="billing-name">Merchant name</span>
           <span class="billing-value">
-            5913435132
+            {{ receipt.merchant_name }}
           </span>
         </div>
-        <div class="billing-row">
-          <span class="billing-name">DRM platform</span>
-          <span class="billing-value">
-            Steam
-          </span>
-        </div>
-        <div class="billing-row">
-          <span class="billing-name">Payment partner</span>
-          <span class="billing-value">
-            PaySuper
-          </span>
-        </div>
+        <template v-if="false">
+          <div class="billing-row">
+            <span class="billing-name">DRM platform</span>
+            <span class="billing-value">
+              Steam
+            </span>
+          </div>
+          <div class="billing-row">
+            <span class="billing-name">Payment partner</span>
+            <span class="billing-value">
+              PaySuper
+            </span>
+          </div>
+        </template>
       </SlideUpDown>
 
       <div class="footer">
         <p>The receipt was sent to example@gmail.com</p>
         <div class="footer-links">
-          <a href="#">PaySuper</a>
-          <a href="#">Terms of Use</a>
+          <a href="https://pay.super.com/">PaySuper</a>
+          <a href="https://pay.super.com/policy/tou/">Terms of Use</a>
         </div>
       </div>
     </div>
@@ -158,7 +174,7 @@ for this purchase.</p>
 <style lang="scss" scoped>
 @import url("https://fonts.googleapis.com/css?family=Quicksand:400,500");
 .payment-receipt-page {
-  background: linear-gradient(90deg, #d3a9fc 0%, #4facfe 100%, #e7f3fe 100%);
+  background: linear-gradient(90deg, #e1e4eb 0%, #e9ecf0 100%);
   min-height: 100vh;
   display: flex;
   font-family: Quicksand;
@@ -265,7 +281,12 @@ for this purchase.</p>
   }
 }
 
+.billing-name {
+  padding-right: 16px;
+}
 .billing-value {
+  text-align: right;
+
   &._refund {
     color: #fa7f56;
   }

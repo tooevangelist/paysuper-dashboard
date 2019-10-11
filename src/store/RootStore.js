@@ -67,9 +67,13 @@ export default new Vuex.Store({
         return;
       }
 
-      const errorCode = get(error, 'response.status', 520);
-      commit('pageError', errorCode);
-      console.error(error);
+      if (typeof error === 'number') {
+        commit('pageError', error);
+      } else {
+        const errorCode = get(error, 'response.status', 520);
+        commit('pageError', errorCode);
+        console.error(error);
+      }
     },
 
     async uploadImage({ rootState }, imagefile) {
