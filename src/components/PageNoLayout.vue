@@ -18,29 +18,10 @@ export default {
   font-family: Lato, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;
   line-height: 1.25;
-
-  * {
-    box-sizing: border-box;
-  }
 }
 .page-no-layout-body,
 .page-no-layout-html {
   display: flex;
   flex-direction: column;
-}
-.template-page-no-layout {
-  p {
-    margin: 0;
-  }
-
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  label {
-    margin: 0;
-  }
 }
 </style>
