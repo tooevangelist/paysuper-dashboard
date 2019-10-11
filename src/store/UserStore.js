@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { get } from 'lodash-es';
 import MerchantStore from '@/store/MerchantStore';
 import { UNAUTHORIZED } from '@/errors';
 
@@ -32,24 +31,18 @@ export default function createUserStore({ notifications }) {
     actions: {
       async initState({ commit, dispatch, rootState }) {
         commit('authIframeSrc', `${rootState.config.ownBackendUrl}/auth1/login`);
-
         try {
           await dispatch('initUserMerchantData');
         } catch (error) {
-          await dispatch('refreshToken');
           if (error !== UNAUTHORIZED) {
-            console.warn(error);
+            console.error(error);
           }
         }
       },
 
       async initUserMerchantData({ commit, dispatch }) {
-        try {
-          await dispatch('Merchant/fetchMerchant');
-          commit('isAuthorised', true);
-        } catch (error) {
-          throw error;
-        }
+        await dispatch('Merchant/fetchMerchant');
+        commit('isAuthorised', true);
       },
 
       /**
@@ -71,18 +64,11 @@ export default function createUserStore({ notifications }) {
        * @returns {Promise.<T>|Promise<any>|Promise}
        */
       async refreshToken({ dispatch, rootState }) {
-        try {
-          const response = await axios.get(`${rootState.config.ownBackendUrl}/auth1/refresh`, {
-            // this method requires only cookies for authrization
-            withCredentials: true,
-          });
-          await dispatch('setAccessToken', response.data.access_token);
-        } catch (error) {
-          if (get(error, 'response.data.error.message') !== 'User not logged') {
-            console.warn(error);
-          }
-          await dispatch('logout');
-        }
+        const response = await axios.get(`${rootState.config.ownBackendUrl}/auth1/refresh`, {
+          // this method requires only cookies for authrization
+          withCredentials: true,
+        });
+        await dispatch('setAccessToken', response.data.access_token);
       },
 
       async logout({ commit, rootState }) {
@@ -91,11 +77,10 @@ export default function createUserStore({ notifications }) {
             withCredentials: true,
           });
           // eslint-disable-next-line
-        } catch (error) { }
+        } catch { }
         localStorage.removeItem('token');
         commit('isAuthorised', false);
         commit('accessToken', '');
-        // router.push({ path: '/login' });
       },
     },
 
