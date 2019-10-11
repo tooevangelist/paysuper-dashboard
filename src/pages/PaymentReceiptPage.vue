@@ -37,10 +37,8 @@ export default {
   computed: {
     ...mapState('PaymentReceipt', ['receipt', 'receiptType']),
 
-    computed: {
-      isRefunded() {
-        return this.receiptType === 'refund';
-      },
+    isRefunded() {
+      return this.receiptType === 'refund';
     },
   },
 };
@@ -94,23 +92,21 @@ for this purchase.</p>
         <span class="billing-name">Total:</span>
         <span class="billing-value" v-if="!isRefunded">{{ receipt.total_price }}</span>
       </div>
-      <template v-if="receipt.items">
-        <div
-          class="billing-row"
-          v-for="(item, index) in items"
-          :key="index"
-        >
-          <span class="billing-name">
-            {{ item.name }}
-          </span>
-          <span class="billing-value _refund" v-if="isRefunded">
-            Refund
-          </span>
-          <span class="billing-value" v-else>
-            {{ $formatPrice(item.amount, item.currency) }}
-          </span>
-        </div>
-      </template>
+      <div
+        class="billing-row"
+        v-for="(item, index) in receipt.items"
+        :key="index"
+      >
+        <span class="billing-name">
+          {{ item.name }}
+        </span>
+        <span class="billing-value _refund" v-if="isRefunded">
+          Refund
+        </span>
+        <span class="billing-value" v-else>
+          {{ item.price }}
+        </span>
+      </div>
 
       <div class="additional-toggler">
         <a
