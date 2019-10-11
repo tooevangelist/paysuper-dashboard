@@ -145,7 +145,10 @@ export default {
 
     async toggleItemStatus(item) {
       this.setIsLoading(true);
-      await this.editItem(Object.assign(item, { enabled: !item.enabled }), this.$route.params.id);
+      await this.editItem({
+        data: Object.assign(item, { enabled: !item.enabled }),
+        projectId: this.$route.params.id,
+      });
       await this.searchItems();
       this.setIsLoading(false);
     },

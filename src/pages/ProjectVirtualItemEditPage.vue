@@ -1,8 +1,9 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 import { required } from 'vuelidate/lib/validators';
-import { debounce, get, find } from 'lodash-es';
-import UiImageUpload from '@/components/UiImageUpload.vue';
+import {
+  debounce, get, cloneDeep,
+} from 'lodash-es';
 import ProjectVirtualItemPageStore from '@/store/ProjectVirtualItemPageStore';
 import ProjectVirtualItemPrice from '@/components/ProjectVirtualItemPrice.vue';
 
@@ -19,6 +20,7 @@ const DEFAULTS = {
     en: '',
     ru: '',
   },
+  enabled: true,
 };
 
 export default {
@@ -26,7 +28,6 @@ export default {
 
   components: {
     ProjectVirtualItemPrice,
-    UiImageUpload,
   },
 
   props: {
@@ -45,7 +46,7 @@ export default {
       isSkuUnique: true,
       langs: ['en', 'ru'],
       image: null,
-      item: {},
+      item: null,
     };
   },
 
@@ -120,21 +121,25 @@ export default {
     if (!this.isNewItem) {
       this.item = this.virtualItem;
     } else {
-      Object.assign(this.item, DEFAULTS);
+      this.item = cloneDeep(DEFAULTS);
       this.item.prices = this.mapCurrencies;
-      this.item.pricingMethod = 'manual';
+      this.item.pricing = 'manual';
     }
     this.image = get(this.item, 'images.0', '');
   },
 
   methods: {
     ...mapActions(['setIsLoading']),
-    ...mapActions('ProjectVirtualItemPage', ['editItem', 'createItem', 'getPrices']),
+    ...mapActions('ProjectVirtualItemPage', ['editItem', 'createItem']),
     ...mapActions('Project', ['checkIsSkuUnique']),
 
     async saveItem() {
       this.$v.$touch();
-      if (this.$v.$invalid) {
+      let isPricesValid = true;
+      if (this.$refs.pricesBlock) {
+        isPricesValid = this.$refs.pricesBlock.checkIsValid();
+      }
+      if (this.$v.$invalid || !isPricesValid) {
         this.$showErrorMessage('The form is not filled right');
         return;
       }
@@ -147,10 +152,10 @@ export default {
         default_currency: 'USD',
       };
       if (this.isNewItem) {
-        await this.createItem(data, this.projectId).catch(this.$showErrorMessage);
+        await this.createItem({ data, projectId: this.projectId }).catch(this.$showErrorMessage);
       } else {
         data.id = this.virtualItem.id;
-        await this.editItem(data, this.projectId).catch(this.$showErrorMessage);
+        await this.editItem({ data, projectId: this.projectId }).catch(this.$showErrorMessage);
       }
       this.setIsLoading(false);
       this.$showSuccessMessage('Saved successfully');
@@ -164,18 +169,8 @@ export default {
       200,
     ),
 
-    async handleFillPrice({ amount, closeSuggest }) {
-      this.setIsLoading(true);
-      const prices = await this.getPrices(amount).catch(this.$showErrorMessage);
-      prices.forEach((price) => {
-        const item = find(this.item.prices, { region: price.region, currency: price.currency });
-        if (item) {
-          item.amount = price.amount;
-        }
-      });
-
-      closeSuggest();
-      this.setIsLoading(false);
+    handleUpdatePrice(value) {
+      this.item.prices = value;
     },
   },
 };
@@ -203,21 +198,18 @@ export default {
           v-model="image"
         />
         <UiLangTextField
-          :value="item.name"
-          :langs="langs"
+          v-model="item.name"
           label="Item name"
           v-bind="$getValidatedFieldProps('item.name.en')"
         />
         <UiLangTextField
-          :value="item.description"
-          :langs="langs"
+          v-model="item.description"
           :required="true"
           label="Short description"
           v-bind="$getValidatedFieldProps('item.description.en')"
         />
         <UiLangTextField
-          :value="item.long_description"
-          :langs="langs"
+          v-model="item.long_description"
           :required="true"
           label="Full description"
           v-bind="$getValidatedFieldProps('item.long_description.en')"
@@ -247,9 +239,9 @@ export default {
         </p>
 
         <ProjectVirtualItemPrice
-          :method="item.pricingMethod"
+          :method="item.pricing"
           :prices="item.prices"
-          @fillConvertedPrices="handleFillPrice"/>
+          @updatePrice="handleUpdatePrice"/>
       </section>
 
       <div class="controls">

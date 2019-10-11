@@ -1,5 +1,7 @@
 <script>
-import { find } from 'lodash-es';
+import { find, cloneDeep } from 'lodash-es';
+import { required } from 'vuelidate/lib/validators';
+import { mapActions } from 'vuex';
 
 export default {
   name: 'ProjectVirtualItemPrice',
@@ -17,6 +19,7 @@ export default {
 
   data() {
     return {
+      priceData: null,
       pricingMethodOptions: {
         real: {
           label: 'Real currency',
@@ -47,11 +50,38 @@ export default {
 
   computed: {
     hasRegionPrice() {
-      return this.prices.some(price => price.currency !== price.region);
+      return this.priceData.some(price => price.currency !== price.region);
+    },
+  },
+
+  validations() {
+    return {
+      $each: {
+        priceData: {
+          $each: {
+            amount: {
+              required,
+            },
+          },
+        },
+      },
+    };
+  },
+
+  created() {
+    this.priceData = cloneDeep(this.prices);
+  },
+
+  watch: {
+    priceData(value) {
+      this.$emit('updatePrice', value);
     },
   },
 
   methods: {
+    ...mapActions(['setIsLoading']),
+    ...mapActions('ProjectVirtualItemPage', ['getPrices']),
+
     getCurrencyName(currency) {
       if (this.isDefault(currency)) {
         return 'USD, Default currency';
@@ -68,15 +98,28 @@ export default {
       return currency.currency === 'USD' && currency.region === 'USD';
     },
 
-    handleSuggestClick(item, closeSuggest) {
+    async fillPrice(amount) {
+      this.setIsLoading(true);
+      const prices = await this.getPrices(amount).catch(this.$showErrorMessage);
+      prices.forEach((price) => {
+        const item = find(this.priceData, { region: price.region, currency: price.currency });
+        if (item) {
+          item.amount = price.amount;
+        }
+      });
+      this.setIsLoading(false);
+    },
+
+    async handleSuggestClick(item, closeSuggest) {
       if (item.id === 'conversion') {
-        this.$emit('fillConvertedPrices', {
-          amount: find(this.prices, price => this.isDefault(price)).amount,
-          closeSuggest,
-        });
-      } else {
-        closeSuggest();
+        await this.fillPrice(find(this.priceData, price => this.isDefault(price)).amount);
       }
+      closeSuggest();
+    },
+
+    checkIsValid() {
+      this.$v.$touch();
+      return !this.$v.$invalid;
     },
   },
 };
@@ -99,7 +142,7 @@ export default {
 
   <div class="price-group">
     <UiTextField
-      v-for="(price, index) in prices"
+      v-for="(price, index) in priceData"
       :key="index"
       v-model="price.amount"
       :isNumeric="true"
@@ -126,7 +169,7 @@ export default {
     <div class="region-prices" v-if="hasRegionPrice">
       <UiHeader level="4" :hasMargin="true">Prices for regions</UiHeader>
       <UiTextField
-        v-for="(price, index) in prices"
+        v-for="(price, index) in priceData"
         :key="index"
         v-model="price.amount"
         :isNumeric="true"

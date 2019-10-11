@@ -43,7 +43,7 @@ export default function createProjectVirtualItemPageStore() {
        * @param projectId {String}
        * @returns {Promise<void>}
        */
-      async editItem({ rootState, commit }, data, projectId) {
+      async editItem({ rootState, commit }, { data, projectId }) {
         const response = await axios.put(`${rootState.config.apiUrl}/admin/api/v1/products/${data.id}`, {
           ...data,
           project_id: projectId,
@@ -58,7 +58,7 @@ export default function createProjectVirtualItemPageStore() {
        * @param projectId {String}
        * @returns {Promise<void>}
        */
-      async createItem({ rootState }, data, projectId) {
+      async createItem({ rootState }, { data, projectId }) {
         await axios.post(`${rootState.config.apiUrl}/admin/api/v1/products`, {
           ...data,
           project_id: projectId,
