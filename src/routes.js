@@ -216,17 +216,17 @@ const routes = [
   {
     path: '/payform-sdk/',
     component: () => import('@/pages/PaymentFormSdk.vue'),
-    meta: { isStoreInitDisabled: true },
+    meta: { layout: 'PageFormLayout', isStoreInitDisabled: true },
   },
   {
     path: '/payform-page/',
     component: () => import('@/pages/PaymentFormPage.vue'),
-    meta: { isStoreInitDisabled: true },
+    meta: { layout: 'PageFormLayout', isStoreInitDisabled: true },
   },
   {
     path: '/payform-loading/',
     component: () => import('@/pages/PaymentFormLoading.vue'),
-    meta: { isStoreInitDisabled: true },
+    meta: { layout: 'PageFormLayout', isStoreInitDisabled: true },
   },
   {
     path: '/profile/',

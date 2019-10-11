@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <div id="p1payone-form"></div>
-  </div>
+<div id="p1payone-form"></div>
 </template>
 
 <script>
@@ -13,19 +11,28 @@ export default {
     const script = document.createElement('script');
     script.innerHTML = data;
     document.head.appendChild(script);
+    const {
+      pay,
+      products,
+      productsCount,
+      project,
+      type,
+    } = this.$route.query;
     let request = {
-      project: '5cd5620f06ae110001509185',
-      products: ['5d848f484dd6a50001970479', '5d8c7a219e362100013de214'],
+      project: project || '5cd5620f06ae110001509185',
+      products: products ? products.split(',') : ['5d848f484dd6a50001970479', '5d8c7a219e362100013de214'],
+      type: type || 'product',
     };
-    if (this.$route.query.productsCount) {
-      request.products = request.products.slice(0, this.$route.query.productsCount);
+    if (productsCount) {
+      request.products = request.products.slice(0, productsCount);
     }
-    if (this.$route.query.pay) {
-      const [amount, currency] = this.$route.query.pay.split('-');
+    if (pay) {
+      const [amount, currency] = pay.split('-');
       request = {
-        project: '5cd5624a06ae110001509186',
+        project: request.project,
         amount: Number(amount),
         currency,
+        type: 'simple',
       };
     }
 
