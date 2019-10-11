@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <div id="p1payone-form"></div>
-  </div>
+<div id="p1payone-form"></div>
 </template>
 
 <script>
