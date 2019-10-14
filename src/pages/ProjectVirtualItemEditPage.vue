@@ -45,7 +45,6 @@ export default {
     return {
       isSkuUnique: true,
       langs: ['en', 'ru'],
-      image: null,
       item: null,
     };
   },
@@ -75,6 +74,15 @@ export default {
 
     projectId() {
       return this.$route.params.id;
+    },
+
+    image: {
+      get() {
+        return get(this.item, 'images.0', '');
+      },
+      set(value) {
+        this.item.images = [value];
+      },
     },
   },
 
@@ -125,7 +133,6 @@ export default {
       this.item.prices = this.mapCurrencies;
       this.item.pricing = 'manual';
     }
-    this.image = get(this.item, 'images.0', '');
   },
 
   methods: {
@@ -146,7 +153,7 @@ export default {
       this.setIsLoading(true);
       const data = {
         ...this.item,
-        images: this.image.length ? [this.image] : null,
+        images: [this.image],
         object: 'product',
         type: 'simple_product',
         default_currency: 'USD',
