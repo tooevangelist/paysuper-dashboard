@@ -9,6 +9,11 @@ export default {
     CurrencyInput,
   },
 
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
+
   /**
    * We can't just close suggest on blur
    * if we do so, the tip will be closed before a click is handled by suggest item

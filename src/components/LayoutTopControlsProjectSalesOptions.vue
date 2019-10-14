@@ -28,8 +28,8 @@ export default {
         },
         {
           title: 'Virtual items',
-          url: `/projects/${projectId}/`,
-          routeNames: ['ProjectVirtualCurrency'],
+          url: `/projects/${projectId}/virtual-items/`,
+          routeNames: ['ProjectVirtualItems'],
         },
         {
           title: 'Game keys',
