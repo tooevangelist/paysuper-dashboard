@@ -1,5 +1,5 @@
 <script>
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import {
   findIndex,
   get,
@@ -10,6 +10,8 @@ import {
   upperFirst,
 } from 'lodash-es';
 import LayoutMainNavInnerBase from '@/components/LayoutMainNavInnerBase.vue';
+import { showSuccessMessage } from '@/helpers/notifications';
+import getStatusKey from '@/helpers/getStatusKey';
 
 function getItemIcon(item) {
   return {
@@ -25,8 +27,8 @@ function getItemAvailable(item, status) {
   return {
     personalProfile: true,
     companyInfo: true,
-    licenseAgreement: status !== 'archive',
-    paymentMethods: status !== 'archive',
+    licenseAgreement: status !== 5,
+    paymentMethods: status !== 5,
     history: true,
   }[item];
 }
@@ -36,6 +38,12 @@ export default {
 
   components: {
     LayoutMainNavInnerBase,
+  },
+
+  data() {
+    return {
+      isModalOpened: false,
+    };
   },
 
   computed: {
@@ -69,25 +77,119 @@ export default {
     },
 
     status() {
-      // if (this.project.status === 4) {
-      //   return 'inactive';
-      // }
-      return 'new';
+      return get(this.merchant, 'status', 0);
+    },
+
+    statusKey() {
+      return getStatusKey(this.status);
     },
 
     headTitle() {
       return get(this.merchant, 'company.name') || '';
     },
   },
+
+  methods: {
+    ...mapActions('Merchant', ['changeMerchantStatus']),
+
+    async submitArchive() {
+      const hasChanged = await this.changeMerchantStatus({
+        status: 5,
+        message: 'Your account has been move to archive',
+      });
+      this.isModalOpened = false;
+
+      if (hasChanged) {
+        showSuccessMessage('Account has been move to archive', { position: 'bottom-center' });
+      }
+    },
+  },
 };
 </script>
 
 <template>
-<LayoutMainNavInnerBase
-  :headTitle="headTitle"
-  :headStatus="status"
-  :headImage="''"
-  :items="items"
-  :currentItemIndex="currentItemIndex"
-/>
+<div class="merchant-nav">
+  <LayoutMainNavInnerBase
+    :headTitle="headTitle"
+    :headStatus="statusKey"
+    :headImage="''"
+    :items="items"
+    :currentItemIndex="currentItemIndex"
+  />
+
+  <div
+    v-if="status === 0"
+    class="archive-block"
+  >
+    <UiButton
+      size="small"
+      :isTransparent="true"
+      @click="isModalOpened = true"
+    >
+      <IconArchive slot="iconBefore" class="icon-archive" />
+      ARCHIVE ACCOUNT
+    </UiButton>
+  </div>
+
+  <UiModal
+    v-if="isModalOpened"
+    width="448px"
+  >
+    <UiHeader
+      slot="header"
+      level="3"
+      align="center"
+      :hasMargin="true"
+    >
+      Archive account
+    </UiHeader>
+    <div class="modal-content">
+      Are you sure you want to archive this request?
+    </div>
+    <div class="controls">
+      <UiButton
+        color="gray"
+        :isTransparent="true"
+        @click="isModalOpened = false"
+      >CANCEL</UiButton>
+      <UiButton
+        color="red"
+        @click="submitArchive"
+      >ARCHIVE</UiButton>
+    </div>
+  </UiModal>
+</div>
 </template>
+
+<style lang="scss" scoped>
+.merchant-nav {
+  display: flex;
+  flex-direction: column;
+}
+.archive-block {
+  margin: 16px 32px;
+  padding-top: 24px;
+  border-top: 1px solid #f1f3f4;
+}
+.icon-archive {
+  margin-right: 8px;
+}
+.modal-content {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.controls {
+  display: flex;
+
+  & > * {
+    &:first-child {
+      flex-grow: 1;
+      margin-right: 16px;
+    }
+
+    &:last-child {
+      flex-grow: 4;
+    }
+  }
+}
+</style>

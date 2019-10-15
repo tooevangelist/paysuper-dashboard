@@ -38,7 +38,12 @@ export default function createMerchantLicenseAgreementStore() {
       async initState({ commit }, merchantId) {
         commit('merchantId', merchantId);
       },
-      async initHellosign({ commit, dispatch, getters }) {
+      async initHellosign({
+        commit,
+        dispatch,
+        getters,
+        state,
+      }) {
         dispatch('fetchAgreementMetadata');
 
         if (getters.isUsingHellosign) {
@@ -53,9 +58,9 @@ export default function createMerchantLicenseAgreementStore() {
           });
 
           helloSign.on('sign', () => {
-            dispatch('Merchant/updateMerchant', null, { root: true });
             delay(async () => {
-              dispatch('fetchAgreementMetadata', true);
+              await dispatch('Merchant/fetchMerchantById', state.merchantId, { root: true });
+              await dispatch('fetchAgreementMetadata', true);
             }, 5000);
           });
 
@@ -77,6 +82,7 @@ export default function createMerchantLicenseAgreementStore() {
       },
       async fetchAgreementMetadata({
         commit,
+        dispatch,
         getters,
         rootState,
         state,
@@ -92,6 +98,10 @@ export default function createMerchantLicenseAgreementStore() {
           const agreement = get(response, 'data', getDefaultAgreementDocument());
 
           commit('agreement', agreement);
+
+          if (agreement.metadata.size) {
+            dispatch('fetchDocument');
+          }
         }
       },
       async uploadDocument({ dispatch, state }) {

@@ -1,6 +1,7 @@
 <script>
 import { get, find } from 'lodash-es';
 import MerchantAdminModal from '@/components/MerchantAdminModal.vue';
+import { showErrorMessage } from '@/helpers/notifications';
 
 export default {
   name: 'MerchantAdminLicenseAgreement',
@@ -24,15 +25,19 @@ export default {
   },
   computed: {
     statuses() {
+      if (this.merchantStatus === 'signed') {
+        return [{ color: 'green', label: 'Signed', value: 'signed' }];
+      }
+      if (this.merchantStatus === 'rejected') {
+        return [{ color: 'red', label: 'Rejected', value: 'rejected' }];
+      }
       return [
-        { color: 'blue', label: 'New', value: 'new' },
         { color: 'purple', label: 'Signing', value: 'signing' },
-        { color: 'green', label: 'Signed', value: 'signed' },
         { color: 'red', label: 'Rejected', value: 'rejected' },
       ];
     },
     actualStatusColor() {
-      return get(find(this.statuses, { value: this.newStatus }), 'color', 'blue');
+      return get(find(this.statuses, { value: this.newStatus }), 'color', 'purple');
     },
     isNoAgreement() {
       return this.merchantStatus === 'new';
@@ -54,6 +59,10 @@ export default {
       this.modalOpened = false;
     },
     openChangeStatusModal(status) {
+      if (status !== 'rejected') {
+        showErrorMessage('You can change status to rejected only', { position: 'bottom-center' });
+        return;
+      }
       this.newStatus = status;
       this.modalType = 'changeStatus';
       this.modalOpened = true;
@@ -94,10 +103,7 @@ export default {
       When merchant signs the license agreement it can be dowloaded here
       for future reference and sending it to risk manager for KYC.
     </UiText>
-    <div
-      v-if="merchantStatus === 'signed'"
-      class="agreement"
-    >
+    <div class="agreement">
       <IconFile v-if="agreement.metadata.size" />
       <IconFileLoader v-else />
       <div class="agreement-text">
@@ -111,6 +117,7 @@ export default {
         :href="agreement.url"
         @click.prevent="uploadDocument"
       >
+        <IconDownload class="icon" />
         DOWNLOAD
       </a>
       <div
@@ -118,6 +125,7 @@ export default {
         class="link"
         @click="openLicense"
       >
+        <IconPen class="icon" />
         E-SIGN
       </div>
     </div>
@@ -152,7 +160,7 @@ export default {
       class="link"
       @click="openContactModal"
     >
-      <IconEdit class="icon-edit" />
+      <IconEdit class="icon" />
       Contact merchant
     </div>
   </section>
@@ -245,7 +253,8 @@ export default {
   margin-bottom: 2px;
   color: #000;
 }
-.icon-edit {
+.icon {
   margin-right: 8px;
+  fill: #3d7bf5;
 }
 </style>

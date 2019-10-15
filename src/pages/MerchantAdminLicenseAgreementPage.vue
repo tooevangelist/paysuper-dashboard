@@ -1,6 +1,7 @@
 <script>
 import { mapState, mapActions } from 'vuex';
 import MerchantLicenseAgreementStore from '@/store/MerchantLicenseAgreementStore';
+import PictureExcellentWork from '@/components/PictureExcellentWork.vue';
 import PictureLicensePage from '@/components/PictureLicensePage.vue';
 import MerchantAdminLicenseAgreement from '@/components/MerchantAdminLicenseAgreement.vue';
 import getStatusByKey from '@/helpers/getStatusByKey';
@@ -10,6 +11,7 @@ import { showSuccessMessage } from '@/helpers/notifications';
 export default {
   name: 'MerchantLicenseAgreementPage',
   components: {
+    PictureExcellentWork,
     PictureLicensePage,
     MerchantAdminLicenseAgreement,
   },
@@ -23,6 +25,11 @@ export default {
     } catch (error) {
       store.dispatch('setPageError', error);
     }
+  },
+  data() {
+    return {
+      hasSigned: false,
+    };
   },
   computed: {
     ...mapState('Merchant', ['merchant']),
@@ -57,6 +64,10 @@ export default {
 
       if (success) {
         showSuccessMessage('Status changed', { position: 'bottom-center' });
+
+        if (status === 'signed') {
+          this.hasSigned = true;
+        }
       }
     },
   },
@@ -83,5 +94,42 @@ export default {
     @openLicense="openLicense"
     @uploadDocument="uploadDocument"
   />
+
+  <UiModal
+    v-if="hasSigned"
+    width="448px"
+  >
+    <PictureExcellentWork />
+    <UiHeader
+      slot="header"
+      level="3"
+      align="center"
+      :hasMargin="true"
+    >
+      Excellent work!
+    </UiHeader>
+    <div class="modal-content">
+      Now agreement is signed by both sides and this company's request moved to a Merchants list.
+    </div>
+    <div class="modal-controls">
+      <UiButton @click="hasSigned = false">DONE</UiButton>
+    </div>
+  </UiModal>
 </div>
 </template>
+
+<style lang="scss" scoped>
+.modal-content {
+  font-family: Roboto;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  color: #5e6366;
+  text-align: center;
+  margin-bottom: 24px;
+}
+.modal-controls {
+  display: flex;
+  justify-content: center;
+}
+</style>
