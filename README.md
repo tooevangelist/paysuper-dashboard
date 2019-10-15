@@ -1,4 +1,12 @@
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=paysuper_paysuper-management-api&metric=alert_status)](https://sonarcloud.io/dashboard?id=paysuper_paysuper-management-api)
+PaySuper Dashboard
+=====
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-brightgreen.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
+PaySuper is a unique, simple payment toolkit designed to make developers self-reliant. It’s an open-source payment service 
+with a highly customizable payment form, an intuitive API, and comprehensible, eye-catching reports.
+
+Dashboard is the BFF server and frontend to interact with all PaySuper related features for merchants. Use the 
+REST API ([Management API](https://github.com/paysuper/paysuper-management-api)) as backend. 
 
 # PayOne web interface
 Uses Nuxt.js
