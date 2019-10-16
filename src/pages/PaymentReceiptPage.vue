@@ -174,6 +174,16 @@ export default {
 
 <style lang="scss" scoped>
 @import url("https://fonts.googleapis.com/css?family=Quicksand:400,500");
+@mixin corner($color, $offsetX, $offsetY) {
+  background: $color;
+  background: radial-gradient(
+    circle 1px at $offsetX $offsetY,
+    transparent,
+    transparent 10px,
+    $color 10.5px
+  );
+}
+
 .payment-receipt-page {
   background: linear-gradient(90deg, #e1e4eb 0%, #e9ecf0 100%);
   min-height: 100vh;
@@ -343,40 +353,16 @@ export default {
   background-repeat: no-repeat;
 
   &._top-left {
-    background: #f7f8fa;
-    background: radial-gradient(
-      circle 1px at 0px 11px,
-      transparent,
-      transparent 10px,
-      #f7f8fa 10.5px
-    );
+    @include corner(#f7f8fa, 0px, 11px);
   }
   &._top-right {
-    background: #f7f8fa;
-    background: radial-gradient(
-      circle 1px at 11px 11px,
-      transparent,
-      transparent 10px,
-      #f7f8fa 10.5px
-    );
+    @include corner(#f7f8fa, 11px, 11px);
   }
   &._bottom-left {
-    background: #ffffff;
-    background: radial-gradient(
-      circle 1px at 0px 0px,
-      transparent,
-      transparent 10px,
-      #ffffff 10.5px
-    );
+    @include corner(#ffffff, 0px, 0px);
   }
   &._bottom-right {
-    background: #ffffff;
-    background: radial-gradient(
-      circle 1px at 11px 0px,
-      transparent,
-      transparent 10px,
-      #ffffff 10.5px
-    );
+    @include corner(#ffffff, 11px, 0px);
   }
 }
 
