@@ -1,5 +1,4 @@
 import axios from 'axios';
-import qs from 'qs';
 import { get } from 'lodash-es';
 
 function mapDataFormToApi(data) {
@@ -125,25 +124,12 @@ export default function createProjectStore() {
           return;
         }
         await dispatch('fetchProject', id);
-        // await dispatch('fetchProductsList', id);
       },
 
       async fetchProject({ state, commit, rootState }, id) {
         const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/projects/${id}`);
         commit('project', mapDataApiToForm(response.data.item));
         commit('projectPublicName', state.project.name);
-      },
-
-      async fetchProductsList({ rootState }, projectId) {
-        const params = {
-          project_id: projectId,
-        };
-
-        let url = `${rootState.config.apiUrl}/admin/api/v1/products`;
-        url += `?${qs.stringify(params)}`;
-        const response = await axios.get(url);
-        console.log(11111, 'response.data', response.data);
-        // commit('project', mapDataApiToForm(response.data));
       },
 
       async createProject({
