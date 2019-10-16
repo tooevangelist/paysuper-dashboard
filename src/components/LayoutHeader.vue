@@ -1,7 +1,7 @@
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex';
 import { directive as clickaway } from 'vue-clickaway';
-import Notifications from '@/components/Notifications.vue';
+import UserNotifications from '@/components/UserNotifications.vue';
 import LeaveFeedbackPopup from '@/components/LeaveFeedbackPopup.vue';
 import NotificationsMixin from '@/mixins/Notifications';
 
@@ -12,7 +12,7 @@ export default {
     clickaway,
   },
   components: {
-    Notifications,
+    UserNotifications,
     LeaveFeedbackPopup,
   },
   props: {
@@ -46,33 +46,12 @@ export default {
           id: 'leaveFeedback', link: '#', icon: 'IconPen', text: 'Leave Feedback',
         },
       ],
-      notifications: [
-        {
-          id: 1,
-          image: '',
-          sender: 'Pay Super',
-          text: `
-            We've got your license agreement signing request.
-            If we will need your further assistance, proceeding this request,
-            our onboarding manager will contact you directly.
-          `,
-          timestamp: 1564549028934,
-        },
-        {
-          id: 2,
-          image: '',
-          sender: 'Pay Super',
-          text: `
-            Your license agreement signing request is confirmed and document is signed by Pay Super
-          `,
-          timestamp: 1564549028934,
-        },
-      ],
     };
   },
   computed: {
     ...mapState('User', ['role']),
     ...mapState('User/Merchant', ['merchantStatus']),
+    ...mapState('UserNotifications', ['notifications']),
 
     status() {
       return this.merchantStatus === 'life' ? 'active' : 'test';
@@ -266,7 +245,7 @@ export default {
         maxWidth="400px"
         :visible="hasNotificationsOpened"
       >
-        <Notifications :items="notifications" />
+        <UserNotifications :items="notifications" />
       </UiTip>
     </div>
 
