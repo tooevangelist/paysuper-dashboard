@@ -103,15 +103,16 @@ export default {
     v-if="hasSigned"
     width="448px"
   >
-    <PictureExcellentWork />
-    <UiHeader
-      slot="header"
-      level="3"
-      align="center"
-      :hasMargin="true"
-    >
-      Excellent work!
-    </UiHeader>
+    <template slot="header">
+      <PictureExcellentWork class="picture" />
+      <UiHeader
+        level="3"
+        align="center"
+        :hasMargin="true"
+      >
+        Excellent work!
+      </UiHeader>
+    </template>
     <div class="modal-content">
       Now agreement is signed by both sides and this company's request moved to a Merchants list.
     </div>
@@ -123,6 +124,10 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+.picture {
+  width: 100%;
+  margin: 16px 0;
+}
 .modal-content {
   font-family: Roboto;
   font-size: 14px;
@@ -135,5 +140,6 @@ export default {
 .modal-controls {
   display: flex;
   justify-content: center;
+  margin-bottom: 16px;
 }
 </style>
