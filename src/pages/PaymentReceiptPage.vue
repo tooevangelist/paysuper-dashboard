@@ -187,7 +187,6 @@ export default {
 .payment-receipt-page {
   background: linear-gradient(90deg, #e1e4eb 0%, #e9ecf0 100%);
   min-height: 100vh;
-  height: 100px; // IE11 fix
   display: flex;
   justify-content: center;
   align-items: center;
