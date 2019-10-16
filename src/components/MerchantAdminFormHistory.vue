@@ -179,7 +179,8 @@ export default {
 .status-icon {
   position: absolute;
   left: -18px;
-  top: 6px;
+  top: 5px;
+  fill: #78909c;
 }
 
 .message {

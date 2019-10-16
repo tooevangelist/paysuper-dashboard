@@ -14,15 +14,15 @@ export default {
     color: 'green',
     value: 'signed',
   },
+  6: {
+    label: 'Rejected',
+    color: 'red',
+    value: 'rejected',
+  },
   5: {
     label: 'Archived',
     color: 'red',
     icon: 'IconArchive',
     value: 'archived',
-  },
-  6: {
-    label: 'Rejected',
-    color: 'red',
-    value: 'rejected',
   },
 };

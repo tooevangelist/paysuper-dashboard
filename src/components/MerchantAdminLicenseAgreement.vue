@@ -1,6 +1,7 @@
 <script>
-import { find } from 'lodash-es';
+import { find, includes } from 'lodash-es';
 import MerchantAdminModal from '@/components/MerchantAdminModal.vue';
+import merchantStatusScheme from '@/schemes/merchantStatusScheme';
 import { showErrorMessage } from '@/helpers/notifications';
 
 export default {
@@ -29,19 +30,16 @@ export default {
   },
   computed: {
     statuses() {
-      switch (this.merchantStatus) {
-        case 'signed':
-          return [{ color: 'green', label: 'Signed', value: 'signed' }];
-        case 'rejected':
-          return [{ color: 'red', label: 'Rejected', value: 'rejected' }];
-        case 'deleted':
-          return [{ color: 'red', label: 'Archived', value: 'archived' }];
-        default:
-          return [
-            { color: 'purple', label: 'Signing', value: 'signing' },
-            { color: 'red', label: 'Rejected', value: 'rejected' },
-          ];
+      const currentStatus = find(
+        merchantStatusScheme,
+        { value: this.merchantStatus },
+      ) || merchantStatusScheme[0];
+
+      if (includes(['new', 'signing'], currentStatus.value)) {
+        return [currentStatus, merchantStatusScheme[6]];
       }
+
+      return [currentStatus];
     },
     actualStatus() {
       return find(this.statuses, { value: this.newStatus });
@@ -153,11 +151,12 @@ export default {
         :color="actualStatus.color"
         :isRounded="true"
         :options="statuses"
-        :value="merchantStatus"
+        :value="newStatus"
         @input="openChangeStatusModal"
       />
       <UiButton
         v-else
+        size="small"
         :color="actualStatus.color"
         :isRounded="true"
       >

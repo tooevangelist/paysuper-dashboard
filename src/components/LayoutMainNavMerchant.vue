@@ -35,17 +35,14 @@ function getItemAvailable(item, status) {
 
 export default {
   name: 'LayoutMainNavProject',
-
   components: {
     LayoutMainNavInnerBase,
   },
-
   data() {
     return {
       isModalOpened: false,
     };
   },
-
   computed: {
     ...mapState('Merchant', ['merchant']),
 
@@ -67,7 +64,6 @@ export default {
         available: getItemAvailable(item, this.status),
       }));
     },
-
     currentItemIndex() {
       const routeIndex = findIndex(this.items, item => includes(item.routeNames, this.$route.name));
       if (routeIndex !== -1) {
@@ -75,17 +71,17 @@ export default {
       }
       return findIndex(this.items, { value: this.$route.query.step || 'basicInfo' });
     },
-
     status() {
       return get(this.merchant, 'status', 0);
     },
-
     statusKey() {
       return get(merchantStatusScheme, this.status, merchantStatusScheme[0]).value;
     },
-
     headTitle() {
       return get(this.merchant, 'company.name') || '';
+    },
+    isArchivePossible() {
+      return includes([0, 6], this.status);
     },
   },
 
@@ -118,7 +114,7 @@ export default {
   />
 
   <div
-    v-if="status === 0"
+    v-if="isArchivePossible"
     class="archive-block"
   >
     <UiButton

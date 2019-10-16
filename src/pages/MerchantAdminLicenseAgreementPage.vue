@@ -1,11 +1,10 @@
 <script>
 import { mapState, mapActions } from 'vuex';
-import { get } from 'lodash-es';
+import { get, findKey } from 'lodash-es';
 import MerchantLicenseAgreementStore from '@/store/MerchantLicenseAgreementStore';
 import PictureExcellentWork from '@/components/PictureExcellentWork.vue';
 import PictureLicensePage from '@/components/PictureLicensePage.vue';
 import MerchantAdminLicenseAgreement from '@/components/MerchantAdminLicenseAgreement.vue';
-import merchantStatusByKeyScheme from '@/schemes/merchantStatusByKeyScheme';
 import merchantStatusScheme from '@/schemes/merchantStatusScheme';
 import { showSuccessMessage } from '@/helpers/notifications';
 
@@ -62,7 +61,7 @@ export default {
     },
     async changeStatus({ status, message }) {
       const success = await this.changeMerchantStatus({
-        status: merchantStatusByKeyScheme[status],
+        status: findKey(merchantStatusScheme, { value: status }),
         message,
       });
 
