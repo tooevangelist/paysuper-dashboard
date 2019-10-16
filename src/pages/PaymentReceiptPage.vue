@@ -144,20 +144,18 @@ export default {
             {{ receipt.merchant_name }}
           </span>
         </div>
-        <template v-if="false">
-          <div class="billing-row">
-            <span class="billing-name">DRM platform</span>
-            <span class="billing-value">
-              Steam
-            </span>
-          </div>
-          <div class="billing-row">
-            <span class="billing-name">Payment partner</span>
-            <span class="billing-value">
-              PaySuper
-            </span>
-          </div>
-        </template>
+        <div class="billing-row" v-if="receipt.platform_name">
+          <span class="billing-name">DRM platform</span>
+          <span class="billing-value">
+            {{ receipt.platform_name }}
+          </span>
+        </div>
+        <div class="billing-row" v-if="false">
+          <span class="billing-name">Payment partner</span>
+          <span class="billing-value">
+            PaySuper
+          </span>
+        </div>
       </SlideUpDown>
 
       <div class="footer">
