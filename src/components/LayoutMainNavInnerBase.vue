@@ -1,5 +1,5 @@
 <script>
-import { includes, startCase } from 'lodash-es';
+import { startCase } from 'lodash-es';
 
 export default {
   name: 'LayoutMainNavInnerBase',
@@ -11,9 +11,6 @@ export default {
     },
     headStatus: {
       type: String,
-      validator(value) {
-        return includes(['new', 'inactive'], value);
-      },
       default: 'new',
     },
     headImage: {
@@ -153,6 +150,7 @@ export default {
   }
   &._not-available {
     cursor: default;
+    pointer-events: none;
 
     & > .title::after {
       content: '';
