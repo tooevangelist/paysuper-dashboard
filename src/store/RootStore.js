@@ -38,7 +38,6 @@ export default new Vuex.Store({
           initConfig.includes(partName)
           && !state.initedParts.includes(partName)
         ) {
-          console.log(11111, 'partName', partName);
           return true;
         }
         return false;

@@ -16,13 +16,19 @@ export default {
       store.dispatch('setPageError', 404);
       return;
     }
-
     try {
       await registerStoreModule('PaymentReceipt', PaymentReceiptStore, {
         receiptType: route.params.receiptType,
         receiptId: route.params.receiptId,
         orderId: route.params.orderId,
       });
+      // The refund receipt should be unavailable if order is not refunded
+      if (
+        route.params.receiptType === 'refund'
+        && store.state.PaymentReceipt.receipt.order_type !== 'refund'
+      ) {
+        store.dispatch('setPageError', 404);
+      }
     } catch (error) {
       store.dispatch('setPageError', error);
     }
@@ -55,8 +61,7 @@ export default {
           </span>
         </span>
         <h2>The purchase was refunded</h2>
-        <p>Upon your request, we have issued a refund
-for this purchase.</p>
+        <p>Upon your request, we have issued a refund for this purchase.</p>
       </template>
       <template v-else>
         <span class="status-icon-holder">
@@ -172,9 +177,13 @@ for this purchase.</p>
 .payment-receipt-page {
   background: linear-gradient(90deg, #e1e4eb 0%, #e9ecf0 100%);
   min-height: 100vh;
+  height: 100px; // IE11 fix
   display: flex;
+  justify-content: center;
+  align-items: center;
   font-family: Quicksand;
   padding: 48px 16px 32px;
+  box-sizing: border-box;
 
   a {
     color: #5b88de;
@@ -183,7 +192,7 @@ for this purchase.</p>
 }
 .window {
   max-width: 640px;
-  margin: auto;
+  width: 1000px; // IE11 fix
   flex-grow: 1;
 }
 .header {

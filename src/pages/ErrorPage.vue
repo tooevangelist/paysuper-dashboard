@@ -61,12 +61,14 @@ export default {
   font-size: 40px;
   font-weight: bold;
   line-height: 50px;
+  margin: 0;
 }
 
 .text {
   text-transform: uppercase;
   font-size: 20px;
   line-height: 35px;
+  margin: 0;
 }
 
 .link-text {
