@@ -34,7 +34,6 @@ export default {
       filters: {},
       isSearchRouting: false,
       isInfiniteScrollLocked: false,
-      merchantStatusScheme,
     };
   },
 
@@ -84,7 +83,7 @@ export default {
 
       const itemsCounts = mapKeys(
         mapValues(groups, item => item.length),
-        (value, key) => merchantStatusScheme[key].value,
+        (value, key) => get(merchantStatusScheme, key, merchantStatusScheme[0]).value,
       );
 
       return {
@@ -164,6 +163,10 @@ export default {
 
       const currency = get(merchant, 'banking.currency', '');
       return this.$formatPrice(amount, currency);
+    },
+
+    getStatus(status) {
+      return get(merchantStatusScheme, status, merchantStatusScheme[0]);
     },
   },
 };
@@ -260,15 +263,13 @@ export default {
             class="cell-text"
             :class="{'_empty': !merchant.updated_at}"
           >
-            {{$formatDate(merchant.updated_at, 'dd.MM.yy') || '—'}}
+            {{ $formatDate(merchant.updated_at, 'dd.MM.yy') || '—' }}
           </span>
         </UiTableCell>
         <UiTableCell align="left">
           <div class="label-tag-holder">
-            <UiLabelTag
-              :color="merchantStatusScheme[merchant.status].color"
-            >
-              {{merchantStatusScheme[merchant.status].text}}
+            <UiLabelTag :color="getStatus(merchant.status).color">
+              {{ getStatus(merchant.status).label }}
             </UiLabelTag>
           </div>
         </UiTableCell>

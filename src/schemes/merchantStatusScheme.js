@@ -1,38 +1,28 @@
 export default {
   0: {
-    text: 'No agreement',
-    color: 'transparent',
-    value: 'no-agreement',
-  },
-  1: {
-    text: 'New',
+    label: 'New',
     color: 'blue',
     value: 'new',
   },
-  2: {
-    text: 'Pending',
-    color: 'orange',
-    value: 'pending',
-  },
   3: {
-    text: 'Singing',
+    label: 'Signing',
     color: 'purple',
-    value: 'singing',
+    value: 'signing',
   },
   4: {
-    text: 'Singed',
+    label: 'Signed',
     color: 'green',
-    value: 'singed',
+    value: 'signed',
   },
   5: {
-    text: 'Rejected',
+    label: 'Archived',
     color: 'red',
-    value: 'rejected',
+    icon: 'IconArchive',
+    value: 'archived',
   },
   6: {
-    text: 'Archieved',
-    color: '',
-    icon: 'IconArchieve',
-    value: 'archieved',
+    label: 'Rejected',
+    color: 'red',
+    value: 'rejected',
   },
 };

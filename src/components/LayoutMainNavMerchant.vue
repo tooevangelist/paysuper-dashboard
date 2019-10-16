@@ -11,7 +11,7 @@ import {
 } from 'lodash-es';
 import LayoutMainNavInnerBase from '@/components/LayoutMainNavInnerBase.vue';
 import { showSuccessMessage } from '@/helpers/notifications';
-import getStatusKey from '@/helpers/getStatusKey';
+import merchantStatusScheme from '@/schemes/merchantStatusScheme';
 
 function getItemIcon(item) {
   return {
@@ -81,7 +81,7 @@ export default {
     },
 
     statusKey() {
-      return getStatusKey(this.status);
+      return get(merchantStatusScheme, this.status, merchantStatusScheme[0]).value;
     },
 
     headTitle() {
@@ -126,7 +126,7 @@ export default {
       :isTransparent="true"
       @click="isModalOpened = true"
     >
-      <IconArchive slot="iconBefore" class="icon-archive" />
+      <IconArchive slot="iconBefore" />
       ARCHIVE ACCOUNT
     </UiButton>
   </div>
@@ -170,9 +170,6 @@ export default {
   margin: 16px 32px;
   padding-top: 24px;
   border-top: 1px solid #f1f3f4;
-}
-.icon-archive {
-  margin-right: 8px;
 }
 .modal-content {
   text-align: center;

@@ -26,7 +26,7 @@ export default {
       isDropdownOpened: false,
       statusesList: [
         {
-          text: 'All requests',
+          label: 'All requests',
           value: 'all',
         },
         ...map(merchantStatusScheme, (item, key) => ({
@@ -81,7 +81,7 @@ export default {
           v-if="item.icon"
           :is="item.icon"
         />
-        {{item.text}}
+        {{ item.label }}
         <span
           class="status-count"
           v-if="countsByStatus"

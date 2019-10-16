@@ -1,11 +1,12 @@
 <script>
 import { mapState, mapActions } from 'vuex';
+import { get } from 'lodash-es';
 import MerchantLicenseAgreementStore from '@/store/MerchantLicenseAgreementStore';
 import PictureExcellentWork from '@/components/PictureExcellentWork.vue';
 import PictureLicensePage from '@/components/PictureLicensePage.vue';
 import MerchantAdminLicenseAgreement from '@/components/MerchantAdminLicenseAgreement.vue';
-import getStatusByKey from '@/helpers/getStatusByKey';
-import getStatusKey from '@/helpers/getStatusKey';
+import merchantStatusByKeyScheme from '@/schemes/merchantStatusByKeyScheme';
+import merchantStatusScheme from '@/schemes/merchantStatusScheme';
 import { showSuccessMessage } from '@/helpers/notifications';
 
 export default {
@@ -36,7 +37,10 @@ export default {
     ...mapState('MerchantLicenseAgreement', ['agreement']),
 
     status() {
-      return getStatusKey(this.merchant.status);
+      return get(merchantStatusScheme, this.merchant.status, merchantStatusScheme[0]).value;
+    },
+    hasSignature() {
+      return this.merchant.has_merchant_signature || false;
     },
   },
   mounted() {
@@ -58,7 +62,7 @@ export default {
     },
     async changeStatus({ status, message }) {
       const success = await this.changeMerchantStatus({
-        status: getStatusByKey(status),
+        status: merchantStatusByKeyScheme[status],
         message,
       });
 
@@ -89,6 +93,7 @@ export default {
   <MerchantAdminLicenseAgreement
     :agreement="agreement"
     :merchantStatus="status"
+    :hasSignature="hasSignature"
     @sendMessage="sendMessage"
     @changeStatus="changeStatus"
     @openLicense="openLicense"

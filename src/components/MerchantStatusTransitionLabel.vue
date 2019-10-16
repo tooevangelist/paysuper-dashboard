@@ -23,7 +23,6 @@ export default {
       statuses: merchantStatusScheme,
     };
   },
-
 };
 </script>
 
@@ -34,13 +33,13 @@ export default {
     <UiLabelTag
       v-if="codeFrom !== undefined"
       :color="statuses[codeFrom].color"
-      v-text="statuses[codeFrom].text"
+      v-text="statuses[codeFrom].label"
     />
     <IconBigArrow class="arrow" />
     <UiLabelTag
       v-if="codeTo !== undefined"
       :color="statuses[codeTo].color"
-      v-text="statuses[codeTo].text"
+      v-text="statuses[codeTo].label"
     />
   </div>
 </template>

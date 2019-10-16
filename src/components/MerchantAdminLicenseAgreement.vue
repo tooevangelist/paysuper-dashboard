@@ -1,5 +1,5 @@
 <script>
-import { get, find } from 'lodash-es';
+import { find } from 'lodash-es';
 import MerchantAdminModal from '@/components/MerchantAdminModal.vue';
 import { showErrorMessage } from '@/helpers/notifications';
 
@@ -10,6 +10,10 @@ export default {
     agreement: {
       required: true,
       type: Object,
+    },
+    hasSignature: {
+      default: false,
+      type: Boolean,
     },
     merchantStatus: {
       default: 'new',
@@ -25,28 +29,25 @@ export default {
   },
   computed: {
     statuses() {
-      if (this.merchantStatus === 'signed') {
-        return [{ color: 'green', label: 'Signed', value: 'signed' }];
+      switch (this.merchantStatus) {
+        case 'signed':
+          return [{ color: 'green', label: 'Signed', value: 'signed' }];
+        case 'rejected':
+          return [{ color: 'red', label: 'Rejected', value: 'rejected' }];
+        case 'deleted':
+          return [{ color: 'red', label: 'Archived', value: 'archived' }];
+        default:
+          return [
+            { color: 'purple', label: 'Signing', value: 'signing' },
+            { color: 'red', label: 'Rejected', value: 'rejected' },
+          ];
       }
-      if (this.merchantStatus === 'rejected') {
-        return [{ color: 'red', label: 'Rejected', value: 'rejected' }];
-      }
-      return [
-        { color: 'purple', label: 'Signing', value: 'signing' },
-        { color: 'red', label: 'Rejected', value: 'rejected' },
-      ];
     },
-    actualStatusColor() {
-      return get(find(this.statuses, { value: this.newStatus }), 'color', 'purple');
-    },
-    isNoAgreement() {
-      return this.merchantStatus === 'new';
+    actualStatus() {
+      return find(this.statuses, { value: this.newStatus });
     },
     statusFrom() {
       return find(this.statuses, { value: this.merchantStatus });
-    },
-    statusTo() {
-      return find(this.statuses, { value: this.newStatus });
     },
   },
   methods: {
@@ -93,7 +94,7 @@ export default {
 <template>
 <UiPanel>
   <section
-    v-if="!isNoAgreement"
+    v-if="hasSignature"
     class="section"
   >
     <UiHeader level="3" :hasMargin="true">
@@ -139,21 +140,30 @@ export default {
       Merchant will get different notifications depending on the LA request status.
     </UiText>
     <div
-      v-if="isNoAgreement"
+      v-if="!hasSignature"
       class="no-agreement"
     >
       No agreement
     </div>
-    <UiSelectAsButton
-      v-else
-      tipInnerPosition="left"
-      textColor="white"
-      :color="actualStatusColor"
-      :isRounded="true"
-      :options="statuses"
-      :value="merchantStatus"
-      @input="openChangeStatusModal"
-    />
+    <template v-else>
+      <UiSelectAsButton
+        v-if="statuses.length > 1"
+        tipInnerPosition="left"
+        textColor="white"
+        :color="actualStatus.color"
+        :isRounded="true"
+        :options="statuses"
+        :value="merchantStatus"
+        @input="openChangeStatusModal"
+      />
+      <UiButton
+        v-else
+        :color="actualStatus.color"
+        :isRounded="true"
+      >
+        {{ actualStatus.label }}
+      </UiButton>
+    </template>
   </section>
   <section class="footer">
     <div
@@ -167,7 +177,7 @@ export default {
   <MerchantAdminModal
     v-if="modalOpened"
     :statusFrom="statusFrom"
-    :statusTo="statusTo"
+    :statusTo="actualStatus"
     :type="modalType"
     @close="closeModal"
     @send="sendMessage"
