@@ -43,9 +43,10 @@ function updateDocumentClassModificators(to, from) {
 }
 
 router.beforeResolve(async (to, from, next) => {
-  if (!store.state.isStateInited && (!to.meta || !to.meta.isStoreInitDisabled)) {
-    await store.dispatch('initState');
-  }
+  await store.dispatch(
+    'initState',
+    get(to, 'meta.initStore', undefined),
+  );
   store.dispatch('setPageError', null);
 
   if (to.matched.some(record => record.meta.isAuthRequired)) {
