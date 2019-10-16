@@ -6,6 +6,29 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title>PaySuper</title>
+    <style>
+      @keyframes rotating {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .preloader {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+      }
+      .preloader > svg {
+        animation: rotating 0.8s linear infinite;
+      }
+    </style>
   </head>
   <body>
     <!-- This page is a base page in development mode  -->
@@ -15,7 +38,19 @@
         Please enable it to continue.</strong>
     </noscript>
     
-    <div id="app"></div>
+    <div id="app">
+      <div class="preloader">
+        <svg viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" width="64" height="64" stroke="#000">
+          <g fill="none" fill-rule="evenodd">
+            <g transform="translate(1 1)" stroke-width="2">
+              <circle stroke-opacity=".25" cx="18" cy="18" r="18"/>
+              <path d="M36 18c0-9.94-8.06-18-18-18">
+              </path>
+            </g>
+          </g>
+        </svg>
+      </div>
+    </div>
     
     <!-- built files will be auto injected -->
   </body>
