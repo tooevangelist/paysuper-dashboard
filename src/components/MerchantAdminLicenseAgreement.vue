@@ -86,6 +86,11 @@ export default {
       this.$emit('openLicense');
     },
   },
+  watch: {
+    merchantStatus(val) {
+      this.newStatus = val;
+    },
+  },
 };
 </script>
 

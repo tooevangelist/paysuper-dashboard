@@ -151,28 +151,21 @@ export default function createLicenseAgreementStore() {
         const { merchant } = rootState.User.Merchant;
 
         centrifuge.setToken(merchant.centrifugo_token);
-        centrifuge.subscribe(`paysuper:merchant#${merchant.id}`, ({ data }) => {
-          /**
-           * Data codes
-           * ds000001: Document signing failed
-           * ds000002: Signer decline document sign
-           * ds000003: Paysuper signer decline document sign
-           * mr000017: License agreement was signed by merchant
-           * mr000018: License agreement was signed by Paysuper admin
-           */
-          if (data.code === 'ds000003') {
+        centrifuge.subscribe(`paysuper:merchant#${merchant.id}`, async ({ data }) => {
+          if (get(data, 'statuses.to') === 6) {
             commit('isReject', true);
-            dispatch('User/Merchant/updateStatus', 0, { root: true });
+            dispatch('User/Merchant/updateStatus', 6, { root: true });
 
             return;
           }
 
-          if (data.code === 'mr000018') {
-            delay(async () => {
-              dispatch('fetchAgreementMetadata', true);
-            }, 5000);
+          if (get(data, 'statuses.to') === 4) {
             dispatch('User/Merchant/updateStatus', 4, { root: true });
             dispatch('User/Merchant/completeStep', 'license', { root: true });
+            delay(async () => {
+              await dispatch('fetchAgreementMetadata', true);
+              await dispatch('fetchDocument');
+            }, 5000);
           }
 
           /**
