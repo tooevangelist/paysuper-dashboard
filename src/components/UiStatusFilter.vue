@@ -59,6 +59,11 @@ export default {
         this.$emit('input', item.value);
       }
     },
+
+    handleLevelTwoClick(item, child) {
+      console.log(item, child)
+      this.$emit('inputSecondLevel', { filter: item.value, value: child.value });
+    },
   },
 };
 </script>
@@ -111,6 +116,7 @@ export default {
             :visible="item.expand"
             v-if="item.children">
             <div
+              @click="handleLevelTwoClick(item, child)"
               class="status"
               v-for="(child, index) in item.children"
               :class="getItemClass(child)"

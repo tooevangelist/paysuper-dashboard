@@ -4,7 +4,7 @@ import {
 } from 'vuex';
 import { format } from 'date-fns';
 import {
-  debounce, isEqual, get, find,
+  debounce, isEqual, get, find, remove,
 } from 'lodash-es';
 import transactionsStatusScheme from '@/schemes/transactionsStatusScheme';
 import PictureTabletWithChart from '@/components/PictureTabletWithChart.vue';
@@ -89,7 +89,7 @@ export default {
     get,
 
     updateFiltersFromQuery() {
-      this.filters = this.getFilterValues(['quickFilter', 'offset', 'limit']);
+      this.filters = this.getFilterValues(['quickFilter', 'offset', 'limit', 'status']);
     },
 
     filterTransactions() {
@@ -166,6 +166,17 @@ export default {
       ];
       return !badStatus.includes(status);
     },
+
+    handleStatusInput() {},
+
+    handleFilterInput(data) {
+      if (this.filters[data.filter].includes(data.value)) {
+        remove(this.filters[data.filter], n => n === (data.value));
+      } else {
+        this.filters[data.filter].push(data.value);
+      }
+      this.filterTransactions();
+    },
   },
 };
 </script>
@@ -189,7 +200,11 @@ export default {
         <div class="control-bar__left">
           <UiFilterSearchInput
             :isAlwaysExpanded="true" />
-          <UiStatusFilter :scheme="scheme" :countsByStatus="tempFilters" />
+          <UiStatusFilter
+            @input="handleStatusInput"
+            @inputSecondLevel="handleFilterInput"
+            :scheme="scheme"
+            :countsByStatus="tempFilters" />
         </div>
 
         <div class="control-bar__right">

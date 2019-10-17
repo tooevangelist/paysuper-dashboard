@@ -8,10 +8,6 @@ const filters = {
     defaultValue: () => [],
   },
 
-  enabled: {
-    defaultValue: () => [],
-  },
-
   limit: {
     isPassingToQueryDisabled: true,
     defaultValue: 30,
@@ -20,6 +16,10 @@ const filters = {
   offset: {
     isPassingToQueryDisabled: true,
     defaultValue: 0,
+  },
+
+  status: {
+    defaultValue: () => [],
   },
 };
 
