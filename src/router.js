@@ -49,6 +49,8 @@ router.beforeResolve(async (to, from, next) => {
   );
   store.dispatch('setPageError', null);
 
+  document.querySelector('#preloader').style.display = 'none';
+
   if (to.matched.some(record => record.meta.isAuthRequired)) {
     if (!store.state.User.isAuthorised) {
       return next({
