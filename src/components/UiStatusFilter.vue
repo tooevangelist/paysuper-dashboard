@@ -61,7 +61,6 @@ export default {
     },
 
     handleLevelTwoClick(item, child) {
-      console.log(item, child)
       this.$emit('inputSecondLevel', { filter: item.value, value: child.value });
     },
   },
