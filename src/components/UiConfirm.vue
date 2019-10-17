@@ -72,11 +72,12 @@ export default {
   </UiModal>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .content {
   font-size: 16px;
   text-align: center;
   margin-bottom: 24px;
+  overflow: hidden;
 }
 
 .controls {
@@ -86,6 +87,10 @@ export default {
 
 .close-button {
   width: 128px;
+
+  &:hover {
+    color: #919699 !important;
+  }
 }
 
 .submit-button {

@@ -226,6 +226,7 @@ export default {
           Use SKU to identify this item. Item SKU is unique within parent project.
         </p>
         <UiTextField
+          :disabled="!isNewItem"
           label="SKU"
           v-model="item.sku"
           @input="handleSkuFieldInput"

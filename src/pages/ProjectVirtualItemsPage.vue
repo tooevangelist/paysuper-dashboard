@@ -73,6 +73,10 @@ export default {
     this.updateFiltersFromQuery();
   },
 
+  mounted() {
+    this.initInfiniteScroll();
+  },
+
   methods: {
     ...mapActions(['setIsLoading']),
     ...mapActions('ProjectVirtualItems', [
@@ -101,6 +105,22 @@ export default {
       this.navigate();
       await this.fetchItems().catch(this.$showErrorMessage);
       this.setIsLoading(false);
+    },
+
+    initInfiniteScroll() {
+      this.$appEventsOn('contentScrollReachEnd', async () => {
+        if (
+          this.isInfiniteScrollLocked
+          || this.filters.offset + this.filters.limit >= this.gameKeys.count
+        ) {
+          return;
+        }
+        this.isInfiniteScrollLocked = true;
+
+        this.filters.offset += this.filters.limit;
+        await this.searchItems();
+        this.isInfiniteScrollLocked = false;
+      });
     },
 
     navigate() {
@@ -155,7 +175,7 @@ export default {
 
     handleStatusInput(value) {
       this.filters.enabled = value;
-      this.filterMerchants();
+      this.filterItems();
     },
 
     getUsdPrice(item) {
