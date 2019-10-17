@@ -87,10 +87,6 @@ export default {
 
 .close-button {
   width: 128px;
-
-  &:hover {
-    color: #919699 !important;
-  }
 }
 
 .submit-button {
