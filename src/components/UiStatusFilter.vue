@@ -1,5 +1,6 @@
 <script>
 import ClickOutside from 'vue-click-outside';
+import { has } from 'lodash-es';
 
 export default {
   name: 'UiStatusFilter',
@@ -21,6 +22,10 @@ export default {
       type: Object,
       required: true,
     },
+    multilevel: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -38,16 +43,23 @@ export default {
         value === item.value ? '_current' : '',
       ];
     },
+
+    handleClick(item) {
+      if (has(item, 'expand')) {
+        item.expand = !item.expand;
+      } else {
+        this.$emit('input', item.value);
+      }
+    },
   },
 };
 </script>
 
 <template>
-  <div class="status-filter">
+  <div class="status-filter" v-click-outside="() => isDropdownOpened = false">
     <div
       class="button"
       :class="{ '_opened': isDropdownOpened }"
-      v-click-outside="() => isDropdownOpened = false"
       @click="isDropdownOpened = !isDropdownOpened"
     >
       <IconDropdownMenu />
@@ -57,6 +69,7 @@ export default {
       innerPosition="right"
       position="bottom"
       width="200px"
+      :margin="4"
       :visible="isDropdownOpened"
       :closeDelay="0"
       :stayOpenedOnHover="false"
@@ -66,8 +79,8 @@ export default {
           class="status"
           v-for="(item, index) in statusesList"
           :key="index"
-          :class="getItemClass(item, value)"
-          @click="$emit('input', item.value)"
+          :class="[getItemClass(item, value), { 'has-child': item.children }]"
+          @click="handleClick(item)"
         >
           <component
             class="status-icon"
@@ -78,9 +91,25 @@ export default {
           <span
             class="status-count"
             v-if="countsByStatus"
-          >
-          ({{ countsByStatus[item.value] || 0 }})
-        </span>
+            >
+            ({{ countsByStatus[item.value] || 0 }})
+          </span>
+          <UiTip
+            class="dropdown-child dropdown-content"
+            position="bottom"
+            innerPosition="left"
+            width="200px"
+            :margin="0"
+            :visible="item.expand"
+            v-if="item.children">
+            <div
+              class="status"
+              v-for="(child, index) in item.children"
+              :class="getItemClass(child)"
+              :key="index">
+              {{ child.text }}
+            </div>
+          </UiTip>
         </div>
       </div>
     </UiTip>
@@ -126,6 +155,11 @@ export default {
 
 .dropdown {
   top: calc(100% + 4px);
+
+  &-child {
+    left: 200px !important;
+    top: -10px !important;
+  }
 }
 
 .dropdown-content {
