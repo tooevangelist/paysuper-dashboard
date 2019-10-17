@@ -150,7 +150,7 @@ export default {
             {{ receipt.platform_name }}
           </span>
         </div>
-        <div class="billing-row" v-if="false">
+        <div class="billing-row">
           <span class="billing-name">Payment partner</span>
           <span class="billing-value">
             PaySuper
