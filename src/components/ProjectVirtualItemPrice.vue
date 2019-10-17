@@ -1,5 +1,5 @@
 <script>
-import { find, cloneDeep } from 'lodash-es';
+import { find, cloneDeep, mapValues } from 'lodash-es';
 import { required } from 'vuelidate/lib/validators';
 import { mapActions } from 'vuex';
 
@@ -56,15 +56,11 @@ export default {
 
   validations() {
     return {
-      $each: {
-        priceData: {
-          $each: {
-            amount: {
-              required,
-            },
-          },
+      priceData: mapValues(this.priceData, () => ({
+        amount: {
+          required,
         },
-      },
+      })),
     };
   },
 
@@ -111,7 +107,7 @@ export default {
     },
 
     async handleSuggestClick(item, closeSuggest) {
-      if (item.id === 'conversion') {
+      if (item.id === 'conversion' && this.checkIsValid()) {
         await this.fillPrice(find(this.priceData, price => this.isDefault(price)).amount);
       }
       closeSuggest();

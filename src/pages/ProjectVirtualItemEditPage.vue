@@ -199,8 +199,8 @@ export default {
       <section class="section">
         <UiImageUpload
           class="section"
-          title="Update logo"
-          description="200x200 px, .png, .jpg"
+          title="cover"
+          description=".png, .jpg, .jpeg, max size 30Mb, min 200x300px; max 1000x1500px"
           :uploadImage="uploadImage"
           v-model="image"
         />
@@ -226,6 +226,7 @@ export default {
           Use SKU to identify this item. Item SKU is unique within parent project.
         </p>
         <UiTextField
+          :disabled="!isNewItem"
           label="SKU"
           v-model="item.sku"
           @input="handleSkuFieldInput"
