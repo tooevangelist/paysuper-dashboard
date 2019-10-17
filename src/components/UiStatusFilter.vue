@@ -35,6 +35,14 @@ export default {
     };
   },
 
+  watch: {
+    isDropdownOpened(value) {
+      if (!value) {
+        Object.keys(this.statusesList).forEach((key) => { this.statusesList[key].expand = false; });
+      }
+    },
+  },
+
   methods: {
     getItemClass(item, value) {
       return [
@@ -90,9 +98,9 @@ export default {
           {{item.text}}
           <span
             class="status-count"
-            v-if="countsByStatus"
+            v-if="countsByStatus && countsByStatus[item.value]"
             >
-            ({{ countsByStatus[item.value] || 0 }})
+            {{ countsByStatus[item.value] }}
           </span>
           <UiTip
             class="dropdown-child dropdown-content"
