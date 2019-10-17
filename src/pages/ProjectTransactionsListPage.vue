@@ -50,10 +50,6 @@ export default {
   data() {
     return {
       scheme: transactionsStatusScheme,
-      tempFilters: {
-        status: 2,
-        method: 3,
-      },
     };
   },
 
@@ -66,6 +62,13 @@ export default {
       return debounce(() => {
         this.filterTransactions();
       }, 500);
+    },
+
+    filterCounts() {
+      return {
+        status: get(this.filters, 'status.length') || 0,
+        methods: get(this.filters, 'methods.length') || 0,
+      };
     },
   },
 
@@ -204,7 +207,7 @@ export default {
             @input="handleStatusInput"
             @inputSecondLevel="handleFilterInput"
             :scheme="scheme"
-            :countsByStatus="tempFilters" />
+            :countsByStatus="filterCounts" />
         </div>
 
         <div class="control-bar__right">
