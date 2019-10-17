@@ -13,6 +13,7 @@ function getDefaultAgreementDocument() {
       size: 0,
     },
     url: '#',
+    hasSigned: false,
   };
 }
 
@@ -58,9 +59,10 @@ export default function createMerchantLicenseAgreementStore() {
           });
 
           helloSign.on('sign', () => {
+            commit('hasSigned', true);
             delay(async () => {
               await dispatch('Merchant/fetchMerchantById', state.merchantId, { root: true });
-              await dispatch('fetchAgreementMetadata', true);
+              await dispatch('fetchAgreementMetadata');
             }, 5000);
           });
 
@@ -155,6 +157,9 @@ export default function createMerchantLicenseAgreementStore() {
       },
       document(state, data) {
         state.document = data;
+      },
+      hasSigned(state, data) {
+        state.hasSigned = data;
       },
       helloSign(state, data) {
         state.helloSign = data;
