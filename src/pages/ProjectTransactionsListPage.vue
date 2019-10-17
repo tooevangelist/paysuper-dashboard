@@ -163,7 +163,7 @@ export default {
         'refunded',
         'rejected',
         'chargeback',
-      ]
+      ];
       return !badStatus.includes(status);
     },
   },
