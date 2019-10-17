@@ -111,7 +111,7 @@ export default {
       this.$appEventsOn('contentScrollReachEnd', async () => {
         if (
           this.isInfiniteScrollLocked
-          || this.filters.offset + this.filters.limit >= this.gameKeys.count
+          || this.filters.offset + this.filters.limit >= this.virtualItems.count
         ) {
           return;
         }
