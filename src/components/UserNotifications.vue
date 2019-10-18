@@ -11,16 +11,6 @@ export default {
     PictureAThingBetweenTrees,
   },
   props: {
-    /**
-     * @typedef {{
-     *    id: number,
-     *    image?: string,
-     *    sender: string,
-     *    text: string,
-     *    timestamp: string,
-     * }} Notify
-     * @type {Notify[]}
-     */
     items: {
       default: () => [],
       type: Array,
@@ -256,7 +246,6 @@ export default {
 
 .content {
   max-height: 300px;
-  // margin-bottom: 24px;
   margin-right: -16px;
   padding-right: 20px;
 }
