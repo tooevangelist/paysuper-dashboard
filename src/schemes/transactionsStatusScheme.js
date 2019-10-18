@@ -6,7 +6,7 @@ export default {
     children: [
       {
         text: 'All transactions',
-        value: 'All',
+        value: 'all',
       },
       {
         text: 'Created',
@@ -51,6 +51,7 @@ export default {
   },
   2: {
     text: 'Clear filter',
-    value: 'false',
+    value: 'all',
+    color: 'archieved ',
   },
 };

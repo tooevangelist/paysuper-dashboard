@@ -67,7 +67,7 @@ export default function createProjectVirtualItemsStore() {
         const query = qs.stringify({
           ...state.apiQuery,
         }, { arrayFormat: 'brackets' });
-        const url = `${rootState.config.apiUrl}/admin/api/v1/order?${query}&project_date_from=1569888000`;
+        const url = `${rootState.config.apiUrl}/admin/api/v1/order?${query}&sort[]=-created_at`;
 
         const response = await axios.get(url);
         const transactionsList = {

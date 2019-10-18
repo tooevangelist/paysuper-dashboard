@@ -11,12 +11,8 @@ export default {
 
   props: {
     value: {
-      type: String,
+      type: [String, Object],
       default: 'all',
-    },
-    countsByStatus: {
-      type: Object,
-      default: null,
     },
     scheme: {
       type: Object,
@@ -25,6 +21,10 @@ export default {
     multilevel: {
       type: Boolean,
       default: false,
+    },
+    countsByStatus: {
+      type: Object,
+      default: null,
     },
   },
 
@@ -106,6 +106,7 @@ export default {
             >
             {{ countsByStatus[item.value] }}
           </span>
+          <div class="triangle" v-if="item.children"></div>
           <UiTip
             class="dropdown-child dropdown-content"
             position="bottom"
@@ -193,6 +194,10 @@ export default {
     cursor: pointer;
     background: rgba(61, 123, 245, 0.08);
     color: #3d7bf5;
+
+    .triangle {
+      border-color: transparent transparent transparent #3D7BF5;
+    }
   }
 
   &::before {
@@ -256,8 +261,30 @@ export default {
   top: 12px;
 }
 .status-count {
-  color: #919699;
-  margin-left: 4px;
-  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 0 0 0 1px;
+  border-radius: 50%;
+  position: absolute;
+  right: 30px;
+  top: 6px;
+  color: #fff;
+  background: #3D7BF5;
+  font-size: 9px;
+}
+
+.triangle {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  display: block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 4.0px 0 4.0px 4.0px;
+  border-color: transparent transparent transparent rgb(0,0,0);
 }
 </style>

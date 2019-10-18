@@ -21,6 +21,16 @@ const filters = {
   status: {
     defaultValue: () => [],
   },
+
+  dateFrom: {
+    defaultValue: null,
+    apiQueryName: 'pm_date_from',
+  },
+
+  dateTo: {
+    defaultValue: null,
+    apiQueryName: 'pm_date_to',
+  },
 };
 
 export default {

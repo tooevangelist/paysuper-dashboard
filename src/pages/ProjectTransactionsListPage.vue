@@ -49,7 +49,9 @@ export default {
 
   data() {
     return {
+      filters: {},
       scheme: transactionsStatusScheme,
+      filterCounts: {},
     };
   },
 
@@ -64,11 +66,24 @@ export default {
       }, 500);
     },
 
-    filterCounts() {
-      return {
-        status: get(this.filters, 'status.length') || 0,
-        methods: get(this.filters, 'methods.length') || 0,
-      };
+    dateFilter: {
+      get() {
+        return [this.filters.dateFrom || null, this.filters.dateTo || null];
+      },
+      set(value) {
+        const [dateFrom, dateTo] = value;
+        this.filters.dateFrom = dateFrom;
+        this.filters.dateTo = dateTo;
+      },
+    },
+  },
+
+  watch: {
+    filters: {
+      handler() {
+        this.fillCounts();
+      },
+      deep: true,
     },
   },
 
@@ -78,6 +93,7 @@ export default {
 
   mounted() {
     this.initInfiniteScroll();
+    this.fillCounts();
   },
 
   methods: {
@@ -170,15 +186,32 @@ export default {
       return !badStatus.includes(status);
     },
 
-    handleStatusInput() {},
+    handleStatusInput(data) {
+      if (data === 'all') {
+        this.filters.status = [];
+        this.filters.dateFrom = null;
+        this.filters.dateTo = null;
+        this.filterTransactions();
+      }
+    },
 
     handleFilterInput(data) {
-      if (this.filters[data.filter].includes(data.value)) {
+      if (data.value === 'all') {
+        this.filters[data.filter] = [];
+      } else if (this.filters[data.filter].includes(data.value)) {
         remove(this.filters[data.filter], n => n === (data.value));
       } else {
         this.filters[data.filter].push(data.value);
       }
+
       this.filterTransactions();
+    },
+
+    fillCounts() {
+      this.filterCounts = {
+        status: get(this.filters, 'status.length') || 0,
+        methods: get(this.filters, 'methods.length') || 0,
+      };
     },
   },
 };
@@ -201,16 +234,20 @@ export default {
     <UiPanel>
       <div class="control-bar">
         <div class="control-bar__left">
-          <UiFilterSearchInput
-            :isAlwaysExpanded="true" />
+          <UiFilterDate
+            v-model="dateFilter"
+            @input="filterTransactions"
+          />
           <UiStatusFilter
             @input="handleStatusInput"
             @inputSecondLevel="handleFilterInput"
+            :value="filters"
             :scheme="scheme"
             :countsByStatus="filterCounts" />
         </div>
 
         <div class="control-bar__right">
+          <div class="export-button"><IconDonwload></IconDonwload></div>
         </div>
       </div>
 
@@ -276,6 +313,11 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+.control-bar {
+  display: flex;
+  justify-content: space-between;
+}
+
 .status-filter {
   margin-left: 4px;
   position: relative;
@@ -369,4 +411,36 @@ export default {
 .status-refunded {
   color: #EA3D2F;
 }
+
+.export-button {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  border: 1px solid #e3e5e6;
+  box-sizing: border-box;
+  border-radius: 4px;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+
+  & > svg {
+    transition: fill 0.2s ease-out;
+  }
+
+  &:hover:not(._opened) {
+    background: rgba(61, 123, 245, 0.08);
+
+    & > svg {
+      fill: #3d7bf5;
+    }
+  }
+
+  &._opened {
+    background-color: #f1f3f4;
+    border-color: #f1f3f4;
+  }
+}
+
 </style>
