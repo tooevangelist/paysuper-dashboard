@@ -288,12 +288,12 @@ export default function createMerchantStore() {
         commit('merchant', mapDataApiToForm(merchant));
       },
 
-      async updateMerchant({ state, commit, rootState }) {
-        const response = await axios.put(
-          `${rootState.config.apiUrl}/admin/api/v1/merchants`,
-          state.merchant,
-        );
-        commit('merchant', mapDataApiToForm(response.data));
+      /*
+       * TODO: realizate change tariffs (this method isn't actual)
+       * @see https://github.com/paysuper/paysuper-management-api/blob/master/api/swagger.yaml#L6173
+       */
+      async updateMerchant({ state, commit }) {
+        commit('merchant', mapDataApiToForm(state.merchant));
       },
 
       async patchMerchant({ state, commit, rootState }, props) {

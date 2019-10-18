@@ -1,5 +1,6 @@
 <script>
 import { format } from 'date-fns';
+import { get } from 'lodash-es';
 import merchantStatusScheme from '@/schemes/merchantStatusScheme';
 import NoResults from '@/components/NoResults.vue';
 
@@ -17,12 +18,6 @@ export default {
     },
   },
 
-  data() {
-    return {
-      merchantStatusScheme,
-    };
-  },
-
   methods: {
     formatDate(seconds) {
       const datetime = new Date(seconds * 1000);
@@ -33,7 +28,7 @@ export default {
       if (!statuses || !statuses.to) {
         return merchantStatusScheme[0];
       }
-      return this.merchantStatusScheme[statuses.to];
+      return get(merchantStatusScheme, statuses.to, merchantStatusScheme[0]);
     },
   },
 };
@@ -67,7 +62,7 @@ export default {
             v-if="getStatus(item.statuses).icon"
             :is="getStatus(item.statuses).icon"
           />
-          {{getStatus(item.statuses).text}}
+          {{ getStatus(item.statuses).label }}
         </div>
         <p class="title">
           {{item.title}}
@@ -184,7 +179,8 @@ export default {
 .status-icon {
   position: absolute;
   left: -18px;
-  top: 6px;
+  top: 5px;
+  fill: #78909c;
 }
 
 .message {

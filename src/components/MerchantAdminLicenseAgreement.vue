@@ -1,6 +1,8 @@
 <script>
-import { get, find } from 'lodash-es';
+import { find, includes } from 'lodash-es';
 import MerchantAdminModal from '@/components/MerchantAdminModal.vue';
+import merchantStatusScheme from '@/schemes/merchantStatusScheme';
+import { showErrorMessage } from '@/helpers/notifications';
 
 export default {
   name: 'MerchantAdminLicenseAgreement',
@@ -9,6 +11,10 @@ export default {
     agreement: {
       required: true,
       type: Object,
+    },
+    hasSignature: {
+      default: false,
+      type: Boolean,
     },
     merchantStatus: {
       default: 'new',
@@ -24,24 +30,22 @@ export default {
   },
   computed: {
     statuses() {
-      return [
-        { color: 'blue', label: 'New', value: 'new' },
-        { color: 'purple', label: 'Signing', value: 'signing' },
-        { color: 'green', label: 'Signed', value: 'signed' },
-        { color: 'red', label: 'Rejected', value: 'rejected' },
-      ];
+      const currentStatus = find(
+        merchantStatusScheme,
+        { value: this.merchantStatus },
+      ) || merchantStatusScheme[0];
+
+      if (includes(['new', 'signing'], currentStatus.value)) {
+        return [currentStatus, merchantStatusScheme[6]];
+      }
+
+      return [currentStatus];
     },
-    actualStatusColor() {
-      return get(find(this.statuses, { value: this.newStatus }), 'color', 'blue');
-    },
-    isNoAgreement() {
-      return this.merchantStatus === 'new';
+    actualStatus() {
+      return find(this.statuses, { value: this.newStatus });
     },
     statusFrom() {
       return find(this.statuses, { value: this.merchantStatus });
-    },
-    statusTo() {
-      return find(this.statuses, { value: this.newStatus });
     },
   },
   methods: {
@@ -54,6 +58,10 @@ export default {
       this.modalOpened = false;
     },
     openChangeStatusModal(status) {
+      if (status !== 'rejected') {
+        showErrorMessage('You can change status to rejected only', { position: 'bottom-center' });
+        return;
+      }
       this.newStatus = status;
       this.modalType = 'changeStatus';
       this.modalOpened = true;
@@ -78,13 +86,18 @@ export default {
       this.$emit('openLicense');
     },
   },
+  watch: {
+    merchantStatus(val) {
+      this.newStatus = val;
+    },
+  },
 };
 </script>
 
 <template>
 <UiPanel>
   <section
-    v-if="!isNoAgreement"
+    v-if="hasSignature"
     class="section"
   >
     <UiHeader level="3" :hasMargin="true">
@@ -94,10 +107,7 @@ export default {
       When merchant signs the license agreement it can be dowloaded here
       for future reference and sending it to risk manager for KYC.
     </UiText>
-    <div
-      v-if="merchantStatus === 'signed'"
-      class="agreement"
-    >
+    <div class="agreement">
       <IconFile v-if="agreement.metadata.size" />
       <IconFileLoader v-else />
       <div class="agreement-text">
@@ -111,6 +121,7 @@ export default {
         :href="agreement.url"
         @click.prevent="uploadDocument"
       >
+        <IconDownload class="icon" />
         DOWNLOAD
       </a>
       <div
@@ -118,6 +129,7 @@ export default {
         class="link"
         @click="openLicense"
       >
+        <IconPen class="icon" />
         E-SIGN
       </div>
     </div>
@@ -131,35 +143,45 @@ export default {
       Merchant will get different notifications depending on the LA request status.
     </UiText>
     <div
-      v-if="isNoAgreement"
+      v-if="!hasSignature"
       class="no-agreement"
     >
       No agreement
     </div>
-    <UiSelectAsButton
-      v-else
-      tipInnerPosition="left"
-      textColor="white"
-      :color="actualStatusColor"
-      :isRounded="true"
-      :options="statuses"
-      :value="merchantStatus"
-      @input="openChangeStatusModal"
-    />
+    <template v-else>
+      <UiSelectAsButton
+        v-if="statuses.length > 1"
+        tipInnerPosition="left"
+        textColor="white"
+        :color="actualStatus.color"
+        :isRounded="true"
+        :options="statuses"
+        :value="newStatus"
+        @input="openChangeStatusModal"
+      />
+      <UiButton
+        v-else
+        size="small"
+        :color="actualStatus.color"
+        :isRounded="true"
+      >
+        {{ actualStatus.label }}
+      </UiButton>
+    </template>
   </section>
   <section class="footer">
     <div
       class="link"
       @click="openContactModal"
     >
-      <IconEdit class="icon-edit" />
+      <IconEdit class="icon" />
       Contact merchant
     </div>
   </section>
   <MerchantAdminModal
     v-if="modalOpened"
     :statusFrom="statusFrom"
-    :statusTo="statusTo"
+    :statusTo="actualStatus"
     :type="modalType"
     @close="closeModal"
     @send="sendMessage"
@@ -245,7 +267,8 @@ export default {
   margin-bottom: 2px;
   color: #000;
 }
-.icon-edit {
+.icon {
   margin-right: 8px;
+  fill: #3d7bf5;
 }
 </style>

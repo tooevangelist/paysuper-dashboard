@@ -264,14 +264,19 @@ const routes = [
     component: () => import('@/pages/ConfirmEmail.vue'),
   },
   {
+    path: '/receipt/:receiptType/:receiptId/:orderId',
+    component: () => import('@/pages/PaymentReceiptPage.vue'),
+    meta: { initStore: ['config'] },
+  },
+  {
     path: '/icons/',
     component: () => import('@/pages/IconsPage.vue'),
-    meta: { isStoreInitDisabled: true },
+    meta: { initStore: false },
   },
   {
     path: '/ui/',
     component: () => import('@/pages/ComponentsPage.vue'),
-    meta: { isStoreInitDisabled: true },
+    meta: { initStore: false },
   },
 
   {

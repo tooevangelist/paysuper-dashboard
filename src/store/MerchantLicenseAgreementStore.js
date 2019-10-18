@@ -13,6 +13,7 @@ function getDefaultAgreementDocument() {
       size: 0,
     },
     url: '#',
+    hasSigned: false,
   };
 }
 
@@ -38,7 +39,12 @@ export default function createMerchantLicenseAgreementStore() {
       async initState({ commit }, merchantId) {
         commit('merchantId', merchantId);
       },
-      async initHellosign({ commit, dispatch, getters }) {
+      async initHellosign({
+        commit,
+        dispatch,
+        getters,
+        state,
+      }) {
         dispatch('fetchAgreementMetadata');
 
         if (getters.isUsingHellosign) {
@@ -53,9 +59,10 @@ export default function createMerchantLicenseAgreementStore() {
           });
 
           helloSign.on('sign', () => {
-            dispatch('Merchant/updateMerchant', null, { root: true });
+            commit('hasSigned', true);
             delay(async () => {
-              dispatch('fetchAgreementMetadata', true);
+              await dispatch('Merchant/fetchMerchantById', state.merchantId, { root: true });
+              await dispatch('fetchAgreementMetadata');
             }, 5000);
           });
 
@@ -77,6 +84,7 @@ export default function createMerchantLicenseAgreementStore() {
       },
       async fetchAgreementMetadata({
         commit,
+        dispatch,
         getters,
         rootState,
         state,
@@ -92,6 +100,10 @@ export default function createMerchantLicenseAgreementStore() {
           const agreement = get(response, 'data', getDefaultAgreementDocument());
 
           commit('agreement', agreement);
+
+          if (agreement.metadata.size) {
+            dispatch('fetchDocument');
+          }
         }
       },
       async uploadDocument({ dispatch, state }) {
@@ -145,6 +157,9 @@ export default function createMerchantLicenseAgreementStore() {
       },
       document(state, data) {
         state.document = data;
+      },
+      hasSigned(state, data) {
+        state.hasSigned = data;
       },
       helloSign(state, data) {
         state.helloSign = data;

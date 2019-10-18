@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
-import { get } from 'lodash-es';
+import { get, union } from 'lodash-es';
 
 import DictionariesStore from './DictionariesStore';
 import LeaveFeedbackStore from './LeaveFeedbackStore';
@@ -12,11 +12,10 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    user: {},
     config: {},
     isLoading: false,
     pageError: null,
-    isStateInited: false,
+    initedParts: [],
   },
   mutations: {
     isLoading(state, value) {
@@ -28,21 +27,43 @@ export default new Vuex.Store({
     config(state, value) {
       state.config = value;
     },
-    isStateInited(state, value) {
-      state.isStateInited = value;
+    initedParts(state, value) {
+      state.initedParts = union(state.initedParts, value);
     },
   },
   getters: {
-    getUser: state => state.user || null,
+    checkIfNeedToInitPart(state) {
+      return (partName, initConfig) => {
+        if (
+          initConfig.includes(partName)
+          && !state.initedParts.includes(partName)
+        ) {
+          return true;
+        }
+        return false;
+      };
+    },
   },
   actions: {
-    async initState({ dispatch, commit }) {
-      await dispatch('fetchConfig');
-      await Promise.all([
-        dispatch('Dictionaries/initState'),
-        dispatch('User/initState'),
-      ]);
-      commit('isStateInited', true);
+    async initState(
+      { getters, dispatch, commit },
+      initConfig = ['config', 'dictionaries', 'user'],
+    ) {
+      const parallelInit = [];
+      if (!initConfig) {
+        return;
+      }
+      if (getters.checkIfNeedToInitPart('config', initConfig)) {
+        await dispatch('fetchConfig');
+      }
+      if (getters.checkIfNeedToInitPart('dictionaries', initConfig)) {
+        parallelInit.push(dispatch('Dictionaries/initState'));
+      }
+      if (getters.checkIfNeedToInitPart('user', initConfig)) {
+        parallelInit.push(dispatch('User/initState'));
+      }
+      await Promise.all(parallelInit);
+      commit('initedParts', initConfig);
     },
 
     /**
@@ -67,9 +88,13 @@ export default new Vuex.Store({
         return;
       }
 
-      const errorCode = get(error, 'response.status', 520);
-      commit('pageError', errorCode);
-      console.error(error);
+      if (typeof error === 'number') {
+        commit('pageError', error);
+      } else {
+        const errorCode = get(error, 'response.status', 520);
+        commit('pageError', errorCode);
+        console.error(error);
+      }
     },
 
     async uploadImage({ rootState }, imagefile) {

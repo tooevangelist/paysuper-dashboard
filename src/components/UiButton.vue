@@ -137,7 +137,7 @@ $primary-button-size: 14px;
   $fontWeight: 500,
   $transparentColor: $background,
   $transparentBorderColor: $background,
-  $transparentHoverColor: $color,
+  $transparentHoverColor: $background,
   $transparentHoverBoxColor: transparent
 ) {
   background-color: $background;
