@@ -51,15 +51,20 @@ export default {
   computed: {
     ...mapState('User', ['role']),
     ...mapState('User/Merchant', ['merchantStatus']),
-    ...mapState('UserNotifications', ['notifications']),
+    ...mapState('User/Notifications', ['notifications']),
 
     status() {
       return this.merchantStatus === 'life' ? 'active' : 'test';
+    },
+
+    newNotificationsCount() {
+      return this.notifications.filter(item => item.is_read === false).length;
     },
   },
   methods: {
     ...mapActions(['setIsLoading']),
     ...mapActions('User', ['logout']),
+    ...mapActions('User/Notifications', ['markNotificationAsReaded']),
     ...mapMutations('User', { setRole: 'role' }),
     ...mapActions('LeaveFeedback', ['postFeedback']),
 
@@ -231,10 +236,10 @@ export default {
       >
         <IconNotify />
         <div
-          v-if="notifications.length"
+          v-if="newNotificationsCount"
           class="notify-count"
         >
-          {{ notifications.length }}
+          {{ newNotificationsCount }}
         </div>
       </div>
 
@@ -244,8 +249,14 @@ export default {
         width="calc(100vw - 140px)"
         maxWidth="400px"
         :visible="hasNotificationsOpened"
+        :closeDelay="0"
+        :stayOpenedOnHover="false"
       >
-        <UserNotifications :items="notifications" />
+        <UserNotifications
+          :items="notifications"
+          @close="hideNotificationsBlock"
+          @markAsReaded="markNotificationAsReaded"
+        />
       </UiTip>
     </div>
 

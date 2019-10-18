@@ -1,10 +1,15 @@
 <script>
 import { format, isValid } from 'date-fns';
-import { truncate } from 'lodash-es';
+import { truncate, get } from 'lodash-es';
 import merchantStatusScheme from '@/schemes/merchantStatusScheme';
+import merchantStatusNotificationsScheme from '@/schemes/merchantStatusNotificationsScheme';
+import PictureAThingBetweenTrees from '@/components/PictureAThingBetweenTrees.vue';
 
 export default {
   name: 'UserNotifications',
+  components: {
+    PictureAThingBetweenTrees,
+  },
   props: {
     /**
      * @typedef {{
@@ -23,38 +28,39 @@ export default {
   },
   data() {
     return {
-      notifyOpenedID: null,
+      openedItem: null,
+      noMessageText: '¯\\_(ツ)_/¯',
     };
   },
-  computed: {
-    innerItems() {
-      return this.notifyOpenedID
-        ? this.items.filter(item => item.id === this.notifyOpenedID)
-        : this.items;
-    },
-  },
   methods: {
-    formatDate(timestamp) {
-      const datetime = new Date(timestamp);
-      return isValid(datetime) ? format(datetime, 'dd/MM/yyyy') : '';
-    },
-    prepareText(item) {
-      const textArray = [];
-      if (item.statuses) {
-        textArray.push(this.getStatusChangeText(item.statuses));
+    formatDate(item) {
+      if (!item.created_at) {
+        return '';
       }
-      if (item.message) {
-        textArray.push(item.message);
-      }
-      const text = textArray.join('<br/>');
-      return this.notifyOpenedID ? text : truncate(text, { length: 100, separator: /,? +/ });
+      const datetime = new Date(item.created_at.seconds * 1000);
+      return isValid(datetime) ? format(datetime, 'dd.MM.yyyy') : '';
     },
-    getStatusChangeText(statuses) {
-      const textFrom = statuses.from
-        ? merchantStatusScheme[statuses.from].text : merchantStatusScheme[0].text;
-      const textTo = statuses.to
-        ? merchantStatusScheme[statuses.to].text : merchantStatusScheme[0].text;
-      return `License Agreement status changed from ${textFrom} to ${textTo}`;
+    getShortText(item) {
+      const hasStatusText = this.checkIfHasStatusText(item);
+      const text = hasStatusText ? this.getStatusChangeText(item) : item.message;
+      return truncate(text, { length: 100, separator: /,? +/ }) || this.noMessageText;
+    },
+    checkIfHasStatusText(item) {
+      return item.statuses && item.statuses.to;
+    },
+    getStatusChangeText(item) {
+      const statusFrom = get(item, 'statuses.from');
+      const statusTo = get(item, 'statuses.to');
+
+      const statusFromText = get(merchantStatusScheme, `[${statusFrom}].label`, 'Unknown');
+      const statusToText = get(merchantStatusScheme, `[${statusTo}].label`, 'Unknown');
+
+      const fallbackText = `Status change (${statusFromText} -> ${statusToText})`;
+      return merchantStatusNotificationsScheme[statusTo] || fallbackText;
+    },
+    openItem(item) {
+      this.openedItem = item;
+      this.$emit('markAsReaded', item.id);
     },
   },
 };
@@ -62,35 +68,93 @@ export default {
 
 <template>
 <div class="user-notifications">
-  <UiScrollbarBox class="content" ref="scrollbar">
-    <div
-      v-if="notifyOpenedID"
-      class="link _back"
-      @click="notifyOpenedID = null"
+  <header class="header">
+    <span
+      v-if="!openedItem"
+      class="title"
     >
-      <IconParagraphPointer class="back-icon" />
-      Back
-    </div>
-
-    <div
-      v-for="(item, index) in innerItems"
-      :key="index"
-      class="item"
-      :class="{ _clickable: !notifyOpenedID }"
-      @click="notifyOpenedID = item.id"
+      Notifications
+    </span>
+    <span
+      v-else
+      class="title"
     >
-      <span class="icon"></span>
-      <div class="main">
-        <div class="header">
-          <div class="title">
-            {{ item.is_system ? 'Pay Super' : 'Administrator' }}
+      <span class="icon _inline"></span>
+      {{ openedItem.is_system ? 'Pay Super' : 'Administrator' }}
+    </span>
+    <span
+      v-if="openedItem"
+      class="back-link"
+      @click="openedItem = null"
+    >
+      <IconParagraphPointer />
+    </span>
+    <span
+      v-else
+      class="close-button"
+      @click="$emit('close')"
+    >
+      <IconClose />
+    </span>
+  </header>
+  <template v-if="items.length">
+    <!-- 2 UiScrollbarBox-es to sustain scroll position on switching to full message -->
+    <UiScrollbarBox
+      v-show="!openedItem"
+      class="content"
+    >
+      <div
+        v-for="(item, index) in items"
+        :key="index"
+        :class="{ _readed: item.is_read }"
+        class="item"
+        @click="openItem(item)"
+      >
+        <span class="icon"></span>
+        <div class="notification">
+          <div class="notification-header">
+            <div class="subtitle">
+              {{ item.is_system ? 'Pay Super' : 'Administrator' }}
+            </div>
+            <div class="date">{{ formatDate(item) }}</div>
           </div>
-          <div class="date">{{ formatDate(item.timestamp) }}</div>
+          <p class="text">{{ getShortText(item) }}</p>
         </div>
-        <div class="text">{{ prepareText(item) }}</div>
       </div>
-    </div>
-  </UiScrollbarBox>
+    </UiScrollbarBox>
+    <UiScrollbarBox
+      v-if="openedItem"
+      class="content"
+    >
+      <div class="notification">
+        <div
+          class="text-block"
+          v-if="checkIfHasStatusText(openedItem)"
+        >
+          <div class="subtitle">License agreement</div>
+          <p class="text">{{ getStatusChangeText(openedItem) }}</p>
+        </div>
+        <div
+          class="text-block"
+          v-if="openedItem.message"
+        >
+          <div class="subtitle">Administrator's comment</div>
+          <p class="text">{{ openedItem.message }}</p>
+        </div>
+        <p
+          class="text"
+          v-if="!checkIfHasStatusText(openedItem) && !openedItem.message"
+        >Something gone wrong {{ noMessageText }}</p>
+      </div>
+    </UiScrollbarBox>
+  </template>
+  <div
+    v-else
+    class="no-notifications"
+  >
+    <PictureAThingBetweenTrees />
+    <p>You don’t have any notification yet</p>
+  </div>
 </div>
 </template>
 
@@ -99,28 +163,24 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 16px;
+  padding: 0 16px 16px 16px;
 }
-.content {
-  max-height: 300px;
-  // margin-bottom: 24px;
-  margin-right: -16px;
-  padding-right: 20px;
-}
-.item {
+
+.header {
   display: flex;
-
-  &._clickable {
-    cursor: pointer;
-
-    &:not(:last-child) {
-      padding-bottom: 8px;
-      margin-bottom: 16px;
-      border-bottom: 1px solid #f1f3f4;
-    }
-  }
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  font-size: 18px;
+  line-height: 28px;
+  color: #000000;
+}
+.title {
+  display: flex;
+  align-items: center;
 }
 .icon {
+  display: block;
   width: 40px;
   height: 40px;
   margin-right: 10px;
@@ -133,27 +193,106 @@ export default {
   flex-shrink: 0;
   transition: background-color 0.2s ease-out;
 
-  .item._clickable:hover & {
+  &._inline {
+    width: 24px;
+    height: 24px;
+  }
+
+  .item:hover & {
     background-color: rgba(61, 123, 245, 0.08);
   }
 }
-.main {
+
+.back-link,
+.close-button {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 12px;
+  width: 32px;
+  height: 32px;
+  box-sizing: content-box;
+  cursor: pointer;
+}
+
+.close-button {
+  right: 12px;
+
+  & > svg {
+    width: 12px;
+    height: 12px;
+    display: block;
+    stroke-width: 2px;
+    stroke: #c4c4c4;
+    transition: stroke 0.2s ease-out;
+  }
+
+  &:hover {
+    & > svg {
+      stroke: #3d7bf5;
+    }
+  }
+}
+
+.back-link {
+  left: 12px;
+
+  & > svg {
+    transition: fill 0.2s ease-out;
+    transform: rotate(180deg);
+    margin-right: 12px;
+    height: 14px;
+    width: 7px;
+    fill: #c6cacc;
+  }
+
+  &:hover {
+    & > svg {
+      fill: #3d7bf5;
+    }
+  }
+}
+
+.content {
+  max-height: 300px;
+  // margin-bottom: 24px;
+  margin-right: -16px;
+  padding-right: 20px;
+}
+.item {
+  cursor: pointer;
+  display: flex;
+
+  & + & {
+    padding-top: 16px;
+    margin-top: 16px;
+    border-top: 1px solid #f1f3f4;
+  }
+}
+.notification {
   line-height: 20px;
   font-size: 14px;
+  flex-grow: 1;
 }
-.header {
+
+.notification-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 4px;
 }
-.title {
+.subtitle {
   font-weight: 500;
   color: #000;
   letter-spacing: 0.1px;
   transition: color 0.2s ease-out;
+  margin-bottom: 4px;
 
-  .item._clickable:hover & {
+  .item._readed & {
+    color: #919699;
+  }
+
+  .item:hover & {
     color: #3d7bf5;
   }
 }
@@ -165,31 +304,35 @@ export default {
 .text {
   color: #5e6366;
   letter-spacing: 0.25px;
-  margin-bottom: 4px;
   transition: color 0.2s ease-out;
 
-  .item._clickable:hover & {
+  .item._readed & {
+    color: #919699;
+  }
+
+  .item:hover & {
     color: #3d7bf5;
   }
 }
-.link {
-  display: inline-flex;
-  align-items: center;
-  font-size: 14px;
-  line-height: 20px;
-  color: #3d7bf5;
-  letter-spacing: 0.25px;
-  margin-bottom: 4px;
-  cursor: pointer;
 
-  &._back {
-    margin-bottom: 12px;
+.text-block {
+  & + & {
+    margin-top: 16px;
   }
 }
-.back-icon {
-  transform: rotate(180deg);
-  margin-right: 12px;
-  height: 14px;
-  width: 7px;
+
+.no-notifications {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 0 14px;
+
+  p {
+    font-size: 14px;
+    line-height: 20px;
+    color: #919699;
+    margin-top: 10px;
+  }
 }
 </style>

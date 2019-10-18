@@ -223,11 +223,12 @@ const routes = [
     path: '/privacy_policy/',
     component: () => import('@/pages/privacy_policy.vue'),
   },
+
   {
     path: '/login/',
-    component: () => import('@/pages/login.vue'),
+    component: () => import('@/pages/LoginPage.vue'),
+    name: 'Login',
   },
-
   {
     path: '/payform-sdk/',
     component: () => import('@/pages/PaymentFormSdk.vue'),

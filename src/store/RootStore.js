@@ -7,7 +7,6 @@ import resources from '@/resources';
 import DictionariesStore from './DictionariesStore';
 import LeaveFeedbackStore from './LeaveFeedbackStore';
 import UserStore from './UserStore';
-import UserNotificationsStore from './UserNotificationsStore';
 
 Vue.use(Vuex);
 
@@ -114,6 +113,5 @@ export default new Vuex.Store({
     Dictionaries: DictionariesStore(resources),
     LeaveFeedback: LeaveFeedbackStore(resources),
     User: UserStore(resources),
-    UserNotifications: UserNotificationsStore(resources),
   },
 });
