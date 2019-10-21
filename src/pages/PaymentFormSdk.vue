@@ -1,11 +1,11 @@
-<template>
-<div id="p1payone-form"></div>
-</template>
-
 <script>
 import axios from 'axios';
+import { mapState } from 'vuex';
 
 export default {
+  computed: {
+    ...mapState(['config']),
+  },
   async created() {
     const { data } = await axios.get('https://static.protocol.one/paysuper/sdk/dev/paysuper.js');
     const script = document.createElement('script');
@@ -37,10 +37,14 @@ export default {
     }
 
     const paySuper = new window.PaySuper({
-      formUrl: '/payform-page/',
+      formUrl: `${this.config.ownBackendUrl}/order`,
       ...request,
     });
     paySuper.renderModal();
   },
 };
 </script>
+
+<template>
+<div id="p1payone-form"></div>
+</template>
