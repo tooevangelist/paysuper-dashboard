@@ -5,7 +5,7 @@ const webappConfig = require('../../config/webappConfig');
 
 const auth1Middleware = require('./auth1.oauth2');
 const { uploadFile } = require('./s3-upload');
-const orderPage = require('./order-page');
+// const orderPage = require('./order-page');
 
 const router = new Router({
   prefix: config.routesPrefix,
@@ -27,10 +27,10 @@ router
     const result = await uploadFile(file);
     ctx.body = result;
   })
-  .get('/order', async (ctx) => {
-    const body = await orderPage(ctx);
-    ctx.body = body;
-  })
+  // .get('/order', async (ctx) => {
+  //   const body = await orderPage(ctx);
+  //   ctx.body = body;
+  // })
 
   .get(`${auth1RoutesNamespace}/login`, auth1Middleware.login)
   .get(`${auth1RoutesNamespace}/callback`, auth1Middleware.authorize)
