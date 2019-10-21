@@ -1,5 +1,6 @@
 
 import axios from 'axios';
+import Centrifuge from 'centrifuge';
 
 export default function createUserNotificationsStore() {
   return {
@@ -18,6 +19,7 @@ export default function createUserNotificationsStore() {
         }
 
         await dispatch('fetchNotifications');
+        dispatch('initWatchForNotifications');
       },
 
       async fetchNotifications({ commit, rootState }) {
@@ -48,6 +50,20 @@ export default function createUserNotificationsStore() {
         } catch (error) {
           console.error(error);
         }
+      },
+
+      initWatchForNotifications({ state, commit, rootState }) {
+        const centrifuge = new Centrifuge(rootState.config.websocketUrl);
+        const { merchant } = rootState.User.Merchant;
+
+        centrifuge.setToken(merchant.centrifugo_token);
+        centrifuge.subscribe(`paysuper:merchant#${merchant.id}`, async ({ data }) => {
+          commit('notifications', [
+            ...state.notifications,
+            data,
+          ]);
+        });
+        centrifuge.connect();
       },
     },
 
