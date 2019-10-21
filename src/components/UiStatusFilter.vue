@@ -52,6 +52,14 @@ export default {
       ];
     },
 
+    getChildClass(item, parent) {
+      return [
+        item.value ? `_${item.value}` : '',
+        item.color ? `_${item.color}` : '',
+        this.value[parent.value].includes(item.value) ? '_current' : '',
+      ];
+    },
+
     handleClick(item) {
       if (has(item, 'expand')) {
         item.expand = !item.expand;
@@ -119,7 +127,7 @@ export default {
               @click="handleLevelTwoClick(item, child)"
               class="status"
               v-for="(child, index) in item.children"
-              :class="getItemClass(child)"
+              :class="getChildClass(child, item)"
               :key="index">
               {{ child.text }}
             </div>

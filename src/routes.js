@@ -106,6 +106,12 @@ const routes = [
         meta: projectPagesMeta,
         name: 'ProjectTransactions',
       },
+      {
+        path: 'transactions/:transactionId',
+        component: () => import('@/pages/ProjectTransactionPage.vue'),
+        meta: projectPagesMeta,
+        name: 'ProjectTransactionPage',
+      },
     ],
   },
   {

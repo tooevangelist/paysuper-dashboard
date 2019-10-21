@@ -104,6 +104,18 @@ export default function createProjectVirtualItemsStore() {
         const query = searchBuilder.getQueryFromFilterValues(newFilters);
         commit('query', query);
       },
+
+      async refund({ rootState, commit }, { transaction, reason }) {
+        const data = {
+          reason,
+          creator_id: rootState.User.Merchant.merchant.id,
+          amount: transaction.total_payment_amount,
+        };
+        const response = await axios.post(`${rootState.config.apiUrl}/admin/api/v1/order/${transaction.uuid}/refunds`, data);
+        if (response.data) {
+          commit('refund', { items: response.data });
+        }
+      },
     },
 
     namespaced: true,

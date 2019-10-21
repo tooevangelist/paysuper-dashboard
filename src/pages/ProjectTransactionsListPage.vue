@@ -10,6 +10,8 @@ import transactionsStatusScheme from '@/schemes/transactionsStatusScheme';
 import PictureTabletWithChart from '@/components/PictureTabletWithChart.vue';
 import ProjectTransactionsListStore from '@/store/ProjectTransactionsListStore';
 import NoResults from '@/components/NoResults.vue';
+import TransactionsListExport from '@/components/TransactionsListExport.vue';
+import TransactionRefund from '@/components/TransactionRefund.vue';
 
 const STATUS_COLOR = {
   created: 'blue',
@@ -25,8 +27,10 @@ export default {
   name: 'ProjectTransctionsListPage',
 
   components: {
+    TransactionsListExport,
     PictureTabletWithChart,
     NoResults,
+    TransactionRefund,
   },
 
   props: {
@@ -52,6 +56,8 @@ export default {
       filters: {},
       scheme: transactionsStatusScheme,
       filterCounts: {},
+      showRefundModal: false,
+      currentTransaction: null,
     };
   },
 
@@ -213,6 +219,14 @@ export default {
         methods: get(this.filters, 'methods.length') || 0,
       };
     },
+
+    async handleRefund(reason) {
+      this.setIsLoading(true);
+      await this.refund({ transaction: this.currentTransaction, reason })
+        .catch(this.$showErrorMessage);
+      this.filterTransactions();
+      this.setIsLoading(false);
+    },
   },
 };
 </script>
@@ -247,7 +261,7 @@ export default {
         </div>
 
         <div class="control-bar__right">
-          <div class="export-button"><IconDonwload></IconDonwload></div>
+          <transactions-list-export></transactions-list-export>
         </div>
       </div>
 
@@ -265,8 +279,9 @@ export default {
           </UiTableRow>
           <UiTableRow
             class="transaction"
-            v-for="transaction in transactionsList.items"
-            :key="transaction.id">
+            v-for="(transaction, index) in transactionsList.items"
+            :key="index"
+            :link="`/projects/${project.id}/transactions/${transaction.uuid}`">
             <UiTableCell align="left" class="status">
               <div class="status-dot"
                :class="getColor(transaction.status)"
@@ -289,7 +304,8 @@ export default {
               {{$formatPrice(transaction.total_payment_amount, transaction.currency)}}
             </UiTableCell>
             <UiTableCell align="left">
-              <div class="transaction__refund">
+              <div class="transaction__refund"
+                   @click.stop.prevent="showRefundModal = true, currentTransaction = transaction">
                 <IconRetry v-if="refundAvailable(transaction.status)"/>
                 <UiTip
                   width="140px"
@@ -309,6 +325,11 @@ export default {
         <NoResults type="add-new" v-else>You don’t have any transactions yet</NoResults>
       </div>
     </UiPanel>
+
+    <TransactionRefund
+      :showModal="showRefundModal"
+      @close="showRefundModal = false"
+      @input="handleRefund($event)"></TransactionRefund>
   </div>
 </template>
 
@@ -411,36 +432,4 @@ export default {
 .status-refunded {
   color: #EA3D2F;
 }
-
-.export-button {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  border: 1px solid #e3e5e6;
-  box-sizing: border-box;
-  border-radius: 4px;
-  justify-content: center;
-  align-items: center;
-  margin: 0 auto;
-  cursor: pointer;
-  transition: all 0.2s ease-out;
-
-  & > svg {
-    transition: fill 0.2s ease-out;
-  }
-
-  &:hover:not(._opened) {
-    background: rgba(61, 123, 245, 0.08);
-
-    & > svg {
-      fill: #3d7bf5;
-    }
-  }
-
-  &._opened {
-    background-color: #f1f3f4;
-    border-color: #f1f3f4;
-  }
-}
-
 </style>
