@@ -6,11 +6,11 @@ WORKDIR /application
 
 COPY package.json yarn.lock ./
 
-RUN yarn install
+RUN npm rebuild node-sass && yarn install
 
 COPY . /application
 
-RUN npm rebuild node-sass && npm run build && npm prune --production
+RUN yarn build
 
 EXPOSE 8080
 
