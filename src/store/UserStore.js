@@ -1,14 +1,14 @@
 import axios from 'axios';
 import MerchantStore from '@/store/MerchantStore';
+import UserNotificationsStore from './UserNotificationsStore';
 import { UNAUTHORIZED } from '@/errors';
 
-export default function createUserStore({ notifications }) {
+export default function createUserStore(resources) {
   const accessToken = localStorage.getItem('token') || '';
   return {
     state: {
       accessToken,
       isAuthorised: false,
-      authIframeSrc: '',
       role: localStorage.getItem('userRole') || 'merchant',
     },
 
@@ -19,20 +19,23 @@ export default function createUserStore({ notifications }) {
       isAuthorised(state, value) {
         state.isAuthorised = value;
       },
-      authIframeSrc(state, value) {
-        state.authIframeSrc = value;
-      },
       role(state, value) {
         state.role = value;
         localStorage.setItem('userRole', value);
       },
     },
 
+    getters: {
+      authIframeSrc(state, getters, rootState) {
+        return `${rootState.config.ownBackendUrl}/auth1/login`;
+      },
+    },
+
     actions: {
-      async initState({ commit, dispatch, rootState }) {
-        commit('authIframeSrc', `${rootState.config.ownBackendUrl}/auth1/login`);
+      async initState({ dispatch }) {
         try {
           await dispatch('initUserMerchantData');
+          dispatch('Notifications/initState');
         } catch (error) {
           if (error !== UNAUTHORIZED) {
             console.error(error);
@@ -87,7 +90,8 @@ export default function createUserStore({ notifications }) {
     namespaced: true,
 
     modules: {
-      Merchant: MerchantStore({ notifications }),
+      Merchant: MerchantStore(resources),
+      Notifications: UserNotificationsStore(resources),
     },
   };
 }
