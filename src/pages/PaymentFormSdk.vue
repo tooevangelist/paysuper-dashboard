@@ -37,8 +37,7 @@ export default {
     }
 
     const paySuper = new window.PaySuper({
-      formUrl: '/payform-page/',
-      // formUrl: `${this.config.ownBackendUrl}/order`,
+      formUrl: `${this.config.ownBackendUrl}/order`,
       ...request,
     });
     paySuper.renderModal();
