@@ -28,7 +28,7 @@ export default function createUserNotificationsStore() {
           const { data } = await axios.get(
             `{apiUrl}/admin/api/v1/merchants/${id}/notifications?sort[]=-created_at`,
           );
-          commit('notifications', data.items);
+          commit('notifications', data.items || []);
         } catch (error) {
           console.error(error);
         }
@@ -59,8 +59,8 @@ export default function createUserNotificationsStore() {
         centrifuge.setToken(merchant.centrifugo_token);
         centrifuge.subscribe(`paysuper:merchant#${merchant.id}`, async ({ data }) => {
           commit('notifications', [
-            ...state.notifications,
             data,
+            ...state.notifications,
           ]);
         });
         centrifuge.connect();

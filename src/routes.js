@@ -230,19 +230,19 @@ const routes = [
     name: 'Login',
   },
   {
-    path: '/payform-sdk/',
+    path: '/form-demo/',
     component: () => import('@/pages/PaymentFormSdk.vue'),
-    meta: { isStoreInitDisabled: true },
+    meta: { layout: 'PageShallow', initStore: ['config'] },
+    name: 'PaymentFormSdk',
+  },
+  {
+    path: '/payform-sdk/',
+    redirect: { name: 'PaymentFormSdk' },
   },
   {
     path: '/payform-page/',
     component: () => import('@/pages/PaymentFormPage.vue'),
-    meta: { layout: 'PageFormLayout', isStoreInitDisabled: true },
-  },
-  {
-    path: '/payform-loading/',
-    component: () => import('@/pages/PaymentFormLoading.vue'),
-    meta: { layout: 'PageFormLayout', isStoreInitDisabled: true },
+    meta: { layout: 'PageFormLayout', initStore: false },
   },
   {
     path: '/profile/',
