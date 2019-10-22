@@ -59,8 +59,8 @@ export default function createUserNotificationsStore() {
         centrifuge.setToken(merchant.centrifugo_token);
         centrifuge.subscribe(`paysuper:merchant#${merchant.id}`, async ({ data }) => {
           commit('notifications', [
-            ...state.notifications,
             data,
+            ...state.notifications,
           ]);
         });
         centrifuge.connect();
