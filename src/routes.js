@@ -232,7 +232,7 @@ const routes = [
   {
     path: '/payform-sdk/',
     component: () => import('@/pages/PaymentFormSdk.vue'),
-    meta: { isStoreInitDisabled: true },
+    meta: { layout: 'PageShallow', isStoreInitDisabled: true },
   },
   {
     path: '/payform-page/',
