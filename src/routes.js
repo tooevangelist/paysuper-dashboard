@@ -33,6 +33,12 @@ const routes = [
     component: () => import('@/pages/index.vue'),
   },
   {
+    path: '/reports/',
+    component: () => import('@/pages/RoyaltyReportsList.vue'),
+    meta: { layout: 'Layout', isAuthRequired: true },
+    name: 'RoyaltyReports',
+  },
+  {
     path: '/transactions/',
     component: () => import('@/pages/TransactionsList.vue'),
     meta: { layout: 'Layout', isAuthRequired: true },

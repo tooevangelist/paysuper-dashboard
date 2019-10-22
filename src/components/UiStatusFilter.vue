@@ -230,6 +230,11 @@ export default {
       border: 1px solid #919699;
     }
   }
+  &._grey {
+    &::before {
+      background: #C6CACC;
+    }
+  }
   &._blue {
     &::before {
       background: #3d7bf5;
@@ -248,6 +253,11 @@ export default {
   &._green {
     &::before {
       background: #2fa84f;
+    }
+  }
+  &._cian {
+    &::before {
+      background: #069697;
     }
   }
   &._red {

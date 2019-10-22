@@ -17,11 +17,11 @@ export default function getMerchantMainNavItems() {
       isAvailable: true,
     },
     {
-      additional: 'Your weekly royalty reports',
+      additional: 'Weekly royalty reports',
       icon: 'IconBlank',
       link: '/reports',
-      title: 'Reports',
-      isAvailable: false,
+      title: 'Royalty reports',
+      isAvailable: true,
     },
     {
       additional: 'Need license agreement',
