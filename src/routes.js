@@ -35,14 +35,14 @@ const routes = [
   {
     path: '/transactions/',
     component: () => import('@/pages/TransactionsList.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
+    meta: { layout: 'Layout', isAuthRequired: true },
     name: 'transactions',
   },
   {
-    path: '/transactions/:id',
+    path: '/transactions/:transactionId',
     component: () => import('@/pages/TransactionCard.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
-    name: 'transactions-card',
+    meta: { layout: 'Layout', isAuthRequired: true },
+    name: 'transactionsCard',
   },
   {
     path: '/projects/',
@@ -99,18 +99,6 @@ const routes = [
         component: () => import('@/pages/ProjectSettingsPage.vue'),
         meta: projectPagesMeta,
         name: 'ProjectSettings',
-      },
-      {
-        path: 'transactions/',
-        component: () => import('@/pages/ProjectTransactionsListPage.vue'),
-        meta: projectPagesMeta,
-        name: 'ProjectTransactions',
-      },
-      {
-        path: 'transactions/:transactionId',
-        component: () => import('@/pages/ProjectTransactionPage.vue'),
-        meta: projectPagesMeta,
-        name: 'ProjectTransactionPage',
       },
     ],
   },

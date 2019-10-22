@@ -1,12 +1,11 @@
 import axios from 'axios';
 import qs from 'qs';
-import assert from 'simple-assert';
 import SearchBuilder from '@/tools/SearchBuilder/SearchBuilder';
 import projectTransactionsScheme from '@/schemes/projectTransactionsScheme';
 
 const searchBuilder = new SearchBuilder(projectTransactionsScheme);
 
-export default function createProjectVirtualItemsStore() {
+export default function createTransactionsListStore() {
   return {
     state: () => ({
       transactionsList: {
@@ -36,9 +35,6 @@ export default function createProjectVirtualItemsStore() {
     },
 
     mutations: {
-      projectId(store, data) {
-        store.projectId = data;
-      },
       transactionsList(store, data) {
         store.transactionsList = data;
       },
@@ -54,10 +50,8 @@ export default function createProjectVirtualItemsStore() {
     },
 
     actions: {
-      async initState({ getters, dispatch, commit }, { projectId, query }) {
-        assert(projectId, 'ProjectVirtualItemsStore requires projectId param');
+      async initState({ getters, dispatch }, { query }) {
         const filters = getters.getFilterValues();
-        commit('projectId', projectId);
         dispatch('submitFilters', filters);
         dispatch('initQuery', query);
         await dispatch('fetchTransactions');

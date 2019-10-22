@@ -1,7 +1,6 @@
 import axios from 'axios';
-import assert from 'simple-assert';
 
-export default function createProjectTransactionPageStore() {
+export default function createTransactionPageStore() {
   return {
     state: {
       transaction: null,
@@ -10,9 +9,6 @@ export default function createProjectTransactionPageStore() {
     },
 
     mutations: {
-      projectId(store, data) {
-        store.projectId = data;
-      },
       transactionId(state, data) {
         state.transactionId = data;
       },
@@ -25,9 +21,7 @@ export default function createProjectTransactionPageStore() {
     },
 
     actions: {
-      async initState({ dispatch, commit }, { projectId, transactionId }) {
-        assert(projectId, 'ProjectTransactionPageStore requires projectId param');
-        commit('projectId', projectId);
+      async initState({ dispatch, commit }, { transactionId }) {
         commit('transactionId', transactionId);
         await dispatch('fetchTransactionData', transactionId);
         await dispatch('isRefund');
