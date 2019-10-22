@@ -1,6 +1,6 @@
 <script>
 import ClickOutside from 'vue-click-outside';
-import { has } from 'lodash-es';
+import { has, includes } from 'lodash-es';
 
 export default {
   name: 'UiStatusFilter',
@@ -11,7 +11,7 @@ export default {
 
   props: {
     value: {
-      type: [String, Object],
+      type: [String, Object, Array],
       default: 'all',
     },
     scheme: {
@@ -25,6 +25,16 @@ export default {
     countsByStatus: {
       type: Object,
       default: null,
+    },
+    align: {
+      type: String,
+      default: 'right',
+      validator(value) {
+        return includes(
+          ['right', 'left'],
+          value,
+        );
+      },
     },
   },
 
@@ -86,7 +96,7 @@ export default {
     </div>
     <UiTip
       class="dropdown"
-      innerPosition="right"
+      :innerPosition="align"
       position="bottom"
       width="200px"
       :margin="4"
@@ -230,6 +240,11 @@ export default {
       border: 1px solid #919699;
     }
   }
+  &._gray {
+    &::before {
+      background: #919699;
+    }
+  }
   &._blue {
     &::before {
       background: #3d7bf5;
@@ -253,6 +268,11 @@ export default {
   &._red {
     &::before {
       background: #ea3d2f;
+    }
+  }
+  &._cyan {
+    &::before {
+      background: #069697;
     }
   }
   &._archieved {
