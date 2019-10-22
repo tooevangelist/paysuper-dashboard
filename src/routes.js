@@ -196,7 +196,7 @@ const routes = [
   {
     path: '/payout/',
     component: () => import('@/pages/payout.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
+    meta: { layout: 'Layout', isAuthRequired: true },
     name: 'payout',
   },
   {
