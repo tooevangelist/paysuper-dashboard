@@ -3,7 +3,6 @@ import axios from 'axios';
 import { get } from 'lodash-es';
 import Centrifuge from 'centrifuge';
 import mergeApiValuesWithDefaults from '@/helpers/mergeApiValuesWithDefaults';
-import router from '@/router';
 
 function getDefaultProfileData() {
   return {
@@ -11,6 +10,9 @@ function getDefaultProfileData() {
       first_name: '',
       last_name: '',
       position: '',
+    },
+    email: {
+      confirmed: false,
     },
     help: {
       product_promotion_and_development: false,
@@ -64,17 +66,13 @@ export default function createUserStore() {
     },
 
     actions: {
-      async initState({ dispatch }) {
+      initState({ dispatch }) {
         return dispatch('fetchProfile');
       },
 
-      async fetchProfile({ dispatch, commit, rootState }) {
+      async fetchProfile({ commit, rootState }) {
         try {
           const { data } = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/user/profile`);
-          if (data.email.confirmed) {
-            dispatch('redirectToDashboard');
-            return;
-          }
           commit('profile', data);
           if (data.last_step) {
             commit('currentStepCode', data.last_step);
@@ -106,19 +104,17 @@ export default function createUserStore() {
         commit('currentStepCode', value);
       },
 
-      initWaitingForEmailConfirm({ state, dispatch, rootState }) {
-        const centrifuge = new Centrifuge(rootState.config.websocketUrl);
-        centrifuge.setToken(state.profile.centrifugo_token);
-        centrifuge.subscribe(`paysuper:user#${state.profile.id}`, ({ data }) => {
-          if (data.code === 'op000005') {
-            dispatch('redirectToDashboard');
-          }
+      waitForEmailConfirm({ state, rootState }) {
+        return new Promise((resolve) => {
+          const centrifuge = new Centrifuge(rootState.config.websocketUrl);
+          centrifuge.setToken(state.profile.centrifugo_token);
+          centrifuge.subscribe(`paysuper:user#${state.profile.id}`, ({ data }) => {
+            if (data.code === 'op000005') {
+              resolve();
+            }
+          });
+          centrifuge.connect();
         });
-        centrifuge.connect();
-      },
-
-      redirectToDashboard() {
-        router.push({ path: '/dashboard' });
       },
     },
 
