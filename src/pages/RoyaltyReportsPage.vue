@@ -216,7 +216,7 @@ export default {
       <UiPanel>
         <div class="control-bar _center">
           <div class="total-amount__summ">
-            {{ $formatPrice(payoutAmount, balance.currency) }}
+            {{ balance !== {} ? $formatPrice(payoutAmount, balance.currency) : 0 }}
           </div>
           <div class="total-amount__text">
             Total royalty amount
@@ -273,7 +273,7 @@ export default {
             </UiTableCell>
             <UiTableCell align="left" :style="{ color: returnColorAmount(report.status) }">
               {{
-                report.totals !== null
+                report.totals !== null && report.currency && report.totals.payout_amount
                   ? $formatPrice(report.totals.payout_amount, report.currency)
                   : '—'
               }}

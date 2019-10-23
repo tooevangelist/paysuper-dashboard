@@ -39,16 +39,22 @@ const routes = [
     name: 'RoyaltyReportsPage',
   },
   {
-    path: '/transactions/',
-    component: () => import('@/pages/TransactionsList.vue'),
+    path: '/reports/:reportId',
+    component: () => import('@/pages/RoyaltyReportCard.vue'),
     meta: { layout: 'Layout', isAuthRequired: true },
-    name: 'transactions',
+    name: 'RoyaltyReportCard',
+  },
+  {
+    path: '/transactions/',
+    component: () => import('@/pages/TransactionsPage.vue'),
+    meta: { layout: 'Layout', isAuthRequired: true },
+    name: 'TransactionsPage',
   },
   {
     path: '/transactions/:transactionId',
     component: () => import('@/pages/TransactionCard.vue'),
     meta: { layout: 'Layout', isAuthRequired: true },
-    name: 'transactionsCard',
+    name: 'TransactionsCard',
   },
   {
     path: '/projects/',

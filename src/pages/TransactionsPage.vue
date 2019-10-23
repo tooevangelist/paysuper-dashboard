@@ -24,7 +24,7 @@ const STATUS_COLOR = {
 };
 
 export default {
-  name: 'transactions',
+  name: 'TransactionsPage',
 
   components: {
     TransactionsListExport,

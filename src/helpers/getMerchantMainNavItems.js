@@ -34,9 +34,10 @@ export default function getMerchantMainNavItems() {
     {
       additional: 'Full list of customer transactions',
       icon: 'IconCoin',
-      link: '/transaction',
+      link: '/transactions',
       title: 'Transaction Search',
-      isAvailable: false,
+      routeNames: ['TransactionsPage'],
+      isAvailable: true,
     },
     {
       additional: 'Technical integrations',
