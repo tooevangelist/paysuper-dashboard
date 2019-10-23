@@ -251,11 +251,6 @@ const routes = [
     meta: { layout: 'PageFormLayout', initStore: false },
   },
   {
-    path: '/payform-loading/',
-    component: () => import('@/pages/PaymentFormLoading.vue'),
-    meta: { layout: 'PageFormLayout', initStore: false },
-  },
-  {
     path: '/profile/',
     component: () => import('@/pages/UserProfile.vue'),
     meta: { layout: 'PageShallow', isAuthRequired: true },

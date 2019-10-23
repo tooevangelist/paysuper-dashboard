@@ -1,6 +1,7 @@
 
 import axios from 'axios';
 import Centrifuge from 'centrifuge';
+import getUnixTime from 'date-fns/getUnixTime';
 
 export default function createUserNotificationsStore() {
   return {
@@ -59,8 +60,13 @@ export default function createUserNotificationsStore() {
         centrifuge.setToken(merchant.centrifugo_token);
         centrifuge.subscribe(`paysuper:merchant#${merchant.id}`, async ({ data }) => {
           commit('notifications', [
+            {
+              ...data,
+              created_at: data.created_at || {
+                seconds: getUnixTime(new Date()),
+              },
+            },
             ...state.notifications,
-            data,
           ]);
         });
         centrifuge.connect();
