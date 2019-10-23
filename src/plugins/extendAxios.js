@@ -35,7 +35,6 @@ export default function extendAxios(store) {
       return http(error.config);
     } catch {
       refreshTokenPromise = null;
-      await store.dispatch('User/logout');
       return Promise.reject(error);
     }
   };

@@ -78,10 +78,12 @@ export default {
   mounted() {
     if (this.currentStepCode === 'confirmEmail') {
       this.waitForEmailConfirm();
+      this.$router.push({ name: 'Dashboard' });
     }
   },
 
   methods: {
+    ...mapActions('User', ['setEmailConfirmed']),
     ...mapActions('User/Profile', ['updateProfile', 'setCurrentStepCode', 'waitForEmailConfirm']),
 
     handleStepComplete(value) {
@@ -102,6 +104,7 @@ export default {
 
         if (nextStepCode === 'confirmEmail') {
           await this.waitForEmailConfirm();
+          this.setEmailConfirmed(true);
           this.$router.push({ name: 'Dashboard' });
         }
       } catch (error) {
