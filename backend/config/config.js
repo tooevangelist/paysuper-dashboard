@@ -32,6 +32,16 @@ const config = {
   auth1SessionNamespace: 'auth1',
 
   corsValidOrigins: getEnvVariableArray('CORS_VALID_ORIGINS', 'http://localhost:3030'),
+
+  s3AccessKeyId: getEnvVariable('S3_ACCESS_KEY_ID'),
+  s3SecretAccessKey: getEnvVariable('S3_SECRET_ACCESS_KEY'),
+  s3BucketName: getEnvVariable('S3_BUCKET_NAME'),
+  s3Region: getEnvVariable('S3_REGION'),
+
+  paysuperSdkUrl: getEnvVariable(
+    'PAYSUPER_PAYMENT_FORM_URL',
+    'https://static.protocol.one/paysuper/form/dev/paysuper-form.js',
+  ),
 };
 
 module.exports = config;
