@@ -3,7 +3,7 @@ import {
   mapState, mapGetters, mapActions,
 } from 'vuex';
 import {
-  debounce, isEqual, get, remove,
+  isEqual, get,
 } from 'lodash-es';
 import moment from 'moment';
 
@@ -13,17 +13,25 @@ import NoResults from '@/components/NoResults.vue';
 import CreatePayoutModal from '@/components/CreatePayoutModal.vue';
 
 const STATUS_COLOR = {
-  info: 'gray',
-  pending: 'yellow',
+  pending: 'orange',
   accepted: 'green',
-  paying: 'green',
+  waiting_payment: 'green',
   paid: 'aqua',
   dispute: 'red',
   canceled: 'transparent',
 };
 
+const STATUS = {
+  pending: 'pending',
+  accepted: 'confirmed',
+  waiting_payment: 'paying',
+  paid: 'paid',
+  dispute: 'dispute',
+  canceled: 'canceled',
+};
+
 export default {
-  name: 'RoyaltyReports',
+  name: 'RoyaltyReportsPage',
 
   components: {
     NoResults,
@@ -44,7 +52,6 @@ export default {
     return {
       filters: {},
       scheme: reportsStatusScheme,
-      filterCounts: {},
       showRefundModal: false,
       currentTransaction: null,
       isCreatePayoutModalOpened: false,
@@ -52,15 +59,9 @@ export default {
   },
 
   computed: {
-    ...mapState('Reports', ['reportsList', 'filterValues', 'query', 'apiQuery', 'balanceDebit']),
+    ...mapState('Reports', ['reportsList', 'filterValues', 'query', 'apiQuery', 'balance']),
     ...mapGetters('Reports', ['getFilterValues']),
     ...mapGetters('Dictionaries', ['countries']),
-
-    handleQuickSearchInput() {
-      return debounce(() => {
-        this.filterReports();
-      }, 500);
-    },
 
     dateFilter: {
       get() {
@@ -78,16 +79,7 @@ export default {
     },
 
     payoutAmount() {
-      return this.balanceDebit;
-    },
-  },
-
-  watch: {
-    filters: {
-      handler() {
-        this.fillCounts();
-      },
-      deep: true,
+      return this.balance.debit || 0;
     },
   },
 
@@ -97,8 +89,7 @@ export default {
 
   mounted() {
     this.initInfiniteScroll();
-    this.fillCounts();
-    this.getDebit();
+    this.getBalance();
   },
 
   methods: {
@@ -108,13 +99,13 @@ export default {
       'createItem',
       'submitFilters',
       'fetchReports',
-      'getDebit',
+      'getBalance',
     ]),
 
     get,
 
     updateFiltersFromQuery() {
-      this.filters = this.getFilterValues(['quickFilter', 'offset', 'limit', 'status']);
+      this.filters = this.getFilterValues(['dateFrom', 'dateTo', 'offset', 'limit', 'status']);
     },
 
     filterReports() {
@@ -161,32 +152,20 @@ export default {
       return STATUS_COLOR[status];
     },
 
-    handleStatusInput(data) {
-      if (data === 'all') {
-        this.filters.status = [];
-        this.filters.dateFrom = null;
-        this.filters.dateTo = null;
-        this.filterReports();
-      }
+    getStatus(status) {
+      return STATUS[status];
     },
 
     handleFilterInput(data) {
-      if (data.value === 'all') {
-        this.filters[data.filter] = [];
-      } else if (this.filters[data.filter].includes(data.value)) {
-        remove(this.filters[data.filter], n => n === (data.value));
+      this.filters.status = [];
+
+      if (data === 'all') {
+        this.filters.status = [];
       } else {
-        this.filters[data.filter].push(data.value);
+        this.filters.status.push(data);
       }
 
       this.filterReports();
-    },
-
-    fillCounts() {
-      this.filterCounts = {
-        status: get(this.filters, 'status.length') || 0,
-        methods: get(this.filters, 'methods.length') || 0,
-      };
     },
 
     getFormattedDate(item) {
@@ -195,6 +174,10 @@ export default {
 
     getValue(item, path) {
       return get(item, path) || '—';
+    },
+
+    returnColorAmount(status) {
+      return status === 'paid' ? '#069697' : '#3E4345';
     },
   },
 };
@@ -233,7 +216,7 @@ export default {
       <UiPanel>
         <div class="control-bar _center">
           <div class="total-amount__summ">
-            ${{ payoutAmount }}
+            {{ $formatPrice(payoutAmount, balance.currency) }}
           </div>
           <div class="total-amount__text">
             Total royalty amount
@@ -244,17 +227,16 @@ export default {
 
     <UiPanel>
       <div class="control-bar">
-        <div class="control-bar__left">
+        <div class="control-bar _left-center">
           <UiFilterDate
             v-model="dateFilter"
             @input="filterReports"
           />
-          <UiStatusFilter
-            @input="handleStatusInput"
-            @inputSecondLevel="handleFilterInput"
-            :value="filters"
-            :scheme="scheme"
-            :countsByStatus="filterCounts" />
+          <UiFilterReportsStatus
+            class="filter-status"
+            @input="handleFilterInput"
+            :value="filters.status[0]"
+            :scheme="scheme" />
         </div>
       </div>
 
@@ -289,18 +271,35 @@ export default {
             <UiTableCell align="left">
               {{ getFormattedDate(report.payout_date.seconds) }}
             </UiTableCell>
-            <UiTableCell align="left">
+            <UiTableCell align="left" :style="{ color: returnColorAmount(report.status) }">
               {{
                 report.totals !== null
                   ? $formatPrice(report.totals.payout_amount, report.currency)
                   : '—'
               }}
             </UiTableCell>
-            <UiTableCell align="left">
+            <UiTableCell align="left" class="report__status">
               <UiLabelTag class="status" :color="getColor(report.status)">
-                {{ report.status }}
+                <IconFlag
+                  class="report__status-flag"
+                  v-if="report.is_auto_accepted"
+                  />
+                {{ getStatus(report.status) }}
               </UiLabelTag>
+              <UiTip
+                v-if="report.is_auto_accepted"
+                width="258px"
+                :visible="true"
+                position="top"
+                innerPosition="center"
+                :margin="0"
+                class="report__status-tip">
+                  This report was accepted automatically.
+                  You must make a decision to Confirm or Dispute
+                  each report within 5 days period, since it was created
+              </UiTip>
             </UiTableCell>
+            <UiTableCell/>
           </UiTableRow>
         </UiTable>
 
@@ -333,6 +332,10 @@ export default {
     align-items: center;
     flex-direction: column;
   }
+  &._left-center {
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 .status-filter {
@@ -352,18 +355,24 @@ export default {
     cursor: pointer;
   }
 
-  &__refund {
+  &__status {
     position: relative;
+    & .label-tag {
+      width: 104px;
+    }
+    &-flag {
+      margin-right: 3px;
+    }
     &-tip {
       display: none;
-      height: 39px;
       background: #000;
       border-radius: 4px;
       color: #fff;
       font-size: 12px;
-      text-align: center;
-      line-height: 38px;
+      text-align: left;
+      line-height: 16px;
       box-shadow: none;
+      padding: 12px;
 
       &:after {
         display: block;
@@ -381,6 +390,10 @@ export default {
       display: block;
     }
   }
+}
+
+.filter-status {
+  margin: 0 0 0 2px;
 }
 
 .status {

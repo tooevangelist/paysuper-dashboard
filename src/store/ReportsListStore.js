@@ -1,9 +1,9 @@
 import axios from 'axios';
 import qs from 'qs';
 import SearchBuilder from '@/tools/SearchBuilder/SearchBuilder';
-import projectReportsScheme from '@/schemes/projectReportsScheme';
+import reportsFilterScheme from '@/schemes/reportsFilterScheme';
 
-const searchBuilder = new SearchBuilder(projectReportsScheme);
+const searchBuilder = new SearchBuilder(reportsFilterScheme);
 
 export default function createReportsListStore() {
   return {
@@ -12,7 +12,7 @@ export default function createReportsListStore() {
         items: [],
         count: 0,
       },
-      balanceDebit: 0,
+      balance: {},
       filterValues: {},
       query: {},
       apiQuery: {},
@@ -48,8 +48,8 @@ export default function createReportsListStore() {
       apiQuery(store, value) {
         store.apiQuery = value;
       },
-      balanceDebit(store, value) {
-        store.balanceDebit = value;
+      balance(store, value) {
+        store.balance = value;
       },
     },
 
@@ -83,12 +83,12 @@ export default function createReportsListStore() {
         commit('reportsList', reportsList);
       },
 
-      async getDebit({ commit, rootState }) {
+      async getBalance({ commit, rootState }) {
         const url = `${rootState.config.apiUrl}/admin/api/v1/balance`;
         const response = await axios.get(url);
-        const balanceDebit = response.data.debit || 0;
+        const balance = response.data || 0;
 
-        commit('balanceDebit', balanceDebit);
+        commit('balance', balance);
       },
 
       initQuery({ commit }, query) {

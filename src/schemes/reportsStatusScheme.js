@@ -3,38 +3,34 @@ export default {
     text: 'All reports',
     value: 'all',
     color: 'current',
+    icon: 'IconCheck',
   },
   1: {
-    text: 'Info',
-    value: 'info',
-    color: 'grey',
-  },
-  2: {
     text: 'Pending',
     value: 'pending',
     color: 'orange',
   },
-  3: {
-    text: 'Accepted',
+  2: {
+    text: 'Confirmed',
     value: 'accepted',
     color: 'green',
   },
-  4: {
+  3: {
     text: 'Paying',
-    value: 'paying',
+    value: 'waiting_payment',
     color: 'green',
   },
-  5: {
+  4: {
     text: 'Paid',
     value: 'paid',
-    color: 'cian',
+    color: 'aqua',
   },
-  6: {
+  5: {
     text: 'Dispute',
     value: 'dispute',
     color: 'red',
   },
-  7: {
+  6: {
     text: 'Canceled',
     value: 'canceled',
     color: 'transparent',

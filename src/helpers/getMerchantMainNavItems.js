@@ -21,6 +21,7 @@ export default function getMerchantMainNavItems() {
       icon: 'IconBlank',
       link: '/reports',
       title: 'Royalty reports',
+      routeNames: ['RoyaltyReportsPage'],
       isAvailable: true,
     },
     {

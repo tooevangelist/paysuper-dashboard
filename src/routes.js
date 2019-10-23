@@ -34,9 +34,9 @@ const routes = [
   },
   {
     path: '/reports/',
-    component: () => import('@/pages/RoyaltyReportsList.vue'),
+    component: () => import('@/pages/RoyaltyReportsPage.vue'),
     meta: { layout: 'Layout', isAuthRequired: true },
-    name: 'RoyaltyReports',
+    name: 'RoyaltyReportsPage',
   },
   {
     path: '/transactions/',
