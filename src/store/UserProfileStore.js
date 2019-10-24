@@ -1,6 +1,6 @@
 
 import axios from 'axios';
-import { get } from 'lodash-es';
+import { get, includes } from 'lodash-es';
 import Centrifuge from 'centrifuge';
 import mergeApiValuesWithDefaults from '@/helpers/mergeApiValuesWithDefaults';
 
@@ -61,7 +61,11 @@ export default function createUserStore() {
         state.profile = profile;
       },
       currentStepCode(state, value) {
-        state.currentStepCode = value;
+        if (includes(['personal', 'help', 'company', 'confirmEmail'], value)) {
+          state.currentStepCode = value;
+        } else {
+          state.currentStepCode = 'personal';
+        }
       },
     },
 
@@ -70,9 +74,9 @@ export default function createUserStore() {
         return dispatch('fetchProfile');
       },
 
-      async fetchProfile({ commit, rootState }) {
+      async fetchProfile({ commit }) {
         try {
-          const { data } = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/user/profile`);
+          const { data } = await axios.get('{apiUrl}/admin/api/v1/user/profile');
           commit('profile', data);
           if (data.last_step) {
             commit('currentStepCode', data.last_step);

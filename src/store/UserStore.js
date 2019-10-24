@@ -39,6 +39,9 @@ export default function createUserStore(resources) {
     actions: {
       async initState({ state, commit, dispatch }) {
         try {
+          if (!state.accessToken) {
+            await dispatch('refreshToken');
+          }
           await Promise.all([
             dispatch('initUserMerchantData'),
             dispatch('Profile/initState'),
@@ -69,6 +72,10 @@ export default function createUserStore(resources) {
         localStorage.setItem('token', token);
         commit('isAuthorised', true);
         commit('accessToken', token);
+      },
+
+      setEmailConfirmed({ commit }, value) {
+        commit('isEmailConfirmed', value);
       },
 
       /**

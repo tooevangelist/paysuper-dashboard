@@ -6,21 +6,23 @@ import getUnixTime from 'date-fns/getUnixTime';
 export default function createUserNotificationsStore() {
   return {
     state: {
+      isWatchingInited: false,
       notifications: [],
     },
     mutations: {
+      isWatchingInited(state, value) {
+        state.isWatchingInited = value;
+      },
       notifications(state, value) {
         state.notifications = value;
       },
     },
     actions: {
       async initState({ dispatch, rootState }) {
-        if (!rootState.User.Merchant.merchant) {
-          throw new Error('User.Merchant must be inited before fetching user notifications');
+        if (rootState.User.Merchant.merchant && rootState.User.Merchant.merchant.id) {
+          await dispatch('fetchNotifications');
+          dispatch('watchForNotifications');
         }
-
-        await dispatch('fetchNotifications');
-        dispatch('initWatchForNotifications');
       },
 
       async fetchNotifications({ commit, rootState }) {
@@ -53,7 +55,10 @@ export default function createUserNotificationsStore() {
         }
       },
 
-      initWatchForNotifications({ state, commit, rootState }) {
+      watchForNotifications({ state, commit, rootState }) {
+        if (state.isWatchingInited) {
+          return;
+        }
         const centrifuge = new Centrifuge(rootState.config.websocketUrl);
         const { merchant } = rootState.User.Merchant;
 
@@ -70,6 +75,7 @@ export default function createUserNotificationsStore() {
           ]);
         });
         centrifuge.connect();
+        commit('isWatchingInited', true);
       },
     },
 

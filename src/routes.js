@@ -1,4 +1,6 @@
 
+import { signedStatusCode } from '@/schemes/merchantStatusScheme';
+
 const projectPagesMeta = {
   layout: 'Layout',
   isAuthRequired: true,
@@ -17,9 +19,10 @@ const merchantPagesMeta = {
   layout: 'Layout',
   isAuthRequired: true,
   specialNav: {
-    backLink() {
+    backLink({ store }) {
+      const isSigned = store.state.Merchant.merchant.status === Number(signedStatusCode);
       return {
-        url: '/merchants/',
+        url: isSigned ? '/merchants/' : '/agreement-requests/',
         label: 'Back to list',
       };
     },
