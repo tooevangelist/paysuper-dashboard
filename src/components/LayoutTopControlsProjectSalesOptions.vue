@@ -18,8 +18,8 @@ export default {
       return [
         {
           title: 'General',
-          url: `/projects/${projectId}/`,
-          routeNames: [],
+          url: `/projects/${projectId}/sales-options/`,
+          routeNames: ['ProjectSalesOptions'],
         },
         {
           title: 'Virtual currency',

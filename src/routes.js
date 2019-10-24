@@ -61,6 +61,15 @@ const routes = [
     name: 'Project',
     children: [
       {
+        path: 'sales-options/',
+        component: () => import('@/pages/ProjectSalesOptionsPage.vue'),
+        meta: {
+          ...projectPagesMeta,
+          topControls: () => import('@/components/LayoutTopControlsProjectSalesOptions.vue'),
+        },
+        name: 'ProjectSalesOptions',
+      },
+      {
         path: 'virtual-currency/',
         component: () => import('@/pages/ProjectVirtualCurrencyPage.vue'),
         meta: {
