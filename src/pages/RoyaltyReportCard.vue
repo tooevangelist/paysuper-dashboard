@@ -2,7 +2,11 @@
 import { mapActions, mapState } from 'vuex';
 import { format } from 'date-fns';
 import moment from 'moment';
+import {
+  get,
+} from 'lodash-es';
 import ReportCardStore from '@/store/ReportCardStore';
+import ReportDispute from '@/components/ReportDispute.vue';
 
 const STATUS_COLOR = {
   pending: 'orange',
@@ -25,12 +29,18 @@ const STATUS = {
 export default {
   name: 'RoyaltyReportCard',
   components: {
+    ReportDispute,
   },
 
   data() {
     return {
       colors: STATUS_COLOR,
-      showRefundModal: false,
+      showDisputeModal: false,
+      reportTabs: [
+        { label: 'Summary', value: 'sum' },
+        { label: 'Transactions report', value: 'trans' },
+      ],
+      currentTab: 0,
     };
   },
 
@@ -50,6 +60,10 @@ export default {
 
   methods: {
     ...mapActions(['setIsLoading']),
+    ...mapActions('ReportCard', [
+      'acceptReport',
+      'dispute',
+    ]),
 
     formatDateAndTime(seconds) {
       const datetime = new Date(seconds * 1000);
@@ -63,6 +77,34 @@ export default {
     getFormattedDate(item) {
       return moment.unix(item).format('DD MMM YYYY');
     },
+
+    async confirmReport() {
+      this.setIsLoading(true);
+      await this.acceptReport()
+        .then(this.$showSuccessMessage('Report confirmed'))
+        .catch(this.$showErrorMessage);
+      this.setIsLoading(false);
+    },
+
+    openDispute() {
+      this.showDisputeModal = true;
+    },
+
+    async declineReport(reason) {
+      this.setIsLoading(true);
+      this.showDisputeModal = false;
+      await this.dispute(reason)
+        .catch(this.$showErrorMessage);
+      this.setIsLoading(false);
+    },
+
+    getValue(item, path) {
+      return get(item, path) || '—';
+    },
+
+    returnColorAmount(status) {
+      return status === 'paid' ? '#069697' : '#3E4345';
+    },
   },
 };
 </script>
@@ -71,7 +113,7 @@ export default {
   <div>
     <UiPageHeaderFrame class="report-page-header">
       <template slot="title">
-        Royal report {{ report.id }}
+        Royalty report {{ report.id }}
       </template>
       <span slot="description">
         <div class="header-date">
@@ -89,12 +131,12 @@ export default {
         </UiLabelTag>
       </span>
     </UiPageHeaderFrame>
-    <div class="report-buttons">
+    <div class="report-buttons" v-if="report.status === 'pending'">
       <span>
         <UiButton
           size="default"
           :isTransparent="true"
-          @click="true"
+          @click="confirmReport"
           >
           <IconCheckInCircle slot="iconBefore" />
           Confirm
@@ -105,13 +147,64 @@ export default {
           size="default"
           :color="`transparent-gray`"
           :isTransparent="true"
-          @click="true"
+          @click="openDispute"
           >
           <IconDispute slot="iconBefore" />
           Dispute
         </UiButton>
       </span>
     </div>
+
+    <UiTabs
+      class="tabs"
+      :items="reportTabs"
+      v-model="currentTab">
+    </UiTabs>
+
+    <UiPanel>
+      <UiTable v-if="currentTab === 0">
+        <UiTableRow :isHead="true">
+          <UiTableCell align="left">Period</UiTableCell>
+          <UiTableCell align="left">Report date</UiTableCell>
+          <UiTableCell align="left">Payout ID</UiTableCell>
+          <UiTableCell align="left">Payment date</UiTableCell>
+          <UiTableCell align="left">Amount</UiTableCell>
+          <UiTableCell align="left">Status</UiTableCell>
+          <UiTableCell align="left" width="3%"></UiTableCell>
+        </UiTableRow>
+        <UiTableRow
+          class="report"
+          >
+          <UiTableCell align="left">
+            {{ getFormattedDate(report.period_from.seconds) }}
+            —
+            {{ getFormattedDate(report.period_to.seconds) }}
+          </UiTableCell>
+          <UiTableCell align="left">
+            {{ getFormattedDate(report.created_at.seconds) }}
+          </UiTableCell>
+          <UiTableCell align="left">
+            {{ getValue(report, 'payout_document_id') }}
+          </UiTableCell>
+          <UiTableCell align="left">
+            {{ getFormattedDate(report.payout_date.seconds) }}
+          </UiTableCell>
+          <UiTableCell align="left" :style="{ color: returnColorAmount(report.status) }">
+            {{
+            report.totals !== null && report.currency && report.totals.payout_amount
+            ? $formatPrice(report.totals.payout_amount, report.currency)
+            : '—'
+            }}
+          </UiTableCell>
+          <UiTableCell/>
+        </UiTableRow>
+      </UiTable>
+    </UiPanel>
+
+    <ReportDispute
+      :showModal="showDisputeModal"
+      @close="showDisputeModal = false"
+      @input="declineReport($event)"></ReportDispute>
   </div>
 </template>
 
