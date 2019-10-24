@@ -57,6 +57,7 @@ const routes = [
     path: '/projects/:id',
     component: () => import('@/pages/ProjectPage.vue'),
     redirect: { name: 'ProjectSettings' },
+    name: 'Project',
     children: [
       {
         path: 'virtual-currency/',
