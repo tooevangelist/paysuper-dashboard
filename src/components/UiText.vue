@@ -5,13 +5,13 @@ export default {
 </script>
 
 <template>
-<p class="text">
+<p class="ui-text">
   <slot></slot>
 </p>
 </template>
 
 <style lang="scss" scoped>
-.text {
+.ui-text {
   max-width: 448px;
   margin-bottom: 24px;
   font-size: 14px;
