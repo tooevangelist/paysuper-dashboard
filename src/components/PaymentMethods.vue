@@ -1,6 +1,7 @@
 <script>
-import { mapState, mapGetters, mapActions } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import { required } from 'vuelidate/lib/validators';
+import { get, find } from 'lodash-es';
 import Notifications from '@/mixins/Notifications';
 
 export default {
@@ -9,37 +10,28 @@ export default {
   data() {
     return {
       hasCountriesOpened: false,
-      hasChannelCustomersTipOpened: false,
-      hasRefundCustomersTipOpened: false,
+      hasCustomersTipOpened: false,
     };
   },
   validations: {
-    currency: { required },
     region: { required },
   },
   computed: {
     ...mapState('Company/Tariff', [
       'amount',
+      'amounts',
       'currency',
-      'channelCostsRegion',
-      'refundCostsRegion',
+      'payerRegion',
       'region',
       'regions',
     ]),
     ...mapState('User/Merchant', ['merchant', 'onboardingSteps']),
-    ...mapGetters('Dictionaries', ['currenciesThreeLetters']),
 
     status() {
       return this.merchant.status;
     },
-    amounts() {
-      return [
-        { label: `0.75-5 ${this.currency}`, value: '0.75-5' },
-        { label: `1-10 ${this.currency}`, value: '1-10' },
-        { label: `11-100 ${this.currency}`, value: '11-100' },
-        { label: `101-500 ${this.currency}`, value: '101-500' },
-        { label: `501-1000 ${this.currency}`, value: '501-1000' },
-      ];
+    amountsOptions() {
+      return this.amounts.map(amount => ({ label: `${amount} ${this.currency}`, value: amount }));
     },
     prepareCountries() {
       const region = this.regions[this.region];
@@ -47,50 +39,31 @@ export default {
     },
     prepareRegions() {
       return [
-        { label: 'North America', value: 'north_america' },
-        { label: 'European United', value: 'eu' },
-        { label: 'United Kingdom', value: 'uk' },
-        { label: 'Russia', value: 'russia' },
-        { label: 'Worldwide', value: 'worldwide' },
+        { label: 'European Union', value: 'europe', abbr: 'EU' },
+        { label: 'Russia & CIS', value: 'russia_and_cis', abbr: 'RU & CIS' },
+        { label: 'Asia', value: 'asia', abbr: 'Asia' },
+        { label: 'Latin America', value: 'latin_america', abbr: 'LA' },
+        { label: 'Worldwide', value: 'worldwide', abbr: 'WW' },
       ];
     },
+    payerRegionAbbr() {
+      return get(find(this.prepareRegions, { value: this.payerRegion }), 'abbr', '');
+    },
     channelCosts() {
-      const region = this.regions[this.channelCostsRegion];
-      return region ? region.channelCosts : [];
-    },
-    refundCosts() {
-      const region = this.regions[this.refundCostsRegion];
-      return region ? region.refundCosts : [];
-    },
-    regionChannelAbbr() {
-      const region = this.regions[this.channelCostsRegion];
-      return region ? region.abbreviation : null;
-    },
-    regionRefundAbbr() {
-      const region = this.regions[this.refundCostsRegion];
-      return region ? region.abbreviation : null;
+      return get(
+        this.regions,
+        `${this.region}.payerRegions.${this.payerRegion}`,
+        {},
+      )[this.amount] || [];
     },
     chargeback() {
-      const region = this.regions[this.region];
-      return region ? region.chargeback : {};
+      return get(this.regions, `${this.region}.chargeback`, {});
     },
     payout() {
-      const region = this.regions[this.region];
-      return region ? region.payout : {};
-    },
-    isHomeDefaultCurrency() {
-      const region = this.regions[this.region];
-      return region && this.currency ? region.defaultCurrency === this.currency : true;
+      return get(this.regions, `${this.region}.payout`, {});
     },
     isOneLineCountries() {
       return this.prepareCountries.length < 44;
-    },
-    currencyErrorText() {
-      return this.isHomeDefaultCurrency
-        ? this.$getFieldErrorMessages('currency')
-        : `Due to currency conversion you will be charged for additional 1% fee,
-          because your chosen payout currency does not correspond
-          with chosen region’s default payout currency.`;
     },
   },
   async mounted() {
@@ -105,19 +78,16 @@ export default {
       'initState',
       'submitTariffs',
       'updateAmount',
-      'updateCurrency',
-      'updateChannelCostsRegion',
-      'updateRefundCostsRegion',
+      'updatePayerRegion',
       'updateRegion',
     ]),
 
     async submit() {
       this.$v.region.$touch();
-      this.$v.currency.$touch();
 
-      if (!this.$v.region.$invalid && !this.$v.currency.$invalid) {
+      if (!this.$v.region.$invalid) {
         try {
-          const hasSubmit = await this.submitTariffs();
+          const hasSubmit = await this.submitTariffs(this.merchant.id);
 
           if (hasSubmit) {
             this.$emit('hasSubmit');
@@ -170,24 +140,6 @@ export default {
         </UiTip>
       </div>
     </div>
-
-    <div class="info">
-      Your chosen payout currency must match the currency of your bank account in
-      <span class="blue-text">Banking Info</span> section.
-    </div>
-    <div class="select">
-      <UiSelect
-        v-bind="$getValidatedFieldProps('currency')"
-        label="Payout Currency"
-        :options="currenciesThreeLetters"
-        :value="currency"
-        :errorText="currencyErrorText"
-        :hasError="$isFieldInvalid('currency') || !isHomeDefaultCurrency"
-        :errorColor="isHomeDefaultCurrency ? 'red' : 'black'"
-        @input="updateCurrency($event)"
-        @blur="$v.currency.$touch()"
-      />
-    </div>
   </div>
 
   <div class="section">
@@ -200,7 +152,7 @@ export default {
     <div class="select">
       <UiSelect
         label="Payment Amount"
-        :options="amounts"
+        :options="amountsOptions"
         :value="amount"
         @input="updateAmount($event)"
       />
@@ -209,8 +161,8 @@ export default {
     <div class="tabs-info">
       <div
         class="icon-wrapper"
-        @mouseenter="hasChannelCustomersTipOpened = true"
-        @mouseleave="hasChannelCustomersTipOpened = false"
+        @mouseenter="hasCustomersTipOpened = true"
+        @mouseleave="hasCustomersTipOpened = false"
       >
         <IconQuestion class="question" />
         <UiTip
@@ -220,14 +172,14 @@ export default {
           width="calc(100vw - 320px)"
           maxWidth="280px"
           :hasCaret="true"
-          :visible="hasChannelCustomersTipOpened"
+          :visible="hasCustomersTipOpened"
         >
           You can check here how your choice of <span class="bolder">Home Region</span>
           and <span class="bolder">Payout Currency</span> will affect
           on rates and fees, if your customer will get refund in another region
         </UiTip>
       </div>
-      External regions rates ({{ regionChannelAbbr }})
+      External regions rates ({{ payerRegionAbbr }})
     </div>
     <div class="tabs">
       <UiButton
@@ -236,8 +188,8 @@ export default {
         class="tabs-btn"
         color="light-gray"
         :isRounded="true"
-        :isTransparent="channelCostsRegion !== region.value"
-        @click="updateChannelCostsRegion(region.value)"
+        :isTransparent="payerRegion !== region.value"
+        @click="updatePayerRegion(region.value)"
       >
         {{ region.label }}
       </UiButton>
@@ -276,66 +228,6 @@ export default {
       Notice that all refund fees are being paid by Pay Super, so they are
       <span class="bolder">free of charge for you</span>.
     </div>
-
-    <div class="tabs-info">
-      <div
-        class="icon-wrapper"
-        @mouseenter="hasRefundCustomersTipOpened = true"
-        @mouseleave="hasRefundCustomersTipOpened = false"
-      >
-        <IconQuestion class="question" />
-        <UiTip
-          class="tip"
-          innerPosition="left"
-          position="top"
-          width="calc(100vw - 320px)"
-          maxWidth="280px"
-          :hasCaret="true"
-          :visible="hasRefundCustomersTipOpened"
-        >
-          You can check here how your choice of <span class="bolder">Home Region</span>
-          and <span class="bolder">Payout Currency</span> will affect
-          on rates and fees, if your customer will get refund in another region
-        </UiTip>
-      </div>
-      External regions rates ({{ regionRefundAbbr }})
-    </div>
-    <div class="tabs">
-      <UiButton
-        v-for="(region, index) in prepareRegions"
-        :key="index"
-        class="tabs-btn"
-        color="light-gray"
-        :isRounded="true"
-        :isTransparent="refundCostsRegion !== region.value"
-        @click="updateRefundCostsRegion(region.value)"
-      >
-        {{ region.label }}
-      </UiButton>
-    </div>
-
-    <transition name="table" mode="out-in">
-      <UiTable v-if="refundCosts.length">
-        <UiTableRow :isHead="true" class="row-indent">
-          <UiTableCell class="cell _second" align="left">Payment Method</UiTableCell>
-          <UiTableCell class="cell _refund">Refund fee, %</UiTableCell>
-          <UiTableCell class="cell _refund">Refund fixed fee, {{ currency }}</UiTableCell>
-          <UiTableCell class="cell _refund">Refund fee payout party</UiTableCell>
-        </UiTableRow>
-        <UiTableRow
-          v-for="(data, index) in refundCosts"
-          :key="index"
-        >
-          <UiTableCell class="cell _first">
-            <component :is="data.icon" class="method-icon" />
-          </UiTableCell>
-          <UiTableCell class="cell _second" align="left">{{ data.method }}</UiTableCell>
-          <UiTableCell class="cell _refund">{{ data.refundFee }}</UiTableCell>
-          <UiTableCell class="cell _refund">{{ data.refundFixedFee }}</UiTableCell>
-          <UiTableCell class="cell _refund">{{ data.payoutParty }}</UiTableCell>
-        </UiTableRow>
-      </UiTable>
-    </transition>
   </div>
 
   <div class="section">
