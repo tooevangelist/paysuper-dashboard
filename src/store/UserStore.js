@@ -98,7 +98,7 @@ export default function createUserStore(resources) {
         }
       },
 
-      async logout({ commit, rootState }) {
+      async logout({ commit, dispatch, rootState }) {
         try {
           await axios.get(`${rootState.config.ownBackendUrl}/auth1/logout`, {
             withCredentials: true,
@@ -109,6 +109,7 @@ export default function createUserStore(resources) {
         commit('isAuthorised', false);
         commit('isEmailConfirmed', false);
         commit('accessToken', '');
+        dispatch('Profile/setCurrentStepCode');
       },
     },
 
