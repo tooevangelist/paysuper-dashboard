@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const qs = require('qs');
 const Handlebars = require('handlebars');
+const config = require('../../config/config');
 
 const orderTemplate = fs.readFileSync(path.resolve('backend/templates/order-page.hbs'), 'utf-8');
 const template = Handlebars.compile(orderTemplate);
@@ -17,5 +18,6 @@ module.exports = function orderPage(ctx) {
       type: 'simple',
     }),
     formOptions: JSON.stringify((query.loading ? { layout: 'loading' } : {})),
+    sdkUrl: config.paysuperSdkUrl,
   });
 };

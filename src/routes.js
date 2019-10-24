@@ -34,6 +34,7 @@ const routes = [
   {
     path: '/',
     component: () => import('@/pages/index.vue'),
+    name: 'Index',
   },
   {
     path: '/reports/',
@@ -244,6 +245,11 @@ const routes = [
     path: '/login/',
     component: () => import('@/pages/LoginPage.vue'),
     name: 'Login',
+  },
+  {
+    path: '/logout/',
+    component: () => import('@/pages/LogoutPage.vue'),
+    name: 'Logout',
   },
   {
     path: '/form-demo/',
