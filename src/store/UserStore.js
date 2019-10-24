@@ -86,11 +86,16 @@ export default function createUserStore(resources) {
        * @returns {Promise.<T>|Promise<any>|Promise}
        */
       async refreshToken({ dispatch, rootState }) {
-        const response = await axios.get(`${rootState.config.ownBackendUrl}/auth1/refresh`, {
-          // this method requires only cookies for authrization
-          withCredentials: true,
-        });
-        await dispatch('setAccessToken', response.data.access_token);
+        try {
+          const response = await axios.get(`${rootState.config.ownBackendUrl}/auth1/refresh`, {
+            // this method requires only cookies for authrization
+            withCredentials: true,
+          });
+          await dispatch('setAccessToken', response.data.access_token);
+        } catch (error) {
+          await dispatch('logout');
+          throw error;
+        }
       },
 
       async logout({ commit, rootState }) {
