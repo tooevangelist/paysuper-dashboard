@@ -3,12 +3,15 @@ import {
   mapState, mapGetters, mapActions,
 } from 'vuex';
 import {
-  isEqual,
+  isEqual, startCase, capitalize,
 } from 'lodash-es';
 import { format } from 'date-fns';
 import PayoutsStore from '@/store/PayoutStore';
 import NoResults from '@/components/NoResults.vue';
 import payoutsStatusScheme from '@/schemes/payoutsStatusScheme';
+import PayoutExportModal from '@/components/PayoutExportModal.vue';
+import PictureExcellentWork from '@/components/PictureExcellentWork.vue';
+import PictureGrave from '@/components/PictureGrave.vue';
 
 const STATUS_COLOR = {
   paid: 'cyan',
@@ -23,7 +26,10 @@ export default {
   name: 'payouts',
 
   components: {
+    PayoutExportModal,
     NoResults,
+    PictureExcellentWork,
+    PictureGrave,
   },
 
   async asyncData({ store, registerStoreModule, route }) {
@@ -43,11 +49,16 @@ export default {
       filterCounts: {},
       showRefundModal: false,
       colors: STATUS_COLOR,
+      showModal: false, // export modal
+      successModal: false, // create payout complete
+      failModal: false,
+      currentDoc: null,
     };
   },
 
   computed: {
     ...mapState('Payouts', ['payoutsList', 'filterValues', 'query', 'apiQuery', 'balance']),
+    ...mapState('User', ['Merchant']),
     ...mapGetters('Payouts', ['getFilterValues']),
 
     dateFilter: {
@@ -59,6 +70,15 @@ export default {
         this.filters.dateFrom = dateFrom;
         this.filters.dateTo = dateTo;
       },
+    },
+
+    // show 'create payout' button if true
+    manualPayout() {
+      return this.Merchant.merchant.manual_payouts_enabled;
+    },
+
+    payoutAvailable() {
+      return this.balance.total > this.Merchant.merchant.min_payout_amount;
     },
   },
 
@@ -72,16 +92,25 @@ export default {
 
   methods: {
     ...mapActions(['setIsLoading']),
+    ...mapActions('ExportFile', ['createReportFile', 'initWaitingFile']),
     ...mapActions('Payouts', [
       'initQuery',
       'submitFilters',
       'fetchPayouts',
+      'createPayout',
     ]),
 
     format,
 
     updateFiltersFromQuery() {
-      this.filters = this.getFilterValues(['quickFilter', 'offset', 'limit', 'status']);
+      this.filters = this.getFilterValues([
+        'quickFilter',
+        'offset',
+        'limit',
+        'status',
+        'dateFrom',
+        'dateTo',
+      ]);
     },
 
     filterPayouts() {
@@ -131,13 +160,45 @@ export default {
     },
 
     handleStatusInput(value) {
-      console.log(value);
       if (value === 'all') {
         this.filters.status = [];
+        this.filters.dateFrom = null;
+        this.filters.dateTo = null;
       } else {
         this.filters.status.push(value);
       }
       this.filterPayouts();
+    },
+
+    getStatusName(status) {
+      return capitalize(startCase(status));
+    },
+
+    async newPayout() {
+      const description = 'manual payout';
+      this.setIsLoading(true);
+      try {
+        await this.createPayout(description).catch(this.$showErrorMessage);
+        this.successModal = true;
+      } catch (e) {
+        this.failModal = true;
+      }
+      this.setIsLoading(false);
+    },
+
+    async exportFile(fileType) {
+      this.setIsLoading(true);
+      await this.createReportFile({
+        file_type: fileType,
+        report_type: 'payout',
+        params: {
+          id: this.currentDoc,
+        },
+      });
+      this.setIsLoading(false);
+      this.showModal = false;
+
+      this.initWaitingFile();
     },
   },
 };
@@ -153,6 +214,12 @@ export default {
         Each payout is based on one or more royalty reports.
         On a quarterly basis you will get an automatically formed payout invoice to close
         a quarter taxation period.
+
+        <div class="create-button" v-if="manualPayout">
+          <UiButton @click="newPayout" color="blue" :disabled="!payoutAvailable">
+            CREATE PAYOUT
+          </UiButton>
+        </div>
       </span>
     </UiPageHeaderFrame>
 
@@ -166,6 +233,10 @@ export default {
     <UiPanel>
       <div class="control-bar">
         <div class="control-bar__left">
+          <UiFilterDate
+            v-model="dateFilter"
+            @input="filterPayouts"
+          />
           <UiStatusFilter
             @input="handleStatusInput"
             align="left"
@@ -189,7 +260,8 @@ export default {
           </UiTableRow>
           <UiTableRow
             v-for="(payout, index) in payoutsList.items"
-            :key="index">
+            :key="index"
+            :link="`/payouts/${payout.id}`">
             <UiTableCell align="left">
               {{ formatPeriod(payout.period_from.seconds, payout.period_to.seconds) }}
             </UiTableCell>
@@ -198,18 +270,21 @@ export default {
             </UiTableCell>
             <UiTableCell align="left">{{ payout.id }}</UiTableCell>
             <UiTableCell align="left">
-              <!--{{ format(payout.arrival_date.seconds * 1000, 'dd.MM.yyyy') }}-->
+              <template v-if="payout.paid_at < 0">
+                {{ format(payout.paid_at.seconds * 1000, 'dd.MM.yyyy') }}
+              </template>
+              <template v-else>&mdash;</template>
             </UiTableCell>
             <UiTableCell align="left">
               {{ $formatPrice(payout.balance, payout.currency) }}
             </UiTableCell>
             <UiTableCell align="left">
               <UiLabelTag :color="colors[payout.status]">
-                {{payout.status}}
+                {{ getStatusName(payout.status) }}
               </UiLabelTag>
             </UiTableCell>
             <UiTableCell align="left" width="3%">
-              <div class="download">
+              <div class="download" @click.stop.prevent="showModal = true, currentDoc = payout.id">
                 <IconDownload></IconDownload>
               </div>
             </UiTableCell>
@@ -219,6 +294,40 @@ export default {
         <NoResults type="add-new" v-else>You don’t have any item yet</NoResults>
       </div>
     </UiPanel>
+
+    <PayoutExportModal v-show="showModal" @export="exportFile" @close="showModal = false"/>
+
+    <UiModal class="success-payout" width="448px" v-show="successModal">
+      <div class="success-payout__content">
+        <PictureExcellentWork></PictureExcellentWork>
+        <UiHeader level="3" align="center" class="success-payout__header">
+          Payout successfully created
+        </UiHeader>
+        <p class="success-payout__text">
+          Your total royalty amount is waiting to be Paid.
+          Since payment procedure will take some time you will get a notification.
+        </p>
+        <div class="success-payout__controls">
+          <UiButton color="blue" @click="successModal = false">DONE</UiButton>
+        </div>
+      </div>
+    </UiModal>
+
+    <UiModal class="fail-payout" width="448px" v-show="failModal">
+      <div class="fail-payout__content">
+        <PictureGrave></PictureGrave>
+        <UiHeader level="3" align="center" class="fail-payout__header">
+          Something went wrong
+        </UiHeader>
+        <p class="fail-payout__text">
+          You have at least one unconfirmed royalty report.
+          Please Confirm it before creating payout.
+        </p>
+        <div class="fail-payout__controls">
+          <UiButton :isTransparent="true" color="gray" @click="failModal = false">CLOSE</UiButton>
+        </div>
+      </div>
+    </UiModal>
   </div>
 </template>
 
@@ -238,6 +347,10 @@ export default {
     font-size: 12px;
     color: #5E6366;
   }
+}
+
+.create-button {
+  margin-top: 20px;
 }
 
 .status-filter {
@@ -263,6 +376,25 @@ export default {
 
   &:hover svg {
     fill: #3D7BF5;
+  }
+}
+
+.success-payout, .fail-payout {
+  &__content {
+    text-align: center;
+  }
+
+  &__header {
+    margin: 24px 0 8px;
+  }
+
+  &__text {
+    font-size: 14px;
+    color: #5E6366;
+  }
+
+  &__controls {
+    margin-top: 24px;
   }
 }
 </style>

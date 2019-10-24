@@ -111,6 +111,12 @@ export default function createPayoutsStore() {
 
         commit('balance', data);
       },
+
+      async createPayout({ rootState }, description) {
+        await axios.post(
+          `${rootState.config.apiUrl}/admin/api/v1/payout_documents`, { description },
+        );
+      },
     },
 
     namespaced: true,

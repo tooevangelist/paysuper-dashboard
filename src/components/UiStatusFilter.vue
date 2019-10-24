@@ -1,6 +1,6 @@
 <script>
 import ClickOutside from 'vue-click-outside';
-import { has, includes } from 'lodash-es';
+import { includes, isArray } from 'lodash-es';
 
 export default {
   name: 'UiStatusFilter',
@@ -55,10 +55,16 @@ export default {
 
   methods: {
     getItemClass(item, value) {
+      let current;
+      if (isArray(this.value)) {
+        current = this.value.includes(item.value) ? '_current' : '';
+      } else {
+        current = value === item.value ? '_current' : '';
+      }
       return [
         item.value ? `_${item.value}` : '',
         item.color ? `_${item.color}` : '',
-        value === item.value ? '_current' : '',
+        current,
       ];
     },
 
@@ -71,7 +77,7 @@ export default {
     },
 
     handleClick(item) {
-      if (has(item, 'expand')) {
+      if (item.expand) {
         item.expand = !item.expand;
       } else {
         this.$emit('input', item.value);

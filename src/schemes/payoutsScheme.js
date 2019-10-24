@@ -19,17 +19,17 @@ const filters = {
   },
 
   status: {
-    defaultValue: null,
+    defaultValue: () => [],
   },
 
   dateFrom: {
     defaultValue: null,
-    apiQueryName: 'pm_date_from',
+    apiQueryName: 'date_from',
   },
 
   dateTo: {
     defaultValue: null,
-    apiQueryName: 'pm_date_to',
+    apiQueryName: 'date_to',
   },
 };
 
