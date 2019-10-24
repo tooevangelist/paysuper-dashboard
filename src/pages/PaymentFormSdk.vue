@@ -65,7 +65,7 @@ export default {
       localStorage.setItem('sdkTestRequest', JSON.stringify(request));
 
       const paySuper = new window.PaySuper({
-        formUrl: `${this.config.ownBackendUrl}/order`,
+        apiUrl: 'https://p1payapi.tst.protocol.one',
         ...request,
       });
       paySuper.renderModal();
