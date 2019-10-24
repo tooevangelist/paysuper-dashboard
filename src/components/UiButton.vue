@@ -247,7 +247,7 @@ $primary-button-size: 14px;
       normal,
       $light-gray-transparent-font-color,
       $light-gray-transparent-border-color,
-      $light-gray-button-color,
+      $light-gray-transparent-hover-font-color,
       $light-gray-transparent-hover-box-color
     );
   }
