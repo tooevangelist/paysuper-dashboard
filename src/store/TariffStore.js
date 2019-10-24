@@ -1,23 +1,22 @@
 import axios from 'axios';
 import {
-  camelCase,
   get,
   groupBy,
   map,
   includes,
-  toLower,
   union,
   upperFirst,
 } from 'lodash-es';
 import qs from 'qs';
 import getCountriesByRegion from '@/helpers/getCountriesByRegion';
+import getIconByPaymentMethod from '@/helpers/getIconByPaymentMethod';
 
 function preparePayerRegion(data) {
   let amounts = [];
   const channelCosts = groupBy(
     map(data, item => ({
       method: upperFirst(item.method_name),
-      icon: `Icon${upperFirst(camelCase(toLower(item.method_name)))}`,
+      icon: getIconByPaymentMethod(item.method_name),
       methodFee: item.method_percent_fee,
       fixedFee: item.method_fixed_fee,
       overallFee: item.ps_percent_fee,
