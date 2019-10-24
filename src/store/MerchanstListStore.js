@@ -3,12 +3,14 @@ import qs from 'qs';
 import { get } from 'lodash-es';
 import SearchBuilder from '@/tools/SearchBuilder/SearchBuilder';
 import merchantsListScheme from '@/schemes/merchantsListScheme';
+import { signedStatusCode, notSignedStatusCodes } from '@/schemes/merchantStatusScheme';
 
 const searchBuilder = new SearchBuilder(merchantsListScheme);
 
 export default function createMerchantListStore() {
   return {
-    state: () => ({
+    state: {
+      page: '',
       merchants: {
         items: [],
         count: 0,
@@ -16,7 +18,7 @@ export default function createMerchantListStore() {
       filterValues: {},
       query: {},
       apiQuery: {},
-    }),
+    },
 
     getters: {
       getFilterValues(state) {
@@ -35,6 +37,9 @@ export default function createMerchantListStore() {
     },
 
     mutations: {
+      page(store, data) {
+        store.page = data;
+      },
       merchants(store, data) {
         store.merchants = data;
       },
@@ -50,7 +55,8 @@ export default function createMerchantListStore() {
     },
 
     actions: {
-      async initState({ getters, dispatch }, { query }) {
+      async initState({ commit, getters, dispatch }, { query, page }) {
+        commit('page', page);
         const filters = getters.getFilterValues();
         dispatch('submitFilters', filters);
         dispatch('initQuery', query);
@@ -58,8 +64,16 @@ export default function createMerchantListStore() {
       },
 
       async fetchMerchants({ state, commit, rootState }) {
+        let { status } = state.apiQuery;
+        if (state.page === 'merchantsList') {
+          status = [signedStatusCode];
+        }
+        if (state.page === 'agreementRequestsList') {
+          status = status || notSignedStatusCodes;
+        }
         const query = qs.stringify({
           ...state.apiQuery,
+          status,
         }, { arrayFormat: 'brackets' });
         const url = `${rootState.config.apiUrl}/admin/api/v1/merchants?${query}`;
 

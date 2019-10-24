@@ -1,6 +1,7 @@
 import axios from 'axios';
 import MerchantStore from '@/store/MerchantStore';
 import UserNotificationsStore from './UserNotificationsStore';
+import UserProfileStore from './UserProfileStore';
 import { UNAUTHORIZED } from '@/errors';
 
 export default function createUserStore(resources) {
@@ -9,6 +10,7 @@ export default function createUserStore(resources) {
     state: {
       accessToken,
       isAuthorised: false,
+      isEmailConfirmed: false,
       role: localStorage.getItem('userRole') || 'merchant',
     },
 
@@ -18,6 +20,9 @@ export default function createUserStore(resources) {
       },
       isAuthorised(state, value) {
         state.isAuthorised = value;
+      },
+      isEmailConfirmed(state, value) {
+        state.isEmailConfirmed = value;
       },
       role(state, value) {
         state.role = value;
@@ -32,9 +37,19 @@ export default function createUserStore(resources) {
     },
 
     actions: {
-      async initState({ dispatch }) {
+      async initState({ state, commit, dispatch }) {
         try {
-          await dispatch('initUserMerchantData');
+          if (!state.accessToken) {
+            await dispatch('refreshToken');
+          }
+          await Promise.all([
+            dispatch('initUserMerchantData'),
+            dispatch('Profile/initState'),
+          ]);
+          if (state.Profile.profile.email.confirmed) {
+            commit('isEmailConfirmed', true);
+          }
+
           dispatch('Notifications/initState');
         } catch (error) {
           if (error !== UNAUTHORIZED) {
@@ -57,6 +72,10 @@ export default function createUserStore(resources) {
         localStorage.setItem('token', token);
         commit('isAuthorised', true);
         commit('accessToken', token);
+      },
+
+      setEmailConfirmed({ commit }, value) {
+        commit('isEmailConfirmed', value);
       },
 
       /**
@@ -83,6 +102,7 @@ export default function createUserStore(resources) {
         } catch { }
         localStorage.removeItem('token');
         commit('isAuthorised', false);
+        commit('isEmailConfirmed', false);
         commit('accessToken', '');
       },
     },
@@ -92,6 +112,7 @@ export default function createUserStore(resources) {
     modules: {
       Merchant: MerchantStore(resources),
       Notifications: UserNotificationsStore(resources),
+      Profile: UserProfileStore(resources),
     },
   };
 }

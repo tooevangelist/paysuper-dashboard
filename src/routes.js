@@ -1,4 +1,6 @@
 
+import { signedStatusCode } from '@/schemes/merchantStatusScheme';
+
 const projectPagesMeta = {
   layout: 'Layout',
   isAuthRequired: true,
@@ -17,9 +19,10 @@ const merchantPagesMeta = {
   layout: 'Layout',
   isAuthRequired: true,
   specialNav: {
-    backLink() {
+    backLink({ store }) {
+      const isSigned = store.state.Merchant.merchant.status === Number(signedStatusCode);
       return {
-        url: '/merchants/',
+        url: isSigned ? '/merchants/' : '/agreement-requests/',
         label: 'Back to list',
       };
     },
@@ -66,6 +69,7 @@ const routes = [
     path: '/projects/:id',
     component: () => import('@/pages/ProjectPage.vue'),
     redirect: { name: 'ProjectSettings' },
+    name: 'Project',
     children: [
       {
         path: 'virtual-currency/',
@@ -258,8 +262,9 @@ const routes = [
   },
   {
     path: '/profile/',
-    component: () => import('@/pages/UserProfile.vue'),
+    component: () => import('@/pages/UserProfilePage.vue'),
     meta: { layout: 'PageShallow', isAuthRequired: true },
+    name: 'UserProfile',
   },
   {
     path: '/sign-up/',
