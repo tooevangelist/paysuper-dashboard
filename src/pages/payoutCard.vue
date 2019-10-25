@@ -1,17 +1,10 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 import { format } from 'date-fns';
+import { forEach } from 'lodash-es';
 import PayoutExportModal from '@/components/PayoutExportModal.vue';
 import PayoutCardStore from '@/store/PayoutCardStore';
-
-const STATUS_COLOR = {
-  paid: 'cyan',
-  in_progress: 'green',
-  pending: 'orange',
-  failed: 'red',
-  skip: 'gray',
-  canceled: 'transparent',
-};
+import payoutsStatusScheme from '@/schemes/payoutsStatusScheme';
 
 export default {
   name: 'payoutCard',
@@ -32,7 +25,7 @@ export default {
 
   data() {
     return {
-      colors: STATUS_COLOR,
+      colors: {},
       tabs: [
         { label: 'Summary', value: 0 },
         { label: 'Royalty reports', value: 1 },
@@ -44,6 +37,14 @@ export default {
 
   computed: {
     ...mapState('PayoutCard', ['payout']),
+  },
+
+  created() {
+    forEach(payoutsStatusScheme, (i) => {
+      if (i.value !== 'all') {
+        this.colors[i.value] = i.color;
+      }
+    });
   },
 
   methods: {

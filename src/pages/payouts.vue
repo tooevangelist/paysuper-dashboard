@@ -3,7 +3,7 @@ import {
   mapState, mapGetters, mapActions,
 } from 'vuex';
 import {
-  isEqual, startCase, capitalize,
+  isEqual, startCase, capitalize, forEach,
 } from 'lodash-es';
 import { format } from 'date-fns';
 import PayoutsStore from '@/store/PayoutStore';
@@ -12,15 +12,6 @@ import payoutsStatusScheme from '@/schemes/payoutsStatusScheme';
 import PayoutExportModal from '@/components/PayoutExportModal.vue';
 import PictureExcellentWork from '@/components/PictureExcellentWork.vue';
 import PictureGrave from '@/components/PictureGrave.vue';
-
-const STATUS_COLOR = {
-  paid: 'cyan',
-  in_progress: 'green',
-  pending: 'orange',
-  failed: 'red',
-  skip: 'gray',
-  canceled: 'transparent',
-};
 
 export default {
   name: 'payouts',
@@ -48,7 +39,7 @@ export default {
       scheme: payoutsStatusScheme,
       filterCounts: {},
       showRefundModal: false,
-      colors: STATUS_COLOR,
+      colors: {},
       showModal: false, // export modal
       successModal: false, // create payout complete
       failModal: false,
@@ -84,6 +75,11 @@ export default {
 
   created() {
     this.updateFiltersFromQuery();
+    forEach(payoutsStatusScheme, (i) => {
+      if (i.value !== 'all') {
+        this.colors[i.value] = i.color;
+      }
+    });
   },
 
   mounted() {
@@ -189,7 +185,7 @@ export default {
     async exportFile(fileType) {
       this.setIsLoading(true);
       await this.createReportFile({
-        file_type: fileType,
+        file_type: fileType.toLowerCase(),
         report_type: 'payout',
         params: {
           id: this.currentDoc,

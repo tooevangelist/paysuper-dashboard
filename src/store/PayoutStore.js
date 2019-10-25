@@ -62,11 +62,11 @@ export default function createPayoutsStore() {
         await dispatch('fetchBalance');
       },
 
-      async fetchPayouts({ state, commit, rootState }) {
+      async fetchPayouts({ state, commit }) {
         const query = qs.stringify({
           ...state.apiQuery,
         }, { arrayFormat: 'brackets' });
-        const url = `${rootState.config.apiUrl}/admin/api/v1/payout_documents?${query}`;
+        const url = `{apiUrl}/admin/api/v1/payout_documents?${query}`;
 
         const response = await axios.get(url);
         const payoutsList = {
@@ -104,17 +104,14 @@ export default function createPayoutsStore() {
         commit('query', query);
       },
 
-      async fetchBalance({ rootState, commit }) {
-        const { data } = await axios.get(
-          `${rootState.config.apiUrl}/admin/api/v1/balance`,
-        );
-
+      async fetchBalance({ commit }) {
+        const { data } = await axios.get('{apiUrl}/admin/api/v1/balance');
         commit('balance', data);
       },
 
-      async createPayout({ rootState }, description) {
+      async createPayout(description) {
         await axios.post(
-          `${rootState.config.apiUrl}/admin/api/v1/payout_documents`, { description },
+          '{apiUrl}/admin/api/v1/payout_documents', { description },
         );
       },
     },

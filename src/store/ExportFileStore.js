@@ -17,7 +17,7 @@ export default function exportFile() {
       * @returns {Promise<void>}
       */
       async createReportFile({ rootState }, params) {
-        await axios.post(`${rootState.config.apiUrl}/admin/api/v1/report_file`, {
+        await axios.post('{apiUrl}/admin/api/v1/report_file', {
           ...params,
           merchant_id: rootState.User.Merchant.merchant.id,
         });
@@ -27,7 +27,7 @@ export default function exportFile() {
         const centrifuge = new Centrifuge(rootState.config.websocketUrl);
         centrifuge.setToken(rootState.User.Merchant.merchant.centrifugo_token);
         centrifuge.subscribe(`paysuper:user#${rootState.User.Merchant.merchant.id}`, ({ data }) => {
-          axios.get(`${rootState.config.apiUrl}/admin/api/v1/report_file/download/${data.file_name}`)
+          axios.get(`{apiUrl}/admin/api/v1/report_file/download/${data.file_name}`)
             .then((response) => {
               const url = window.URL.createObjectURL(new Blob([response.data]));
               const link = document.createElement('a');
