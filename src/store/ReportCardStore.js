@@ -5,6 +5,10 @@ export default function createReportCardStore() {
     state: {
       report: null,
       reportId: null,
+      transactionsList: {
+        items: [],
+        count: 0,
+      },
     },
 
     mutations: {
@@ -14,6 +18,9 @@ export default function createReportCardStore() {
       setReport(state, data) {
         state.report = data;
       },
+      transactionsList(store, data) {
+        store.transactionsList = data;
+      },
     },
 
     actions: {
@@ -22,9 +29,11 @@ export default function createReportCardStore() {
         await dispatch('fetchReportData', reportId);
       },
 
-      async fetchReportData({ commit, rootState }, id) {
+      async fetchReportData({ commit, rootState, dispatch }, id) {
         const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/royalty_reports/${id}`);
         commit('setReport', response.data);
+
+        dispatch('fetchTransactions', id);
       },
 
       async acceptReport({ rootState, state, dispatch }) {
@@ -41,6 +50,16 @@ export default function createReportCardStore() {
         if (response) {
           await dispatch('fetchReportData', reportId);
         }
+      },
+
+      async fetchTransactions({ commit, rootState }, id) {
+        const url = `${rootState.config.apiUrl}/admin/api/v1/royalty_reports/${id}/transactions`;
+        const response = await axios.get(url);
+        const transactionsList = {
+          ...response.data,
+          items: response.data.items || [],
+        };
+        commit('transactionsList', transactionsList);
       },
     },
 

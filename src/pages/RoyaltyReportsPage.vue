@@ -175,10 +175,6 @@ export default {
     getValue(item, path) {
       return get(item, path) || '—';
     },
-
-    returnColorAmount(status) {
-      return status === 'paid' ? '#069697' : '#3E4345';
-    },
   },
 };
 </script>
@@ -271,7 +267,7 @@ export default {
             <UiTableCell align="left">
               {{ getFormattedDate(report.payout_date.seconds) }}
             </UiTableCell>
-            <UiTableCell align="left" :style="{ color: returnColorAmount(report.status) }">
+            <UiTableCell align="left" :class="`status-${report.status}`">
               {{
                 report.totals !== null && report.currency && report.totals.payout_amount
                   ? $formatPrice(report.totals.payout_amount, report.currency)
@@ -398,5 +394,9 @@ export default {
 
 .status {
   text-transform: capitalize;
+}
+
+.status-paid {
+  color: #069697
 }
 </style>
