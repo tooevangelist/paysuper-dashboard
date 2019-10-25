@@ -34,6 +34,7 @@ const routes = [
   {
     path: '/',
     component: () => import('@/pages/index.vue'),
+    name: 'Index',
   },
   {
     path: '/reports/',
@@ -71,6 +72,15 @@ const routes = [
     redirect: { name: 'ProjectSettings' },
     name: 'Project',
     children: [
+      {
+        path: 'sales-options/',
+        component: () => import('@/pages/ProjectSalesOptionsPage.vue'),
+        meta: {
+          ...projectPagesMeta,
+          topControls: () => import('@/components/LayoutTopControlsProjectSalesOptions.vue'),
+        },
+        name: 'ProjectSalesOptions',
+      },
       {
         path: 'virtual-currency/',
         component: () => import('@/pages/ProjectVirtualCurrencyPage.vue'),
@@ -244,6 +254,11 @@ const routes = [
     path: '/login/',
     component: () => import('@/pages/LoginPage.vue'),
     name: 'Login',
+  },
+  {
+    path: '/logout/',
+    component: () => import('@/pages/LogoutPage.vue'),
+    name: 'Logout',
   },
   {
     path: '/form-demo/',

@@ -1,11 +1,13 @@
 <script>
 import { required } from 'vuelidate/lib/validators';
 import PictureLetterGLandscape from '@/components/PictureLetterGLandscape.vue';
+import TestingTag from '@/components/TestingTag.vue';
 
 export default {
   name: 'ProjectVirtualCurrencyPage',
   components: {
     PictureLetterGLandscape,
+    TestingTag,
   },
   props: {
     project: {
@@ -60,17 +62,10 @@ export default {
 
 <template>
 <div>
-  <UiPageHeaderFrame tag="testing">
+  <UiPageHeaderFrame>
     <template slot="title">
       Virtual currency
-      <span class="tag">
-        Testing
-        <IconParagraphPointer
-          fill="#F3AA18"
-          width="5"
-          height="9"
-        />
-      </span>
+      <TestingTag class="tag" />
     </template>
     <span slot="description">
       Virtual Currency is an option to sell your in-game currency — gold, coins, etc.
@@ -213,21 +208,7 @@ export default {
 }
 
 .tag {
-  position: relative;
   top: -8px;
   margin-left: 8px;
-  height: 24px;
-  line-height: 20px;
-  border: 1px solid #f3aa18;
-  box-sizing: border-box;
-  border-radius: 12px;
-  padding: 0 12px;
-  font-size: 12px;
-  color: #f3aa18;
-  letter-spacing: 0.4px;
-
-  & > svg {
-    margin-left: 4px;
-  }
 }
 </style>
