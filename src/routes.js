@@ -208,10 +208,16 @@ const routes = [
     name: 'revenue',
   },
   {
-    path: '/payout/',
-    component: () => import('@/pages/payout.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
-    name: 'payout',
+    path: '/payouts/',
+    component: () => import('@/pages/payouts.vue'),
+    meta: { layout: 'Layout', isAuthRequired: true },
+    name: 'payouts',
+  },
+  {
+    path: '/payouts/:id',
+    component: () => import('@/pages/payoutCard.vue'),
+    meta: { layout: 'Layout', isAuthRequired: true },
+    name: 'payoutCard',
   },
   {
     path: '/demo/',

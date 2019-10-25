@@ -106,7 +106,14 @@ export default {
     get,
 
     updateFiltersFromQuery() {
-      this.filters = this.getFilterValues(['quickFilter', 'offset', 'limit', 'status']);
+      this.filters = this.getFilterValues([
+        'quickFilter',
+        'offset',
+        'limit',
+        'status',
+        'dateFrom',
+        'dateTo',
+      ]);
     },
 
     filterTransactions() {
