@@ -30,13 +30,6 @@ export default {
           routeNames: ['ProjectSettings'],
           available: true,
         },
-        {
-          title: 'Transactions',
-          icon: 'IconCoin',
-          url: `/projects/${projectId}/transactions/`,
-          routeNames: ['ProjectTransactions'],
-          available: true,
-        },
 
         // {
         //   icon: 'IconInfo',
