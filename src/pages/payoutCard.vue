@@ -85,7 +85,7 @@ export default {
       </template>
       <span slot="description">
         <div class="period">
-          <div class="period-calendar"><IconCalendar></IconCalendar></div>
+          <div class="period-calendar"><IconCalendar/></div>
           {{ formatPeriod(payout.period_from.seconds, payout.period_to.seconds) }}
         </div>
         <UiLabelTag :color="colors[payout.status]">{{payout.status}}</UiLabelTag>

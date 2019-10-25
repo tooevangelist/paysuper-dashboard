@@ -49,7 +49,7 @@ export default {
 
   computed: {
     ...mapState('Payouts', ['payoutsList', 'filterValues', 'query', 'apiQuery', 'balance']),
-    ...mapState('User', ['Merchant']),
+    ...mapState('User/Merchant', ['merchant']),
     ...mapGetters('Payouts', ['getFilterValues']),
 
     dateFilter: {
@@ -65,11 +65,11 @@ export default {
 
     // show 'create payout' button if true
     manualPayout() {
-      return this.Merchant.merchant.manual_payouts_enabled;
+      return this.merchant.manual_payouts_enabled;
     },
 
     payoutAvailable() {
-      return this.balance.total > this.Merchant.merchant.min_payout_amount;
+      return this.balance.total > this.merchant.min_payout_amount;
     },
   },
 
