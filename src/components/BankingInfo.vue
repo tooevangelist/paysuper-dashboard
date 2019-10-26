@@ -1,5 +1,6 @@
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex';
+import IBAN from 'iban';
 import { integer, maxLength, required } from 'vuelidate/lib/validators';
 import Notifications from '@/mixins/Notifications';
 
@@ -8,7 +9,7 @@ export default {
   mixins: [Notifications],
   validations: {
     bankingInfo: {
-      accountNumber: { integer, maxLength: maxLength(30), required },
+      accountNumber: { required, iban: IBAN.isValid },
       address: { maxLength: maxLength(60), required },
       correspondentAccount: { integer, maxLength: maxLength(30) },
       currency: { required },
@@ -83,21 +84,21 @@ export default {
     />
     <UiTextField
       v-bind="$getValidatedFieldProps('bankingInfo.accountNumber')"
-      label="Beneficiary’s bank account"
+      label="IBAN"
       :value="bankingInfo.accountNumber"
       @input="updateField('accountNumber', $event)"
       @blur="$v.bankingInfo.accountNumber.$touch()"
     />
     <UiTextField
       v-bind="$getValidatedFieldProps('bankingInfo.name')"
-      label="Beneficiary’s bank name"
+      label="Bank name"
       :value="bankingInfo.name"
       @input="updateField('name', $event)"
       @blur="$v.bankingInfo.name.$touch()"
     />
     <UiTextField
       v-bind="$getValidatedFieldProps('bankingInfo.address')"
-      label="Beneficiary’s bank address"
+      label="Bank address"
       :value="bankingInfo.address"
       @input="updateField('address', $event)"
       @blur="$v.bankingInfo.address.$touch()"
