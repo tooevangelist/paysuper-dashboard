@@ -1,14 +1,16 @@
 import axios from 'axios';
 import { get } from 'lodash-es';
+import mergeApiValuesWithDefaults from '@/helpers/mergeApiValuesWithDefaults';
 
 function mapDataFormToApi(data) {
+  return data;
   // eslint-disable-next-line
-  const { create_order_allowed_urls, ...rest } = data;
-  return {
-    ...rest,
-    // create_invoice_allowed_urls: create_order_allowed_urls || '',
-    notify_emails: data.notify_emails || [],
-  };
+  // const { create_order_allowed_urls, ...rest } = data;
+  // return {
+  //   ...rest,
+  //   // create_invoice_allowed_urls: create_order_allowed_urls || '',
+  //   notify_emails: data.notify_emails || [],
+  // };
   // const {
   //   image,
   //   callback_currency,
@@ -25,41 +27,43 @@ function mapDataFormToApi(data) {
 }
 
 function mapDataApiToForm(data) {
-  return data;
+  return mergeApiValuesWithDefaults({
+    cover: {
+      images: {
+        en: '',
+        ru: '',
+      },
+      use_one_for_all: true,
+    },
+    name: {
+      en: '',
+      ru: '',
+    },
+    full_description: {
+      en: '',
+      ru: '',
+    },
+    short_description: {
+      en: '',
+      ru: '',
+    },
+    localizations: ['en', 'ru'],
+    currencies: [
+      { currency: 'USD', region: 'USD' },
+    ],
+  }, data);
 }
 
 export default function createProjectStore() {
-  const localStorageCurrencies = localStorage.getItem('projectCurrencies');
   return {
     state: {
       project: null,
       projectPublicName: '',
-
-      // @todo remove after adding real param to API
-      currencies: localStorageCurrencies ? JSON.parse(localStorageCurrencies) : ['USD'],
-    },
-
-    getters: {
-      currenciesDetailed(state) {
-        return state.currencies.map((item) => {
-          const [currency, region] = item.split('-');
-          if (region) {
-            return {
-              currency,
-              region,
-            };
-          }
-          return {
-            currency,
-            region: currency,
-          };
-        });
-      },
     },
 
     mutations: {
       project(state, value) {
-        state.project = value;
+        state.project = mapDataApiToForm(value);
       },
       projectPublicName(state, value) {
         state.projectPublicName = value.en;
@@ -71,72 +75,23 @@ export default function createProjectStore() {
     },
 
     actions: {
-      async initState({ state, commit, dispatch }, { id, name, image }) {
-        if (id === 'new') {
-          commit('project', {
-            name: {
-              ru: '',
-              en: name || '',
-            },
-            image: image || '',
-            url_check_account: 'https://ya.ru',
-            url_process_payment: 'https://ya.ru',
-            url_redirect_success: 'https://ya.ru',
-            url_redirect_fail: 'https://ya.ru',
-            secret_key: '',
-            create_invoice_allowed_urls: [],
-
-            callback_protocol: 'default',
-            min_payment_amount: 0,
-            max_payment_amount: 0,
-
-            callback_currency: '',
-            limits_currency: '',
-
-            // allow_dynamic_notify_urls: false,
-            // allow_dynamic_redirect_urls: true,
-            is_products_checkout: true,
-            // notify_emails: [],
-            // send_notify_email: false,
-            // status: 0,
-          });
-          // commit('project', {
-          //   name: 'Universe of Futurama222',
-          //   callback_currency: 643,
-          //   callback_protocol: 'default',
-          //   create_invoice_allowed_urls: [],
-          //   limits_currency: 643,
-          //   max_payment_amount: 10000,
-          //   min_payment_amount: 100,
-          //   notify_emails: [],
-          //   secret_key: '',
-          //   url_check_account: null,
-          //   url_process_payment: null,
-          //   url_redirect_fail: null,
-          //   url_redirect_success: null,
-          //   is_active: true,
-          //   send_notify_email: false,
-          //   only_fixed_amounts: true,
-          //   is_allow_dynamic_notify_urls: false,
-          //   is_allow_dynamic_redirect_urls: true,
-          // });
-          commit('projectPublicName', state.project.name);
-          return;
-        }
+      async initState({ dispatch }, { id }) {
         await dispatch('fetchProject', id);
       },
 
       async fetchProject({ state, commit, rootState }, id) {
-        const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/projects/${id}`);
-        commit('project', mapDataApiToForm(response.data.item));
+        const { data } = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/projects/${id}`);
+        commit('project', data.item);
         commit('projectPublicName', state.project.name);
       },
 
       async saveProject({ state, commit, rootState }, project) {
-        await axios.patch(
+        console.log(11111, 'J', JSON.stringify(project, null, '  '));
+        const { data } = await axios.patch(
           `${rootState.config.apiUrl}/admin/api/v1/projects/${state.project.id}`,
           mapDataFormToApi(project),
         );
+        commit('project', data);
         commit('projectPublicName', state.project.name);
       },
 

@@ -17,7 +17,7 @@ export default {
   props: {
     currencies: {
       type: Array,
-      default: () => ['USD'],
+      default: () => [{ currency: 'USD', region: 'USD' }],
     },
   },
 
@@ -35,22 +35,26 @@ export default {
   computed: {
     ...mapGetters('Dictionaries', ['currenciesWithRegions']),
 
+    currenciesValues() {
+      return this.currencies.map(item => this.getValueFromItem(item));
+    },
+
     selectOptions() {
       const result = this.currenciesWithRegions.map((item) => {
         if (item.currency === item.region) {
           return {
-            code: item.currency,
+            value: item.currency,
             label: `${this.$t(`currencies.${item.currency}`)} (${item.currency})`,
           };
         }
         return {
-          code: `${item.currency}-${item.region}`,
+          value: `${item.currency}-${item.region}`,
           label: `${this.$t(`currencies.${item.currency}`)} ${item.region} (${item.currency})`,
         };
       });
       return [
         {
-          code: 'USD',
+          value: 'USD',
           label: 'American Dollar (USD)',
         },
         ...result,
@@ -59,8 +63,21 @@ export default {
   },
 
   methods: {
+    getItemFromValue(value) {
+      const [currency, region] = value.split('-');
+      if (region) {
+        return { currency, region };
+      }
+      return { currency, region: currency };
+    },
+    getValueFromItem(item) {
+      if (item.currency === item.region) {
+        return item.currency;
+      }
+      return `${item.currency}-${item.region}`;
+    },
     openEntityManagementModal() {
-      this.localizationsModalCurrencies = this.currencies.slice();
+      this.localizationsModalCurrencies = this.currenciesValues.slice();
       this.isEntityManagementModalOpened = true;
     },
 
@@ -85,18 +102,19 @@ export default {
       if (this.isToReopenAddModal) {
         this.isEntityManagementModalOpened = true;
         this.isToReopenAddModal = false;
-        const newCurrencies = this.localizationsModalCurrencies
+        this.localizationsModalCurrencies = this.localizationsModalCurrencies
           .filter(item => this.currencyToDelete !== item);
-        this.localizationsModalCurrencies = newCurrencies;
       } else {
-        const newCurrencies = this.currencies.filter(item => this.currencyToDelete !== item);
+        const newCurrencies = this.currencies
+          .filter(item => this.currencyToDelete !== this.getValueFromItem(item));
         this.$emit('change', newCurrencies);
       }
     },
 
-    handleModalSave(newCurrencies) {
-      this.$emit('change', newCurrencies);
+    handleModalSave(currencies) {
+      const newCurrencies = currencies.map(item => this.getItemFromValue(item));
       this.isEntityManagementModalOpened = false;
+      this.$emit('change', newCurrencies);
     },
   },
 };
@@ -106,8 +124,8 @@ export default {
 <div>
   <UiEntityMainHub
     label="Currencies"
-    :value="currencies"
-    :defaultOption="defaultOptionCode"
+    :items="currenciesValues"
+    :defaultOptionValue="defaultOptionCode"
     @add="openEntityManagementModal"
     @delete="requestDeleteCurrency"
   />
@@ -126,9 +144,9 @@ export default {
     v-if="isEntityManagementModalOpened"
     v-model="localizationsModalCurrencies"
     title="Select currencies"
-    :value="currencies"
-    :options="selectOptions"
-    :defaultOptionCode="defaultOptionCode"
+    :value="currenciesValues"
+    :items="selectOptions"
+    :defaultOptionValue="defaultOptionCode"
     @close="isEntityManagementModalOpened = false"
     @delete="requestDeleteCurrencyFromModal"
     @save="handleModalSave"

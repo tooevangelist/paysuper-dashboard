@@ -14,11 +14,11 @@ export default {
       type: String,
       required: true,
     },
-    defaultOptionCode: {
+    defaultOptionValue: {
       type: String,
       required: true,
     },
-    options: {
+    items: {
       type: Array,
       required: true,
     },
@@ -28,20 +28,15 @@ export default {
     },
   },
 
-  data() {
-    return {
-    };
-  },
-
   methods: {
     includes,
 
-    toggleItemSelected(itemCode) {
-      if (itemCode === this.defaultOptionCode || includes(this.value, itemCode)) {
+    toggleItemSelected(itemValue) {
+      if (itemValue === this.defaultOptionValue || includes(this.value, itemValue)) {
         return;
       }
       const newItems = this.value.slice();
-      newItems.push(itemCode);
+      newItems.push(itemValue);
 
       this.$emit('update', newItems);
     },
@@ -64,14 +59,14 @@ export default {
   </UiHeader>
   <UiScrollbarBox class="content">
     <div
-      v-for="(item, index) in options"
+      v-for="(item, index) in items"
       class="item"
       :key="index"
       :class="{
-        '_selected': includes(value, item.code),
-        '_undeletable': item.code === defaultOptionCode,
+        '_selected': includes(value, item.value),
+        '_undeletable': item.value === defaultOptionValue,
       }"
-      @click="toggleItemSelected(item.code)"
+      @click="toggleItemSelected(item.value)"
     >
       <div class="icon" v-if="item.iconComponent">
         <component :is="item.iconComponent" />
@@ -83,7 +78,7 @@ export default {
 
       <span
         class="delete-icon"
-        @click="$emit('delete', item.code)"
+        @click="$emit('delete', item.value)"
       >
         <IconCloseInCircle />
       </span>

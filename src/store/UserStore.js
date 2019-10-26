@@ -93,6 +93,9 @@ export default function createUserStore(resources) {
           });
           await dispatch('setAccessToken', response.data.access_token);
         } catch (error) {
+          // logout is required in case when we can't get new token (refresh failed),
+          // but auth form thinks we're still logged (because of cookies)
+          // In that case auth form won't show itself until we clear the cookies
           await dispatch('logout');
           throw error;
         }

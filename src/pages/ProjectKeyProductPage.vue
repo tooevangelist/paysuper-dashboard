@@ -1,5 +1,5 @@
 <script>
-import { mapState, mapActions, mapGetters } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import { required } from 'vuelidate/lib/validators';
 import { find, cloneDeep, debounce } from 'lodash-es';
 import { OpenFileDialog } from '@/helpers/uploader';
@@ -50,7 +50,6 @@ export default {
 
   computed: {
     ...mapState('Project', ['project']),
-    ...mapGetters('Project', ['currenciesDetailed']),
     ...mapState('ProjectKeyProduct', ['keyProductId', 'keyProduct', 'platforms', 'keyCounts']),
 
     platformNameForDelete() {
@@ -102,7 +101,7 @@ export default {
       this.keyProductLocal = cloneDeep(this.keyProduct);
 
       this.keyProductLocal.platforms.forEach((platform) => {
-        platform.prices = this.currenciesDetailed.map(({ currency, region }) => {
+        platform.prices = this.project.currencies.map(({ currency, region }) => {
           const match = find(platform.prices, { currency, region });
           return {
             currency,
@@ -138,7 +137,7 @@ export default {
         const platform = find(this.platforms, { id });
         this.keyProductLocal.platforms.push({
           ...platform,
-          prices: this.currenciesDetailed.map(item => ({
+          prices: this.project.currencies.map(item => ({
             ...item,
             amount: '',
           })),
@@ -303,7 +302,7 @@ export default {
       <ProjectKeyProductPriceBlock
         ref="pricesBlock"
         :platforms="keyProductLocal.platforms"
-        :currencies="currenciesDetailed"
+        :currencies="project.currencies"
         @fillSteamPrices="handleRecommendedPricesSelect($event, 'steam')"
         @fillConvertedPrices="handleRecommendedPricesSelect($event, 'conversion')"
       />
