@@ -3,7 +3,7 @@ import { mapActions, mapState } from 'vuex';
 import { format } from 'date-fns';
 import moment from 'moment';
 import {
-  get,
+  get, find,
 } from 'lodash-es';
 import ReportCardStore from '@/store/ReportCardStore';
 import ReportDispute from '@/components/ReportDispute.vue';
@@ -55,7 +55,7 @@ export default {
   },
 
   computed: {
-    ...mapState('ReportCard', ['report']),
+    ...mapState('ReportCard', ['report', 'transactionsList']),
   },
 
   methods: {
@@ -104,6 +104,26 @@ export default {
 
     returnColorAmount(status) {
       return status === 'paid' ? '#069697' : '#3E4345';
+    },
+
+    getColor(status) {
+      return STATUS_COLOR[status];
+    },
+
+    getProductName(items) {
+      if (items === null) {
+        return 'Checkout';
+      }
+
+      if (items.length > 1) {
+        return 'Product';
+      }
+
+      return items[0].name;
+    },
+
+    getCountryByCode(code) {
+      return get(find(this.countries, ({ value }) => value === code), 'label', code);
     },
   },
 };
@@ -155,48 +175,239 @@ export default {
       </span>
     </div>
 
-    <UiTabs
-      class="tabs"
-      :items="reportTabs"
-      v-model="currentTab">
-    </UiTabs>
-
     <UiPanel>
-      <UiTable v-if="currentTab === 0">
+      <UiTabs
+        class="tabs"
+        :items="reportTabs"
+        v-model="currentTab">
+      </UiTabs>
+      <div v-if="currentTab === 0 && report.summary !== null">
+        <div class="total-summary">
+          <div class="total-summary__col">
+            <span>
+              {{ report.currency }}
+            </span>
+            <span>Report currency</span>
+          </div>
+          <div class="total-summary__col">
+            <span>
+              {{
+                 report.summary.products_total !== null
+                  ? report.summary.products_total.total_transactions
+                  : 0
+              }}
+            </span>
+            <span>Transactions quantity</span>
+          </div>
+          <div class="total-summary__col">
+            <span>
+              {{
+                report.summary.corrections !== null
+                  ? report.summary.corrections.amount
+                  : 0
+              }}
+            </span>
+            <span>Correction amount</span>
+          </div>
+          <div class="total-summary__col">
+            <span>
+              {{
+                report.summary.rolling_reserves !== null
+                  ? report.summary.rolling_reserves.amount
+                  : 0
+              }}
+            </span>
+            <span>Rolling reserve amount</span>
+          </div>
+        </div>
+
+        <UiTable class="summary-table" v-if="report.summary.products_items !== null">
+          <UiTableRow :isHead="true">
+            <UiTableCell align="left">Product</UiTableCell>
+            <UiTableCell align="left">Country</UiTableCell>
+            <UiTableCell align="left">Total End User Sales</UiTableCell>
+            <UiTableCell align="left">Total End User Fees</UiTableCell>
+            <UiTableCell align="left">Returns Qty</UiTableCell>
+            <UiTableCell align="left">Returns Amount</UiTableCell>
+            <UiTableCell align="left">End User Sales</UiTableCell>
+            <UiTableCell align="left">End User Fees</UiTableCell>
+            <UiTableCell align="left">VAT on End User Sales</UiTableCell>
+            <UiTableCell align="left">License Share</UiTableCell>
+            <UiTableCell align="left">License Fee</UiTableCell>
+          </UiTableRow>
+          <UiTableRow
+            class="product-total"
+            v-if="report.summary !== null && report.summary.products_total !== null"
+             >
+            <UiTableCell align="left">
+              Total
+            </UiTableCell>
+            <UiTableCell/>
+            <UiTableCell align="left">
+              {{ report.summary.products_total.total_transactions }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ report.summary.products_total.gross_sales_amount }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ report.summary.products_total.returns_count }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ report.summary.products_total.gross_returns_amount }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ report.summary.products_total.sales_count }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ report.summary.products_total.gross_total_amount }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ report.summary.products_total.total_vat }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ report.summary.products_total.total_fees }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ report.summary.products_total.payout_amount }}
+            </UiTableCell>
+          </UiTableRow>
+          <UiTableRow
+            class="product"
+            v-for="(product, index) in report.summary.products_items"
+            :key="index"
+            >
+            <UiTableCell align="left">
+              {{ product.product }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ product.region }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ product.total_transactions }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ product.gross_sales_amount }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ product.returns_count }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ product.gross_returns_amount }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ product.sales_count }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ product.gross_total_amount }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ product.total_vat }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ product.total_fees }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ product.payout_amount }}
+            </UiTableCell>
+          </UiTableRow>
+        </UiTable>
+      </div>
+
+      <UiTable v-if="currentTab === 1 && transactionsList.count !== 0">
         <UiTableRow :isHead="true">
-          <UiTableCell align="left">Period</UiTableCell>
-          <UiTableCell align="left">Report date</UiTableCell>
-          <UiTableCell align="left">Payout ID</UiTableCell>
-          <UiTableCell align="left">Payment date</UiTableCell>
+          <UiTableCell align="left">Product</UiTableCell>
+          <UiTableCell align="left">Transaction ID</UiTableCell>
+          <UiTableCell align="left">Date & Time</UiTableCell>
+          <UiTableCell align="left">Country</UiTableCell>
+          <UiTableCell align="left">Method</UiTableCell>
           <UiTableCell align="left">Amount</UiTableCell>
-          <UiTableCell align="left">Status</UiTableCell>
-          <UiTableCell align="left" width="3%"></UiTableCell>
+          <UiTableCell align="left">VAT</UiTableCell>
+          <UiTableCell align="left">Comission</UiTableCell>
+          <UiTableCell align="left">Payout</UiTableCell>
         </UiTableRow>
         <UiTableRow
-          class="report"
+          class="transaction"
+          v-for="(transaction, index) in transactionsList.items"
+          :key="index"
           >
           <UiTableCell align="left">
-            {{ getFormattedDate(report.period_from.seconds) }}
-            —
-            {{ getFormattedDate(report.period_to.seconds) }}
+            <div class="status-dot"
+              :class="`status-${transaction.status}-dot`"
+              :title="transaction.status">
+            </div>
+            {{ getProductName(transaction.items) }}
           </UiTableCell>
           <UiTableCell align="left">
-            {{ getFormattedDate(report.created_at.seconds) }}
+            {{ transaction.transaction }}
           </UiTableCell>
           <UiTableCell align="left">
-            {{ getValue(report, 'payout_document_id') }}
+            {{ formatDateAndTime(transaction.created_at.seconds) }}
+          </UiTableCell>
+          <UiTableCell
+            align="left"
+            class="country-name"
+            :title="getCountryByCode(transaction.country_code)"
+            >
+            <div>
+              {{ getCountryByCode(transaction.country_code) }}
+            </div>
           </UiTableCell>
           <UiTableCell align="left">
-            {{ getFormattedDate(report.payout_date.seconds) }}
+            {{ transaction.payment_method.title }}
           </UiTableCell>
-          <UiTableCell align="left" :style="{ color: returnColorAmount(report.status) }">
+          <UiTableCell align="left">
             {{
-            report.totals !== null && report.currency && report.totals.payout_amount
-            ? $formatPrice(report.totals.payout_amount, report.currency)
-            : '—'
+              transaction.status === 'refunded'
+              ? $formatPrice(
+                transaction.refund_gross_revenue.amount,
+                transaction.refund_gross_revenue.currency
+              )
+              : $formatPrice(
+                transaction.gross_revenue.amount,
+                transaction.gross_revenue.currency
+              )
             }}
           </UiTableCell>
-          <UiTableCell/>
+          <UiTableCell align="left">
+            {{
+              transaction.status === 'refunded'
+              ? $formatPrice(
+                transaction.refund_tax_fee.amount,
+                transaction.refund_tax_fee.currency
+              )
+              : $formatPrice(
+                transaction.tax_fee.amount,
+                transaction.tax_fee.currency
+              )
+            }}
+          </UiTableCell>
+          <UiTableCell align="left">
+            {{
+              transaction.status === 'refunded'
+              ? $formatPrice(
+                transaction.refund_fees_total.amount ? transaction.refund_fees_total.amount : 0,
+                transaction.refund_fees_total.currency
+              )
+              : $formatPrice(
+                transaction.fees_total.amount,
+                transaction.fees_total.currency
+              )
+            }}
+          </UiTableCell>
+          <UiTableCell class="transaction-amount" align="left"
+            :class="`status-${transaction.status}`">
+            {{
+              transaction.status === 'refunded'
+              ? $formatPrice(
+                transaction.refund_reverse_revenue.amount,
+                transaction.refund_reverse_revenue.currency
+              )
+              : $formatPrice(
+                transaction.net_revenue.amount,
+                transaction.net_revenue.currency
+              )
+            }}
+          </UiTableCell>
         </UiTableRow>
       </UiTable>
     </UiPanel>
@@ -252,5 +463,94 @@ export default {
       width: 100%;
     }
   }
+}
+
+.transaction-amount {
+  color: aqua
+}
+
+.tabs {
+  margin: 0 0 24px;
+}
+
+.total-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  background-color: #F7F9FA;
+  margin: 0 0 24px;
+  &__col {
+    text-align: center;
+    margin: 12px 24px;
+    & span {
+      font-size: 12px;
+      display: block;
+      &:first-child {
+        font-size: 16px;
+        font-weight: 500;
+        color: #000;
+      }
+    }
+  }
+}
+
+.summary-table {
+  font-size: 12px;
+  .product:nth-child(2n + 1) {
+    background-color: #F7F9FA;
+  }
+  .ui-table-cell {
+    padding-right: 8px;
+  }
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  box-sizing: border-box;
+  display: inline-block;
+  position: relative;
+  top: -2px;
+  margin-right: 5px;
+
+  &.green {
+    background: #2fa84f;
+  }
+
+  &.blue {
+    background: #3d7bf5;
+  }
+
+  &.yellow {
+    background: #f3aa18;
+  }
+
+  &.red {
+    background: #ea3d2f;
+  }
+
+  &.transparent {
+    border: 1px solid #919699;
+  }
+}
+
+.status-processed {
+  color: #069697;
+  &-dot {
+    background: #069697;
+  }
+}
+
+.status-refunded {
+  color: #EA3D2F;
+  &-dot {
+    background: #EA3D2F;
+  }
+}
+
+.product-total {
+  font-weight: 500;
 }
 </style>
