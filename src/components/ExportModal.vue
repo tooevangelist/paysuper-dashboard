@@ -1,6 +1,13 @@
 <script>
 export default {
-  name: 'PayoutExportModal',
+  name: 'ExportModal',
+
+  props: {
+    title: {
+      default: 'Export data',
+      type: String,
+    },
+  },
 
   data() {
     return {
@@ -18,7 +25,7 @@ export default {
       level="3"
       align="center"
     >
-      Export of payout
+     {{ title }}
     </UiHeader>
 
     <div class="content">

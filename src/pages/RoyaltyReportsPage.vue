@@ -11,6 +11,7 @@ import reportsStatusScheme from '@/schemes/reportsStatusScheme';
 import ReportsListStore from '@/store/ReportsListStore';
 import NoResults from '@/components/NoResults.vue';
 import CreatePayoutModal from '@/components/CreatePayoutModal.vue';
+import ExportModal from '@/components/ExportModal.vue';
 
 const STATUS_COLOR = {
   pending: 'orange',
@@ -36,6 +37,7 @@ export default {
   components: {
     NoResults,
     CreatePayoutModal,
+    ExportModal,
   },
 
   async asyncData({ store, registerStoreModule, route }) {
@@ -55,6 +57,9 @@ export default {
       showRefundModal: false,
       currentTransaction: null,
       isCreatePayoutModalOpened: false,
+      openedReportId: null,
+      reportIdExport: null,
+      showExportModal: false,
     };
   },
 
@@ -100,6 +105,10 @@ export default {
       'submitFilters',
       'fetchReports',
       'getBalance',
+    ]),
+    ...mapActions('ExportFile', [
+      'createReportFile',
+      'initWaitingFile',
     ]),
 
     get,
@@ -174,6 +183,26 @@ export default {
 
     getValue(item, path) {
       return get(item, path) || '—';
+    },
+
+    showExport(id) {
+      this.reportIdExport = id;
+      this.showExportModal = !this.showExportModal;
+    },
+
+    async exportFile(fileType) {
+      this.setIsLoading(true);
+      await this.createReportFile({
+        file_type: fileType.toLowerCase(),
+        report_type: 'royalty',
+        params: {
+          id: this.reportIdExport,
+        },
+      });
+      this.setIsLoading(false);
+      this.showExportModal = false;
+
+      this.initWaitingFile();
     },
   },
 };
@@ -295,13 +324,69 @@ export default {
                   each report within 5 days period, since it was created
               </UiTip>
             </UiTableCell>
-            <UiTableCell/>
+            <UiTableCell
+              class="cell-with-menu"
+              align="left"
+              valign="middle"
+              @mouseenter.native="openedReportId = report.id"
+              @mouseleave.native="() => openedReportId = null"
+              :noPadding="true"
+            >
+              <div class="dots-menu">
+                <UiDotsMenuTrigger
+                  class="dots-menu-trigger"
+                  :isOpened="openedReportId === report.id"
+                />
+                <UiTip
+                  innerPosition="right"
+                  position="bottom"
+                  width="180px"
+                  :margin="0"
+                  :visible="openedReportId === report.id"
+                  :closeDelay="0"
+                  :stayOpenedOnHover="false"
+                >
+                  <UiTooltipMenuItem
+                    v-if="report.status === 'pending'"
+                    class="dots-menu__item"
+                    iconComponent="IconCheckInCircle"
+                    @click.stop.prevent=""
+                  >
+                    Confirm
+                  </UiTooltipMenuItem>
+                  <UiTooltipMenuItem
+                    v-if="report.status === 'pending'"
+                    class="dots-menu__item"
+                    iconComponent="IconDispute"
+                    @click.stop.prevent=""
+                  >
+                   <IconDispute slot="iconBefore" />
+                    Dispute
+                  </UiTooltipMenuItem>
+                  <UiTooltipMenuItem
+                    class="dots-menu__item"
+                    iconComponent="IconDownload"
+                    @click.stop.prevent="showExport(report.id)"
+                  >
+                    Export data
+                  </UiTooltipMenuItem>
+                </UiTip>
+              </div>
+            </UiTableCell>
           </UiTableRow>
         </UiTable>
 
         <NoResults type="add-new" v-else>You don’t have any item yet</NoResults>
       </div>
     </UiPanel>
+
+    <ExportModal
+      title="Export of royalty report"
+      v-show="showExportModal"
+      @export="exportFile"
+      @close="showExportModal = false"
+    />
+
   </div>
 </template>
 
@@ -398,5 +483,21 @@ export default {
 
 .status-paid {
   color: #069697
+}
+
+.cell-with-menu {
+  position: relative;
+  padding-right: 5px;
+}
+.dots-menu {
+  position: relative;
+  &__item {
+    /deep/
+    .menu-icon {
+      svg {
+        fill:  #78909C !important;
+      }
+    }
+  }
 }
 </style>

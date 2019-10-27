@@ -7,6 +7,7 @@ import {
 } from 'lodash-es';
 import ReportCardStore from '@/store/ReportCardStore';
 import ReportDispute from '@/components/ReportDispute.vue';
+import ExportModal from '@/components/ExportModal.vue';
 
 const STATUS_COLOR = {
   pending: 'orange',
@@ -30,12 +31,14 @@ export default {
   name: 'RoyaltyReportCard',
   components: {
     ReportDispute,
+    ExportModal,
   },
 
   data() {
     return {
       colors: STATUS_COLOR,
       showDisputeModal: false,
+      showExportModal: false,
       reportTabs: [
         { label: 'Summary', value: 'sum' },
         { label: 'Transactions report', value: 'trans' },
@@ -55,7 +58,10 @@ export default {
   },
 
   computed: {
-    ...mapState('ReportCard', ['report', 'transactionsList']),
+    ...mapState('ReportCard', [
+      'report',
+      'transactionsList',
+    ]),
   },
 
   methods: {
@@ -63,6 +69,10 @@ export default {
     ...mapActions('ReportCard', [
       'acceptReport',
       'dispute',
+    ]),
+    ...mapActions('ExportFile', [
+      'createReportFile',
+      'initWaitingFile',
     ]),
 
     formatDateAndTime(seconds) {
@@ -125,6 +135,21 @@ export default {
     getCountryByCode(code) {
       return get(find(this.countries, ({ value }) => value === code), 'label', code);
     },
+
+    async exportFile(fileType) {
+      this.setIsLoading(true);
+      await this.createReportFile({
+        file_type: fileType.toLowerCase(),
+        report_type: 'royalty',
+        params: {
+          id: this.report.id,
+        },
+      });
+      this.setIsLoading(false);
+      this.showExportModal = false;
+
+      this.initWaitingFile();
+    },
   },
 };
 </script>
@@ -176,11 +201,23 @@ export default {
     </div>
 
     <UiPanel>
-      <UiTabs
-        class="tabs"
-        :items="reportTabs"
-        v-model="currentTab">
-      </UiTabs>
+      <div class="panel-header">
+        <div class="panel-header__col">
+          <UiTabs
+            class="tabs"
+            :items="reportTabs"
+            v-model="currentTab">
+          </UiTabs>
+        </div>
+        <div class="panel-header__col">
+          <div class="export">
+            <div class="export__button" @click="showExportModal = !showExportModal">
+                <IconDownload/>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div v-if="currentTab === 0 && report.summary !== null">
         <div class="total-summary">
           <div class="total-summary__col">
@@ -415,7 +452,15 @@ export default {
     <ReportDispute
       :showModal="showDisputeModal"
       @close="showDisputeModal = false"
-      @input="declineReport($event)"></ReportDispute>
+      @input="declineReport($event)"
+    />
+
+    <ExportModal
+      title="Export of royalty report"
+      v-show="showExportModal"
+      @export="exportFile"
+      @close="showExportModal = false"
+    />
   </div>
 </template>
 
@@ -471,6 +516,7 @@ export default {
 
 .tabs {
   margin: 0 0 24px;
+  position: relative;
 }
 
 .total-summary {
@@ -552,5 +598,51 @@ export default {
 
 .product-total {
   font-weight: 500;
+}
+
+.export {
+  position: relative;
+  top: -10px;
+  &__button {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto;
+
+    border: 1px solid #e3e5e6;
+    box-sizing: border-box;
+    border-radius: 4px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    cursor: pointer;
+    transition: all 0.2s ease-out;
+    & > svg {
+      fill: #78909C;
+      transition: fill 0.2s ease-out;
+    }
+
+    &:hover {
+      background: rgba(61, 123, 245, 0.08);
+
+      & > svg {
+        fill: #3d7bf5;
+      }
+    }
+  }
+}
+.panel-header {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  &__col {
+    width: 6%;
+    &:first-child {
+      width: 94%;
+    }
+  }
 }
 </style>
