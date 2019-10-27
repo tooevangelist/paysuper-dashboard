@@ -35,6 +35,7 @@
     "fs": "0.0.1-security",
     "handlebars": "^4.0.3",
     "hellosign-embedded": "^2.5.0",
+    "iban": "^0.0.12",
     "ioredis": "^4.6.2",
     "js-cookie": "^2.2.0",
     "koa": "^2.7.0",

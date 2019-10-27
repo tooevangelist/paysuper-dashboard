@@ -294,7 +294,8 @@ const routes = [
   },
   {
     path: '/confirm_email/',
-    component: () => import('@/pages/ConfirmEmail.vue'),
+    component: () => import('@/pages/ConfirmEmailPage.vue'),
+    meta: { initStore: ['config'] },
   },
   {
     path: '/receipt/:receiptType/:receiptId/:orderId',
