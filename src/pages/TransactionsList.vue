@@ -192,7 +192,6 @@ export default {
     },
 
     handleStatusInput(data) {
-      console.log(data)
       if (data === 'all') {
         this.filters.status = [];
         this.filters.dateFrom = null;
