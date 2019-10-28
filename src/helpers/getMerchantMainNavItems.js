@@ -18,11 +18,12 @@ export default function getMerchantMainNavItems({ hasMerchant }) {
       isAvailable: hasMerchant,
     },
     {
-      additional: 'Your weekly royalty reports',
+      additional: 'Weekly royalty reports',
       icon: 'IconBlank',
       link: '/reports',
-      title: 'Reports',
-      isAvailable: false,
+      title: 'Royalty reports',
+      routeNames: ['RoyaltyReportsPage'],
+      isAvailable: true,
     },
     {
       additional: 'Need license agreement',
@@ -34,9 +35,10 @@ export default function getMerchantMainNavItems({ hasMerchant }) {
     {
       additional: 'Full list of customer transactions',
       icon: 'IconCoin',
-      link: '/transaction',
+      link: '/transactions',
       title: 'Transaction Search',
-      isAvailable: false,
+      routeNames: ['TransactionsPage'],
+      isAvailable: true,
     },
     {
       additional: 'Technical integrations',

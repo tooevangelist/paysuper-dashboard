@@ -9,7 +9,7 @@ import { format } from 'date-fns';
 import PayoutsStore from '@/store/PayoutStore';
 import NoResults from '@/components/NoResults.vue';
 import payoutsStatusScheme from '@/schemes/payoutsStatusScheme';
-import PayoutExportModal from '@/components/PayoutExportModal.vue';
+import ExportModal from '@/components/ExportModal.vue';
 import PictureExcellentWork from '@/components/PictureExcellentWork.vue';
 import PictureGrave from '@/components/PictureGrave.vue';
 
@@ -17,7 +17,7 @@ export default {
   name: 'payouts',
 
   components: {
-    PayoutExportModal,
+    ExportModal,
     NoResults,
     PictureExcellentWork,
     PictureGrave,
@@ -314,7 +314,12 @@ export default {
       </div>
     </UiPanel>
 
-    <PayoutExportModal v-show="showModal" @export="exportFile" @close="showModal = false"/>
+    <ExportModal
+      title="Export of payout"
+      v-show="showModal"
+      @export="exportFile"
+      @close="showModal = false"
+    />
 
     <UiModal class="success-payout" width="448px" v-show="successModal">
       <div class="success-payout__content">

@@ -2,7 +2,7 @@
 import { mapActions, mapState } from 'vuex';
 import { format } from 'date-fns';
 import { forEach } from 'lodash-es';
-import PayoutExportModal from '@/components/PayoutExportModal.vue';
+import ExportModal from '@/components/ExportModal.vue';
 import PayoutCardStore from '@/store/PayoutCardStore';
 import payoutsStatusScheme from '@/schemes/payoutsStatusScheme';
 
@@ -10,7 +10,7 @@ export default {
   name: 'payoutCard',
 
   components: {
-    PayoutExportModal,
+    ExportModal,
   },
 
   async asyncData({ store, registerStoreModule, route }) {
@@ -231,7 +231,12 @@ export default {
       </div>
     </UiPanel>
 
-    <PayoutExportModal v-show="showModal" @export="exportFile" @close="showModal = false"/>
+    <ExportModal
+      title="Export of payout"
+      v-show="showModal"
+      @export="exportFile"
+      @close="showModal = false"
+    />
   </div>
 </template>
 
