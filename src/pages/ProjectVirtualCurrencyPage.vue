@@ -1,4 +1,6 @@
 <script>
+import { mapState, mapGetters, mapActions } from 'vuex';
+import { cloneDeep } from 'lodash-es';
 import { required } from 'vuelidate/lib/validators';
 import PictureLetterGLandscape from '@/components/PictureLetterGLandscape.vue';
 import TestingTag from '@/components/TestingTag.vue';
@@ -9,21 +11,10 @@ export default {
     PictureLetterGLandscape,
     TestingTag,
   },
-  props: {
-    project: {
-      type: Object,
-      required: true,
-    },
-    uploadImage: {
-      type: Function,
-      required: true,
-    },
-  },
 
   data() {
     return {
-      langs: ['en', 'ru'],
-      currencies: ['USD', 'EUR'],
+      projectLocal: null,
       image: '',
       virtualCurrencyName: {
         en: '',
@@ -40,6 +31,11 @@ export default {
     };
   },
 
+  computed: {
+    ...mapState('Project', ['project']),
+    ...mapGetters('Project', ['currenciesTags', 'defaultCurrencyValue']),
+  },
+
   validations: {
     virtualCurrencyName: {
       en: {
@@ -48,13 +44,29 @@ export default {
     },
   },
 
+  watch: {
+    project() {
+      this.updateProjectLocal();
+    },
+  },
+
+  created() {
+    this.updateProjectLocal();
+  },
+
   methods: {
+    ...mapActions(['uploadImage']),
+
+    updateProjectLocal() {
+      this.projectLocal = cloneDeep(this.project);
+    },
+
     handleSave() {
-      this.$v.touch();
+      this.$v.$touch();
       if (this.$v.$invalid) {
         return;
       }
-      this.$emit('save');
+      this.$emit('save', this.projectLocal);
     },
   },
 };
@@ -86,13 +98,13 @@ export default {
       />
       <UiLangTextField
         :value="virtualCurrencyName"
-        :langs="langs"
+        :langs="projectLocal.localizations"
         label="Virtual currency name"
         v-bind="$getValidatedFieldProps('virtualCurrencyName.en')"
       />
       <UiLangTextField
         :value="successfulMessage"
-        :langs="langs"
+        :langs="projectLocal.localizations"
         label="Custom message on successful payment"
       />
     </section>
@@ -126,11 +138,11 @@ export default {
       </div>
       <UiLangTextField
         :value="singleUnitPrice"
-        :langs="currencies"
+        :langs="currenciesTags"
         :isNumeric="true"
         :decimalLength="2"
         label="Virtual currency single unit price"
-        v-bind="$getValidatedFieldProps('singleUnitPrice.USD')"
+        v-bind="$getValidatedFieldProps(`singleUnitPrice.${defaultCurrencyValue}`)"
       />
     </section>
 

@@ -1,4 +1,4 @@
-export default function getMerchantMainNavItems({ hasMerchant }) {
+export default function getMerchantMainNavItems({ hasDefaultCurrency }) {
   return [
     {
       additional: 'Homepage for main controls',
@@ -10,12 +10,12 @@ export default function getMerchantMainNavItems({ hasMerchant }) {
     },
     {
       additional: 'Organise your products for sales',
-      unavailableReason: 'Need to start signing agreement',
+      unavailableReason: 'Need to fill banking info first',
       icon: 'IconFolder',
       link: '/projects',
       title: 'Projects',
       routeNames: ['ProjectsList'],
-      isAvailable: hasMerchant,
+      isAvailable: hasDefaultCurrency,
     },
     {
       additional: 'Weekly royalty reports',

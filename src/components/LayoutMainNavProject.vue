@@ -1,6 +1,6 @@
 <script>
 import { mapState } from 'vuex';
-import { findIndex, includes } from 'lodash-es';
+import { findIndex, includes, get } from 'lodash-es';
 import LayoutMainNavInnerBase from '@/components/LayoutMainNavInnerBase.vue';
 
 export default {
@@ -19,8 +19,11 @@ export default {
         {
           title: 'Sales options',
           icon: 'IconMoney',
-          url: `/projects/${projectId}/virtual-currency/`,
-          routeNames: ['ProjectVirtualCurrency', 'ProjectKeyProductsList'],
+          url: `/projects/${projectId}/sales-options/`,
+          routeNames: [
+            'ProjectSalesOptions', 'ProjectVirtualItems',
+            'ProjectVirtualCurrency', 'ProjectKeyProductsList',
+          ],
           available: true,
         },
         {
@@ -71,6 +74,10 @@ export default {
       return 'new';
     },
   },
+
+  methods: {
+    get,
+  },
 };
 </script>
 
@@ -78,7 +85,7 @@ export default {
 <LayoutMainNavInnerBase
   :headTitle="projectPublicName"
   :headStatus="status"
-  :headImage="project.image"
+  :headImage="get(project, 'cover.images.en', '')"
   :items="items"
   :currentItemIndex="currentItemIndex"
 />
