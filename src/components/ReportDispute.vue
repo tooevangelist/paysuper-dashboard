@@ -18,7 +18,7 @@ export default {
 </script>
 
 <template>
-  <UiModal width="448px" v-show="showModal">
+  <UiModal width="448px">
     <UiHeader
       slot="header"
       level="3"

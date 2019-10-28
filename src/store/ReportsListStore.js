@@ -111,6 +111,20 @@ export default function createReportsListStore() {
         const query = searchBuilder.getQueryFromFilterValues(newFilters);
         commit('query', query);
       },
+
+      async acceptReport({ rootState, dispatch }, id) {
+        const response = await axios.post(`${rootState.config.apiUrl}/admin/api/v1/royalty_reports/${id}/accept`);
+        if (response) {
+          await dispatch('fetchReports');
+        }
+      },
+
+      async dispute({ rootState, dispatch }, { reason, id }) {
+        const response = await axios.post(`${rootState.config.apiUrl}/admin/api/v1/royalty_reports/${id}/decline`, { dispute_reason: reason });
+        if (response) {
+          await dispatch('fetchReports');
+        }
+      },
     },
 
     namespaced: true,

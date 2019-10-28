@@ -11,6 +11,7 @@ import reportsStatusScheme from '@/schemes/reportsStatusScheme';
 import ReportsListStore from '@/store/ReportsListStore';
 import NoResults from '@/components/NoResults.vue';
 import CreatePayoutModal from '@/components/CreatePayoutModal.vue';
+import ReportDispute from '@/components/ReportDispute.vue';
 import ExportModal from '@/components/ExportModal.vue';
 
 const STATUS_COLOR = {
@@ -37,6 +38,7 @@ export default {
   components: {
     NoResults,
     CreatePayoutModal,
+    ReportDispute,
     ExportModal,
   },
 
@@ -58,8 +60,10 @@ export default {
       currentTransaction: null,
       isCreatePayoutModalOpened: false,
       openedReportId: null,
+      disputeReportId: null,
       reportIdExport: null,
       showExportModal: false,
+      showDisputeModal: false,
     };
   },
 
@@ -105,6 +109,8 @@ export default {
       'submitFilters',
       'fetchReports',
       'getBalance',
+      'acceptReport',
+      'dispute',
     ]),
     ...mapActions('ExportFile', [
       'createReportFile',
@@ -203,6 +209,27 @@ export default {
       this.showExportModal = false;
 
       this.initWaitingFile();
+    },
+
+    async confirmReport(id) {
+      this.setIsLoading(true);
+      await this.acceptReport(id)
+        .then(this.$showSuccessMessage('Report confirmed'))
+        .catch(this.$showErrorMessage);
+      this.setIsLoading(false);
+    },
+
+    openDispute(id) {
+      this.disputeReportId = id;
+      this.showDisputeModal = true;
+    },
+
+    async declineReport(reason) {
+      this.setIsLoading(true);
+      this.showDisputeModal = false;
+      await this.dispute({ reason, id: this.disputeReportId })
+        .catch(this.$showErrorMessage);
+      this.setIsLoading(false);
     },
   },
 };
@@ -350,7 +377,7 @@ export default {
                     v-if="report.status === 'pending'"
                     class="dots-menu__item"
                     iconComponent="IconCheckInCircle"
-                    @click.stop.prevent=""
+                    @click.stop.prevent="confirmReport(report.id)"
                   >
                     Confirm
                   </UiTooltipMenuItem>
@@ -358,7 +385,7 @@ export default {
                     v-if="report.status === 'pending'"
                     class="dots-menu__item"
                     iconComponent="IconDispute"
-                    @click.stop.prevent=""
+                    @click.stop.prevent="openDispute(report.id)"
                   >
                    <IconDispute slot="iconBefore" />
                     Dispute
@@ -379,6 +406,12 @@ export default {
         <NoResults type="add-new" v-else>You don’t have any item yet</NoResults>
       </div>
     </UiPanel>
+
+    <ReportDispute
+      v-show="showDisputeModal"
+      @close="showDisputeModal = false"
+      @input="declineReport($event)"
+    />
 
     <ExportModal
       title="Export of royalty report"
