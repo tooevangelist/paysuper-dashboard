@@ -40,7 +40,7 @@ export default {
       filterCounts: {},
       showRefundModal: false,
       colors: {},
-      showModal: false, // export modal
+      showModal: false, // export modal (not currently in use. the export works only in pdf)
       successModal: false, // create payout complete
       failModal: false,
       currentDoc: null,
@@ -182,13 +182,13 @@ export default {
       this.setIsLoading(false);
     },
 
-    async exportFile(fileType) {
+    async exportFile(fileType, id) {
       this.setIsLoading(true);
       await this.createReportFile({
         file_type: fileType.toLowerCase(),
         report_type: 'payout',
         params: {
-          id: this.currentDoc,
+          id,
         },
       });
       this.setIsLoading(false);
@@ -215,6 +215,17 @@ export default {
           <UiButton @click="newPayout" color="blue" :disabled="!payoutAvailable">
             CREATE PAYOUT
           </UiButton>
+        </div>
+        <div class="autopayouts" v-else>
+          <div class="autopayouts__ico">
+            <IconHistory />
+          </div>
+          <div class="autopayouts__info">
+            <UiHeader level="4">Autopayouts enabled</UiHeader>
+            <p>If you want to change it pls go to
+              <router-link to="/">payout settings</router-link>
+            </p>
+          </div>
         </div>
       </span>
     </UiPageHeaderFrame>
@@ -275,12 +286,24 @@ export default {
               {{ $formatPrice(payout.balance, payout.currency) }}
             </UiTableCell>
             <UiTableCell align="left">
-              <UiLabelTag :color="colors[payout.status]">
+              <UiLabelTag :color="colors[payout.status]" class="status-label">
                 {{ getStatusName(payout.status) }}
+                <div class="skip-tip" v-if="payout.status === 'skip'">
+                  <span class="icon"><IconInfo/></span>
+                  <UiTip
+                    width="258px"
+                    :visible="true"
+                    position="top"
+                    innerPosition="center"
+                    :margin="10"
+                    class="skip-tip__tip">
+                    You could not exceed your minimum payout threshold limit for now.
+                  </UiTip>
+                </div>
               </UiLabelTag>
             </UiTableCell>
             <UiTableCell align="left" width="3%">
-              <div class="download" @click.stop.prevent="showModal = true, currentDoc = payout.id">
+              <div class="download" @click.stop.prevent="exportFile('pdf', payout.id)">
                 <IconDownload></IconDownload>
               </div>
             </UiTableCell>
@@ -391,6 +414,64 @@ export default {
 
   &__controls {
     margin-top: 24px;
+  }
+}
+
+.status-label {
+  position: relative;
+  width: 104px;
+}
+
+.skip-tip {
+  position: absolute;
+  left: 8px;
+  top: 6px;
+
+  svg {
+    width: 12px;
+    height: 12px;
+    fill: #53585b;
+  }
+
+  &__tip {
+    display: none;
+    align-items: center;
+    height: 56px;
+    background: #000;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.8;
+    box-shadow: none;
+
+    &:after {
+      display: block;
+      content: '';
+      width: 6px;
+      height: 6px;
+      position: absolute;
+      bottom: -4px;
+      background: #000000;
+      transform: rotate(45deg);
+    }
+  }
+
+  &:hover &__tip {
+    display: flex;
+  }
+}
+
+.autopayouts {
+  display: flex;
+  margin: 15px 0;
+
+  &__ico {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 </style>
