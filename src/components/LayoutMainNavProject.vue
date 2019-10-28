@@ -19,8 +19,11 @@ export default {
         {
           title: 'Sales options',
           icon: 'IconMoney',
-          url: `/projects/${projectId}/virtual-currency/`,
-          routeNames: ['ProjectVirtualCurrency', 'ProjectKeyProductsList'],
+          url: `/projects/${projectId}/sales-options/`,
+          routeNames: [
+            'ProjectSalesOptions', 'ProjectVirtualItems',
+            'ProjectVirtualCurrency', 'ProjectKeyProductsList',
+          ],
           available: true,
         },
         {

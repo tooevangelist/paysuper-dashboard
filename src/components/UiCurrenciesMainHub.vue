@@ -1,6 +1,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import EntityManagementModal from '@/components/EntityManagementModal.vue';
+import { getCurrencyItemFromValue, getCurrencyValueFromItem } from '@/helpers/currencyDataConversion';
 
 export default {
   name: 'UiCurrenciesMainHub',
@@ -19,11 +20,14 @@ export default {
       type: Array,
       default: () => [{ currency: 'USD', region: 'USD' }],
     },
+    defaultCurrency: {
+      type: Object,
+      default: () => ({ currency: 'USD', region: 'USD' }),
+    },
   },
 
   data() {
     return {
-      defaultOptionCode: 'USD',
       isToReopenAddModal: false,
       isEntityManagementModalOpened: false,
       localizationsModalCurrencies: [],
@@ -36,7 +40,11 @@ export default {
     ...mapGetters('Dictionaries', ['currenciesWithRegions']),
 
     currenciesValues() {
-      return this.currencies.map(item => this.getValueFromItem(item));
+      return this.currencies.map(item => getCurrencyValueFromItem(item));
+    },
+
+    defaultCurrencyValue() {
+      return getCurrencyValueFromItem(this.defaultCurrency);
     },
 
     selectOptions() {
@@ -82,7 +90,7 @@ export default {
     },
 
     requestDeleteCurrency(currency) {
-      if (currency === this.defaultOptionCode) {
+      if (currency === this.defaultCurrencyValue) {
         return;
       }
       this.isDeleteModalOpened = true;
@@ -106,13 +114,13 @@ export default {
           .filter(item => this.currencyToDelete !== item);
       } else {
         const newCurrencies = this.currencies
-          .filter(item => this.currencyToDelete !== this.getValueFromItem(item));
+          .filter(item => this.currencyToDelete !== getCurrencyValueFromItem(item));
         this.$emit('change', newCurrencies);
       }
     },
 
     handleModalSave(currencies) {
-      const newCurrencies = currencies.map(item => this.getItemFromValue(item));
+      const newCurrencies = currencies.map(item => getCurrencyItemFromValue(item));
       this.isEntityManagementModalOpened = false;
       this.$emit('change', newCurrencies);
     },
@@ -125,7 +133,7 @@ export default {
   <UiEntityMainHub
     label="Currencies"
     :items="currenciesValues"
-    :defaultOptionValue="defaultOptionCode"
+    :defaultOptionValue="defaultCurrencyValue"
     @add="openEntityManagementModal"
     @delete="requestDeleteCurrency"
   />
@@ -146,7 +154,7 @@ export default {
     title="Select currencies"
     :value="currenciesValues"
     :items="selectOptions"
-    :defaultOptionValue="defaultOptionCode"
+    :defaultOptionValue="defaultCurrencyValue"
     @close="isEntityManagementModalOpened = false"
     @delete="requestDeleteCurrencyFromModal"
     @save="handleModalSave"

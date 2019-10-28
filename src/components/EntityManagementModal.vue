@@ -1,5 +1,5 @@
 <script>
-import { includes } from 'lodash-es';
+import { includes, sortBy } from 'lodash-es';
 
 export default {
   name: 'EntityManagement',
@@ -25,6 +25,17 @@ export default {
     value: {
       type: Array,
       required: true,
+    },
+  },
+
+  computed: {
+    itemsView() {
+      return sortBy(this.items, (item) => {
+        if (item.value === this.defaultOptionValue) {
+          return 0;
+        }
+        return 1;
+      });
     },
   },
 
@@ -59,7 +70,7 @@ export default {
   </UiHeader>
   <UiScrollbarBox class="content">
     <div
-      v-for="(item, index) in items"
+      v-for="(item, index) in itemsView"
       class="item"
       :key="index"
       :class="{
