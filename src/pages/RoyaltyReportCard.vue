@@ -450,7 +450,7 @@ export default {
     </UiPanel>
 
     <ReportDispute
-      :showModal="showDisputeModal"
+      v-show="showDisputeModal"
       @close="showDisputeModal = false"
       @input="declineReport($event)"
     />

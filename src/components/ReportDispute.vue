@@ -1,20 +1,6 @@
 <script>
-import {
-  UiTextarea,
-} from '@protocol-one/ui-kit';
-
 export default {
   name: 'ReportDispute',
-  components: {
-    UiTextarea,
-  },
-
-  props: {
-    showModal: {
-      type: Boolean,
-      required: true,
-    },
-  },
 
   data() {
     return {
@@ -51,7 +37,6 @@ export default {
         label="Details of correction"
         :required="true"
         v-model="reason"
-
       />
     </div>
 
@@ -95,7 +80,6 @@ export default {
 }
 .textBox {
   height: 120px;
-  /deep/
   & textarea {
     font-size: 16px;
     line-height: 24px;
