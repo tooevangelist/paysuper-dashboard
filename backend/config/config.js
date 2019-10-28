@@ -18,7 +18,7 @@ const config = {
   routesPrefix: getEnvVariable('ROUTES_PREFIX', ''),
   auth1RoutesNamespace: '/auth1',
 
-  sentryDsn: getEnvVariable('SENTRY_DSN', 'https://2fc1a112904e472da22284cad12c6d87@sentry.tst.protocol.one/10'),
+  sentryDsn: getEnvVariable('SENTRY_DSN', 'https://784314fe11d44fb0872d0044a28339a3@sentry.io/1796353'),
 
   publicHost: getEnvVariable('PUBLIC_HOST', 'http://localhost:8080'),
 
