@@ -240,14 +240,6 @@ $primary-button-size: 14px;
   }
   &._gray {
     @include base-button($gray-button-color);
-
-    &._transparent {
-      color: #000000;
-
-      &:hover {
-        color: $gray-button-color;
-      }
-    }
   }
   &._light-gray {
     @include base-button(

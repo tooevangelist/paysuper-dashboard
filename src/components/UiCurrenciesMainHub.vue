@@ -71,19 +71,6 @@ export default {
   },
 
   methods: {
-    getItemFromValue(value) {
-      const [currency, region] = value.split('-');
-      if (region) {
-        return { currency, region };
-      }
-      return { currency, region: currency };
-    },
-    getValueFromItem(item) {
-      if (item.currency === item.region) {
-        return item.currency;
-      }
-      return `${item.currency}-${item.region}`;
-    },
     openEntityManagementModal() {
       this.localizationsModalCurrencies = this.currenciesValues.slice();
       this.isEntityManagementModalOpened = true;
