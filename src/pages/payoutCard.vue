@@ -62,7 +62,7 @@ export default {
     async exportFile(fileType) {
       this.setIsLoading(true);
       await this.createReportFile({
-        file_type: fileType,
+        file_type: fileType.toLowerCase(),
         report_type: 'payout',
         params: {
           id: this.$route.params.id,
@@ -100,7 +100,7 @@ export default {
       />
 
       <div class="export-payout">
-        <div class="export-button" @click="showModal = !showModal">
+        <div class="export-button" @click="exportFile('pdf')">
           <svg width="14" height="17" viewBox="0 0 14 17">
             <path
               d="M0.700195 16.1H13.3002V14.3H0.700195V16.1ZM13.3002
@@ -150,6 +150,18 @@ export default {
             </div>
           </div>
           <div class="details__item">
+            <div class="details-info">
+              <span class="icon"><IconQuestion/></span>
+              <UiTip
+                width="208px"
+                :visible="true"
+                position="top"
+                innerPosition="center"
+                :margin="10"
+                class="details-info__tip">
+                Forecast date for arriving funds to your bank account.
+              </UiTip>
+            </div>
             <div class="details__item--label">Arrival date</div>
             <div class="details__item--info">
               {{ format(payout.arrival_date.seconds * 1000, 'dd.MM.yyyy') }}
@@ -252,6 +264,7 @@ export default {
   &__item {
     flex-basis: 50%;
     padding: 0 0 20px 12px;
+    position: relative;
 
     &--label {
       color: #5E6366;
@@ -262,6 +275,9 @@ export default {
     &--info {
       color: #000;
       letter-spacing: 0.44px;
+      overflow-wrap: break-word;
+      max-width: 428px;
+      overflow: hidden;
     }
   }
 
@@ -307,6 +323,46 @@ export default {
     & > svg {
       fill: #3d7bf5;
     }
+  }
+}
+
+.details-info {
+  position: absolute;
+  left: -6px;
+  top: 2px;
+
+  svg {
+    width: 12px;
+    height: 12px;
+    fill: #367BF5;
+  }
+
+  &__tip {
+    display: none;
+    align-items: center;
+    height: 56px;
+    background: #000;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.8;
+    box-shadow: none;
+
+    &:after {
+      display: block;
+      content: '';
+      width: 6px;
+      height: 6px;
+      position: absolute;
+      bottom: -4px;
+      background: #000000;
+      transform: rotate(45deg);
+    }
+  }
+
+  &:hover &__tip {
+    display: flex;
   }
 }
 </style>

@@ -363,6 +363,9 @@ export default {
 }
 
 .vi-name {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 6px;
   display: block;
   max-width: 307px;
   overflow: hidden;

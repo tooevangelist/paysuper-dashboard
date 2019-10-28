@@ -77,7 +77,7 @@ export default {
     },
 
     handleClick(item) {
-      if (item.expand) {
+      if (item.children !== undefined) {
         item.expand = !item.expand;
       } else {
         this.$emit('input', item.value);
