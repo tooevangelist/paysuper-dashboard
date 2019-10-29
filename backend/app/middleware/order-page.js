@@ -30,16 +30,16 @@ function getOrderParams({
   };
 }
 
-async function getOrderId(orderParams) {
+async function getOrderId(apiUrl, orderParams) {
   const { data } = await axios.post(
-    `${webappConfig.apiUrl}/api/v1/order`,
+    `${apiUrl}/api/v1/order`,
     orderParams,
   );
   return data.id;
 }
 
-async function getOrderData(orderId) {
-  const { data } = await axios.get(`${webappConfig.apiUrl}/api/v1/order/${orderId}`);
+async function getOrderData(apiUrl, orderId) {
+  const { data } = await axios.get(`${apiUrl}/api/v1/order/${orderId}`);
   return data;
 }
 
@@ -48,6 +48,7 @@ const sdkUrl = isDev ? 'http://localhost:4040/paysuper-form.js' : config.paysupe
 module.exports = async function orderPage(ctx) {
   const [, queryString] = ctx.request.url.split('?');
   const query = qs.parse(queryString);
+  const apiUrl = query.apiUrl || webappConfig.apiUrl;
 
   if (query.result) {
     return template({
@@ -76,8 +77,8 @@ module.exports = async function orderPage(ctx) {
   const orderParams = getOrderParams(query);
   let orderDataRaw;
   try {
-    const orderId = query.order_id || await getOrderId(orderParams);
-    orderDataRaw = await getOrderData(orderId);
+    const orderId = query.order_id || await getOrderId(apiUrl, orderParams);
+    orderDataRaw = await getOrderData(apiUrl, orderId);
   } catch (error) {
     let errorData = _.get(error, 'response.data');
     if (!errorData) {
