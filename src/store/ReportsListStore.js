@@ -1,18 +1,18 @@
 import axios from 'axios';
 import qs from 'qs';
-import assert from 'simple-assert';
 import SearchBuilder from '@/tools/SearchBuilder/SearchBuilder';
-import projectVirtualItemsScheme from '@/schemes/projectVirtualItemsScheme';
+import reportsFilterScheme from '@/schemes/reportsFilterScheme';
 
-const searchBuilder = new SearchBuilder(projectVirtualItemsScheme);
+const searchBuilder = new SearchBuilder(reportsFilterScheme);
 
-export default function createProjectVirtualItemsStore() {
+export default function createReportsListStore() {
   return {
     state: () => ({
-      virtualItems: {
+      reportsList: {
         items: [],
         count: 0,
       },
+      balance: {},
       filterValues: {},
       query: {},
       apiQuery: {},
@@ -36,11 +36,8 @@ export default function createProjectVirtualItemsStore() {
     },
 
     mutations: {
-      projectId(store, data) {
-        store.projectId = data;
-      },
-      virtualItems(store, data) {
-        store.virtualItems = data;
+      reportsList(store, data) {
+        store.reportsList = data;
       },
       filterValues(store, value) {
         store.filterValues = value;
@@ -51,41 +48,47 @@ export default function createProjectVirtualItemsStore() {
       apiQuery(store, value) {
         store.apiQuery = value;
       },
-      setCurrentItem(store, value) {
-        store.currentItem = value;
+      balance(store, value) {
+        store.balance = value;
       },
     },
 
     actions: {
-      async initState({ getters, dispatch, commit }, { projectId, query }) {
-        assert(projectId, 'ProjectVirtualItemsStore requires projectId param');
+      async initState({ getters, dispatch }, { query }) {
         const filters = getters.getFilterValues();
-        commit('projectId', projectId);
         dispatch('submitFilters', filters);
         dispatch('initQuery', query);
-        await dispatch('fetchItems');
+        await dispatch('fetchReports');
       },
 
-      async fetchItems({ state, commit, rootState }) {
+      async fetchReports({ state, commit, rootState }) {
         const query = qs.stringify({
           ...state.apiQuery,
-          project_id: state.projectId,
+          merchant_id: rootState.User.Merchant.merchant.id,
         }, { arrayFormat: 'brackets' });
-        const url = `${rootState.config.apiUrl}/admin/api/v1/products?${query}`;
+        const url = `${rootState.config.apiUrl}/admin/api/v1/royalty_reports?${query}`;
 
         const response = await axios.get(url);
-        const virtualItems = {
+        const reportsList = {
           ...response.data,
           items: response.data.items || [],
         };
         // append mode for infinite scroll
-        if (state.apiQuery.offset > 0 && virtualItems.count === state.virtualItems.count) {
-          virtualItems.items = [
-            ...state.virtualItems.items,
-            ...virtualItems.items,
+        if (state.apiQuery.offset > 0 && reportsList.count === state.reportssList.count) {
+          reportsList.items = [
+            ...state.reportsList.items,
+            ...reportsList.items,
           ];
         }
-        commit('virtualItems', virtualItems);
+        commit('reportsList', reportsList);
+      },
+
+      async getBalance({ commit, rootState }) {
+        const url = `${rootState.config.apiUrl}/admin/api/v1/balance`;
+        const response = await axios.get(url);
+        const balance = response.data || 0;
+
+        commit('balance', balance);
       },
 
       initQuery({ commit }, query) {
@@ -109,22 +112,18 @@ export default function createProjectVirtualItemsStore() {
         commit('query', query);
       },
 
-      async deleteItem({ rootState }, id) {
-        await axios.delete(`${rootState.config.apiUrl}/admin/api/v1/products/${id}`);
+      async acceptReport({ rootState, dispatch }, id) {
+        const response = await axios.post(`${rootState.config.apiUrl}/admin/api/v1/royalty_reports/${id}/accept`);
+        if (response) {
+          await dispatch('fetchReports');
+        }
       },
 
-      /**
-       * Edit Virtual item
-       * @param rootState
-       * @param data {Object}
-       * @param projectId {String}
-       * @returns {Promise<void>}
-       */
-      async editItem({ rootState }, { data, projectId }) {
-        await axios.put(`${rootState.config.apiUrl}/admin/api/v1/products/${data.id}`, {
-          ...data,
-          project_id: projectId,
-        });
+      async dispute({ rootState, dispatch }, { reason, id }) {
+        const response = await axios.post(`${rootState.config.apiUrl}/admin/api/v1/royalty_reports/${id}/decline`, { dispute_reason: reason });
+        if (response) {
+          await dispatch('fetchReports');
+        }
       },
     },
 

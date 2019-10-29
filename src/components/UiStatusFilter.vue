@@ -246,6 +246,11 @@ export default {
       border: 1px solid #919699;
     }
   }
+  &._grey {
+    &::before {
+      background: #C6CACC;
+    }
+  }
   &._gray {
     &::before {
       background: #919699;
@@ -269,6 +274,11 @@ export default {
   &._green {
     &::before {
       background: #2fa84f;
+    }
+  }
+  &._cian {
+    &::before {
+      background: #069697;
     }
   }
   &._red {
