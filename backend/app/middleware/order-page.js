@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const qs = require('qs');
 const axios = require('axios');
+const requestIp = require('request-ip');
+const ip6addr = require('ip6addr');
 const _ = require('lodash');
 const Handlebars = require('handlebars');
 const config = require('../../config/config');
@@ -39,16 +41,26 @@ async function getOrderId(apiUrl, orderParams) {
   return data.id;
 }
 
-async function getOrderData(apiUrl, orderId, ctx) {
-  const cookie = ctx.cookies.get(userIdentityCookieName);
+async function getOrderData(apiUrl, orderId, { ip, userCookie }) {
   const { data } = await axios.get(
     `${apiUrl}/api/v1/order/${orderId}`,
     {
-      Cookie: `${userIdentityCookieName}=${cookie}`,
+      Cookie: `${userIdentityCookieName}=${userCookie}`,
+      'X-Real-IP': ip,
     },
   );
   return data;
 }
+
+function getIp(request) {
+  let ip = '';
+  try {
+    ip = ip6addr.parse(requestIp.getClientIp(request)).toString({ format: 'v4' });
+    // eslint-disable-next-line no-empty
+  } catch { }
+  return ip;
+}
+
 
 const sdkUrl = isDev ? 'http://localhost:4040/paysuper-form.js' : config.paysuperSdkUrl;
 
@@ -56,6 +68,8 @@ module.exports = async function orderPage(ctx) {
   const [, queryString] = ctx.request.url.split('?');
   const query = qs.parse(queryString);
   const apiUrl = query.apiUrl || webappConfig.apiUrl;
+  const ip = getIp(ctx.request);
+  const userCookie = ctx.cookies.get(userIdentityCookieName);
 
   if (query.result) {
     return template({
@@ -85,7 +99,7 @@ module.exports = async function orderPage(ctx) {
   let orderDataRaw;
   try {
     const orderId = query.order_id || await getOrderId(apiUrl, orderParams);
-    orderDataRaw = await getOrderData(apiUrl, orderId, ctx);
+    orderDataRaw = await getOrderData(apiUrl, orderId, { ip, userCookie });
   } catch (error) {
     let errorData = _.get(error, 'response.data');
     if (!errorData) {
@@ -113,8 +127,7 @@ module.exports = async function orderPage(ctx) {
       orderParams,
       orderData,
       baseOptions,
-      ip: ctx.request.ip,
-      ips: ctx.request.ips,
+      ip,
     }),
     sdkUrl,
     hasForm: true,
