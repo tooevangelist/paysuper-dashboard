@@ -11,6 +11,7 @@ const orderTemplate = fs.readFileSync(path.resolve('backend/templates/order-page
 const template = Handlebars.compile(orderTemplate);
 
 const isDev = process.env.NODE_ENV === 'local';
+const userIdentityCookieName = '_ps_ctkn';
 
 function getOrderParams({
   project, token, products, amount, type, currency,
@@ -38,8 +39,14 @@ async function getOrderId(apiUrl, orderParams) {
   return data.id;
 }
 
-async function getOrderData(apiUrl, orderId) {
-  const { data } = await axios.get(`${apiUrl}/api/v1/order/${orderId}`);
+async function getOrderData(apiUrl, orderId, ctx) {
+  const cookie = ctx.cookies.get(userIdentityCookieName);
+  const { data } = await axios.get(
+    `${apiUrl}/api/v1/order/${orderId}`,
+    {
+      Cookie: `${userIdentityCookieName}=${cookie}`,
+    },
+  );
   return data;
 }
 
@@ -78,7 +85,7 @@ module.exports = async function orderPage(ctx) {
   let orderDataRaw;
   try {
     const orderId = query.order_id || await getOrderId(apiUrl, orderParams);
-    orderDataRaw = await getOrderData(apiUrl, orderId);
+    orderDataRaw = await getOrderData(apiUrl, orderId, ctx);
   } catch (error) {
     let errorData = _.get(error, 'response.data');
     if (!errorData) {
@@ -95,7 +102,7 @@ module.exports = async function orderPage(ctx) {
   const { cookie, ...orderData } = orderDataRaw;
 
   // The cookie is required to identify a user. Common use is for saved bank cards
-  ctx.cookies.set('_ps_ctkn', cookie, {
+  ctx.cookies.set(userIdentityCookieName, cookie, {
     maxAge: 2592000 * 1000, // 30 days
     httpOnly: true,
     overwrite: true,
@@ -106,6 +113,8 @@ module.exports = async function orderPage(ctx) {
       orderParams,
       orderData,
       baseOptions,
+      ip: ctx.request.ip,
+      ips: ctx.request.ips,
     }),
     sdkUrl,
     hasForm: true,
