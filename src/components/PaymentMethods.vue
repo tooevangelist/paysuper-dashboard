@@ -11,6 +11,7 @@ export default {
     return {
       hasCountriesOpened: false,
       hasCustomersTipOpened: false,
+      hasOverallFeeOpened: false,
     };
   },
   validations: {
@@ -198,11 +199,39 @@ export default {
     <transition name="table" mode="out-in">
       <UiTable v-if="channelCosts.length">
         <UiTableRow :isHead="true" class="row-indent">
-          <UiTableCell class="cell _second" align="left">Payment Method</UiTableCell>
-          <UiTableCell class="cell _channel">Method fee, %</UiTableCell>
-          <UiTableCell class="cell _channel">Fixed fee, {{ currency }}</UiTableCell>
-          <UiTableCell class="cell _channel">Overall fee, %</UiTableCell>
-          <UiTableCell class="cell _channel">PS general fixed fee</UiTableCell>
+          <UiTableCell class="cell _second" align="left">
+            Payment Method
+          </UiTableCell>
+          <UiTableCell class="cell _channel">
+            Method fee, %
+          </UiTableCell>
+          <UiTableCell class="cell _channel">
+            Fixed fee, {{ currency }}
+          </UiTableCell>
+          <UiTableCell class="cell _channel">
+            <div
+              class="icon-before-text"
+              @mouseenter="hasOverallFeeOpened = true"
+              @mouseleave="hasOverallFeeOpened = false"
+              >
+              <IconQuestion class="question" />
+              <UiTip
+                class="tip"
+                innerPosition="left"
+                position="top"
+                width="210px"
+                :margin="10"
+                :hasCaret="true"
+                :visible="hasOverallFeeOpened"
+              >
+                Overall fee is a sum of method and fixed fees.
+              </UiTip>
+            </div>
+            Overall fee, %
+          </UiTableCell>
+          <UiTableCell class="cell _channel">
+            PS general fixed fee, {{ currency }}
+          </UiTableCell>
         </UiTableRow>
         <UiTableRow
           v-for="(data, index) in channelCosts"
@@ -211,11 +240,27 @@ export default {
           <UiTableCell class="cell _first">
             <component :is="data.icon" class="method-icon" />
           </UiTableCell>
-          <UiTableCell class="cell _second" align="left">{{ data.method }}</UiTableCell>
-          <UiTableCell class="cell _channel">{{ data.methodFee }}</UiTableCell>
-          <UiTableCell class="cell _channel">{{ data.fixedFee }}</UiTableCell>
-          <UiTableCell class="cell _channel">{{ data.overallFee }}</UiTableCell>
-          <UiTableCell class="cell _channel">{{ data.psGeneralFixedFee }}</UiTableCell>
+          <UiTableCell class="cell _second" align="left">
+            {{ data.method }}
+          </UiTableCell>
+          <UiTableCell class="cell _channel">
+            <span class="cell-blue-transparent">
+              {{ data.methodFee }}%
+            </span>
+          </UiTableCell>
+          <UiTableCell class="cell _channel">
+            <span class="cell-blue-transparent">
+             {{ $formatPrice(data.fixedFee, currency) }}
+            </span>
+          </UiTableCell>
+          <UiTableCell class="cell _channel">
+            <span class="cell-blue">
+              {{ data.overallFee }}%
+            </span>
+          </UiTableCell>
+          <UiTableCell class="cell _channel">
+            {{ $formatPrice(data.psGeneralFixedFee, currency) }}
+          </UiTableCell>
         </UiTableRow>
       </UiTable>
     </transition>
@@ -245,7 +290,7 @@ export default {
       </UiTableRow>
       <UiTableRow class="row-indent">
         <UiTableCell class="cell _second" align="left">All Methods</UiTableCell>
-        <UiTableCell class="cell _merch">{{ chargeback.fee }}</UiTableCell>
+        <UiTableCell class="cell _merch">{{ $formatPrice(chargeback.fee, currency) }}</UiTableCell>
         <UiTableCell class="cell _merch">{{ chargeback.payoutParty}}</UiTableCell>
       </UiTableRow>
     </UiTable>
@@ -265,7 +310,7 @@ export default {
       </UiTableRow>
       <UiTableRow class="row-indent">
         <UiTableCell class="cell _second" align="left">All Methods</UiTableCell>
-        <UiTableCell class="cell _merch">{{ payout.fee }}</UiTableCell>
+        <UiTableCell class="cell _merch">{{ $formatPrice(payout.fee, currency) }}</UiTableCell>
         <UiTableCell class="cell _merch">{{ payout.payoutParty}}</UiTableCell>
       </UiTableRow>
     </UiTable>
@@ -422,5 +467,29 @@ export default {
   min-width: 180px;
   align-self: flex-end;
   letter-spacing: 0.75px;
+}
+.icon-before-text {
+  position: relative;
+  top: 1px;
+  display: inline-block;
+}
+.cell-blue {
+  display: inline-block;
+  width: 72px;
+  height: 28px;
+  line-height: 28px;
+  text-align: center;
+  background: rgba(#DAF5F2, 0.5);
+  border-radius: 2px;
+  border: 1px solid transparent;
+  &-transparent {
+    width: 72px;
+    height: 28px;
+    line-height: 28px;
+    text-align: center;
+    display: inline-block;
+    background-color: transparent;
+    border: 1px solid rgba(#069697, 0.2);
+  }
 }
 </style>
