@@ -90,6 +90,10 @@ export default {
     payoutAmount() {
       return this.balance.debit || 0;
     },
+
+    isBalance() {
+      return this.balance.debit && this.balance.currency;
+    },
   },
 
   created() {
@@ -269,7 +273,7 @@ export default {
       <UiPanel>
         <div class="control-bar _center">
           <div class="total-amount__summ">
-            {{ balance !== {} ? $formatPrice(payoutAmount, balance.currency) : 0 }}
+            {{ isBalance ? $formatPrice(payoutAmount, balance.currency) : 0 }}
           </div>
           <div class="total-amount__text">
             Total royalty amount
