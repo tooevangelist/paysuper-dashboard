@@ -83,6 +83,7 @@ export default function createProjectStore() {
 
     actions: {
       async initState({ commit, dispatch, rootState }, { id }) {
+        commit('project', {});
         const defaultCurrency = get(rootState.User.Merchant.merchant, 'banking.currency');
         if (!defaultCurrency) {
           throw DEFAULT_CURRENCY_IS_NOT_SET;
