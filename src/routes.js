@@ -184,6 +184,24 @@ const routes = [
     ],
   },
   {
+    path: '/settings/',
+    component: () => import('@/pages/MerchantSettingsPage.vue'),
+    redirect: { name: 'MerchantUserRoles' },
+    name: 'MerchantSettings',
+    children: [
+      {
+        path: 'user-roles/',
+        component: () => import('@/pages/MerchantUserRoles.vue'),
+        meta: {
+          layout: 'Layout',
+          isAuthRequired: true,
+          topControls: () => import('@/components/LayoutTopControlsSettings.vue'),
+        },
+        name: 'MerchantUserRoles',
+      },
+    ],
+  },
+  {
     path: '/agreement-requests/',
     component: () => import('@/pages/AgreementRequestsListPage.vue'),
     meta: { layout: 'Layout', isAuthRequired: true },
