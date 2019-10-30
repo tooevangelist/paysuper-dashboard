@@ -1,13 +1,11 @@
 <script>
-import PicturePapersCheckingProgress from '@/components/PicturePapersCheckingProgress.vue';
-import TestingTag from '@/components/TestingTag.vue';
+import PictureDotsAndSquaresScheme from '@/components/PictureDotsAndSquaresScheme.vue';
 
 export default {
-  name: 'ProjectSalesOptionsPage',
+  name: 'ProjectWebhooksPage',
 
   components: {
-    PicturePapersCheckingProgress,
-    TestingTag,
+    PictureDotsAndSquaresScheme,
   },
 
   methods: {
@@ -22,13 +20,14 @@ export default {
 <div>
   <UiPageHeaderFrame>
     <template slot="title">
-      Sales options
+      Webhooks
     </template>
     <template slot="description">
-      This is the main page, where you configure sales options for your project.
-      Any sales option may be enabled only after successful integration testing in Webhooks section.
+      In this section we will setup and test two-way notifications between our systems,
+      so all orders and commands would work as intended.
+      This is an obligatory requirement for Virtual Currency and Virtual Items sales options.
     </template>
-    <PicturePapersCheckingProgress slot="picture" />
+    <PictureDotsAndSquaresScheme slot="picture" />
   </UiPageHeaderFrame>
 
   <UiPanel>
@@ -74,32 +73,6 @@ export default {
         <UiButton
           class="button"
           @click="configure('ProjectVirtualItems')"
-        >
-          CONFIGURE
-        </UiButton>
-      </div>
-    </section>
-  </UiPanel>
-
-  <UiPanel>
-    <section class="section">
-      <div>
-        <UiHeader
-          :hasMargin="true"
-          level="3"
-        >
-          Game keys
-          <TestingTag class="tag" v-if="false" />
-        </UiHeader>
-        <UiText class="text">
-          This sales method is intended <b>to sell game keys</b> for specific
-          DRM platforms, sending your customers e-mail with a key.
-        </UiText>
-      </div>
-      <div class="section-aside">
-        <UiButton
-          class="button"
-          @click="configure('ProjectKeyProductsList')"
         >
           CONFIGURE
         </UiButton>
