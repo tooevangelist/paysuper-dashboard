@@ -3,7 +3,7 @@ import {
   mapState, mapGetters, mapActions,
 } from 'vuex';
 import {
-  isEqual, get, isEmpty,
+  isEqual, get,
 } from 'lodash-es';
 import moment from 'moment';
 
@@ -90,6 +90,10 @@ export default {
     payoutAmount() {
       return this.balance.debit || 0;
     },
+
+    isBalance() {
+      return this.balance.debit && this.balance.currency;
+    },
   },
 
   created() {
@@ -118,8 +122,6 @@ export default {
     ]),
 
     get,
-
-    isEmpty,
 
     updateFiltersFromQuery() {
       this.filters = this.getFilterValues(['dateFrom', 'dateTo', 'offset', 'limit', 'status']);
@@ -270,7 +272,7 @@ export default {
       <UiPanel>
         <div class="control-bar _center">
           <div class="total-amount__summ">
-            {{ !isEmpty(balance) ? $formatPrice(payoutAmount, balance.currency) : 0 }}
+            {{ isBalance ? $formatPrice(payoutAmount, balance.currency) : 0 }}
           </div>
           <div class="total-amount__text">
             Total royalty amount
