@@ -135,6 +135,7 @@ export default {
         object: 'product',
         type: 'simple_product',
         default_currency: this.defaultCurrency.currency,
+        billing_type: 'real',
       };
       try {
         if (this.isNewItem) {
