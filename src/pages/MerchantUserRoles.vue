@@ -1,17 +1,19 @@
 <script>
-/* eslint-disable */
 import { debounce, isEqual } from 'lodash-es';
 import {
   mapState, mapGetters, mapActions,
 } from 'vuex';
 import PictureTwoPeoples from '@/components/PictureTwoPeoples.vue';
 import userRoles from '@/store/UserRolesStore';
-import InviteUserModal from '../components/InviteUserModal';
+import roleScheme from '@/schemes/userRolesStatusScheme';
+import InviteUserModal from '@/components/InviteUserModal.vue';
+import InviteUserSuccessModal from '@/components/InviteUserSeccessModal.vue';
 
 export default {
   name: 'MerchantUserRoles',
 
   components: {
+    InviteUserSuccessModal,
     InviteUserModal,
     PictureTwoPeoples,
   },
@@ -22,10 +24,14 @@ export default {
       isSearchRouting: false,
       isInfiniteScrollLocked: false,
       inviteModal: false,
+      inviteSuccessModal: false,
+      showDeleteConfirm: false,
+      selectedUser: null,
+      roleScheme,
     };
   },
 
-  /* async asyncData({ store, registerStoreModule, route }) {
+  async asyncData({ store, registerStoreModule, route }) {
     try {
       await registerStoreModule('userRoles', userRoles, {
         query: route.query,
@@ -63,20 +69,18 @@ export default {
     this.updateFiltersFromQuery();
   },
 
-  mounted() {
-    this.initInfiniteScroll();
-  }, */
-
   methods: {
     ...mapActions(['setIsLoading']),
     ...mapActions('userRoles', [
       'initQuery',
       'submitFilters',
       'fetchUsers',
+      'invite',
+      'delete',
     ]),
 
     updateFiltersFromQuery() {
-      this.filters = this.getFilterValues(['quickFilter', 'offset', 'limit']);
+      this.filters = this.getFilterValues(['quickFilter']);
     },
 
     filterItems() {
@@ -93,22 +97,6 @@ export default {
       this.setIsLoading(false);
     },
 
-    initInfiniteScroll() {
-      this.$appEventsOn('contentScrollReachEnd', async () => {
-        if (
-          this.isInfiniteScrollLocked
-          || this.filters.offset + this.filters.limit >= this.users.count
-        ) {
-          return;
-        }
-        this.isInfiniteScrollLocked = true;
-
-        this.filters.offset += this.filters.limit;
-        await this.searchItems();
-        this.isInfiniteScrollLocked = false;
-      });
-    },
-
     navigate() {
       if (isEqual(this.$route.query, this.query)) {
         return;
@@ -117,6 +105,21 @@ export default {
         path: this.$route.path,
         query: this.query,
       });
+    },
+
+    async handleAddUser(user) {
+      this.setIsLoading(true);
+      try {
+        await this.invite(user).catch(this.$showErrorMessage);
+        this.inviteSuccessModal = true;
+      } catch (e) { console.warn(e); }
+      this.setIsLoading(false);
+      this.inviteModal = false;
+    },
+
+    deleteSeletedUser() {
+      this.delete(this.selectedUser).catch(this.$showErrorMessage);
+      this.showDeleteConfirm = false;
     },
   },
 };
@@ -144,12 +147,74 @@ export default {
         </div>
 
         <div class="control-bar__right">
-          <UiButton text="INVITE USER"></UiButton>
+          <UiButton text="INVITE USER" @click="inviteModal = true"></UiButton>
         </div>
       </div>
+
+      <UiTable class="users">
+        <UiTableRow :isHead="true">
+          <UiTableCell align="left" width="4%"></UiTableCell>
+          <UiTableCell align="left" width="73%">User</UiTableCell>
+          <UiTableCell align="left">Role</UiTableCell>
+          <UiTableCell align="left" width="5%"></UiTableCell>
+        </UiTableRow>
+        <UiTableRow
+          v-for="user in users"
+          :key="user.id"
+        >
+          <UiTableCell align="left">
+            <IconNoImage class="img" width="18" height="18" fill="#919699" />
+          </UiTableCell>
+          <UiTableCell align="left">
+            {{ user.email }}
+          </UiTableCell>
+          <UiTableCell align="left">
+            <UiLabelSwitch
+              v-if="user.role !== 'merchant_owner'"
+              :value="user.role"
+              :scheme="roleScheme" />
+            <UiLabelTag v-else color="red" class="owner-label">Owner</UiLabelTag>
+          </UiTableCell>
+          <UiTableCell>
+            <div
+              class="delete-user"
+              v-if="user.role !== 'merchant_owner'"
+              @click="showDeleteConfirm = true, selectedUser = user">
+              <IconDelete />
+            </div>
+          </UiTableCell>
+        </UiTableRow>
+      </UiTable>
     </UiPanel>
 
-    <InviteUserModal v-show="inviteModal" :hasCloseButton="true"></InviteUserModal>
+    <UiConfirm
+      v-if="showDeleteConfirm && selectedUser"
+      title="Delete item"
+      buttonText="DELETE"
+      buttonColor="red"
+      @close="showDeleteConfirm=false"
+      @confirm="deleteSeletedUser">
+      This user will no longer have access to your Pay Super account.
+    </UiConfirm>
+
+    <UiConfirm
+      v-if="showDeleteConfirm && selectedUser"
+      title="Delete item"
+      buttonText="DELETE"
+      buttonColor="red"
+      @close="showDeleteConfirm=false"
+      @confirm="deleteSeletedUser">
+      Are you sure you want to assign a new role for this user {{selectedUser.email}}?
+    </UiConfirm>
+
+    <InviteUserModal
+      v-show="inviteModal"
+      @close="inviteModal = false"
+      @input="handleAddUser" />
+
+    <InviteUserSuccessModal
+      v-show="inviteSuccessModal"
+      @close="inviteSuccessModal = false" />
   </div>
 </template>
 
@@ -157,5 +222,27 @@ export default {
 .control-bar {
   display: flex;
   justify-content: space-between;
+}
+
+.users {
+  margin-top: 32px;
+}
+
+.delete-user {
+  cursor: pointer;
+  position: relative;
+  top: 2px;
+
+  svg {
+    fill: #C6CACC;
+  }
+
+  &:hover svg {
+    fill: #EA3D2F;
+  }
+}
+
+.owner-label {
+  width: 130px;
 }
 </style>

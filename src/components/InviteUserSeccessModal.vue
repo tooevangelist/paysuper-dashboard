@@ -12,7 +12,7 @@ export default {
 
 <template>
   <div>
-    <UiModal width="448px">
+    <UiModal width="448px" :hasCloseButton="true" @close="$emit('close')">
       <div class="content">
         <PictureMailSent></PictureMailSent>
         <UiHeader
@@ -42,4 +42,18 @@ export default {
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 24px;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+}
+</style>

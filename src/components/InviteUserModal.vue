@@ -11,19 +11,19 @@ export default {
       roles: [
         {
           label: 'Developer',
-          value: 'developer',
+          value: 'merchant_developer',
         },
         {
           label: 'Accounting',
-          value: 'accounting',
+          value: 'merchant_accounting',
         },
         {
           label: 'Support',
-          value: 'support',
+          value: 'merchant_support',
         },
         {
           label: 'View Only',
-          value: 'view Only',
+          value: 'merchant_view_only',
         },
       ],
     };
@@ -39,7 +39,7 @@ export default {
 
 <template>
   <div>
-    <UiModal width="448px">
+    <UiModal width="448px" :hasCloseButton="true" @close="$emit('close')">
       <UiHeader
         slot="header"
         level="3"

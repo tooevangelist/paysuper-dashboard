@@ -8,10 +8,7 @@ const searchBuilder = new SearchBuilder(userRolesScheme);
 export default function createUserRolesStore() {
   return {
     state: () => ({
-      users: {
-        items: [],
-        count: 0,
-      },
+      users: {}, // no pagination here
       filterValues: {},
       query: {},
       apiQuery: {},
@@ -63,17 +60,8 @@ export default function createUserRolesStore() {
         const url = `{apiUrl}/admin/api/v1/merchants/users?${query}`;
 
         const response = await axios.get(url);
-        const users = {
-          ...response.data,
-          items: response.data.items || [],
-        };
+        const users = response.data;
         // append mode for infinite scroll
-        if (state.apiQuery.offset > 0 && users.count === state.users.count) {
-          users.items = [
-            ...state.users.items,
-            ...users.items,
-          ];
-        }
         commit('users', users);
       },
 
@@ -96,6 +84,17 @@ export default function createUserRolesStore() {
 
         const query = searchBuilder.getQueryFromFilterValues(newFilters);
         commit('query', query);
+      },
+
+      async invite({ dispatch }, user) {
+        await axios.post('{apiUrl}/admin/api/v1/merchants/invite', user);
+        await dispatch('fetchUsers');
+      },
+
+      async delete({ dispatch }, user) {
+        console.log(user);
+        await axios.delete(`{apiUrl}/admin/api/v1/merchants/users/${user.user_id}/`);
+        await dispatch('fetchUsers');
       },
     },
 
