@@ -75,6 +75,10 @@ module.exports = async function orderPage(ctx) {
   const userCookie = ctx.cookies.get(userIdentityCookieName);
   const acceptLanguage = ctx.get('accept-language');
 
+  if (query.headers) {
+    return ctx.headers;
+  }
+
   if (query.result) {
     return template({
       result: query.result,
@@ -131,8 +135,6 @@ module.exports = async function orderPage(ctx) {
       orderParams,
       orderData,
       baseOptions,
-      ip,
-      acceptLanguage,
     }),
     sdkUrl,
     hasForm: true,
