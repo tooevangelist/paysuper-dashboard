@@ -27,6 +27,13 @@ export default {
           available: true,
         },
         {
+          title: 'Webhooks',
+          icon: 'IconLabel',
+          url: `/projects/${projectId}/webhooks/`,
+          routeNames: ['ProjectWebhooks'],
+          available: true,
+        },
+        {
           title: 'Settings',
           icon: 'IconSettings',
           url: `/projects/${projectId}/settings/`,
@@ -44,11 +51,6 @@ export default {
         //   link: `/projects/${this.project.id}/`,
         //   title: 'Settings',
         //   routeNames: ['ProjectCard'],
-        // },
-        // {
-        //   icon: 'IconLabel',
-        //   link: '',
-        //   title: 'Webhooks',
         // },
         // {
         //   icon: 'IconMoney',

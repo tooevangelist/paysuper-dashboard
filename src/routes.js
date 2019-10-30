@@ -126,6 +126,15 @@ const routes = [
         meta: projectPagesMeta,
         name: 'ProjectSettings',
       },
+      {
+        path: 'webhooks/',
+        component: () => import('@/pages/ProjectWebhooksPage.vue'),
+        meta: {
+          ...projectPagesMeta,
+          // topControls: () => import('@/components/LayoutTopControlsProjectWebhooks.vue'),
+        },
+        name: 'ProjectWebhooks',
+      },
     ],
   },
   {

@@ -89,7 +89,7 @@ export default {
           level="3"
         >
           Game keys
-          <TestingTag class="tag" />
+          <TestingTag class="tag" v-if="false" />
         </UiHeader>
         <UiText class="text">
           This sales method is intended <b>to sell game keys</b> for specific
