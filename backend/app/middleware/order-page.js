@@ -41,12 +41,15 @@ async function getOrderId(apiUrl, orderParams) {
   return data.id;
 }
 
-async function getOrderData(apiUrl, orderId, { ip, userCookie }) {
+async function getOrderData(apiUrl, orderId, { ip, userCookie, acceptLanguage }) {
   const { data } = await axios.get(
     `${apiUrl}/api/v1/order/${orderId}`,
     {
-      Cookie: `${userIdentityCookieName}=${userCookie}`,
-      'X-Real-IP': ip,
+      headers: {
+        'Accept-Language': acceptLanguage,
+        'X-Real-IP': ip,
+        Cookie: `${userIdentityCookieName}=${userCookie}`,
+      },
     },
   );
   return data;
@@ -70,6 +73,7 @@ module.exports = async function orderPage(ctx) {
   const apiUrl = query.apiUrl || webappConfig.apiUrl;
   const ip = getIp(ctx.request);
   const userCookie = ctx.cookies.get(userIdentityCookieName);
+  const acceptLanguage = ctx.get('accept-language');
 
   if (query.result) {
     return template({
@@ -99,7 +103,7 @@ module.exports = async function orderPage(ctx) {
   let orderDataRaw;
   try {
     const orderId = query.order_id || await getOrderId(apiUrl, orderParams);
-    orderDataRaw = await getOrderData(apiUrl, orderId, { ip, userCookie });
+    orderDataRaw = await getOrderData(apiUrl, orderId, { ip, userCookie, acceptLanguage });
   } catch (error) {
     let errorData = _.get(error, 'response.data');
     if (!errorData) {
@@ -128,6 +132,7 @@ module.exports = async function orderPage(ctx) {
       orderData,
       baseOptions,
       ip,
+      acceptLanguage,
     }),
     sdkUrl,
     hasForm: true,

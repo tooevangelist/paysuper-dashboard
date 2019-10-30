@@ -79,7 +79,7 @@ export default {
   <UiRadio :checked="type === 'product'" @change="type = 'product'">product</UiRadio>
   <UiRadio :checked="type === 'key'" @change="type = 'key'">key</UiRadio>
   <UiRadio :checked="type === 'simple'" @change="type = 'simple'">simple</UiRadio>
-
+  <br>
   <UiTextField label="project" v-model="project" />
   <UiTextField v-if="type !== 'simple'" label="products" v-model="productsString" />
   <div class="simple" v-if="type === 'simple'">
@@ -87,7 +87,7 @@ export default {
     <UiTextField label="currency" v-model="currency" />
   </div>
 
-  <UiButton @click="buy">Buy</UiButton>
+  <UiButton class="submit" @click="buy">BUY</UiButton>
 </div>
 </template>
 
@@ -97,5 +97,16 @@ export default {
 }
 .simple {
   display: flex;
+}
+.submit {
+  width: 120px;
+}
+@media screen and (max-width: 640px) {
+  .payment-form-sdk {
+    width: 300px;
+  }
+  .simple {
+    display: block;
+  }
 }
 </style>
