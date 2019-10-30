@@ -47,21 +47,15 @@ export default {
     },
 
     async validateAndSaveMerchant() {
-      const isMerchantValid = this.$refs.merchantForm.chekIfFormValid();
-
-      if (isMerchantValid) {
-        this.setIsLoading(true);
-        try {
-          await this.updateMerchant();
-          this.$_Notifications_showSuccessMessage('Merchant updated successfully');
-        } catch (error) {
-          console.warn(error);
-          this.$_Notifications_showErrorMessage('Failed to update merchant');
-        }
-        this.setIsLoading(false);
-      } else {
-        this.$_Notifications_showErrorMessage('The form is not filled right');
+      this.setIsLoading(true);
+      try {
+        await this.updateMerchant();
+        this.$showSuccessMessage('Merchant updated successfully');
+      } catch (error) {
+        console.warn(error);
+        this.$showErrorMessage('Failed to update merchant');
       }
+      this.setIsLoading(false);
     },
 
     async handleAgreementChangeRequest(payload) {
@@ -69,10 +63,10 @@ export default {
       try {
         await this.changeMerchantAgreement(payload);
 
-        this.$_Notifications_showSuccessMessage('Merchant\'s agreement updated successfully');
+        this.$showSuccessMessage('Merchant\'s agreement updated successfully');
       } catch (error) {
         console.warn(error);
-        this.$_Notifications_showErrorMessage('Failed to update merchant\'s agreement');
+        this.$showErrorMessage('Failed to update merchant\'s agreement');
       }
       this.setIsLoading(false);
     },
@@ -81,10 +75,10 @@ export default {
       this.setIsLoading(true);
       try {
         await this.sendNotification(notification);
-        this.$_Notifications_showSuccessMessage('Notification sent successfully');
+        this.$showSuccessMessage('Notification sent successfully');
       } catch (error) {
         console.warn(error);
-        this.$_Notifications_showErrorMessage('Failed to send notification');
+        this.$showErrorMessage('Failed to send notification');
       }
       this.setIsLoading(false);
     },
