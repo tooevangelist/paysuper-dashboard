@@ -100,10 +100,9 @@ export default {
 
   methods: {
     ...mapActions(['setIsLoading', 'uploadImage']),
-    ...mapActions('Project', ['checkIsSkuUnique']),
+    ...mapActions('Project', ['checkIsSkuUnique', 'getRecommendedPrices']),
     ...mapActions('ProjectKeyProduct', [
-      'initState', 'uploadKey', 'updateKeyProduct', 'createKeyProduct',
-      'getRecommendedPrices', 'getRecommendedPricesTable',
+      'initState', 'uploadKey', 'updateKeyProduct', 'createKeyProduct', 'getRecommendedPricesTable',
     ]),
 
     updateKeyProductLocal() {

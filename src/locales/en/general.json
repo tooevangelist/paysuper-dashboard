@@ -12,7 +12,9 @@
     "url": "Enter correct URL: it should begin with \"http(s)://\"",
     "wrongFormatType": "Wrong value format type",
     "uniqueSku": "SKU must be unique within one project",
-    "iban": "IBAN value is invalid"
+    "iban": "IBAN value is invalid",
+    "maxValue": "The value should not be more than %max%",
+    "minValue": "The value should not be less than %min%"
   },
   "orderID": "Order #",
   "account": "Account",

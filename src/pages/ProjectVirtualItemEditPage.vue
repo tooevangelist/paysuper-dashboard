@@ -5,27 +5,27 @@ import {
   debounce, get, cloneDeep, find,
 } from 'lodash-es';
 import ProjectVirtualItemPageStore from '@/store/ProjectVirtualItemPageStore';
-import ProjectVirtualItemPrice from '@/components/ProjectVirtualItemPrice.vue';
+import ProjectEntityPricesForm from '@/components/ProjectEntityPricesForm.vue';
 import updateLangFields from '@/helpers/updateLangFields';
-
-const DEFAULTS = {
-  name: {
-    en: '',
-  },
-  description: {
-    en: '',
-  },
-  long_description: {
-    en: '',
-  },
-  enabled: true,
-};
 
 export default {
   name: 'ProjectVirtualItemEditPage',
 
   components: {
-    ProjectVirtualItemPrice,
+    ProjectEntityPricesForm,
+  },
+
+  async asyncData({
+    store, registerStoreModule, route, resources,
+  }) {
+    try {
+      await registerStoreModule('ProjectVirtualItemPage', ProjectVirtualItemPageStore, {
+        projectId: route.params.id,
+        itemId: route.params.itemId,
+      }).catch(resources.notifications.showErrorMessage);
+    } catch (error) {
+      store.dispatch('setPageError', error);
+    }
   },
 
   data() {
@@ -33,7 +33,16 @@ export default {
       langFields: ['name', 'description', 'long_description'],
       isSkuUnique: true,
       item: null,
-      image: null,
+      pricingMethodOptions: [
+        {
+          label: 'Real currency',
+          value: 'real',
+        },
+        {
+          label: 'Virtual currency',
+          value: 'virtual',
+        },
+      ],
     };
   },
 
@@ -47,6 +56,42 @@ export default {
 
     projectId() {
       return this.$route.params.id;
+    },
+
+    image: {
+      get() {
+        return get(this.item, 'images.0', '');
+      },
+      set(value) {
+        this.item.images = [value];
+      },
+    },
+
+    virtualCurrencySellCountType() {
+      return get(this.project, 'virtual_currency.sell_count_type', '');
+    },
+
+    virtualCurrencyFieldLabel() {
+      const name = get(this.project, 'virtual_currency.name.en', '');
+      const sellCountTypeNameMap = {
+        fractional: 'Fractional value',
+        integral: 'Integral value',
+      };
+      return `${name}, ${sellCountTypeNameMap[this.virtualCurrencySellCountType]}`;
+    },
+    virtualCurrencyPrice: {
+      get() {
+        const item = find(this.item.prices, { is_virtual_currency: true });
+        return item ? item.amount : null;
+      },
+      set(amount) {
+        this.item.prices = [
+          {
+            amount,
+            is_virtual_currency: true,
+          },
+        ];
+      },
     },
   },
 
@@ -78,45 +123,22 @@ export default {
     };
   },
 
-  async asyncData({ store, registerStoreModule, route }) {
-    try {
-      await registerStoreModule('ProjectVirtualItemPage', ProjectVirtualItemPageStore, {
-        projectId: route.params.id,
-        itemId: route.params.itemId,
-      }).catch(this.$showErrorMessage);
-    } catch (error) {
-      store.dispatch('setPageError', error);
-    }
-  },
-
   created() {
-    if (!this.isNewItem) {
-      this.item = this.virtualItem;
-    } else {
-      this.item = cloneDeep(DEFAULTS);
-      this.item.pricing = 'manual';
-    }
-
-    this.item.prices = this.project.currencies.map(({ currency, region }) => {
-      const match = find(this.item.prices, { currency, region });
-      if (match) {
-        return match;
-      }
-      return {
-        amount: null,
-        currency,
-        region,
-      };
-    });
-
-    updateLangFields(this.item, this.langFields, this.project.localizations);
-    this.image = get(this.item, 'images.0', '');
+    this.updateVirtualItemLocal();
   },
 
   methods: {
     ...mapActions(['uploadImage', 'setIsLoading']),
     ...mapActions('ProjectVirtualItemPage', ['editItem', 'createItem']),
-    ...mapActions('Project', ['checkIsSkuUnique']),
+    ...mapActions('Project', ['checkIsSkuUnique', 'getRecommendedPrices']),
+
+    updateVirtualItemLocal() {
+      this.item = {
+        ...cloneDeep(this.virtualItem),
+        default_currency: this.defaultCurrency.currency,
+      };
+      updateLangFields(this.item, this.langFields, this.project.localizations);
+    },
 
     async saveItem() {
       this.$v.$touch();
@@ -134,8 +156,6 @@ export default {
         images: [this.image],
         object: 'product',
         type: 'simple_product',
-        default_currency: this.defaultCurrency.currency,
-        billing_type: 'real',
       };
       try {
         if (this.isNewItem) {
@@ -160,8 +180,12 @@ export default {
       200,
     ),
 
-    handleUpdatePrice(value) {
-      this.item.prices = value;
+    checkIsBillingTypeDisabled(type) {
+      const isVirtualCurrencyAvailable = Boolean(
+        get(this.project, 'virtual_currency.name.en')
+        && get(this.project, 'virtual_currency.prices[0]'),
+      );
+      return type === 'virtual' ? !isVirtualCurrencyAvailable : false;
     },
   },
 };
@@ -215,7 +239,6 @@ export default {
           label="SKU"
           v-model="item.sku"
           @input="handleSkuFieldInput"
-          :required="true"
           v-bind="$getValidatedFieldProps('item.sku')"/>
       </section>
       <section class="section">
@@ -231,12 +254,36 @@ export default {
           <a :href="`/projects/${project.id}/settings/`">project settings</a>.
         </p>
 
-        <ProjectVirtualItemPrice
+        <div class="radio-group">
+          <UiRadio
+            class="radio"
+            v-for="option in pricingMethodOptions"
+            v-model="item.billing_type"
+            :key="option.value"
+            :disabled="checkIsBillingTypeDisabled(option.value)"
+            :value="option.value"
+          >
+            {{ option.label }}
+            <IconQuestion fill="#919699" />
+          </UiRadio>
+        </div>
+
+        <ProjectEntityPricesForm
+          v-if="item.billing_type === 'real'"
           ref="pricesBlock"
-          :method="item.pricing"
-          :prices="item.prices"
+          :currencies="project.currencies"
+          :getRecommendedPrices="getRecommendedPrices"
           :defaultCurrency="defaultCurrency"
-          @updatePrice="handleUpdatePrice"/>
+          v-model="item.prices"
+        />
+        <UiTextField
+          v-else
+          :label="virtualCurrencyFieldLabel"
+          :isNumeric="true"
+          :decimalLength="virtualCurrencySellCountType === 'fractional' ? 2 : 0"
+          v-model="virtualCurrencyPrice"
+          v-bind="$getValidatedFieldProps('item.sku')"
+        />
       </section>
 
       <div class="controls">
@@ -268,10 +315,11 @@ export default {
 .controls {
   display: flex;
   justify-content: flex-end;
+}
 
-  .submit-button {
-    margin-left: 32px;
-  }
+.submit-button {
+  width: 140px;
+  margin-left: 32px;
 }
 
 .price-group {
@@ -294,6 +342,16 @@ export default {
 
   & > .ui-header {
     margin-left: 12px;
+  }
+}
+
+.radio-group {
+  margin: 22px 0 20px;
+}
+
+.radio {
+  & + & {
+    margin-top: 12px;
   }
 }
 </style>
