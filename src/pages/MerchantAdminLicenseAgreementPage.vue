@@ -28,12 +28,12 @@ export default {
   },
   data() {
     return {
-      hasSignedInner: true,
+      hasInitSigned: true,
     };
   },
   computed: {
     ...mapState('Merchant', ['merchant']),
-    ...mapState('MerchantLicenseAgreement', ['agreement', 'hasSigned']),
+    ...mapState('MerchantLicenseAgreement', ['agreement']),
 
     status() {
       return get(merchantStatusScheme, this.merchant.status, merchantStatusScheme[0]).value;
@@ -41,12 +41,13 @@ export default {
     hasSignature() {
       return this.merchant.has_merchant_signature || false;
     },
-    hasOpenedModal() {
-      return this.hasSigned && this.hasSignedInner;
+    isOpenedModal() {
+      return !this.hasInitSigned && this.merchant.status === 4;
     },
   },
   mounted() {
     this.initHellosign();
+    this.hasInitSigned = this.merchant.status === 4;
   },
   methods: {
     ...mapActions('Merchant', ['changeMerchantStatus', 'sendNotification']),
@@ -99,7 +100,7 @@ export default {
   />
 
   <UiModal
-    v-if="hasOpenedModal"
+    v-if="isOpenedModal"
     width="448px"
   >
     <template slot="header">
@@ -116,7 +117,7 @@ export default {
       Now agreement is signed by both sides and this company's request moved to a Merchants list.
     </div>
     <div class="modal-controls">
-      <UiButton @click="hasSignedInner = false">DONE</UiButton>
+      <UiButton @click="hasInitSigned = true">DONE</UiButton>
     </div>
   </UiModal>
 </div>
