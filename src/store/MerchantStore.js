@@ -118,6 +118,9 @@ export default function createMerchantStore() {
     }),
 
     getters: {
+      hasProjects(state) {
+        return state.merchant.has_projects || state.hasProjects;
+      },
       isMerchantChanged(state) {
         return !isEqual(state.merchant, state.merchantOriginalCopy);
       },
@@ -128,7 +131,7 @@ export default function createMerchantStore() {
       isOnboardingComplete(state, getters) {
         return getters.isOnboardingStepsComplete
           && state.merchant.status === 4
-          && state.hasProjects;
+          && getters.hasProjects;
       },
     },
 
@@ -215,28 +218,6 @@ export default function createMerchantStore() {
         commit('merchantStatus', status > 3 ? 'life' : 'draft');
       },
 
-      /**
-       * TODO: after https://protocolone.tpondemand.com/restui/board.aspx?#page=task/191909
-       * remove this method and use has_projects attribute from merchant object
-       */
-      async hasProjects({ state, commit, rootState }) {
-        const merchantId = get(state.merchant, 'id', 0);
-
-        if (merchantId) {
-          const response = await axios.get(
-            `${rootState.config.apiUrl}/admin/api/v1/projects?merchant_id=${merchantId}&limit=1`,
-          );
-
-          const projectsCount = get(response, 'data.count', 0);
-
-          commit('hasProjects', Boolean(projectsCount));
-
-          if (projectsCount) {
-            commit('onboardingCompleteStepsCount', state.onboardingCompleteStepsCount + 1);
-          }
-        }
-      },
-
       completeStep({ commit, state }, stepName) {
         if (state.onboardingSteps[stepName]) {
           return;
@@ -267,7 +248,6 @@ export default function createMerchantStore() {
         commit('merchant', mapDataApiToForm(get(response, 'data', {})));
 
         await dispatch('fetchMerchantStatus');
-        await dispatch('hasProjects');
       },
 
       async fetchMerchantPaymentMethods({ state, commit, rootState }, id) {
