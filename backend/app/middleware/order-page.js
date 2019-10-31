@@ -41,12 +41,15 @@ async function getOrderId(apiUrl, orderParams) {
   return data.id;
 }
 
-async function getOrderData(apiUrl, orderId, { ip, userCookie }) {
+async function getOrderData(apiUrl, orderId, { ip, userCookie, acceptLanguage }) {
   const { data } = await axios.get(
     `${apiUrl}/api/v1/order/${orderId}`,
     {
-      Cookie: `${userIdentityCookieName}=${userCookie}`,
-      'X-Real-IP': ip,
+      headers: {
+        'Accept-Language': acceptLanguage,
+        'X-Real-IP': ip,
+        Cookie: `${userIdentityCookieName}=${userCookie}`,
+      },
     },
   );
   return data;
@@ -61,7 +64,6 @@ function getIp(request) {
   return ip;
 }
 
-
 const sdkUrl = isDev ? 'http://localhost:4040/paysuper-form.js' : config.paysuperSdkUrl;
 
 module.exports = async function orderPage(ctx) {
@@ -70,6 +72,14 @@ module.exports = async function orderPage(ctx) {
   const apiUrl = query.apiUrl || webappConfig.apiUrl;
   const ip = getIp(ctx.request);
   const userCookie = ctx.cookies.get(userIdentityCookieName);
+  const acceptLanguage = ctx.get('accept-language');
+
+  if (query.debug) {
+    return {
+      ip,
+      acceptLanguage,
+    };
+  }
 
   if (query.result) {
     return template({
@@ -78,17 +88,14 @@ module.exports = async function orderPage(ctx) {
     });
   }
 
-  const baseOptions = {
-    ...(query.loading ? { layout: 'loading' } : {}),
-    ...(isDev && query.modal ? { layout: 'modal' } : {}),
-  };
-
   if (query.loading) {
     return template({
       data: JSON.stringify({
         orderParams: {},
         orderData: {},
-        baseOptions,
+        baseOptions: {
+          layout: 'loading',
+        },
       }),
       sdkUrl,
       hasForm: true,
@@ -99,7 +106,7 @@ module.exports = async function orderPage(ctx) {
   let orderDataRaw;
   try {
     const orderId = query.order_id || await getOrderId(apiUrl, orderParams);
-    orderDataRaw = await getOrderData(apiUrl, orderId, { ip, userCookie });
+    orderDataRaw = await getOrderData(apiUrl, orderId, { ip, userCookie, acceptLanguage });
   } catch (error) {
     let errorData = _.get(error, 'response.data');
     if (!errorData) {
@@ -126,8 +133,9 @@ module.exports = async function orderPage(ctx) {
     data: JSON.stringify({
       orderParams,
       orderData,
-      baseOptions,
-      ip,
+      baseOptions: {
+        ...(isDev && query.modal ? { layout: 'modal' } : {}),
+      },
     }),
     sdkUrl,
     hasForm: true,
