@@ -1,5 +1,4 @@
 <script>
-import axios from 'axios';
 import { trim } from 'lodash-es';
 import { mapState } from 'vuex';
 import assert from 'simple-assert';
@@ -36,9 +35,8 @@ export default {
   },
   async created() {
     assert(this.config.paysuperJsSdkUrl, 'paysuperJsSdkUrl is not defined');
-    const { data } = await axios.get(this.config.paysuperJsSdkUrl);
     const script = document.createElement('script');
-    script.innerHTML = data;
+    script.src = this.config.paysuperJsSdkUrl;
     document.head.appendChild(script);
   },
 
