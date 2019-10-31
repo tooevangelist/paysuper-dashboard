@@ -66,6 +66,7 @@ export default {
   &._not-available {
     pointer-events: none;
     opacity: 0.25;
+    display: none;
   }
 }
 .icon {
