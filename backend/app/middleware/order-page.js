@@ -64,7 +64,6 @@ function getIp(request) {
   return ip;
 }
 
-
 const sdkUrl = isDev ? 'http://localhost:4040/paysuper-form.js' : config.paysuperSdkUrl;
 
 module.exports = async function orderPage(ctx) {
@@ -75,10 +74,6 @@ module.exports = async function orderPage(ctx) {
   const userCookie = ctx.cookies.get(userIdentityCookieName);
   const acceptLanguage = ctx.get('accept-language');
 
-  if (query.headers) {
-    return ctx.headers;
-  }
-
   if (query.result) {
     return template({
       result: query.result,
@@ -86,17 +81,14 @@ module.exports = async function orderPage(ctx) {
     });
   }
 
-  const baseOptions = {
-    ...(query.loading ? { layout: 'loading' } : {}),
-    ...(isDev && query.modal ? { layout: 'modal' } : {}),
-  };
-
   if (query.loading) {
     return template({
       data: JSON.stringify({
         orderParams: {},
         orderData: {},
-        baseOptions,
+        baseOptions: {
+          layout: 'loading',
+        },
       }),
       sdkUrl,
       hasForm: true,
@@ -134,7 +126,9 @@ module.exports = async function orderPage(ctx) {
     data: JSON.stringify({
       orderParams,
       orderData,
-      baseOptions,
+      baseOptions: {
+        ...(isDev && query.modal ? { layout: 'modal' } : {}),
+      },
     }),
     sdkUrl,
     hasForm: true,
