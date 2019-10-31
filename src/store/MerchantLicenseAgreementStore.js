@@ -25,7 +25,6 @@ export default function createMerchantLicenseAgreementStore() {
       signature: null,
       agreement: getDefaultAgreementDocument(),
       document: null,
-      hasSigned: false,
     },
     getters: {
       isUsingHellosign(state, getters) {
@@ -59,12 +58,10 @@ export default function createMerchantLicenseAgreementStore() {
           });
 
           helloSign.on('sign', () => {
-            commit('hasSigned', true);
-
             delay(async () => {
               await dispatch('Merchant/fetchMerchantById', state.merchantId, { root: true });
               await dispatch('fetchAgreementMetadata');
-            }, 5000);
+            }, 4000);
           });
 
           commit('helloSign', helloSign);

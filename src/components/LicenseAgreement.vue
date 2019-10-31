@@ -8,7 +8,7 @@ export default {
   computed: {
     ...mapGetters('User/Merchant', ['isOnboardingStepsComplete']),
     ...mapGetters('Company/LicenseAgreement', ['isSigendYou', 'isSigendPS']),
-    ...mapState('Company/LicenseAgreement', ['document', 'agreement']),
+    ...mapState('Company/LicenseAgreement', ['document', 'agreement', 'signature']),
 
     isCheckingAgreement() {
       return this.isSigendYou && !this.isSigendPS;
@@ -112,9 +112,13 @@ export default {
   <UiButton
     v-if="(!isSigendYou || !isSigendPS)"
     class="submit"
-    :disabled="isSigendYou"
+    :disabled="isSigendYou || !signature"
     @click="openLicense"
   >
+    <UiSimplePreloader
+      v-if="isOnboardingStepsComplete && !signature"
+      slot="iconBefore"
+    />
     REVIEW & SIGN
   </UiButton>
 </div>
