@@ -28,7 +28,7 @@ export default {
   },
   data() {
     return {
-      hasSignedInner: true,
+      hasSignedInner: false,
     };
   },
   computed: {
@@ -40,9 +40,6 @@ export default {
     },
     hasSignature() {
       return this.merchant.has_merchant_signature || false;
-    },
-    hasOpenedModal() {
-      return this.hasSigned && this.hasSignedInner;
     },
   },
   mounted() {
@@ -73,6 +70,13 @@ export default {
       }
     },
   },
+  watch: {
+    hasSigned(val) {
+      if (val) {
+        this.hasSignedInner = true;
+      }
+    },
+  },
 };
 </script>
 
@@ -99,7 +103,7 @@ export default {
   />
 
   <UiModal
-    v-if="hasOpenedModal"
+    v-if="hasSignedInner"
     width="448px"
   >
     <template slot="header">

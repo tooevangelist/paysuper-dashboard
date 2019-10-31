@@ -116,7 +116,11 @@ export default function createTariffStore() {
 
         if (response.status === 200) {
           dispatch('User/Merchant/completeStep', 'tariff', { root: true });
-          dispatch('Company/LicenseAgreement/fetchAgreementSignature', true, { root: true });
+          await dispatch(
+            'Company/LicenseAgreement/initWaitingForSignatureGenerated',
+            true,
+            { root: true },
+          );
           return true;
         }
 

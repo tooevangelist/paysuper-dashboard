@@ -8,7 +8,7 @@ export default {
   computed: {
     ...mapGetters('User/Merchant', ['isOnboardingStepsComplete']),
     ...mapGetters('Company/LicenseAgreement', ['isSigendYou', 'isSigendPS']),
-    ...mapState('Company/LicenseAgreement', ['isReject', 'document', 'agreement']),
+    ...mapState('Company/LicenseAgreement', ['document', 'agreement']),
 
     isCheckingAgreement() {
       return this.isSigendYou && !this.isSigendPS;
@@ -20,10 +20,6 @@ export default {
       return this.isSigendPS ? 'Signed by Pay Super' : 'Not signed by Pay Super';
     },
     statusSignedYou() {
-      if (this.isReject) {
-        return 'Correct company info';
-      }
-
       if (!this.isSigendYou) {
         return 'In progress';
       }
@@ -31,10 +27,6 @@ export default {
       return 'Done';
     },
     statusSignedPS() {
-      if (this.isReject) {
-        return 'We have some points to discuss';
-      }
-
       if (this.isCheckingAgreement) {
         return 'Checking agreement…';
       }
@@ -120,7 +112,7 @@ export default {
   <UiButton
     v-if="(!isSigendYou || !isSigendPS)"
     class="submit"
-    :disabled="isSigendYou && !isReject"
+    :disabled="isSigendYou"
     @click="openLicense"
   >
     REVIEW & SIGN
