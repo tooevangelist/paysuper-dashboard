@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { get, find } from 'lodash-es';
+import assert from 'simple-assert';
 import mergeApiValuesWithDefaults from '@/helpers/mergeApiValuesWithDefaults';
 import updateLangFields from '@/helpers/updateLangFields';
 import { getCurrencyValueFromItem } from '@/helpers/currencyDataConversion';
@@ -124,6 +125,13 @@ export default function createProjectStore() {
           throw error;
         }
         return true;
+      },
+
+      async getRecommendedPrices(ctx, { type, amount, currency }) {
+        assert(type === 'steam' || type === 'conversion');
+        const path = `/api/v1/pricing/recommended/${type}?amount=${amount}&currency=${currency}`;
+        const { data } = await axios.get(`{apiUrl}${path}`);
+        return data.recommended_price;
       },
     },
 

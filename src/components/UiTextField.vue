@@ -161,7 +161,7 @@ export default {
 
 <template>
 <div
-  class="text-field"
+  class="ui-text-field"
   v-click-outside="closeSuggest"
 >
   <Money
@@ -241,7 +241,7 @@ $primary-input-size: 16px;
 $secondary-input-size: 12px;
 $left-indent: 12px;
 
-.text-field {
+.ui-text-field {
   display: inline-block;
   padding: 24px 0;
   position: relative;

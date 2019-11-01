@@ -1,5 +1,23 @@
 import axios from 'axios';
 import assert from 'simple-assert';
+import mergeApiValuesWithDefaults from '@/helpers/mergeApiValuesWithDefaults';
+
+const DEFAULTS = {
+  images: [],
+  name: {
+    en: '',
+  },
+  description: {
+    en: '',
+  },
+  long_description: {
+    en: '',
+  },
+  billing_type: 'real',
+  enabled: true,
+  pricing: 'manual',
+  prices: [],
+};
 
 export default function createProjectVirtualItemPageStore() {
   return {
@@ -15,8 +33,8 @@ export default function createProjectVirtualItemPageStore() {
       itemId(state, data) {
         state.itemId = data;
       },
-      setVirtualItem(state, data) {
-        state.virtualItem = data;
+      virtualItem(state, data) {
+        state.virtualItem = mergeApiValuesWithDefaults(DEFAULTS, data);
       },
     },
 
@@ -27,12 +45,14 @@ export default function createProjectVirtualItemPageStore() {
         commit('itemId', itemId);
         if (itemId !== 'new') {
           await dispatch('fetchItemData', itemId);
+        } else {
+          commit('virtualItem', {});
         }
       },
 
       async fetchItemData({ commit, rootState }, id) {
         const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/products/${id}`);
-        commit('setVirtualItem', response.data.item);
+        commit('virtualItem', response.data.item);
       },
 
       /**
@@ -48,7 +68,7 @@ export default function createProjectVirtualItemPageStore() {
           ...data,
           project_id: projectId,
         });
-        commit('setVirtualItem', response.data);
+        commit('virtualItem', response.data);
       },
 
       /**
@@ -65,17 +85,6 @@ export default function createProjectVirtualItemPageStore() {
         });
       },
 
-      /**
-       * Return the converted prices
-       * @param rootState
-       * @param amount
-       * @returns {Promise<*>}
-       */
-      async getPrices({ rootState }, { amount, currency }) {
-        const path = `/api/v1/pricing/recommended/conversion?amount=${amount}&currency=${currency}`;
-        const response = await axios.get(`${rootState.config.apiUrl}${path}`);
-        return response.data.recommended_price;
-      },
     },
 
     namespaced: true,
