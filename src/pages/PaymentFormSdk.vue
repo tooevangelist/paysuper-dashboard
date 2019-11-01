@@ -48,7 +48,7 @@ export default {
         this.products = ['5dbbb06f59bccf00014e9bde', '5dbbb0b959bccf00014e9bdf', '5dbbb14159bccf00014e9be0'];
       }
       if (type === 'key') {
-        this.products = ['5dbbb97c59bccf00014e9be4'];
+        this.products = ['5dbbb97c59bccf00014e9be4', '5dbbbf5e59bccf00014e9beb'];
       }
     },
     buy() {
