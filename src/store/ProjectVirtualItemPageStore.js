@@ -3,6 +3,7 @@ import assert from 'simple-assert';
 import mergeApiValuesWithDefaults from '@/helpers/mergeApiValuesWithDefaults';
 
 const DEFAULTS = {
+  images: [],
   name: {
     en: '',
   },

@@ -28,6 +28,8 @@ export default {
       type: Object,
       required: true,
     },
+
+    // Those two below are used at Key products (game keys)
     hasSteamRecommendations: {
       type: Boolean,
       default: false,

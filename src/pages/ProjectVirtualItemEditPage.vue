@@ -60,7 +60,7 @@ export default {
 
     image: {
       get() {
-        return get(this.item, 'images.0', '');
+        return get(this.item, 'images[0]', '');
       },
       set(value) {
         this.item.images = [value];
@@ -153,7 +153,6 @@ export default {
       this.setIsLoading(true);
       const data = {
         ...this.item,
-        images: [this.image],
         object: 'product',
         type: 'simple_product',
       };
@@ -195,7 +194,7 @@ export default {
   <div>
     <UiPageHeaderFrame>
       <template slot="title">
-        {{ virtualItem === null ? 'Adding item' : 'Edit item' }}
+        {{ isNewItem ? 'Adding item' : 'Edit item' }}
       </template>
       <span slot="description">
         Here you can add a new item to your project, specify localised text descriptions,

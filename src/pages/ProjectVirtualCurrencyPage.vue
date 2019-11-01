@@ -103,7 +103,6 @@ export default {
         this.$showErrorMessage('The form is not filled right');
         return;
       }
-      console.log(JSON.stringify(this.virtualCurrency, null, '  '));
       this.$emit('save', {
         ...this.project,
         virtual_currency: this.virtualCurrency,
