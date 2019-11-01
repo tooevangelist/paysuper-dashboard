@@ -1,5 +1,4 @@
 <script>
-import axios from 'axios';
 import { trim } from 'lodash-es';
 import { mapState } from 'vuex';
 import assert from 'simple-assert';
@@ -9,13 +8,13 @@ export default {
   data() {
     let request = {};
     try {
-      request = JSON.parse(localStorage.getItem('sdkTestRequest'));
+      request = JSON.parse(localStorage.getItem('sdkTestRequest2'));
     } catch (error) {
       console.error(error);
     }
     return {
-      project: '5cd5620f06ae110001509185',
-      products: ['5d848f484dd6a50001970479', '5d8c7a219e362100013de214'],
+      project: '5cc7f1cf790c2900010849ee',
+      products: ['5dbac6de120a810001a8fe7e'],
       type: 'product',
       currency: 'USD',
       amount: 30,
@@ -36,13 +35,22 @@ export default {
   },
   async created() {
     assert(this.config.paysuperJsSdkUrl, 'paysuperJsSdkUrl is not defined');
-    const { data } = await axios.get(this.config.paysuperJsSdkUrl);
     const script = document.createElement('script');
-    script.innerHTML = data;
+    script.src = this.config.paysuperJsSdkUrl;
     document.head.appendChild(script);
   },
 
   methods: {
+    setType(type) {
+      this.type = type;
+
+      if (type === 'product') {
+        this.products = ['5dbac6de120a810001a8fe7e'];
+      }
+      if (type === 'key') {
+        this.products = ['5d8db87e5a50ba000169f3a2'];
+      }
+    },
     buy() {
       let request = {
         project: this.project,
@@ -62,7 +70,7 @@ export default {
         };
       }
 
-      localStorage.setItem('sdkTestRequest', JSON.stringify(request));
+      localStorage.setItem('sdkTestRequest2', JSON.stringify(request));
 
       const paySuper = new window.PaySuper({
         apiUrl: 'https://p1payapi.tst.protocol.one',
@@ -76,10 +84,10 @@ export default {
 
 <template>
 <div class="payment-form-sdk">
-  <UiRadio :checked="type === 'product'" @change="type = 'product'">product</UiRadio>
-  <UiRadio :checked="type === 'key'" @change="type = 'key'">key</UiRadio>
-  <UiRadio :checked="type === 'simple'" @change="type = 'simple'">simple</UiRadio>
-
+  <UiRadio :checked="type === 'product'" @change="setType('product')">product</UiRadio>
+  <UiRadio :checked="type === 'key'" @change="setType('key')">key</UiRadio>
+  <UiRadio :checked="type === 'simple'" @change="setType('simple')">simple</UiRadio>
+  <br>
   <UiTextField label="project" v-model="project" />
   <UiTextField v-if="type !== 'simple'" label="products" v-model="productsString" />
   <div class="simple" v-if="type === 'simple'">
@@ -87,7 +95,7 @@ export default {
     <UiTextField label="currency" v-model="currency" />
   </div>
 
-  <UiButton @click="buy">Buy</UiButton>
+  <UiButton class="submit" @click="buy">BUY</UiButton>
 </div>
 </template>
 
@@ -97,5 +105,16 @@ export default {
 }
 .simple {
   display: flex;
+}
+.submit {
+  width: 120px;
+}
+@media screen and (max-width: 640px) {
+  .payment-form-sdk {
+    width: 300px;
+  }
+  .simple {
+    display: block;
+  }
 }
 </style>

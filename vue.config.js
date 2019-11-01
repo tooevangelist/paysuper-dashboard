@@ -35,6 +35,8 @@ module.exports = {
       .type('javascript/auto')
       .use('i18n')
       .loader('@kazupon/vue-i18n-loader');
+
+    config.plugins.delete('prefetch');
   },
 
   pluginOptions: {

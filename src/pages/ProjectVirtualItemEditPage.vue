@@ -94,6 +94,7 @@ export default {
       this.item = this.virtualItem;
     } else {
       this.item = cloneDeep(DEFAULTS);
+      this.item.pricing = 'manual';
     }
 
     this.item.prices = this.project.currencies.map(({ currency, region }) => {

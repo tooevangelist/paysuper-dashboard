@@ -104,6 +104,7 @@ export default {
       this.setIsLoading(true);
       this.showDisputeModal = false;
       await this.dispute(reason)
+        .then(this.$showSuccessMessage('Report disputed'))
         .catch(this.$showErrorMessage);
       this.setIsLoading(false);
     },

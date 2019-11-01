@@ -70,7 +70,7 @@ export default {
       updateLangFields(this.projectLocal, this.langFields, langs);
     },
 
-    async handleSave() {
+    handleSave() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         this.$emit('save', this.projectLocal);

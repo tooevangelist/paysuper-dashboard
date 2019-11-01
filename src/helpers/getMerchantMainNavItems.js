@@ -30,7 +30,7 @@ export default function getMerchantMainNavItems({ hasDefaultCurrency }) {
       icon: 'IconCash',
       link: '/payouts',
       title: 'Payouts',
-      isAvailable: false,
+      isAvailable: true,
     },
     {
       additional: 'Full list of customer transactions',

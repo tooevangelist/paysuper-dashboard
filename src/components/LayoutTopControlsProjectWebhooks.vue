@@ -4,7 +4,7 @@ import { findIndex, includes } from 'lodash-es';
 import LayoutTopControlsMenuBase from '@/components/LayoutTopControlsMenuBase.vue';
 
 export default {
-  name: 'LayoutTopControlsProjectSalesOptions',
+  name: 'LayoutTopControlsProjectWebhooks',
 
   components: {
     LayoutTopControlsMenuBase,
@@ -18,23 +18,8 @@ export default {
       return [
         {
           title: 'General',
-          url: `/projects/${projectId}/sales-options/`,
-          routeNames: ['ProjectSalesOptions'],
-        },
-        {
-          title: 'Virtual currency',
-          url: `/projects/${projectId}/virtual-currency/`,
-          routeNames: ['ProjectVirtualCurrency'],
-        },
-        {
-          title: 'Virtual items',
-          url: `/projects/${projectId}/virtual-items/`,
-          routeNames: ['ProjectVirtualItems'],
-        },
-        {
-          title: 'Game keys',
-          url: `/projects/${projectId}/game-keys`,
-          routeNames: ['ProjectKeyProductsList'],
+          url: `/projects/${projectId}/webhooks/`,
+          routeNames: ['ProjectWebhooks'],
         },
       ];
     },

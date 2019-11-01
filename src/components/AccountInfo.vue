@@ -17,7 +17,7 @@ export default {
       country: { required },
       name: { onlyRusAndLat, maxLength: maxLength(60), required },
       registrationNumber: { onlyRusAndLatAndNum, maxLength: maxLength(20), required },
-      state: { required },
+      state: { onlyRusAndLatAndNum },
       taxId: { onlyRusAndLatAndNum, maxLength: maxLength(20) },
       website: { required, url },
       zip: { maxLength: maxLength(30), required },
@@ -134,6 +134,7 @@ export default {
       v-bind="$getValidatedFieldProps('accountInfo.state')"
       label="State / Province / Region"
       :value="accountInfo.state"
+      :required="false"
       @input="updateField('state', $event)"
       @blur="$v.accountInfo.state.$touch()"
     />

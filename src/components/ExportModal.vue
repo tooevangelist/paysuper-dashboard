@@ -89,6 +89,11 @@ export default {
       fill: #000;
     }
   }
+  &__name {
+    font-size: 14px;
+    line-height: 20px;
+    padding-top: 14px;
+  }
 }
 
 .modal-button {

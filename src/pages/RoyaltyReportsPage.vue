@@ -90,6 +90,10 @@ export default {
     payoutAmount() {
       return this.balance.debit || 0;
     },
+
+    isBalance() {
+      return this.balance.debit && this.balance.currency;
+    },
   },
 
   created() {
@@ -268,7 +272,7 @@ export default {
       <UiPanel>
         <div class="control-bar _center">
           <div class="total-amount__summ">
-            {{ balance !== {} ? $formatPrice(payoutAmount, balance.currency) : 0 }}
+            {{ isBalance ? $formatPrice(payoutAmount, balance.currency) : 0 }}
           </div>
           <div class="total-amount__text">
             Total royalty amount
@@ -325,7 +329,7 @@ export default {
             </UiTableCell>
             <UiTableCell align="left" :class="`status-${report.status}`">
               {{
-                report.totals !== null && report.currency && report.totals.payout_amount
+                get(report, 'totals.payout_amount')
                   ? $formatPrice(report.totals.payout_amount, report.currency)
                   : '—'
               }}
@@ -436,7 +440,7 @@ export default {
   &__text {
     font-size: 12px;
     line-height: 1.3;
-    color: #5E6366;
+    color: #5e6366;
   }
 }
 .control-bar {
@@ -465,7 +469,7 @@ export default {
 .report {
   &:hover {
     background: rgba(61, 123, 245, 0.08);
-    color: #3D7BF5;
+    color: #3d7bf5;
     cursor: pointer;
   }
 
@@ -490,7 +494,7 @@ export default {
 
       &:after {
         display: block;
-        content: '';
+        content: "";
         width: 6px;
         height: 6px;
         position: absolute;
@@ -515,7 +519,7 @@ export default {
 }
 
 .status-paid {
-  color: #069697
+  color: #069697;
 }
 
 .cell-with-menu {
@@ -525,10 +529,9 @@ export default {
 .dots-menu {
   position: relative;
   &__item {
-    /deep/
-    .menu-icon {
+    /deep/ .menu-icon {
       svg {
-        fill:  #78909C !important;
+        fill: #78909c !important;
       }
     }
   }
