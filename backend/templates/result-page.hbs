@@ -4,18 +4,11 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>PaySuper payment form</title>
+    <title>PaySuper payment form result</title>
     <style>
-      body, html {
-        margin: 0;
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-orient: vertical;
-        -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-        flex-direction: column;
-        height: 100%;
+      body {
+        background: -webkit-gradient(linear,left top,right top,from(#e1e4eb),to(#e9ecf0));
+        background: linear-gradient(90deg,#e1e4eb,#e9ecf0);
       }
     </style>
   </head>
@@ -25,12 +18,14 @@
         >We're sorry but the page doesn't work properly without JavaScript enabled.
         Please enable it to continue.</strong>
     </noscript>
-
-    <div id="paysuper-payment-form"></div>
-    
     <script>
-      window.PAYSUPER_PAYMENT_FORM = {{{ data }}}
+      if (window.opener) {
+        window.opener.postMessage({
+          source: 'PAYSUPER_PAYMENT_PAGE',
+          name: 'PAYMENT_RESULT_PAGE_REPORT',
+          data: {{{ data }}}
+        }, '*');
+      }
     </script>
-    <script src="{{ sdkUrl }}"></script>
   </body>
 </html>
