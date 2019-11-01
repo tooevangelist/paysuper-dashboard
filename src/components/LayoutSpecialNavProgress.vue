@@ -22,7 +22,8 @@ export default {
     },
 
     currentStepCount() {
-      return this.onboardingCompleteStepsCount + 1;
+      const currentStep = this.onboardingCompleteStepsCount + 1;
+      return currentStep > this.stepsCount ? this.stepsCount : currentStep;
     },
     infoStepName() {
       if (!this.onboardingSteps.company) {

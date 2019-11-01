@@ -13,8 +13,8 @@ export default {
       console.error(error);
     }
     return {
-      project: '5cc7f1cf790c2900010849ee',
-      products: ['5dbac6de120a810001a8fe7e'],
+      project: '5dbae86359bccf00014e7812',
+      products: ['5dbbb06f59bccf00014e9bde', '5dbbb0b959bccf00014e9bdf', '5dbbb14159bccf00014e9be0'],
       type: 'product',
       currency: 'USD',
       amount: 30,
@@ -45,10 +45,10 @@ export default {
       this.type = type;
 
       if (type === 'product') {
-        this.products = ['5dbac6de120a810001a8fe7e'];
+        this.products = ['5dbbb06f59bccf00014e9bde', '5dbbb0b959bccf00014e9bdf', '5dbbb14159bccf00014e9be0'];
       }
       if (type === 'key') {
-        this.products = ['5d8db87e5a50ba000169f3a2'];
+        this.products = ['5dbbb97c59bccf00014e9be4'];
       }
     },
     buy() {
