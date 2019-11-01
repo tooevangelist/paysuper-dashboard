@@ -1,5 +1,5 @@
 <script>
-import { upperFirst } from 'lodash-es';
+import { upperFirst, sortBy } from 'lodash-es';
 import EntityManagementModal from '@/components/EntityManagementModal.vue';
 
 export default {
@@ -60,7 +60,9 @@ export default {
 
   computed: {
     localizationOptionsPrepared() {
-      return this.localizationOptions.map((item) => {
+      const localizationList = sortBy(this.localizationOptions, ['label']);
+
+      return localizationList.map((item) => {
         let iconComponent = 'IconLangNoIcon';
         const [name] = item.value.split('-');
         const componentName = `IconLang${upperFirst(name)}`;
