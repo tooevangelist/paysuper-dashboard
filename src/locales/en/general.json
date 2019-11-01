@@ -9,7 +9,7 @@
     "onlyRusAndLatAndNum": "Only latin, russian, space and number symbols are allowed",
     "phone": "Enter correct phone",
     "required": "Enter a value",
-    "url": "Enter correct URL: it should begin with \"http(s)://\"",
+    "url": "Enter correct URL",
     "wrongFormatType": "Wrong value format type",
     "uniqueSku": "SKU must be unique within one project",
     "iban": "IBAN value is invalid"
