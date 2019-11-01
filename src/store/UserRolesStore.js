@@ -92,8 +92,7 @@ export default function createUserRolesStore() {
       },
 
       async delete({ dispatch }, user) {
-        console.log(user);
-        await axios.delete(`{apiUrl}/admin/api/v1/merchants/users/${user.user_id}/`);
+        await axios.delete(`{apiUrl}/admin/api/v1/merchants/users/roles/${user.id}`);
         await dispatch('fetchUsers');
       },
     },
