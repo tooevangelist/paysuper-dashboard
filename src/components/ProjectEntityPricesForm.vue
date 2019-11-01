@@ -2,9 +2,14 @@
 import { find, mapValues, isEqual } from 'lodash-es';
 import { required } from 'vuelidate/lib/validators';
 import { mapActions } from 'vuex';
+import PriceSuggestTable from '@/components/PriceSuggestTable.vue';
 
 export default {
   name: 'ProjectEntityPricesForm',
+
+  components: {
+    PriceSuggestTable,
+  },
 
   props: {
     prices: {
@@ -23,6 +28,14 @@ export default {
       type: Object,
       required: true,
     },
+    hasSteamRecommendations: {
+      type: Boolean,
+      default: false,
+    },
+    recommendedPricesTable: {
+      type: Array,
+      default: () => [],
+    },
   },
 
   model: {
@@ -33,10 +46,17 @@ export default {
   data() {
     return {
       priceData: null,
-
       isSteamSuggestOpened: false,
+    };
+  },
 
-      priceSuggestList: [
+  computed: {
+    regionsPriceData() {
+      return this.priceData.filter(item => item.currency !== item.region);
+    },
+
+    priceSuggestList() {
+      const result = [
         {
           id: 'manual',
           text: 'Continue manual input for all currencies',
@@ -45,13 +65,36 @@ export default {
           id: 'conversion',
           text: 'Use auto-conversion from default currency',
         },
-      ],
-    };
+      ];
+      if (!this.hasSteamRecommendations) {
+        return result;
+      }
+      return [
+        ...result,
+        {
+          id: 'steam',
+          text: 'Select Steam recommended prices',
+        },
+      ];
+    },
   },
 
-  computed: {
-    regionsPriceData() {
-      return this.priceData.filter(item => item.currency !== item.region);
+  watch: {
+    prices: {
+      handler(value) {
+        this.priceData = this.currencies.map(({ currency, region }) => {
+          const match = find(value, { currency, region });
+          if (match) {
+            return match;
+          }
+          return {
+            amount: null,
+            currency,
+            region,
+          };
+        });
+      },
+      immediate: true,
     },
   },
 
@@ -65,28 +108,12 @@ export default {
     };
   },
 
-  created() {
-    this.priceData = this.currencies.map(({ currency, region }) => {
-      const match = find(this.prices, { currency, region });
-      if (match) {
-        return match;
-      }
-      return {
-        amount: null,
-        currency,
-        region,
-      };
-    });
-  },
-
-  watch: {
-    priceData(value) {
-      this.$emit('updatePrice', value);
-    },
-  },
-
   methods: {
     ...mapActions(['setIsLoading']),
+
+    updatePrice() {
+      this.$emit('updatePrice', this.priceData);
+    },
 
     getCurrencyName({ currency, region }) {
       if (this.isDefault({ currency, region })) {
@@ -102,10 +129,9 @@ export default {
       return isEqual(this.defaultCurrency, { currency, region });
     },
 
-    async fillPrice(amount) {
+    async fillPrice(amount, type) {
       this.setIsLoading(true);
       const { currency } = this.defaultCurrency;
-      const type = 'conversion';
       const prices = await this.getRecommendedPrices({ type, amount, currency })
         .catch(this.$showErrorMessage);
       prices.forEach((price) => {
@@ -114,13 +140,24 @@ export default {
           item.amount = price.amount;
         }
       });
+      this.updatePrice();
       this.setIsLoading(false);
     },
 
     async handleSuggestClick(item, closeSuggest) {
-      if (item.id === 'conversion' && find(this.priceData, price => this.isDefault(price)).amount > 0) {
-        await this.fillPrice(find(this.priceData, price => this.isDefault(price)).amount);
+      if (item.id === 'steam') {
+        this.isSteamSuggestOpened = true;
+        return;
       }
+      const defaultCurrencyAmount = find(this.priceData, price => this.isDefault(price)).amount;
+      if (item.id === 'conversion' && defaultCurrencyAmount > 0) {
+        await this.fillPrice(defaultCurrencyAmount, 'conversion');
+      }
+      closeSuggest();
+    },
+
+    async handleSteamPriceSelect(amount, closeSuggest) {
+      await this.fillPrice(amount, 'steam');
       closeSuggest();
     },
 
@@ -146,15 +183,22 @@ export default {
       v-show="price.region === price.currency"
       v-bind="$getValidatedFieldProps(`priceData[${index}].amount`)"
       @suggestClosed="isSteamSuggestOpened = false"
+      @input="updatePrice"
     >
       <template v-slot:suggest="{ closeSuggest }" v-if="isDefault(price)">
         <div>
+          <PriceSuggestTable
+            v-show="isSteamSuggestOpened"
+            :items="recommendedPricesTable"
+            @close="closeSuggest"
+            @select="handleSteamPriceSelect($event, closeSuggest)"
+          />
           <UiSuggestItem
             v-show="!isSteamSuggestOpened"
             v-for="(item, index) in priceSuggestList"
             :key="index"
             v-text="item.text"
-            @click="handleSuggestClick(item, closeSuggest)"
+            @click.stop="handleSuggestClick(item, closeSuggest)"
           />
         </div>
       </template>
@@ -169,12 +213,11 @@ export default {
         class="price-input"
         v-for="(price, index) in regionsPriceData"
         :key="index"
-        v-model="price.amount"
         :isNumeric="true"
         :decimalLength="2"
-        label="Price"
-        :required="true"
+        v-model="price.amount"
         v-bind="$getValidatedFieldProps(`priceData[${index}].amount`)"
+        @input="updatePrice"
       >
         <span slot="label">
           <IconQuestionInCircle class="field-label-icon" />

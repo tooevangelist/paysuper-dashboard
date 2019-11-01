@@ -4,14 +4,14 @@ import { required } from 'vuelidate/lib/validators';
 import { find, cloneDeep, debounce } from 'lodash-es';
 import { OpenFileDialog } from '@/helpers/uploader';
 import ProjectKeyProductStore from '@/store/ProjectKeyProductStore';
-import ProjectKeyProductPriceBlock from '@/components/ProjectKeyProductPriceBlock.vue';
+import ProjectPlatformsPricesForm from '@/components/ProjectPlatformsPricesForm.vue';
 import updateLangFields from '@/helpers/updateLangFields';
 
 export default {
   name: 'ProjectKeyProductPage',
 
   components: {
-    ProjectKeyProductPriceBlock,
+    ProjectPlatformsPricesForm,
   },
 
   async asyncData({ store, registerStoreModule, route }) {
@@ -202,32 +202,6 @@ export default {
       this.setIsLoading(false);
     },
 
-    async handleRecommendedPricesSelect({ amount, platformId, closeSuggest }, type) {
-      this.setIsLoading(true);
-      const { currency } = this.defaultCurrency;
-      const prices = await this.getRecommendedPrices({ amount, currency, type })
-        .catch(this.$showErrorMessage);
-
-      this.setIsLoading(false);
-      closeSuggest();
-
-      if (!prices) {
-        return;
-      }
-
-      const platformData = find(this.keyProductLocal.platforms, { id: platformId });
-
-      const defaultPrice = find(platformData.prices, this.defaultCurrency);
-      defaultPrice.amount = amount;
-
-      prices.forEach((price) => {
-        const item = find(platformData.prices, { region: price.region, currency: price.currency });
-        if (item) {
-          item.amount = price.amount;
-        }
-      });
-    },
-
     handleSkuFieldInput: debounce(
       async function handleSkuFieldInput(value) {
         this.isSkuUnique = await this.checkIsSkuUnique(value).catch(this.$showErrorMessage);
@@ -313,14 +287,13 @@ export default {
         <RouterLink :to="`/projects/${project.id}/settings/`">project settings</RouterLink>.
       </UiText>
 
-      <ProjectKeyProductPriceBlock
+      <ProjectPlatformsPricesForm
         ref="pricesBlock"
-        :platforms="keyProductLocal.platforms"
+        v-model="keyProductLocal.platforms"
         :currencies="project.currencies"
+        :getRecommendedPrices="getRecommendedPrices"
         :defaultCurrency="defaultCurrency"
         :recommendedPricesTable="recommendedPricesTable"
-        @fillSteamPrices="handleRecommendedPricesSelect($event, 'steam')"
-        @fillConvertedPrices="handleRecommendedPricesSelect($event, 'conversion')"
       />
 
     </section>
