@@ -96,7 +96,7 @@ export default {
   },
 
   validations() {
-    return {
+    const item = {
       item: {
         name: {
           en: {
@@ -121,6 +121,16 @@ export default {
         },
       },
     };
+
+    if (this.item.billing_type === 'virtual') {
+      return {
+        ...item,
+        virtualCurrencyPrice: {
+          required,
+        },
+      };
+    }
+    return item;
   },
 
   created() {
@@ -281,7 +291,7 @@ export default {
           :isNumeric="true"
           :decimalLength="virtualCurrencySellCountType === 'fractional' ? 2 : 0"
           v-model="virtualCurrencyPrice"
-          v-bind="$getValidatedFieldProps('item.sku')"
+          v-bind="$getValidatedFieldProps('virtualCurrencyPrice')"
         />
       </section>
 
