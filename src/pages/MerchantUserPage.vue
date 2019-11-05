@@ -25,11 +25,16 @@ export default {
     };
   },
 
-  async asyncData({ store, registerStoreModule, route }) {
+  async asyncData({
+    store,
+    registerStoreModule,
+    route,
+    resources,
+  }) {
     try {
       await registerStoreModule('UserRolePage', UserRolePageStore, {
         roleId: route.params.id,
-      }).catch(this.$showErrorMessage);
+      }).catch(resources.notifications.showErrorMessage);
     } catch (error) {
       store.dispatch('setPageError', error);
     }
@@ -57,10 +62,8 @@ export default {
 
     async handleAddUser(user) {
       this.setIsLoading(true);
-      try {
-        await this.resendInvite(user).catch(this.$showErrorMessage);
-        this.inviteSuccessModal = true;
-      } catch (e) { console.warn(e); }
+      await this.resendInvite(user).catch(this.$showErrorMessage);
+      this.inviteSuccessModal = true;
       this.setIsLoading(false);
       this.inviteModal = false;
     },
