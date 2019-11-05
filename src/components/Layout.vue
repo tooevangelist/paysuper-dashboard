@@ -1,7 +1,9 @@
 <script>
 import Vue from 'vue';
 import { mapState } from 'vuex';
-import { includes, findIndex, get } from 'lodash-es';
+import {
+  includes, findIndex, isEmpty, get,
+} from 'lodash-es';
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
 import getMerchantMainNavItems from '@/helpers/getMerchantMainNavItems';
@@ -28,9 +30,11 @@ export default {
     };
   },
   watch: {
-    $route() {
+    $route(from) {
       const container = document.querySelector('#contentBox');
-      container.scrollTop = 0;
+      const emptyQuery = isEmpty(from.query);
+
+      if (emptyQuery) container.scrollTop = 0;
     },
   },
 
