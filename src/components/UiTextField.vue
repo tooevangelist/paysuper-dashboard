@@ -72,6 +72,10 @@ export default {
       default: 0,
       type: Number,
     },
+    autocompleteUrlProtocol: {
+      default: false,
+      type: Boolean,
+    },
   },
   data() {
     return {
@@ -151,9 +155,18 @@ export default {
     handleNumericInput() {
       const value = this.inputValue ? this.inputValue : '';
       if (value !== this.value) {
-        this.$emit('input', value, this.value);
+        this.$emit('input', value);
         this.openSuggest();
       }
+    },
+
+    handleBlur() {
+      let value = this.inputValue;
+      if (this.autocompleteUrlProtocol && value && !value.match(/^[a-zA-Z]+:\/\//)) {
+        value = `http://${value}`;
+      }
+      this.$emit('input', value);
+      this.$emit('blur');
     },
   },
 };
@@ -170,7 +183,7 @@ export default {
     v-bind="{ ...$attrs, ...moneyDefault, ...money, type, required, disabled }"
     type="tel"
     :class="inputClasses"
-    @blur="$emit('blur')"
+    @blur="handleBlur"
     @focus="$emit('focus')"
     @input="openSuggest(), $emit('input', inputValue)"
   />
@@ -180,7 +193,7 @@ export default {
     v-bind="{ ...$attrs, ...numericOptions, required, disabled, decimalLength }"
     type="tel"
     :class="inputClasses"
-    @blur="$emit('blur')"
+    @blur="handleBlur"
     @focus="$emit('focus')"
     @input="handleNumericInput()"
   />
@@ -190,7 +203,7 @@ export default {
     v-bind="{ ...$attrs, type, required, disabled }"
     :class="inputClasses"
     @focus="$emit('focus')"
-    @blur="$emit('blur')"
+    @blur="handleBlur"
     @input="openSuggest(), $emit('input', inputValue)"
   />
   <label

@@ -115,6 +115,7 @@ export default {
       </UiText>
       <UiTextField
         label="Webhook URL"
+        :autocompleteUrlProtocol="true"
         v-model="projectLocal.url_process_payment"
         v-bind="$getValidatedFieldProps('projectLocal.url_process_payment')"
       />

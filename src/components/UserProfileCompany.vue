@@ -254,6 +254,7 @@ export default {
     <UiTextField
       label="Website"
       v-model="profile.company.website"
+      :autocompleteUrlProtocol="true"
       :required="true"
       :hasError="$isFieldInvalid('profile.company.website')"
       :errorText="$getFieldErrorMessages(
