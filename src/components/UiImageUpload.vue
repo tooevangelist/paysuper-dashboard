@@ -29,12 +29,29 @@ export default {
       type: String,
       default: '',
     },
+    errorText: {
+      default: 'Upload cover',
+      type: String,
+    },
+    hasError: {
+      default: false,
+      type: Boolean,
+    },
   },
   data() {
     return {
       isDragOver: false,
       errorMessage: '',
     };
+  },
+  computed: {
+    /**
+     * Error is visible if it exists and error text isn't empty
+     * @return {boolean}
+     */
+    isVisibleError() {
+      return !!(this.hasError && this.errorText);
+    },
   },
   methods: {
     async uploadFile(file) {
@@ -116,15 +133,27 @@ export default {
     </template>
 
   </div>
+  <span
+    v-if="isVisibleError"
+    class="error"
+    :title="errorText"
+    >
+    {{ errorText }}
+  </span>
 </div>
 </template>
 
 <style scoped lang="scss">
 $hover-text-color: #3d7bf5;
 $error-text-color: #ea3d2f;
+$secondary-input-size: 12px;
+$left-indent: 80px;
+
 .image-upload {
   display: flex;
   cursor: pointer;
+  position: relative;
+  padding-bottom: 24px;
 }
 .image {
   width: 64px;
@@ -140,7 +169,14 @@ $error-text-color: #ea3d2f;
     background-color: #f1f3f4;
   }
 }
-
+.error {
+  bottom: 0;
+  left: $left-indent;
+  color: $error-text-color;
+  display: block;
+  font-size: $secondary-input-size;
+  position: absolute;
+}
 .tag {
   position: absolute;
   font-size: 8px;
