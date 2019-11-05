@@ -27,6 +27,13 @@ export default {
       projectName: 'CD Projects',
     };
   },
+  watch: {
+    $route() {
+      const container = document.querySelector('#contentBox');
+      container.scrollTop = 0;
+    },
+  },
+
   computed: {
     ...mapState(['isLoading']),
     ...mapState('User', ['role']),
@@ -116,6 +123,7 @@ export default {
     <section class="content">
       <UiScrollbarBox
         class="scrollbox"
+        id="contentBox"
         ref="contentScrollbox"
         @ps-y-reach-end="$appEvents.$emit('contentScrollReachEnd')"
         @ps-scroll-y="$appEvents.$emit('contentScroll')"
