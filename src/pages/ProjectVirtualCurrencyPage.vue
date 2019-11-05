@@ -1,72 +1,112 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
-import { cloneDeep } from 'lodash-es';
-import { required } from 'vuelidate/lib/validators';
+import { required, minValue, maxValue } from 'vuelidate/lib/validators';
+import mergeApiValuesWithDefaults from '@/helpers/mergeApiValuesWithDefaults';
 import PictureLetterGLandscape from '@/components/PictureLetterGLandscape.vue';
+import ProjectEntityPricesForm from '@/components/ProjectEntityPricesForm.vue';
 import TestingTag from '@/components/TestingTag.vue';
+import updateLangFields from '@/helpers/updateLangFields';
+
+const DEFAULTS = {
+  logo: '',
+  name: {
+    en: '',
+  },
+  success_message: {
+    en: '',
+  },
+  min_purchase_value: 0,
+  max_purchase_value: 0,
+  sell_count_type: 'fractional',
+  prices: [],
+};
 
 export default {
   name: 'ProjectVirtualCurrencyPage',
   components: {
     PictureLetterGLandscape,
+    ProjectEntityPricesForm,
     TestingTag,
   },
 
   data() {
     return {
-      projectLocal: null,
-      image: '',
-      virtualCurrencyName: {
-        en: '',
-        ru: '',
-      },
-      successfulMessage: {
-        en: '',
-        ru: '',
-      },
-      singleUnitPrice: {
-        USD: 0,
-        EUR: 0,
-      },
+      langFields: ['name', 'success_message'],
+      virtualCurrency: null,
+      valueSellMethodsList: [
+        {
+          label: 'Fractional value',
+          value: 'fractional',
+        },
+        {
+          label: 'Integral value',
+          value: 'integral',
+        },
+      ],
     };
   },
 
   computed: {
-    ...mapState('Project', ['project']),
+    ...mapState('Project', ['project', 'defaultCurrency']),
     ...mapGetters('Project', ['currenciesTags', 'defaultCurrencyValue']),
   },
 
-  validations: {
-    virtualCurrencyName: {
-      en: {
-        required,
+  validations() {
+    const virtualCurrency = {
+      name: {
+        en: {
+          required,
+        },
       },
-    },
+    };
+    if (this.virtualCurrency.max_purchase_value) {
+      virtualCurrency.min_purchase_value = {
+        maxValue: maxValue(this.virtualCurrency.max_purchase_value),
+      };
+    }
+    if (this.virtualCurrency.min_purchase_value) {
+      virtualCurrency.max_purchase_value = {
+        minValue: minValue(this.virtualCurrency.min_purchase_value),
+      };
+    }
+    return {
+      virtualCurrency,
+    };
   },
 
   watch: {
     project() {
-      this.updateProjectLocal();
+      this.updateVirtualCurrency();
     },
   },
 
   created() {
-    this.updateProjectLocal();
+    this.updateVirtualCurrency();
   },
 
   methods: {
     ...mapActions(['uploadImage']),
+    ...mapActions('Project', ['getRecommendedPrices']),
 
-    updateProjectLocal() {
-      this.projectLocal = cloneDeep(this.project);
+    updateVirtualCurrency() {
+      this.virtualCurrency = mergeApiValuesWithDefaults(DEFAULTS, this.project.virtual_currency);
+      updateLangFields(this.virtualCurrency, this.langFields, this.project.localizations);
     },
 
     handleSave() {
       this.$v.$touch();
-      if (this.$v.$invalid) {
+      let isPricesValid = true;
+      if (this.$refs.pricesBlock) {
+        isPricesValid = this.$refs.pricesBlock.checkIsValid();
+      }
+      if (this.$v.$invalid || !isPricesValid) {
+        this.$showErrorMessage('The form is not filled right');
         return;
       }
-      this.$emit('save', this.projectLocal);
+      this.$emit('save', {
+        ...this.project,
+        virtual_currency: this.virtualCurrency,
+      });
     },
   },
 };
@@ -77,7 +117,7 @@ export default {
   <UiPageHeaderFrame>
     <template slot="title">
       Virtual currency
-      <TestingTag class="tag" />
+      <TestingTag class="tag" v-if="false" />
     </template>
     <span slot="description">
       Virtual Currency is an option to sell your in-game currency — gold, coins, etc.
@@ -94,18 +134,18 @@ export default {
         title="logo"
         description="200x200 px, .png, .jpg"
         :uploadImage="uploadImage"
-        v-model="image"
+        v-model="virtualCurrency.logo"
       />
       <UiLangTextField
-        :value="virtualCurrencyName"
-        :langs="projectLocal.localizations"
         label="Virtual currency name"
-        v-bind="$getValidatedFieldProps('virtualCurrencyName.en')"
+        :langs="project.localizations"
+        :value="virtualCurrency.name"
+        v-bind="$getValidatedFieldProps('virtualCurrency.name.en')"
       />
       <UiLangTextField
-        :value="successfulMessage"
-        :langs="projectLocal.localizations"
         label="Custom message on successful payment"
+        :langs="project.localizations"
+        :value="virtualCurrency.success_message"
       />
     </section>
 
@@ -114,7 +154,7 @@ export default {
         :hasMargin="true"
         level="3"
       >
-        Pricing
+        Virtual currency single unit price
       </UiHeader>
       <p class="text">
         Setup the price for one virtual currency unit in all your <br> currencies.
@@ -122,27 +162,12 @@ export default {
         <a :href="`/projects/${project.id}/settings/`">project settings</a>.
       </p>
 
-      <div class="radio-group">
-        <UiRadio class="radio" :disabled="true">
-          Currency conversion
-          <IconQuestion fill="#919699" />
-        </UiRadio>
-        <UiRadio class="radio">
-          Manual input
-          <IconQuestion fill="#919699" />
-        </UiRadio>
-        <UiRadio class="radio">
-          Default currency only
-          <IconQuestion fill="#919699" />
-        </UiRadio>
-      </div>
-      <UiLangTextField
-        :value="singleUnitPrice"
-        :langs="currenciesTags"
-        :isNumeric="true"
-        :decimalLength="2"
-        label="Virtual currency single unit price"
-        v-bind="$getValidatedFieldProps(`singleUnitPrice.${defaultCurrencyValue}`)"
+      <ProjectEntityPricesForm
+        ref="pricesBlock"
+        :currencies="project.currencies"
+        :getRecommendedPrices="getRecommendedPrices"
+        :defaultCurrency="defaultCurrency"
+        v-model="virtualCurrency.prices"
       />
     </section>
 
@@ -152,13 +177,17 @@ export default {
         for a single purchase.
       </p>
       <UiTextField
-        :value="1"
         label="Minimum purchase value"
+        v-model="virtualCurrency.min_purchase_value"
+        v-bind="$getValidatedFieldProps('virtualCurrency.min_purchase_value')"
+        :required="false"
         :isNumeric="true"
       />
       <UiTextField
-        :value="100"
         label="Maximum purchase value"
+        v-model="virtualCurrency.max_purchase_value"
+        v-bind="$getValidatedFieldProps('virtualCurrency.max_purchase_value')"
+        :required="false"
         :isNumeric="true"
       />
     </section>
@@ -169,8 +198,15 @@ export default {
         (for example: 1,58) or as an integral number (1, 2, 5 etc).
       </p>
       <div class="radio-group">
-        <UiRadio class="radio">Fractional value</UiRadio>
-        <UiRadio class="radio">Integral value</UiRadio>
+        <UiRadio
+          class="radio"
+          v-for="item in valueSellMethodsList"
+          :key="item.value"
+          :value="item.value"
+          v-model="virtualCurrency.sell_count_type"
+        >
+          {{ item.label }}
+        </UiRadio>
       </div>
     </section>
 
@@ -184,7 +220,6 @@ export default {
   </UiPanel>
 </div>
 </template>
-
 
 <style lang="scss" scoped>
 .section {

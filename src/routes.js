@@ -135,6 +135,12 @@ const routes = [
         },
         name: 'ProjectWebhooks',
       },
+      {
+        path: 'payment-form/',
+        component: () => import('@/pages/ProjectPaymentFormPage.vue'),
+        meta: projectPagesMeta,
+        name: 'ProjectPaymentForm',
+      },
     ],
   },
   {

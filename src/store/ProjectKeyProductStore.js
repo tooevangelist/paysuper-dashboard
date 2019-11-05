@@ -1,5 +1,4 @@
 import axios from 'axios';
-import assert from 'simple-assert';
 import mergeApiValuesWithDefaults from '@/helpers/mergeApiValuesWithDefaults';
 
 function mapDataApiToForm(data) {
@@ -144,13 +143,6 @@ export default function createProjectKeyProductStore() {
           ...state.keyCounts,
           [platformId]: response.data.total_count,
         });
-      },
-
-      async getRecommendedPrices(ctx, { type, amount, currency }) {
-        assert(type === 'steam' || type === 'conversion');
-        const path = `/api/v1/pricing/recommended/${type}?amount=${amount}&currency=${currency}`;
-        const { data } = await axios.get(`{apiUrl}${path}`);
-        return data.recommended_price;
       },
 
       async getRecommendedPricesTable(ctx, currency) {

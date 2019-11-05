@@ -10,7 +10,10 @@ const config = require('../../config/config');
 const webappConfig = require('../../config/webappConfig');
 
 const orderTemplate = fs.readFileSync(path.resolve('backend/templates/order-page.hbs'), 'utf-8');
-const template = Handlebars.compile(orderTemplate);
+const renderOrder = Handlebars.compile(orderTemplate);
+
+const resultTemplate = fs.readFileSync(path.resolve('backend/templates/result-page.hbs'), 'utf-8');
+const renderResult = Handlebars.compile(resultTemplate);
 
 const isDev = process.env.NODE_ENV === 'local';
 const userIdentityCookieName = '_ps_ctkn';
@@ -81,15 +84,16 @@ module.exports = async function orderPage(ctx) {
     };
   }
 
-  if (query.result) {
-    return template({
-      result: query.result,
-      hasForm: false,
+  if (_.includes(['success', 'fail'], query.result)) {
+    return renderResult({
+      data: JSON.stringify({
+        result: query.result,
+      }),
     });
   }
 
   if (query.loading) {
-    return template({
+    return renderOrder({
       data: JSON.stringify({
         orderParams: {},
         orderData: {},
@@ -98,7 +102,6 @@ module.exports = async function orderPage(ctx) {
         },
       }),
       sdkUrl,
-      hasForm: true,
     });
   }
 
@@ -129,7 +132,7 @@ module.exports = async function orderPage(ctx) {
     overwrite: true,
   });
 
-  return template({
+  return renderOrder({
     data: JSON.stringify({
       orderParams,
       orderData,
@@ -138,6 +141,5 @@ module.exports = async function orderPage(ctx) {
       },
     }),
     sdkUrl,
-    hasForm: true,
   });
 };

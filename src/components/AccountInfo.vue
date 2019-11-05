@@ -87,6 +87,7 @@ export default {
       v-bind="$getValidatedFieldProps('accountInfo.website')"
       label="Website"
       :value="accountInfo.website"
+      :autocompleteUrlProtocol="true"
       @input="updateField('website', $event)"
       @blur="$v.accountInfo.website.$touch()"
     />
