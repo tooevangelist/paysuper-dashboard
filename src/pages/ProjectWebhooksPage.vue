@@ -24,6 +24,18 @@ export default {
   computed: {
     ...mapState('Project', ['project']),
     ...mapState('User/Merchant', ['merchant']),
+
+    isWebhooksEnabled: {
+      get() {
+        if (this.projectLocal.callback_protocol === 'default') {
+          return true;
+        }
+        return false;
+      },
+      set(value) {
+        this.projectLocal.callback_protocol = value ? 'default' : 'empty';
+      },
+    },
   },
 
   validations: {
@@ -73,7 +85,7 @@ export default {
     <template slot="description">
       In this section we will setup and test two-way notifications between our systems,
       so all orders and commands would work as intended.
-      This is an obligatory requirement for Virtual Currency and Virtual Items sales options.
+      This is an obligatory requirement for all kind of sales options.
     </template>
     <PictureDotsAndSquaresScheme slot="picture" />
   </UiPageHeaderFrame>
@@ -141,9 +153,9 @@ export default {
     </div>
 
     <div class="controls">
-      <!-- <UiSwitchBox v-model="projectLocal.enabled">
+      <UiSwitchBox v-model="isWebhooksEnabled">
         Enable webhooks
-      </UiSwitchBox> -->
+      </UiSwitchBox>
       <UiButton
         class="submit-button"
         text="SAVE"
