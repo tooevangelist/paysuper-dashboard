@@ -15,11 +15,12 @@ export default {
 
     items() {
       const projectId = this.project.id || 'new';
+      const baseUrl = `/projects/${projectId}`;
       return [
         {
           title: 'Sales options',
           icon: 'IconMoney',
-          url: `/projects/${projectId}/sales-options/`,
+          url: `${baseUrl}/sales-options/`,
           routeNames: [
             'ProjectSalesOptions', 'ProjectVirtualItems',
             'ProjectVirtualCurrency', 'ProjectKeyProductsList',
@@ -29,14 +30,21 @@ export default {
         {
           title: 'Webhooks',
           icon: 'IconLabel',
-          url: `/projects/${projectId}/webhooks/`,
+          url: `${baseUrl}/webhooks/`,
           routeNames: ['ProjectWebhooks'],
+          available: true,
+        },
+        {
+          title: 'Payment form',
+          icon: 'IconTwoArrowsToInside',
+          url: `${baseUrl}/payment-form/`,
+          routeNames: ['ProjectPaymentForm'],
           available: true,
         },
         {
           title: 'Settings',
           icon: 'IconSettings',
-          url: `/projects/${projectId}/settings/`,
+          url: `${baseUrl}/settings/`,
           routeNames: ['ProjectSettings'],
           available: true,
         },
