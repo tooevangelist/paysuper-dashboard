@@ -1,5 +1,7 @@
 <script>
-import { debounce, isEqual } from 'lodash-es';
+import {
+  debounce, isEqual, get, find,
+} from 'lodash-es';
 import {
   mapState, mapGetters, mapActions,
 } from 'vuex';
@@ -26,7 +28,9 @@ export default {
       inviteModal: false,
       inviteSuccessModal: false,
       showDeleteConfirm: false,
+      showChangeRoleConfirm: false,
       selectedUser: null,
+      newRole: null,
       roleScheme,
     };
   },
@@ -50,6 +54,12 @@ export default {
       return debounce(() => {
         this.filterItems();
       }, 500);
+    },
+
+    filteredUsers() {
+      return this.users.filter(user =>
+        // eslint-disable-next-line
+        ~user.email.toLowerCase().indexOf(this.filters.quickFilter.toLowerCase()));
     },
   },
 
@@ -77,6 +87,7 @@ export default {
       'fetchUsers',
       'invite',
       'delete',
+      'changeRole',
     ]),
 
     updateFiltersFromQuery() {
@@ -117,9 +128,37 @@ export default {
       this.inviteModal = false;
     },
 
+    getLabelColor(role) {
+      return get(find(this.roleScheme, { value: role }), 'color');
+    },
+
+    getRoleName(role) {
+      return get(find(this.roleScheme, { value: role }), 'status');
+    },
+
     deleteSeletedUser() {
       this.delete(this.selectedUser).catch(this.$showErrorMessage);
       this.showDeleteConfirm = false;
+      this.selectedUser = null;
+    },
+
+    handleChangeRole(role, user) {
+      this.selectedUser = user;
+      this.newRole = role.value;
+      this.showChangeRoleConfirm = true;
+    },
+
+    async confirmChangeRole() {
+      this.setIsLoading(true);
+      await this.changeRole({
+        id: this.selectedUser.id,
+        email: this.selectedUser.email,
+        role: this.newRole,
+      }).catch(this.$showErrorMessage);
+      this.setIsLoading(false);
+      this.selectedUser = null;
+      this.newRole = null;
+      this.showChangeRoleConfirm = false;
     },
   },
 };
@@ -159,11 +198,12 @@ export default {
           <UiTableCell align="left" width="5%"></UiTableCell>
         </UiTableRow>
         <UiTableRow
-          v-for="user in users"
+          v-for="user in filteredUsers"
           :key="user.id"
+          :link="`/settings/user-roles/${user.id}`"
         >
           <UiTableCell align="left">
-            <IconNoImage class="img" width="18" height="18" fill="#919699" />
+            <IconUser class="img" width="18" height="18" fill="#919699" />
           </UiTableCell>
           <UiTableCell align="left">
             {{ user.email }}
@@ -172,14 +212,15 @@ export default {
             <UiLabelSwitch
               v-if="user.role !== 'merchant_owner'"
               :value="user.role"
-              :scheme="roleScheme" />
+              :scheme="roleScheme"
+              @input="handleChangeRole($event, user)"/>
             <UiLabelTag v-else color="red" class="owner-label">Owner</UiLabelTag>
           </UiTableCell>
           <UiTableCell>
             <div
               class="delete-user"
               v-if="user.role !== 'merchant_owner'"
-              @click="showDeleteConfirm = true, selectedUser = user">
+              @click.stop.prevent="showDeleteConfirm = true, selectedUser = user">
               <IconDelete />
             </div>
           </UiTableCell>
@@ -188,13 +229,26 @@ export default {
     </UiPanel>
 
     <UiConfirm
-      v-if="showDeleteConfirm && selectedUser"
-      title="Delete item"
-      buttonText="DELETE"
-      buttonColor="red"
-      @close="showDeleteConfirm=false"
-      @confirm="deleteSeletedUser">
-      This user will no longer have access to your Pay Super account.
+      v-if="showChangeRoleConfirm && selectedUser"
+      title="Change role"
+      buttonText="CONFIRM"
+      buttonColor="blue"
+      @close="showChangeRoleConfirm=false"
+      @confirm="confirmChangeRole">
+      <div class="change-role">
+        <div class="change-role__labels">
+          <UiLabelTag :color="getLabelColor(this.selectedUser.role)">
+            {{ getRoleName(this.selectedUser.role) }}
+          </UiLabelTag>
+
+          <IconThinRightArrow class="change-role__dir"/>
+
+          <UiLabelTag :color="getLabelColor(this.newRole)">
+            {{ getRoleName(this.newRole) }}
+          </UiLabelTag>
+        </div>
+        Are you sure you want to assign a new role for this user <br> {{selectedUser.email}}?
+      </div>
     </UiConfirm>
 
     <UiConfirm
@@ -244,5 +298,22 @@ export default {
 
 .owner-label {
   width: 130px;
+}
+
+.change-role {
+  font-size: 14px;
+  letter-spacing: 0.25px;
+  color: #5E6366;
+
+  &__labels {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+
+  &__dir {
+    fill: #000;
+  }
 }
 </style>

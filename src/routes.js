@@ -220,6 +220,16 @@ const routes = [
         },
         name: 'MerchantUserRoles',
       },
+      {
+        path: 'user-roles/:id',
+        component: () => import('@/pages/MerchantUserPage.vue'),
+        meta: {
+          layout: 'Layout',
+          isAuthRequired: true,
+          topControls: () => import('@/components/LayoutTopControlsSettings.vue'),
+        },
+        name: 'MerchantUserPage',
+      },
     ],
   },
   {

@@ -1,7 +1,7 @@
 const filters = {
   quickFilter: {
     defaultValue: '',
-    apiQueryName: 'name',
+    apiQueryName: 'email',
   },
 
   sort: {

@@ -4,10 +4,23 @@ import { email, maxLength, required } from 'vuelidate/lib/validators';
 export default {
   name: 'InviteUserModal',
 
+  props: {
+    title: {
+      type: String,
+      default: 'Invitation',
+    },
+    email: {
+      type: String,
+      default: '',
+    },
+    role: {
+      type: String,
+      default: 'merchant_developer',
+    },
+  },
+
   data() {
     return {
-      email: '',
-      role: 'developer',
       roles: [
         {
           label: 'Developer',
@@ -45,7 +58,7 @@ export default {
         level="3"
         align="center"
       >
-        Invitation
+        {{title}}
       </UiHeader>
 
       <div class="content">

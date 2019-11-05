@@ -1,9 +1,9 @@
 export default [
-  {
+  /* {
     status: 'Owner',
     value: 'merchant_owner',
     color: 'red',
-  },
+  }, */
   {
     status: 'Developer',
     value: 'merchant_developer',

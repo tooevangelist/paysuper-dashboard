@@ -95,6 +95,14 @@ export default function createUserRolesStore() {
         await axios.delete(`{apiUrl}/admin/api/v1/merchants/users/roles/${user.id}`);
         await dispatch('fetchUsers');
       },
+
+      async changeRole({ dispatch }, user) {
+        await axios.put(`{apiUrl}/admin/api/v1/merchants/users/roles/${user.id}`, {
+          email: user.email,
+          role: user.role,
+        });
+        await dispatch('fetchUsers');
+      },
     },
 
     namespaced: true,

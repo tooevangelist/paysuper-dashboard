@@ -1,5 +1,5 @@
 <script>
-import { find } from 'lodash-es';
+import { find, get } from 'lodash-es';
 import ClickOutside from 'vue-click-outside';
 
 export default {
@@ -28,7 +28,7 @@ export default {
 
   methods: {
     getLabelColor() {
-      return find(this.scheme, { value: this.value }).color;
+      return get(find(this.scheme, { value: this.value }), 'color');
     },
 
     getItemClass(item) {
@@ -39,7 +39,7 @@ export default {
     },
 
     getRoleName(code) {
-      return find(this.scheme, { value: code }).status;
+      return get(find(this.scheme, { value: code }), 'status');
     },
 
     labelClick() {
@@ -48,6 +48,7 @@ export default {
 
     handleClick(item) {
       this.$emit('input', item);
+      this.isDropdownOpened = !this.isDropdownOpened;
     },
   },
 };
@@ -55,7 +56,7 @@ export default {
 
 <template>
   <div class="switch-menu" v-click-outside="() => isDropdownOpened = false">
-    <div class="switch-menu__label" @click="labelClick">
+    <div class="switch-menu__label" @click.stop.prevent="labelClick">
       <UiLabelTag class="switch" :class="{ opened: isDropdownOpened }" :color="getLabelColor()">
         {{ getRoleName(this.value) }} <span class="triangle"></span>
       </UiLabelTag>
@@ -76,7 +77,7 @@ export default {
           v-for="(item, index) in scheme"
           :key="index"
           :class="getItemClass(item, value)"
-          @click="handleClick(item)"
+          @click.stop.prevent="handleClick(item)"
         >
           <component
             class="status-icon"
