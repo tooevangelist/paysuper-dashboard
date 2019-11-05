@@ -24,16 +24,6 @@ export default {
     },
   },
 
-  data() {
-    return {
-      webProt: { label: 'http://', value: 'http' },
-      webProtoList: [
-        { label: 'http://', value: 'http' },
-        { label: 'https://', value: 'https' },
-      ],
-    };
-  },
-
   computed: {
     ...mapGetters('Dictionaries', ['countries']),
     ...mapGetters('Company/AccountInfo', ['accountInfo', 'cities']),
@@ -45,23 +35,6 @@ export default {
     // Cities must be into Dictionaries store
     preparedCities() {
       return this.cities.map(city => ({ label: city, value: city }));
-    },
-
-    website() {
-      const URL = this.accountInfo.website;
-
-      let [protocol, domain] = [];
-      if (URL.indexOf('://') !== -1) {
-        [protocol, domain] = URL.split('://');
-      } else {
-        [protocol, domain] = ['http', URL];
-      }
-
-      return { protocol, domain };
-    },
-
-    prot() {
-      return { label: `${this.website.protocol}://`, value: this.website.protocol };
     },
   },
   async mounted() {
@@ -76,12 +49,6 @@ export default {
 
     updateField(key, value) {
       this.updateAccountInfo({ ...this.accountInfo, [key]: value });
-    },
-    updateUrlWebSite(key, value) {
-      this.updateAccountInfo({ ...this.accountInfo, [key]: this.prot.label + value });
-    },
-    updateProtocol(key, value) {
-      this.updateAccountInfo({ ...this.accountInfo, [key]: `${value}://${this.website.domain}` });
     },
 
     async submit() {
@@ -118,24 +85,13 @@ export default {
       @input="updateField('name', $event)"
       @blur="$v.accountInfo.name.$touch()"
     />
-    <div class="section__row">
-      <div class="section__col">
-        <UiSelect
-          :options="webProtoList"
-          :value="prot.value"
-          @input="updateProtocol('website', $event)"
-          />
-      </div>
-      <div class="section__col">
-        <UiTextField
-          v-bind="$getValidatedFieldProps('accountInfo.website')"
-          label="Website"
-          :value="website.domain"
-          @input="updateUrlWebSite('website', $event)"
-          @blur="$v.accountInfo.website.$touch()"
-        />
-      </div>
-    </div>
+    <UiTextField
+      v-bind="$getValidatedFieldProps('accountInfo.website')"
+      label="Website"
+      :value="accountInfo.website"
+      @input="updateField('website', $event)"
+      @blur="$v.accountInfo.website.$touch()"
+      />
     <UiTextField
       v-bind="$getValidatedFieldProps('accountInfo.alternativeName')"
       label="Operating name"
@@ -233,15 +189,6 @@ export default {
 }
 .section {
   margin-bottom: 12px;
-  &__row {
-    display: flex;
-  }
-  &__col:nth-child(1) {
-    width: 110px;
-  }
-  &__col:nth-child(2) {
-     flex-basis: 100%;
-  }
 }
 .title {
   font-family: Quicksand;
