@@ -89,6 +89,13 @@ export default {
       await this.refund({ transaction: this.transaction, reason }).catch(this.$showErrorMessage);
       this.setIsLoading(false);
     },
+
+    hasCurrency(value) {
+      if (value === undefined) {
+        return false;
+      }
+      return value.currency !== '';
+    },
   },
 };
 </script>
@@ -135,19 +142,19 @@ export default {
               {{ $formatPrice(transaction.total_payment_amount, transaction.currency) }}
             </div>
           </div>
-          <div class="details__item" v-if="get(transaction.gross_revenue, 'amount', false)">
+          <div class="details__item" v-if="hasCurrency(transaction.gross_revenue)">
             <div class="details__item--label">Gross Revenue</div>
             <div class="details__item--info">
               {{$formatPrice(transaction.gross_revenue.amount, transaction.gross_revenue.currency)}}
             </div>
           </div>
-          <div class="details__item" v-if="get(transaction.tax_fee, 'amount', false)">
+          <div class="details__item" v-if="hasCurrency(transaction.tax_fee)">
             <div class="details__item--label">VAT Tax Fee</div>
             <div class="details__item--info">
               {{$formatPrice(transaction.tax_fee.amount, transaction.tax_fee.currency)}}
             </div>
           </div>
-          <div class="details__item" v-if="get(transaction.tax_fee_total, 'amount', false)">
+          <div class="details__item" v-if="hasCurrency(transaction.tax_fee_total)">
             <div class="details__item--label">VAT Tax Fee Total</div>
             <div class="details__item--info">
               {{$formatPrice(
@@ -155,13 +162,7 @@ export default {
                 transaction.tax_fee_total.currency)}}
             </div>
           </div>
-          <div class="details__item" v-if="get(transaction.tax_fee, 'amount', false)">
-            <div class="details__item--label">VAT Tax Fee</div>
-            <div class="details__item--info">
-              {{$formatPrice(transaction.tax_fee.amount, transaction.tax_fee.currency)}}
-            </div>
-          </div>
-          <div class="details__item" v-if="get(transaction.net_revenue, 'amount', false)">
+          <div class="details__item" v-if="hasCurrency(transaction.net_revenue)">
             <div class="details__item--label">Merchant Net Revenue</div>
             <div class="details__item--info">
               {{$formatPrice(
@@ -169,7 +170,7 @@ export default {
                 transaction.net_revenue.currency)}}
             </div>
           </div>
-          <div class="details__item" v-if="get(transaction.method_fee_total, 'amount', false)">
+          <div class="details__item" v-if="hasCurrency(transaction.method_fee_total)">
             <div class="details__item--label">Method Fee Total</div>
             <div class="details__item--info">
               {{$formatPrice(
@@ -177,7 +178,7 @@ export default {
                 transaction.method_fee_total.currency)}}
             </div>
           </div>
-          <div class="details__item" v-if="get(transaction.paysuper_fixed_fee, 'amount', false)">
+          <div class="details__item" v-if="hasCurrency(transaction.paysuper_fixed_fee)">
             <div class="details__item--label">PaySuper Fixed Fee</div>
             <div class="details__item--info">
               {{$formatPrice(
@@ -185,7 +186,7 @@ export default {
                 transaction.paysuper_fixed_fee.currency)}}
             </div>
           </div>
-          <div class="details__item" v-if="get(transaction.fees_total, 'amount', false)">
+          <div class="details__item" v-if="hasCurrency(transaction.fees_total)">
             <div class="details__item--label">Merchant Fees Total</div>
             <div class="details__item--info">
               {{$formatPrice(
@@ -194,7 +195,7 @@ export default {
             </div>
           </div>
           <!-- refunds -->
-          <div class="details__item" v-if="get(transaction.refund_gross_revenue, 'amount', false)">
+          <div class="details__item" v-if="hasCurrency(transaction.refund_gross_revenue)">
             <div class="details__item--label">Refund Gross Revenue</div>
             <div class="details__item--info">
               {{$formatPrice(
@@ -202,7 +203,7 @@ export default {
               transaction.refund_gross_revenue.currency)}}
             </div>
           </div>
-          <div class="details__item" v-if="get(transaction.refund_tax_fee, 'amount', false)">
+          <div class="details__item" v-if="hasCurrency(transaction.refund_tax_fee)">
             <div class="details__item--label">Refund VAT Tax Fee</div>
             <div class="details__item--info">
               {{$formatPrice(
@@ -211,7 +212,7 @@ export default {
             </div>
           </div>
           <div class="details__item"
-               v-if="get(transaction.refund_tax_fee_currency_exchange_fee, 'amount', false)">
+               v-if="hasCurrency(transaction.refund_tax_fee_currency_exchange_fee)">
             <div class="details__item--label">Refund VAT Tax Exchange Fee</div>
             <div class="details__item--info">
               {{$formatPrice(
@@ -219,7 +220,7 @@ export default {
               transaction.refund_tax_fee_currency_exchange_fee.currency)}}
             </div>
           </div>
-          <div class="details__item" v-if="get(transaction.refund_tax_fee_total, 'amount', false)">
+          <div class="details__item" v-if="hasCurrency(transaction.refund_tax_fee_total)">
             <div class="details__item--label">Refund VAT Tax Fee Total</div>
             <div class="details__item--info">
               {{$formatPrice(
@@ -228,7 +229,7 @@ export default {
             </div>
           </div>
           <div class="details__item"
-               v-if="get(transaction.refund_reverse_revenue, 'amount', false)">
+               v-if="hasCurrency(transaction.refund_reverse_revenue)">
             <div class="details__item--label">Refund Reverse Revenue</div>
             <div class="details__item--info">
               {{$formatPrice(
@@ -236,7 +237,7 @@ export default {
               transaction.refund_reverse_revenue.currency)}}
             </div>
           </div>
-          <div class="details__item" v-if="get(transaction.refund_fees_total, 'amount', false)">
+          <div class="details__item" v-if="hasCurrency(transaction.refund_fees_total)">
             <div class="details__item--label">Refund Reverse Fees Total</div>
             <div class="details__item--info">
               {{$formatPrice(
