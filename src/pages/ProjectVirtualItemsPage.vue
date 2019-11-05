@@ -234,7 +234,9 @@ export default {
           <UiTableRow
             class="content-row"
             v-for="(item, index) in virtualItems.items"
-            :key="item.id">
+            :key="item.id"
+            :link="`/projects/${project.id}/virtual-items/${item.id}`"
+          >
             <UiTableCell align="left" valign="top">
               <span class="leading-cell-content">{{ index + 1 }}</span>
             </UiTableCell>

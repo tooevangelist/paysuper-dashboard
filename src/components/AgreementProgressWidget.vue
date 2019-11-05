@@ -1,5 +1,5 @@
 <script>
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 import { reduce } from 'lodash-es';
 import PictureWelcomeSheets from '@/components/PictureWelcomeSheets.vue';
 import SmartListItem from '@/components/SmartListItem.vue';
@@ -15,8 +15,8 @@ export default {
       'onboardingCompleteStepsCount',
       'onboardingSteps',
       'merchant',
-      'hasProjects',
     ]),
+    ...mapGetters('User/Merchant', ['hasProjects']),
 
     status() {
       return this.merchant.status;

@@ -1,7 +1,9 @@
 <script>
 import { mapState } from 'vuex';
 import { cloneDeep } from 'lodash-es';
-import { required, minLength, url } from 'vuelidate/lib/validators';
+import {
+  required, minLength, maxLength, url,
+} from 'vuelidate/lib/validators';
 import PictureDotsAndSquaresScheme from '@/components/PictureDotsAndSquaresScheme.vue';
 import KeyGenerateField from '@/components/KeyGenerateField.vue';
 
@@ -29,6 +31,7 @@ export default {
       url_process_payment: {
         required,
         url,
+        maxLength: maxLength(500),
       },
       secret_key: {
         required,
