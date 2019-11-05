@@ -1,6 +1,6 @@
 <script>
-import { mapState } from 'vuex';
-// import MerchantPaymentMethodStore from '@/store/MerchantPaymentMethodStore';
+import { mapGetters, mapState } from 'vuex';
+import MerchantTariffStore from '@/store/MerchantTariffStore';
 import MerchantAdminFormPaymentMethods from '@/components/MerchantAdminFormPaymentMethods.vue';
 
 export default {
@@ -8,24 +8,26 @@ export default {
   components: {
     MerchantAdminFormPaymentMethods,
   },
-  // asyncData({ registerStoreModule, route }) {
-  //   return registerStoreModule(
-  //     'MerchantPaymentMethod',
-  //     MerchantPaymentMethodStore,
-  //     {
-  //       merchantId: route.params.id,
-  //       paymentMethodId: route.params.paymentMethodId,
-  //     },
-  //   );
-  // },
+  asyncData({ registerStoreModule, route }) {
+    const merchantId = route.params.id;
+    return registerStoreModule(
+      'MerchantTariff',
+      MerchantTariffStore,
+      merchantId,
+    );
+  },
 
   computed: {
     ...mapState('Merchant', ['merchant']),
-    // ...mapState('MerchantPaymentMethod', ['paymentMethod']),
-  },
+    ...mapState('MerchantTariff', ['channelCosts', 'chargeback', 'refundCosts']),
+    ...mapGetters('Dictionaries', ['countries']),
 
-  methods: {
-
+    homeRegion() {
+      return this.merchant.home_region || 'europe';
+    },
+    payoutCurrency() {
+      return this.merchant.banking.currency || 'USD';
+    },
   },
 };
 </script>
@@ -42,17 +44,13 @@ export default {
   </header>
 
   <MerchantAdminFormPaymentMethods
-    :merchant="merchant"
-    :paymentMethods="[]"
-  >
-    <div class="controls" slot="controls">
-      <UiButton
-        class="submit-button"
-        text="SAVE"
-        @click="$emit('submitForms')"
-      />
-    </div>
-  </MerchantAdminFormPaymentMethods>
+    :homeRegion="homeRegion"
+    :payoutCurrency="payoutCurrency"
+    :channelCosts="channelCosts"
+    :chargeback="chargeback"
+    :refundCosts="refundCosts"
+    :countries="countries"
+  />
 </div>
 </template>
 
@@ -60,17 +58,7 @@ export default {
 .header {
   margin-bottom: 32px;
 }
-
 .text {
   width: 448px;
-}
-
-.controls {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.submit-button {
-  width: 140px;
 }
 </style>

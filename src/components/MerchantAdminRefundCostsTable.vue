@@ -1,5 +1,5 @@
 <script>
-import { find, cloneDeep } from 'lodash-es';
+import { get, find, map } from 'lodash-es';
 import ClickOutside from 'vue-click-outside';
 import PaymentMethodsTable from '@/mixins/PaymentMethodsTable';
 import ExpandableCellText from '@/components/ExpandableCellText.vue';
@@ -17,108 +17,34 @@ export default {
   },
 
   props: {
+    refundCosts: {
+      required: true,
+      type: Object,
+    },
+    countries: {
+      required: true,
+      type: Array,
+    },
   },
 
   data() {
-    const refundCostsItem = {
-      fee: {
-        value: '1',
-        hasChanges: false,
-        hasError: false,
-        hasFocus: false,
-      },
-      fixedFee: {
-        value: '1',
-        hasChanges: false,
-        hasError: false,
-        hasFocus: false,
-      },
-      payoutParty: 'paysuper',
-      isPayoutPartyMenuOpened: false,
-    };
     return {
-      activeFieldNames: ['fee', 'fixedFee'],
-      refundCosts: [
-        {
-          ...(cloneDeep(refundCostsItem)),
-          method: 'Visa',
-          icon: 'IconVisa',
-          isExpanded: false,
-          items: [
-            cloneDeep(refundCostsItem),
-            cloneDeep(refundCostsItem),
-            cloneDeep(refundCostsItem),
-          ],
-        },
-        {
-          ...(cloneDeep(refundCostsItem)),
-          method: 'Mastercard',
-          icon: 'IconMastercard',
-          isExpanded: false,
-          items: [
-            cloneDeep(refundCostsItem),
-            cloneDeep(refundCostsItem),
-          ],
-        },
-        {
-          ...(cloneDeep(refundCostsItem)),
-          method: 'QIWI',
-          icon: 'IconQiwi',
-          isExpanded: false,
-          items: [
-            cloneDeep(refundCostsItem),
-            cloneDeep(refundCostsItem),
-          ],
-        },
-        {
-          ...(cloneDeep(refundCostsItem)),
-          method: 'Ali Pay',
-          icon: 'IconAlipay',
-          isExpanded: false,
-          items: [
-            cloneDeep(refundCostsItem),
-            cloneDeep(refundCostsItem),
-            cloneDeep(refundCostsItem),
-          ],
-        },
-        {
-          ...(cloneDeep(refundCostsItem)),
-          method: 'WebMoney',
-          icon: 'IconWebMoney',
-          isExpanded: false,
-          items: [
-            cloneDeep(refundCostsItem),
-            cloneDeep(refundCostsItem),
-          ],
-        },
-        {
-          ...(cloneDeep(refundCostsItem)),
-          method: 'Yandex Money',
-          icon: 'IconYandexMoney',
-          isExpanded: false,
-          items: [
-            cloneDeep(refundCostsItem),
-            cloneDeep(refundCostsItem),
-          ],
-        },
-      ],
-
+      activeFieldNames: [],
+      innerRefundCosts: map(this.refundCosts, arrByMethod => ({
+        ...arrByMethod[0],
+        isExpanded: false,
+        items: arrByMethod,
+      })),
       payoutPartyList: [
-        {
-          label: 'Pay Super',
-          value: 'paysuper',
-        },
-        {
-          label: 'Merchant',
-          value: 'merchant',
-        },
+        { label: 'PaySuper', value: 'paysuper' },
+        { label: 'Merchant', value: 'merchant' },
       ],
     };
   },
 
   computed: {
     refundCostsFlattened() {
-      return this.$_PaymentMethodsTable_flattenDataList(this.refundCosts, 'method');
+      return this.$_PaymentMethodsTable_flattenDataList(this.innerRefundCosts, 'method');
     },
   },
 
@@ -147,6 +73,18 @@ export default {
       }
       data.payoutParty = item.value;
       data.isPayoutPartyMenuOpened = false;
+    },
+    getRegionAbbr(region) {
+      return {
+        europe: 'EU',
+        russia_and_cis: 'RU & CIS',
+        asia: 'Asia',
+        latin_america: 'LA',
+        worldwide: 'WW',
+      }[region] || region;
+    },
+    getCountryByCode(code) {
+      return get(find(this.countries, ({ value }) => value === code), 'label', code);
     },
   },
 };
@@ -186,67 +124,27 @@ export default {
           {{ data.method }}
         </ExpandableCellText>
       </UiComplexTableCell>
-      <UiComplexTableCell class="cell _currency">USD</UiComplexTableCell>
-      <UiComplexTableCell class="cell _region">EU</UiComplexTableCell>
-      <UiComplexTableCell class="cell _country">United States</UiComplexTableCell>
-      <UiComplexTableCell
-        class="cell _fee"
-        v-bind="$_PaymentMethodsTable_getEditableCellProps(data.fee)"
-        @toggleFocus="data.fee.hasFocus = $event"
-        @moveFocus="moveFocus(index, 'fee', $event)"
-        @change="$_PaymentMethodsTable_handleCellChange(data.fee, $event)"
-        mask="###"
-      >
-        {{ $_PaymentMethodsTable_getCellText(data.fee.value, '%') }}
+      <UiComplexTableCell class="cell _currency">{{ data.payoutCurrency }}</UiComplexTableCell>
+      <UiComplexTableCell class="cell _region">
+        {{ getRegionAbbr(data.region) }}
       </UiComplexTableCell>
-      <UiComplexTableCell
-        class="cell _fee"
-        v-bind="$_PaymentMethodsTable_getEditableCellProps(data.fixedFee)"
-        @toggleFocus="data.fixedFee.hasFocus = $event"
-        @moveFocus="moveFocus(index, 'fixedFee', $event)"
-        @change="$_PaymentMethodsTable_handleCellChange(data.fixedFee, $event)"
-        mask="NNNNNN"
-      >
-        {{ $_PaymentMethodsTable_getCellText(data.fixedFee.value, '$') }}
+      <UiComplexTableCell class="cell _country">
+        {{ getCountryByCode(data.country) }}
       </UiComplexTableCell>
-      <UiComplexTableCell
-        class="cell _payout-party"
-        @click.native="data.isPayoutPartyMenuOpened = !data.isPayoutPartyMenuOpened"
-        v-click-outside="() => closePayoutPartyMenu(data)"
-      >
-        <div class="payout-party">
-          {{getPayoutPartyLabel(data)}}
-          <UiOpenerCorner :isOpened="data.isPayoutPartyMenuOpened" />
-        </div>
-
-        <UiTip
-          innerPosition="right"
-          position="bottom"
-          width="180px"
-          :margin="0"
-          :visible="data.isPayoutPartyMenuOpened"
-          :closeDelay="0"
-          :stayOpenedOnHover="false"
-        >
-          <UiTooltipMenuItem
-            v-for="item in payoutPartyList"
-            v-text="item.label"
-            :key="item.value"
-            :isCurrent="data.payoutParty === item.value"
-            @click.native.stop="handlePayoutPartyMenuItemClick(data, item)"
-          />
-        </UiTip>
+      <UiComplexTableCell class="cell _fee">{{ data.methodFee }}%</UiComplexTableCell>
+      <UiComplexTableCell class="cell _fee">
+        {{ data.fixedFee }} {{ data.fixedFeeCurrency }}
       </UiComplexTableCell>
+      <UiComplexTableCell class="cell _payout-party">{{ data.payoutParty }}</UiComplexTableCell>
     </UiComplexTableRow>
   </template>
-
 </UiComplexTable>
 </template>
 
 <style lang="scss" scoped>
 .cell {
   &._method {
-    width: 30%;
+    width: 24%;
 
     &._leading {
       cursor: pointer;
@@ -262,10 +160,10 @@ export default {
     width: 18%;
   }
   &._fee {
-    width: 8%;
+    width: 12%;
   }
   &._payout-party {
-    width: 18%;
+    width: 16%;
     cursor: pointer;
     position: relative;
   }

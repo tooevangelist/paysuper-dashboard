@@ -135,8 +135,8 @@ export default {
       <div class="title">Company</div>
 
       <div class="info">
-        Add the official credentials of your company. Please fill-in carefully,
-        because these data will be used in our future License Agreement formation.
+        Add the official credentials of your company carefully,
+        because these data will be used in our future License Agreement.
         If you decide to change any of these data in future after we sign license agreement
         please notify our support team about it.
       </div>
