@@ -135,6 +135,10 @@ export default {
       this.setIsLoading(false);
       this.$router.push({ path: '/' });
     },
+
+    resetPopupFeedback() {
+      this.isLeaveFeedbackSuccess = false;
+    },
   },
 };
 </script>
@@ -205,6 +209,7 @@ export default {
         :visible="isLeaveFeedbackOpened"
         :closeDelay="isLeaveFeedbackSuccess ? 1500 : 0"
         :stayOpenedOnHover="isLeaveFeedbackSuccess ? true : false"
+        @afterClose="resetPopupFeedback"
       >
         <LeaveFeedbackPopup
           :isVisible="isLeaveFeedbackOpened"
