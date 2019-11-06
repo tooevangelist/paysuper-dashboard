@@ -253,7 +253,7 @@ export default {
             <UiTableCell align="left" valign="top" :title="item.sku">
               <span class="cell-text">{{ item.sku }}</span>
             </UiTableCell>
-            <UiTableCell align="left" valign="top" :title="item.prices">
+            <UiTableCell align="left" valign="top" :title="getItemPrice(item)">
               <UiNoText v-if="!getItemPrice(item)" />
               <span v-else class="cell-text">
                 {{ getItemPrice(item) }}
