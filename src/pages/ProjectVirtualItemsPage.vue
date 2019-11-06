@@ -173,6 +173,14 @@ export default {
     },
 
     getItemPrice(item) {
+      if (item.billing_type === 'virtual') {
+        const price = find(item.prices, { is_virtual_currency: true });
+        if (!price) {
+          return '';
+        }
+        return `VC ${price.amount}`;
+      }
+
       const price = find(item.prices, this.defaultCurrency);
       if (!price) {
         return '';
