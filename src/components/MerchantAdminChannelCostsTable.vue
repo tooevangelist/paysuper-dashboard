@@ -1,7 +1,13 @@
 <script>
-import { get, find, map } from 'lodash-es';
+import {
+  get,
+  find,
+  map,
+  tail,
+} from 'lodash-es';
 import PaymentMethodsTable from '@/mixins/PaymentMethodsTable';
 import ExpandableCellText from '@/components/ExpandableCellText.vue';
+import prepareActiveFields from '@/helpers/prepareActiveFields';
 
 export default {
   name: 'MerchantAdminChannelCostsTable',
@@ -24,12 +30,17 @@ export default {
   },
 
   data() {
+    const activeFieldNames = ['methodFee', 'fixedFee', 'overallFee', 'psGeneralFixedFee'];
     return {
-      activeFieldNames: [],
+      activeFieldNames,
       innerChannelCosts: map(this.channelCosts, arrByMethod => ({
         ...arrByMethod[0],
+        ...prepareActiveFields(arrByMethod[0], activeFieldNames),
         isExpanded: false,
-        items: arrByMethod,
+        items: map(tail(arrByMethod), item => ({
+          ...item,
+          ...prepareActiveFields(item, activeFieldNames),
+        })),
       })),
     };
   },
@@ -49,15 +60,6 @@ export default {
         activeFieldNames: this.activeFieldNames,
         flattenedDataList: this.channelCostsFlattened,
       });
-    },
-    getRegionAbbr(region) {
-      return {
-        europe: 'EU',
-        russia_and_cis: 'RU & CIS',
-        asia: 'Asia',
-        latin_america: 'LA',
-        worldwide: 'WW',
-      }[region] || region;
     },
     getCountryByCode(code) {
       return get(find(this.countries, ({ value }) => value === code), 'label', code);
@@ -87,9 +89,8 @@ export default {
       :isPainted="index % 2 === 1"
     >
       <UiComplexTableCell
-        class="cell _method"
+        :class="['cell', '_method', { '_leading': !data.parent }]"
         align="left"
-        :class="{ '_leading': !data.parent}"
         :isCollapsed="!!data.parent"
         :hasChanges="$_PaymentMethodsTable_getIsGroupHasChanges(data, activeFieldNames)"
         :hasError="$_PaymentMethodsTable_getIsGroupHasError(data, activeFieldNames)"
@@ -105,19 +106,52 @@ export default {
       </UiComplexTableCell>
       <UiComplexTableCell class="cell _currency">{{ data.payoutCurrency }}</UiComplexTableCell>
       <UiComplexTableCell class="cell _amount">{{ data.amount }}</UiComplexTableCell>
-      <UiComplexTableCell class="cell _region">
-        {{ getRegionAbbr(data.region) }}
-      </UiComplexTableCell>
+      <UiComplexTableCell class="cell _region">{{ data.region }}</UiComplexTableCell>
       <UiComplexTableCell class="cell _country">
         {{ getCountryByCode(data.country) }}
       </UiComplexTableCell>
-      <UiComplexTableCell class="cell _fee">{{ data.methodFee }}%</UiComplexTableCell>
-      <UiComplexTableCell class="cell _fee">
-        {{ data.fixedFee }} {{ data.fixedFeeCurrency }}
+      <UiComplexTableCell
+        class="cell _fee"
+        v-bind="$_PaymentMethodsTable_getEditableCellProps(data.methodFee)"
+        @toggleFocus="data.methodFee.hasFocus = $event"
+        @moveFocus="moveFocus(index, 'methodFee', $event)"
+        @change="$_PaymentMethodsTable_handleCellChange(data.methodFee, $event)"
+        mask="###"
+      >
+        {{ $_PaymentMethodsTable_getCellText(data.methodFee.value, '%') }}
       </UiComplexTableCell>
-      <UiComplexTableCell class="cell _fee">{{ data.overallFee }}</UiComplexTableCell>
-      <UiComplexTableCell class="cell _fee">
-        {{ data.psGeneralFixedFee }} {{ data.psGeneralFixedFeeCurrency }}
+      <UiComplexTableCell
+        class="cell _fee"
+        v-bind="$_PaymentMethodsTable_getEditableCellProps(data.fixedFee)"
+        @toggleFocus="data.fixedFee.hasFocus = $event"
+        @moveFocus="moveFocus(index, 'fixedFee', $event)"
+        @change="$_PaymentMethodsTable_handleCellChange(data.fixedFee, $event)"
+        mask="NNNNNN"
+      >
+        {{ $_PaymentMethodsTable_getCellText(data.fixedFee.value, data.fixedFeeCurrency) }}
+      </UiComplexTableCell>
+      <UiComplexTableCell
+        class="cell _fee"
+        v-bind="$_PaymentMethodsTable_getEditableCellProps(data.overallFee)"
+        @toggleFocus="data.overallFee.hasFocus = $event"
+        @moveFocus="moveFocus(index, 'overallFee', $event)"
+        @change="$_PaymentMethodsTable_handleCellChange(data.overallFee, $event)"
+      >
+        {{ $_PaymentMethodsTable_getCellText(data.overallFee.value, '%') }}
+      </UiComplexTableCell>
+      <UiComplexTableCell
+        class="cell _fee"
+        v-bind="$_PaymentMethodsTable_getEditableCellProps(data.psGeneralFixedFee)"
+        @toggleFocus="data.psGeneralFixedFee.hasFocus = $event"
+        @moveFocus="moveFocus(index, 'psGeneralFixedFee', $event)"
+        @change="$_PaymentMethodsTable_handleCellChange(data.psGeneralFixedFee, $event)"
+      >
+        {{
+          $_PaymentMethodsTable_getCellText(
+            data.psGeneralFixedFee.value,
+            data.psGeneralFixedFeeCurrency,
+          )
+        }}
       </UiComplexTableCell>
     </UiComplexTableRow>
   </template>

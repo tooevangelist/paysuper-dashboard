@@ -7,6 +7,23 @@ import {
 } from 'lodash-es';
 import getIconByPaymentMethod from '@/helpers/getIconByPaymentMethod';
 
+function getRegionAbbr(region) {
+  return {
+    europe: 'EU',
+    russia_and_cis: 'RU & CIS',
+    asia: 'Asia',
+    latin_america: 'LA',
+    worldwide: 'WW',
+  }[region] || region;
+}
+function getCurrencySymbol(currency) {
+  return {
+    EUR: '€',
+    USD: '$',
+    RUB: '₽',
+    GBP: '£',
+  }[currency] || currency;
+}
 function prepareChannelCosts(data) {
   return groupBy(
     sortBy(
@@ -15,14 +32,14 @@ function prepareChannelCosts(data) {
         icon: getIconByPaymentMethod(item.name),
         methodFee: item.method_percent,
         fixedFee: item.method_fix_amount,
-        fixedFeeCurrency: item.method_fix_amount_currency,
+        fixedFeeCurrency: getCurrencySymbol(item.method_fix_amount_currency),
         overallFee: item.ps_percent,
         psGeneralFixedFee: item.ps_fixed_fee,
         psGeneralFixedFeeCurrency: item.ps_fixed_fee_currency,
         payoutCurrency: item.payout_currency,
         amount: item.min_amount,
         country: item.country,
-        region: item.region,
+        region: getRegionAbbr(item.region),
       })),
       ['amount', 'region', 'country'],
     ),
@@ -37,11 +54,11 @@ function prepareMoneyBack(data) {
         icon: getIconByPaymentMethod(item.name),
         methodFee: item.percent,
         fixedFee: item.fix_amount,
-        fixedFeeCurrency: item.fix_amount_currency,
+        fixedFeeCurrency: getCurrencySymbol(item.fix_amount_currency),
         payoutCurrency: item.payout_currency,
         payoutParty: item.is_paid_by_merchant ? 'Merchant' : 'PaySuper',
         country: item.country,
-        region: item.region,
+        region: getRegionAbbr(item.region),
         type: item.undo_reason,
       })),
       ['method', 'region', 'country'],

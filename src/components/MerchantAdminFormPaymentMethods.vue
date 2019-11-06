@@ -111,6 +111,15 @@ export default {
         :countries="countries"
       />
     </section>
+
+    <div class="controls">
+      <UiButton
+        class="submit-button"
+        text="SAVE"
+        :disabled="true"
+        @click="$emit('submitForms')"
+      />
+    </div>
   </UiPanel>
 </div>
 </template>
@@ -154,5 +163,12 @@ export default {
 }
 .section {
   margin-bottom: 40px;
+}
+.controls {
+  display: flex;
+  justify-content: flex-end;
+}
+.submit-button {
+  width: 140px;
 }
 </style>
