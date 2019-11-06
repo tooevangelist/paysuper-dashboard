@@ -257,7 +257,7 @@ $primary-input-size: 16px;
   left: 0;
   top: 6px;
   width: 100%;
-  margint: 0 0 0 12px;
+  margin: 0 0 0 12px;
   font-size: 12px;
   line-height: 16px;
   color: $secondary-input-color;
