@@ -76,8 +76,8 @@ export default function createUserStore() {
 
       async fetchProfile({ commit }) {
         try {
-          const { data } = await axios.get('{apiUrl}/api/v1/user/profile');
-          commit('profile', data);
+          const { data } = await axios.get('{apiUrl}/admin/api/v1/user/profile/common');
+          commit('profile', data.profile);
           if (data.last_step) {
             commit('currentStepCode', data.last_step);
           }
