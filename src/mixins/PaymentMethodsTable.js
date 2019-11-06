@@ -1,4 +1,4 @@
-import { some, flatten } from 'lodash-es';
+import { flatten, some } from 'lodash-es';
 import assert from 'simple-assert';
 
 export default {
