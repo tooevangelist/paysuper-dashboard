@@ -24,11 +24,6 @@ export default {
     LayoutTopControlsDatepicker,
     Loading,
   },
-  data() {
-    return {
-      projectName: 'CD Projects',
-    };
-  },
   watch: {
     $route(from) {
       const emptyQuery = isEmpty(from.query);
@@ -52,6 +47,9 @@ export default {
       return getMerchantMainNavItems({
         hasDefaultCurrency: !!get(this.merchant, 'banking.currency', false),
       });
+    },
+    projectName() {
+      return this.merchant.company.name;
     },
   },
   mounted() {

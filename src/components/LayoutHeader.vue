@@ -142,12 +142,12 @@ export default {
 <template>
 <div class="layout-header">
   <div class="left">
-    <a href="#" class="logo">
-      <IconLayoutLogo />
+    <a href="/dashboard" class="logo">
+      PS
     </a>
 
     <div class="project">
-      <a href="#" class="name">{{ projectName }}</a>
+      <div class="name">{{ projectName }}</div>
       <div
         :class="['status', `_${status}`, { '_opened': hasStatusOpened }]"
         v-clickaway="hideStatusBlock"
@@ -356,6 +356,10 @@ export default {
   align-items: center;
   margin-right: 10px;
   text-decoration: none;
+  font-size: 20px;
+  font-weight: 500;
+  color: #5e6366;
+  font-family: Quicksand;
 }
 .project {
   display: flex;
