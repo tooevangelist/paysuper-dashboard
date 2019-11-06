@@ -1,4 +1,5 @@
 <script>
+import { sortBy } from 'lodash-es';
 import { mapGetters } from 'vuex';
 import EntityManagementModal from '@/components/EntityManagementModal.vue';
 import { getCurrencyItemFromValue, getCurrencyValueFromItem } from '@/helpers/currencyDataConversion';
@@ -48,7 +49,7 @@ export default {
     },
 
     selectOptions() {
-      const result = this.currenciesWithRegions.map((item) => {
+      const currencies = this.currenciesWithRegions.map((item) => {
         if (item.currency === item.region) {
           return {
             value: item.currency,
@@ -60,6 +61,9 @@ export default {
           label: `${this.$t(`currencies.${item.currency}`)} ${item.region} (${item.currency})`,
         };
       });
+
+      const result = sortBy(currencies, ['label']);
+
       return [
         {
           value: 'USD',

@@ -32,6 +32,15 @@ export default {
           required,
         },
       },
+      cover: {
+        images: {
+          en: {
+            cover() {
+              return this.projectLocal.cover.images.en;
+            },
+          },
+        },
+      },
     },
   },
 
@@ -76,6 +85,8 @@ export default {
         this.$emit('save', this.projectLocal);
       }
     },
+
+
   },
 };
 </script>
@@ -119,6 +130,7 @@ export default {
       :uploadImage="uploadImage"
       :isLocalizationEnabled="!projectLocal.cover.use_one_for_all"
       v-model="projectLocal.cover.images"
+      v-bind="$getValidatedFieldProps('projectLocal.cover.images.en')"
     />
 
     <div class="section">

@@ -232,6 +232,7 @@ export default {
       this.setIsLoading(true);
       this.showDisputeModal = false;
       await this.dispute({ reason, id: this.disputeReportId })
+        .then(this.$showSuccessMessage('Report disputed'))
         .catch(this.$showErrorMessage);
       this.setIsLoading(false);
     },
