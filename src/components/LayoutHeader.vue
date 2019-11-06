@@ -35,16 +35,16 @@ export default {
       },
       infoItems: [
         {
-          id: 'support', link: '#', icon: 'IconSupport', text: 'Support',
+          id: 'support', link: 'https://help.pay.super.com/', icon: 'IconSupport', text: 'Support', target: '_blank',
         },
         {
-          id: 'faq', link: '#', icon: 'IconQuestion', text: 'FAQ',
+          id: 'faq', link: 'https://help.pay.super.com/hc/categories/360002221019', icon: 'IconQuestion', text: 'FAQ', target: '_blank',
         },
         {
-          id: 'documentation', link: '#', icon: 'IconDocumentation', text: 'Documentation',
+          id: 'documentation', link: 'https://docs.pay.super.com/', icon: 'IconDocumentation', text: 'Documentation', target: '_blank',
         },
         {
-          id: 'leaveFeedback', link: '#', icon: 'IconPen', text: 'Leave Feedback',
+          id: 'leaveFeedback', link: '#', icon: 'IconPen', text: 'Leave Feedback', target: '_self',
         },
       ],
       userMenuItems: [
@@ -236,6 +236,7 @@ export default {
             :key="index"
             class="info-item"
             :href="item.link"
+            :target="item.target"
             @click="handleInfoBoxItemClick(item)"
           >
             <component :is="item.icon" class="info-icon" />
