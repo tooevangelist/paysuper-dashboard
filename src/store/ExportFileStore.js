@@ -28,12 +28,14 @@ export default function exportFile() {
       * }
       * @returns {Promise<void>}
       */
-      async createReportFile({ rootState, commit }, params) {
+      async createReportFile({ rootState, commit, dispatch }, params) {
         commit('extension', params.file_type);
         await axios.post('{apiUrl}/admin/api/v1/report_file', {
           ...params,
           merchant_id: rootState.User.Merchant.merchant.id,
         });
+
+        dispatch('initWaitingFile');
       },
 
       initWaitingFile: once(({ rootState, state }) => {
