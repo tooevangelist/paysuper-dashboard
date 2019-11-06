@@ -289,14 +289,6 @@ $content-side-padding: 6vw;
     height: 28px;
     width: calc(100% - 15px);
     content: "";
-    background-image: linear-gradient(
-      180deg,
-      rgba(#fff, 1) 0%,
-      rgba(#fff, 0.95) 20%,
-      rgba(#fff, 0.85) 40%,
-      rgba(#fff, 0.65) 60%,
-      rgba(#fff, 0) 100%
-    );
     pointer-events: none;
   }
 }
