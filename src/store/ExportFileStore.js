@@ -1,6 +1,7 @@
 import axios from 'axios/index';
 import Centrifuge from 'centrifuge';
 import { saveAs } from 'file-saver';
+import { once } from 'lodash-es';
 
 export default function exportFile() {
   return {
@@ -35,7 +36,7 @@ export default function exportFile() {
         });
       },
 
-      initWaitingFile({ rootState, state }) {
+      initWaitingFile: once(({ rootState, state }) => {
         const centrifuge = new Centrifuge(rootState.config.websocketUrl);
         centrifuge.setToken(rootState.User.Merchant.merchant.centrifugo_token);
         centrifuge.subscribe(`paysuper:user#${rootState.User.Merchant.merchant.id}`, ({ data }) => {
@@ -51,7 +52,7 @@ export default function exportFile() {
             });
         });
         centrifuge.connect();
-      },
+      }),
     },
 
     namespaced: true,
