@@ -44,7 +44,9 @@ async function getOrderId(apiUrl, orderParams) {
   return data.id;
 }
 
-async function getOrderData(apiUrl, orderId, { ip, userCookie, acceptLanguage }) {
+async function getOrderData(apiUrl, orderId, {
+  ip, userCookie, acceptLanguage, referer,
+}) {
   const { data } = await axios.get(
     `${apiUrl}/api/v1/order/${orderId}`,
     {
@@ -52,6 +54,7 @@ async function getOrderData(apiUrl, orderId, { ip, userCookie, acceptLanguage })
         'Accept-Language': acceptLanguage,
         'X-Real-IP': ip,
         Cookie: `${userIdentityCookieName}=${userCookie}`,
+        referer,
       },
     },
   );
@@ -76,11 +79,13 @@ module.exports = async function orderPage(ctx) {
   const ip = getIp(ctx.request);
   const userCookie = ctx.cookies.get(userIdentityCookieName);
   const acceptLanguage = ctx.get('accept-language');
+  const referer = ctx.get('referer');
 
   if (query.debug) {
     return {
       ip,
       acceptLanguage,
+      referer,
     };
   }
 
@@ -109,7 +114,9 @@ module.exports = async function orderPage(ctx) {
   let orderDataRaw;
   try {
     const orderId = query.order_id || await getOrderId(apiUrl, orderParams);
-    orderDataRaw = await getOrderData(apiUrl, orderId, { ip, userCookie, acceptLanguage });
+    orderDataRaw = await getOrderData(apiUrl, orderId, {
+      ip, userCookie, acceptLanguage, referer,
+    });
   } catch (error) {
     let errorData = _.get(error, 'response.data');
     if (!errorData) {
@@ -132,9 +139,6 @@ module.exports = async function orderPage(ctx) {
     overwrite: true,
   });
 
-  const headers = { ...ctx.headers };
-  delete headers.cookie;
-
   return renderOrder({
     data: JSON.stringify({
       orderParams,
@@ -142,7 +146,6 @@ module.exports = async function orderPage(ctx) {
       baseOptions: {
         ...(isDev && query.modal ? { layout: 'modal' } : {}),
       },
-      headers,
     }),
     sdkUrl,
   });
