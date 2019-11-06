@@ -22,7 +22,7 @@ export default {
           value: 'Redeem chargeback',
         },
         {
-          label: 'Redeem chargeback',
+          label: 'Purchase not provided',
           value: 'Purchase not provided',
         },
         {

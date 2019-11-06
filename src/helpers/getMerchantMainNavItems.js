@@ -44,7 +44,7 @@ export default function getMerchantMainNavItems({ hasDefaultCurrency }) {
       additional: 'Technical integrations',
       icon: 'IconRepeat',
       link: '/intagrations',
-      title: 'Intagrations',
+      title: 'Integrations',
       isAvailable: false,
     },
     {
