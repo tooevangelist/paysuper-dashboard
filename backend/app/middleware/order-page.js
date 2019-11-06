@@ -132,6 +132,9 @@ module.exports = async function orderPage(ctx) {
     overwrite: true,
   });
 
+  const headers = { ...ctx.headers };
+  delete headers.cookie;
+
   return renderOrder({
     data: JSON.stringify({
       orderParams,
@@ -139,6 +142,7 @@ module.exports = async function orderPage(ctx) {
       baseOptions: {
         ...(isDev && query.modal ? { layout: 'modal' } : {}),
       },
+      headers,
     }),
     sdkUrl,
   });
