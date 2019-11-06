@@ -1,5 +1,5 @@
 <script>
-import { upperFirst, sortBy } from 'lodash-es';
+import { upperFirst } from 'lodash-es';
 import EntityManagementModal from '@/components/EntityManagementModal.vue';
 
 export default {
@@ -31,38 +31,36 @@ export default {
       langToDelete: '',
       localizationOptions: [
         { label: 'English', value: 'en' },
-        { label: 'Spanish', value: 'es' },
         { label: 'Arabic', value: 'ar' },
-        { label: 'Russian', value: 'ru' },
-        { label: 'Chinese traditional', value: 'zh-Hant' },
-        { label: 'Chinese simplified', value: 'zh-Hans' },
         { label: 'Brazilian portuguese', value: 'pt-BR' },
-        { label: 'Portuguese', value: 'pt-PT' },
+        { label: 'Bulgarian', value: 'bg' },
+        { label: 'Chinese simplified', value: 'zh-Hans' },
+        { label: 'Chinese traditional', value: 'zh-Hant' },
+        { label: 'Czech', value: 'cs' },
+        { label: 'Danish', value: 'da' },
+        { label: 'Finnish', value: 'fi' },
         { label: 'French', value: 'fr' },
         { label: 'German', value: 'de' },
-        { label: 'Italian', value: 'it' },
-        { label: 'Polish', value: 'pl' },
-        { label: 'Turkish', value: 'tr' },
         { label: 'Greek', value: 'el' },
-        { label: 'Korean', value: 'ko' },
-        { label: 'Vietnamese', value: 'vi' },
-        { label: 'Japanese', value: 'ja' },
         { label: 'Hebrew', value: 'he' },
-        { label: 'Tai', value: 'th' },
-        { label: 'Czech', value: 'cs' },
-        { label: 'Bulgarian', value: 'bg' },
-        { label: 'Finnish', value: 'fi' },
+        { label: 'Italian', value: 'it' },
+        { label: 'Japanese', value: 'ja' },
+        { label: 'Korean', value: 'ko' },
+        { label: 'Polish', value: 'pl' },
+        { label: 'Portuguese', value: 'pt-PT' },
+        { label: 'Russian', value: 'ru' },
+        { label: 'Spanish', value: 'es' },
         { label: 'Swedish', value: 'sv' },
-        { label: 'Danish', value: 'da' },
+        { label: 'Tai', value: 'th' },
+        { label: 'Turkish', value: 'tr' },
+        { label: 'Vietnamese', value: 'vi' },
       ],
     };
   },
 
   computed: {
     localizationOptionsPrepared() {
-      const localizationList = sortBy(this.localizationOptions, ['label']);
-
-      return localizationList.map((item) => {
+      return this.localizationOptions.map((item) => {
         let iconComponent = 'IconLangNoIcon';
         const [name] = item.value.split('-');
         const componentName = `IconLang${upperFirst(name)}`;

@@ -31,10 +31,9 @@ export default {
   },
   watch: {
     $route(from) {
-      const container = document.querySelector('#contentBox');
       const emptyQuery = isEmpty(from.query);
 
-      if (emptyQuery) container.scrollTop = 0;
+      if (emptyQuery) this.$refs.contentScrollbox.scrollTop(0);
     },
   },
 

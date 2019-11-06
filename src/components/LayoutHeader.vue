@@ -461,8 +461,6 @@ export default {
     background-color: rgba(#3d7bf5, 0.1);
   }
 }
-#company {
-}
 .info-line {
   margin: 8px 0;
   background: #F1F3F4;

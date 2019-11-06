@@ -253,22 +253,16 @@ $primary-input-size: 16px;
   }
 }
 .label {
-  color: $secondary-input-color;
-  line-height: 32px;
-  margin: 0;
   position: absolute;
-}
-.label {
-  font-size: $primary-input-size;
   left: 0;
   top: 6px;
   width: 100%;
-  margin-left: 12px;
+  margint: 0 0 0 12px;
   font-size: 12px;
   line-height: 16px;
-
-&:after {
-   color: #ea3d2f;
- }
+  color: $secondary-input-color;
+  &:after {
+    color: #ea3d2f;
+  }
 }
 </style>

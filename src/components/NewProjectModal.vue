@@ -23,7 +23,7 @@ export default {
   },
 
   computed: {
-    isSubmit() {
+    isSubmitAllowed() {
       return this.name.length > 2 && this.image !== '';
     },
   },
@@ -57,7 +57,7 @@ export default {
   />
   <UiButton
     class="create-button"
-    :disabled="!isSubmit"
+    :disabled="!isSubmitAllowed"
     @click="$emit('submit', { name, image })"
   >
     CREATE
