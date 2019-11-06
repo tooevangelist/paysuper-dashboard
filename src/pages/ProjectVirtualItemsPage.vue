@@ -173,6 +173,14 @@ export default {
     },
 
     getItemPrice(item) {
+      if (item.billing_type === 'virtual') {
+        const price = find(item.prices, { is_virtual_currency: true });
+        if (!price) {
+          return '';
+        }
+        return `VC ${price.amount}`;
+      }
+
       const price = find(item.prices, this.defaultCurrency);
       if (!price) {
         return '';
@@ -253,7 +261,7 @@ export default {
             <UiTableCell align="left" valign="top" :title="item.sku">
               <span class="cell-text">{{ item.sku }}</span>
             </UiTableCell>
-            <UiTableCell align="left" valign="top" :title="item.prices">
+            <UiTableCell align="left" valign="top" :title="getItemPrice(item)">
               <UiNoText v-if="!getItemPrice(item)" />
               <span v-else class="cell-text">
                 {{ getItemPrice(item) }}

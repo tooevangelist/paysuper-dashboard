@@ -28,6 +28,7 @@ export default {
       hasNotificationsOpened: false,
       isLeaveFeedbackOpened: false,
       isLeaveFeedbackSuccess: false,
+      openedUserMenu: false,
       statusesTitles: {
         test: 'Test Mode',
         active: 'Active',
@@ -44,6 +45,20 @@ export default {
         },
         {
           id: 'leaveFeedback', link: '#', icon: 'IconPen', text: 'Leave Feedback',
+        },
+      ],
+      userMenuItems: [
+        {
+          id: 'payoutSettings', link: '#', icon: 'IconCash', text: 'Payout settings', active: false,
+        },
+        {
+          id: 'company', link: '/company/', icon: 'IconCompany', text: 'Company info', active: true,
+        },
+        {
+          id: 'userRoles', link: '/company/', icon: 'IconUsers', text: 'User roles', active: false,
+        },
+        {
+          id: 'logout', link: '/logout/', icon: 'IconLogout', text: 'Log out', active: true,
         },
       ],
     };
@@ -71,6 +86,9 @@ export default {
     hideInfoBlock() {
       this.hasInfoOpened = false;
     },
+    hideUserMenu() {
+      this.openedUserMenu = false;
+    },
     hideNotificationsBlock() {
       this.hasNotificationsOpened = false;
     },
@@ -83,6 +101,11 @@ export default {
     handleInfoBoxItemClick(item) {
       if (item.id === 'leaveFeedback') {
         this.toggleLeaveFeedback();
+      }
+    },
+    handleUserMenuClick(item) {
+      if (item.id === 'logout') {
+        this.handleLogoutk();
       }
     },
     toggleLeaveFeedback() {
@@ -191,10 +214,6 @@ export default {
         />
       </UiTip>
     </div>
-    <a href="#" class="right-icon">
-      <IconSettings />
-    </a>
-
     <div
       :class="['right-icon', { '_active': hasInfoOpened }]"
       v-clickaway="hideInfoBlock"
@@ -260,14 +279,42 @@ export default {
       </UiTip>
     </div>
 
-    <a
-      href="#"
-      class="right-icon icon-user"
-      @click.prevent="handleLogout"
-      title="log out"
+    <div
+      :class="['right-icon', { '_active': openedUserMenu }]"
+      v-clickaway="hideUserMenu"
+      @click="openedUserMenu = !openedUserMenu"
     >
       <IconUser />
-    </a>
+
+      <UiTip
+        innerPosition="right"
+        position="bottom"
+        width="calc(100vw - 140px)"
+        maxWidth="220px"
+        :visible="openedUserMenu"
+        :closeDelay="0"
+        :stayOpenedOnHover="false"
+      >
+        <div class="info-box">
+          <div v-for="(item, index) in userMenuItems" :key="index">
+            <div class="info-line" v-if="item.id === 'logout'"/>
+            <a
+              v-if="item.active"
+              class="info-item"
+              :href="item.link"
+              :id="item.id"
+              @click="handleInfoBoxItemClick(item)"
+            >
+              <component :is="item.icon" class="info-icon" />
+              <div class="info-text">
+                {{ item.text }}
+              </div>
+            </a>
+          </div>
+        </div>
+      </UiTip>
+    </div>
+
   </div>
 </div>
 </template>
@@ -403,21 +450,29 @@ export default {
 }
 .info-item {
   display: flex;
-  height: 40px;
+  height: 32px;
   background-color: transparent;
   align-content: center;
   align-items: center;
   transition: background-color 0.2s ease-out, color 0.2s ease-out;
   color: #000;
   cursor: pointer;
-
   &:hover {
     background-color: rgba(#3d7bf5, 0.1);
   }
 }
+.info-line {
+  margin: 8px 0;
+  background: #F1F3F4;
+  height: 1px;
+}
+.info-text {
+  font-size: 14px;
+  line-height: 31px;
+}
 .info-icon {
   margin-left: 20px;
-  margin-right: 22px;
+  margin-right: 12px;
   width: 16px;
   height: 16px;
 

@@ -1,7 +1,9 @@
 <script>
 import Vue from 'vue';
 import { mapState } from 'vuex';
-import { includes, findIndex, get } from 'lodash-es';
+import {
+  includes, findIndex, isEmpty, get,
+} from 'lodash-es';
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
 import getMerchantMainNavItems from '@/helpers/getMerchantMainNavItems';
@@ -27,6 +29,14 @@ export default {
       projectName: 'CD Projects',
     };
   },
+  watch: {
+    $route(from) {
+      const emptyQuery = isEmpty(from.query);
+
+      if (emptyQuery) this.$refs.contentScrollbox.scrollTop(0);
+    },
+  },
+
   computed: {
     ...mapState(['isLoading']),
     ...mapState('User', ['role']),
@@ -116,6 +126,7 @@ export default {
     <section class="content">
       <UiScrollbarBox
         class="scrollbox"
+        id="contentBox"
         ref="contentScrollbox"
         @ps-y-reach-end="$appEvents.$emit('contentScrollReachEnd')"
         @ps-scroll-y="$appEvents.$emit('contentScroll')"

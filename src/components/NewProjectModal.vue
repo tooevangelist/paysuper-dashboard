@@ -21,6 +21,12 @@ export default {
       image: '',
     };
   },
+
+  computed: {
+    isSubmitAllowed() {
+      return this.name.length > 2 && this.image !== '';
+    },
+  },
 };
 </script>
 
@@ -45,11 +51,13 @@ export default {
   <CoverImageUpload
     class="cover-uploader"
     :uploadImage="uploadImage"
+    label="Cover"
+    :required="true"
     v-model="image"
   />
   <UiButton
     class="create-button"
-    :disabled="name.length < 3"
+    :disabled="!isSubmitAllowed"
     @click="$emit('submit', { name, image })"
   >
     CREATE
@@ -58,9 +66,6 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.cover-uploader {
-  margin-bottom: 24px;
-}
 .create-button {
   width: 100%;
 }

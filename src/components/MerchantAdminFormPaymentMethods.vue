@@ -1,36 +1,57 @@
 <script>
-import CurrencyConverter from '@/components/CurrencyConverter.vue';
 import MerchantAdminChannelCostsTable from '@/components/MerchantAdminChannelCostsTable.vue';
-import MerchantAdminRefundCostsTable from '@/components/MerchantAdminRefundCostsTable.vue';
 import MerchantAdminChargebackTable from '@/components/MerchantAdminChargebackTable.vue';
-import MerchantAdminOtherIndicatorsTable from '@/components/MerchantAdminOtherIndicatorsTable.vue';
+import MerchantAdminRefundCostsTable from '@/components/MerchantAdminRefundCostsTable.vue';
 
 export default {
   name: 'MerchantAdminFormPaymentMethods',
-
   components: {
-    CurrencyConverter,
     MerchantAdminChannelCostsTable,
-    MerchantAdminRefundCostsTable,
     MerchantAdminChargebackTable,
-    MerchantAdminOtherIndicatorsTable,
+    MerchantAdminRefundCostsTable,
   },
-
   props: {
-    merchant: {
+    homeRegion: {
+      default: 'europe',
+      type: String,
+    },
+    payoutCurrency: {
+      default: 'USD',
+      type: String,
+    },
+    channelCosts: {
       required: true,
       type: Object,
     },
-    paymentMethods: {
+    chargeback: {
       required: true,
       type: Array,
+    },
+    refundCosts: {
+      required: true,
+      type: Object,
+    },
+    countries: {
+      required: true,
+      type: Array,
+    },
+  },
+  computed: {
+    regions() {
+      return {
+        europe: { abbr: 'EU', label: 'European Union' },
+        russia_and_cis: { abbr: 'RU & CIS', label: 'Russia & CIS' },
+        asia: { abbr: 'Asia', label: 'Asia' },
+        latin_america: { abbr: 'LA', label: 'Latin America' },
+        worldwide: { abbr: 'WW', label: 'Worldwide' },
+      };
     },
   },
 };
 </script>
 
 <template>
-<div class="merchant-admin-form-licence">
+<div class="merchant-admin-form-tariff">
   <UiPanel class="general-info-panel">
     <div class="general-info">
       <div class="general-item">
@@ -38,7 +59,7 @@ export default {
           <IconEarthGlobe />
         </div>
         <div class="general-item-content">
-          <UiHeader level="3">North America</UiHeader>
+          <UiHeader level="3">{{ regions[homeRegion].label }}</UiHeader>
           <p class="general-item-text">Home region</p>
         </div>
       </div>
@@ -47,45 +68,24 @@ export default {
           <IconDollarInCircle />
         </div>
         <div class="general-item-content">
-          <UiHeader level="3">USD</UiHeader>
+          <UiHeader level="3">{{ payoutCurrency }}</UiHeader>
           <p class="general-item-text">Payout currency</p>
         </div>
       </div>
     </div>
   </UiPanel>
-  <UiPanel>
-    <section class="section">
-      <UiHeader level="3" :hasMargin="true">Active methods selection</UiHeader>
-      <UiText>
-        Activate set of methods available for this merchant.
-      </UiText>
 
-      <div class="payment-methods">
-        <div>
-          <UiSwitchBox class="switch-box" label="Visa" />
-          <UiSwitchBox class="switch-box" label="JCB" />
-          <UiSwitchBox class="switch-box" label="Ali Pay" />
-          <UiSwitchBox class="switch-box" label="Token.io" />
-        </div>
-        <div>
-          <UiSwitchBox class="switch-box" label="Mastercard" />
-          <UiSwitchBox class="switch-box" label="Paypal" />
-          <UiSwitchBox class="switch-box" label="WebMoney" />
-        </div>
-        <div>
-          <UiSwitchBox class="switch-box" label="Union Pay" />
-          <UiSwitchBox class="switch-box" label="QIWI" />
-          <UiSwitchBox class="switch-box" label="Yandex Money" />
-        </div>
-      </div>
-    </section>
+  <UiPanel>
     <section class="section">
       <UiHeader level="3" :hasMargin="true">Channel costs</UiHeader>
       <UiText>
         Setup channel fees for available selection of payment methods.
       </UiText>
 
-      <MerchantAdminChannelCostsTable />
+      <MerchantAdminChannelCostsTable
+        :channelCosts="channelCosts"
+        :countries="countries"
+      />
     </section>
 
     <section class="section">
@@ -94,7 +94,10 @@ export default {
         Setup refund fees for available selection of payment methods.
       </UiText>
 
-      <MerchantAdminRefundCostsTable />
+      <MerchantAdminRefundCostsTable
+        :refundCosts="refundCosts"
+        :countries="countries"
+      />
     </section>
 
     <section class="section">
@@ -103,68 +106,49 @@ export default {
         Setup chargeback fees and operational limits.
         pecified values will be the same for all payment methods.
       </UiText>
-      <MerchantAdminChargebackTable />
+      <MerchantAdminChargebackTable
+        :chargeback="chargeback"
+        :countries="countries"
+      />
     </section>
 
-    <section class="section">
-      <UiHeader level="3" :hasMargin="true">Other indicators</UiHeader>
-      <UiText>
-        Customise additional payment limits here.
-      </UiText>
-      <MerchantAdminOtherIndicatorsTable />
-    </section>
-
-    <section class="section">
-      <UiHeader level="3" :hasMargin="true">Currency conversion rates</UiHeader>
-      <UiText>
-        Here you can tune up currency conversion rates for every pair.
-        Later it will be used for royalty reports calculation.
-      </UiText>
-      <CurrencyConverter />
-    </section>
-
-    <slot name="controls"></slot>
+    <div class="controls">
+      <UiButton
+        class="submit-button"
+        text="SAVE"
+        :disabled="true"
+        @click="$emit('submitForms')"
+      />
+    </div>
   </UiPanel>
 </div>
 </template>
 
 <style lang="scss" scoped>
-.merchant-admin-form-licence {
-}
-
 .general-info-panel {
   margin-bottom: 8px;
 }
-
 .general-info {
   display: flex;
 }
-
 .general-item {
   width: 50%;
   display: flex;
 }
-
 .general-item-icon {
   width: 43px;
   display: flex;
   align-items: center;
 }
-
-.general-item-content {
-}
-
 .general-item-text {
   font-size: 12px;
   line-height: 16px;
   color: #5e6366;
 }
-
 .text {
   width: 448px;
   margin-bottom: 24px;
 }
-
 .payment-methods {
   display: flex;
 
@@ -172,14 +156,19 @@ export default {
     width: 33.333%;
   }
 }
-
 .switch-box {
   & + & {
     margin-top: 8px;
   }
 }
-
 .section {
   margin-bottom: 40px;
+}
+.controls {
+  display: flex;
+  justify-content: flex-end;
+}
+.submit-button {
+  width: 140px;
 }
 </style>

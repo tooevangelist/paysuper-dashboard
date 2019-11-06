@@ -38,6 +38,14 @@ export default {
       type: Boolean,
       default: true,
     },
+    errorText: {
+      default: '',
+      type: String,
+    },
+    hasError: {
+      default: false,
+      type: Boolean,
+    },
   },
 
   data() {
@@ -70,7 +78,7 @@ export default {
 <template>
 <div class="ui-langs-image-upload">
   <UiImageUpload
-    v-bind="{ title, description, uploadImage }"
+    v-bind="{ title, description, uploadImage, hasError, errorText }"
     v-model="value.en"
     :tag="isLocalizationEnabled ? 'EN' : ''"
     @change="updateValue('en', $event)"

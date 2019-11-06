@@ -26,6 +26,9 @@ export default {
     update() {
       this.$refs.scrollbar.update();
     },
+    scrollTop(value) {
+      this.$el.scrollTop = value;
+    },
   },
 };
 </script>

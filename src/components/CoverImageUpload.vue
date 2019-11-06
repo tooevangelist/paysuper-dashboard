@@ -16,12 +16,49 @@ export default {
       type: String,
       required: true,
     },
+    label: {
+      default: '',
+      type: String,
+    },
+    required: {
+      default: false,
+      type: Boolean,
+    },
+    errorText: {
+      default: '',
+      type: String,
+    },
+    hasError: {
+      default: false,
+      type: Boolean,
+    },
   },
   data() {
     return {
       isDragOver: false,
       errorMessage: '',
     };
+  },
+  computed: {
+    /**
+     * Error is visible if it exists and error text isn't empty
+     * @return {boolean}
+     */
+    isVisibleError() {
+      return !!(this.hasError && this.errorText);
+    },
+    /**
+     * Classes for input
+     * @return {Array<string>}
+     */
+    inputClasses() {
+      const isEmpty = !this.value && this.value !== 0;
+      return [
+        isEmpty ? '_empty' : '',
+        this.isVisibleError ? '_error' : '',
+        this.required ? '_required' : '',
+      ];
+    },
   },
   methods: {
     async uploadFile(file) {
@@ -61,8 +98,15 @@ export default {
 </script>
 
 <template>
-<div class="cover-image-upload">
-  <div class="title">Cover</div>
+<div class="cover-image-upload"
+    :class="inputClasses"
+  >
+  <label
+    class="label"
+    :title="label"
+  >
+    <slot name="label">{{ label }}</slot>
+  </label>
   <div class="box">
     <div
       v-if="!value || errorMessage"
@@ -76,7 +120,7 @@ export default {
       <template v-if="errorMessage">
         <IconWarning class="info-icon" />
         <div class="description">
-          {{errorMessage}}
+          {{ errorMessage }}
         </div>
       </template>
       <template v-else>
@@ -102,21 +146,37 @@ export default {
       </span>
     </div>
   </div>
+  <span
+    v-if="isVisibleError"
+    class="error"
+    :title="errorText"
+    >
+    {{ errorText }}
+  </span>
 </div>
 </template>
 
 <style scoped lang="scss">
 $hover-text-color: #3d7bf5;
 $error-text-color: #ea3d2f;
-.cover-image-upload {
-}
+$secondary-input-color: #5e6366;
+$primary-input-size: 16px;
 
-.title {
-  font-size: 12px;
-  line-height: 16px;
-  color: #5e6366;
-  padding-left: 12px;
-  margin-bottom: 8px;
+.cover-image-upload {
+  padding: 24px 0;
+  position: relative;
+  &._error {
+    border-color: rgba($error-text-color, 0.48);
+    color: $error-text-color;
+    &:focus ~ .label {
+      color: $error-text-color;
+    }
+  }
+  &._required .label {
+    &:after {
+      content: "*";
+    }
+  }
 }
 
 .box {
@@ -190,6 +250,19 @@ $error-text-color: #ea3d2f;
 
   & > svg {
     margin: 0 8px 2px 0;
+  }
+}
+.label {
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 100%;
+  margin: 0 0 0 12px;
+  font-size: 12px;
+  line-height: 16px;
+  color: $secondary-input-color;
+  &:after {
+    color: #ea3d2f;
   }
 }
 </style>
