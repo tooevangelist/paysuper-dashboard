@@ -86,7 +86,7 @@ export default {
       <div class="basic-item">
         <div class="basic-title">Revenue by country</div>
         <div class="value">
-          {{ data.revenue_by_country.amount }} {{ currency }}
+          {{ $formatPrice(data.revenue_by_country.amount, currency) }}
           <IconArrowBold
             v-if="data.revenue_by_country.hasIncreasedArrow"
             :class="[
@@ -96,7 +96,12 @@ export default {
           />
         </div>
         <div class="additional">
-          {{ data.revenue_by_country.amountPrevious }} {{ currency }} previously
+          {{
+            $formatPrice(
+              data.revenue_by_country.amountPrevious,
+              currency
+            )
+          }} previously
         </div>
         <Barchart
           v-if="data.revenue_by_country.hasChart"
@@ -115,7 +120,7 @@ export default {
             class="top-item"
           >
             <div class="country">{{ getCountryByCode(item.country) }}</div>
-            <div class="amount">{{ item.amount }} {{ currency }}</div>
+            <div class="amount">{{ $formatPrice(item.amount, currency) }}</div>
           </div>
         </div>
       </div>
