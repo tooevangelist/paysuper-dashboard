@@ -29,6 +29,7 @@ export default {
   watch: {
     isVisible(value) {
       if (!this.isSuccess && value) {
+        this.message = '';
         this.$refs.textarea.$el.focus();
       }
     },
@@ -48,6 +49,14 @@ export default {
 
       updateScrollbar();
     },
+    close() {
+      this.$emit('close');
+    },
+    send(message) {
+      const review = message;
+      const url = this.$route.fullPath;
+      this.$emit('send', { review, url });
+    },
   },
 };
 </script>
@@ -55,11 +64,17 @@ export default {
 <template>
 <div class="leave-feedback-popup">
   <template v-if="isSuccess">
-    <UiHeader level="3" align="center" :hasMargin="true">Thanks!</UiHeader>
-    <p class="text">We really appreciate your feedback.</p>
+    <UiHeader level="3" align="center" :hasMargin="true">
+      Thanks!
+    </UiHeader>
+    <p class="text">
+      We really appreciate your feedback.
+    </p>
   </template>
   <template v-else>
-    <UiHeader level="3" align="center" :hasMargin="true">Leave Feedback</UiHeader>
+    <UiHeader level="3" align="center" :hasMargin="true">
+      Leave Feedback
+    </UiHeader>
     <UiScrollbarBox class="content" ref="scrollbar">
       <TextareaAutosize
         class="textarea"
@@ -75,11 +90,15 @@ export default {
         color="gray"
         :isTransparent="true"
         @click="$emit('close')"
-      >CLOSE</UiButton>
+      >
+        CLOSE
+      </UiButton>
       <UiButton
         :disabled="message.length < 1"
-        @click="$emit('send', message)"
-      >SEND</UiButton>
+        @click="send(message)"
+      >
+        SEND
+      </UiButton>
     </div>
   </template>
 </div>

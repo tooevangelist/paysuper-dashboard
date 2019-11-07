@@ -24,11 +24,6 @@ export default {
     LayoutTopControlsDatepicker,
     Loading,
   },
-  data() {
-    return {
-      projectName: 'CD Projects',
-    };
-  },
   watch: {
     $route(from) {
       const emptyQuery = isEmpty(from.query);
@@ -52,6 +47,9 @@ export default {
       return getMerchantMainNavItems({
         hasDefaultCurrency: !!get(this.merchant, 'banking.currency', false),
       });
+    },
+    projectName() {
+      return this.merchant ? this.merchant.company.name : 'Pay Super';
     },
   },
   mounted() {
@@ -291,14 +289,6 @@ $content-side-padding: 6vw;
     height: 28px;
     width: calc(100% - 15px);
     content: "";
-    background-image: linear-gradient(
-      180deg,
-      rgba(#fff, 1) 0%,
-      rgba(#fff, 0.95) 20%,
-      rgba(#fff, 0.85) 40%,
-      rgba(#fff, 0.65) 60%,
-      rgba(#fff, 0) 100%
-    );
     pointer-events: none;
   }
 }

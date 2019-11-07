@@ -39,7 +39,7 @@ export default {
   <div class="section">
     <div class="box _main">
       <div class="value">
-        {{ data.gross_revenue.amount }} {{ currency }}
+        {{ $formatPrice(data.gross_revenue.amount, currency) }}
         <IconArrowBold
           v-if="data.gross_revenue.hasIncreasedArrow"
           :class="['arrow', { '_is-decreased': !data.gross_revenue.isIncreased }]"
@@ -55,7 +55,7 @@ export default {
     </div>
     <div class="box _main">
       <div class="value">
-        {{ data.total_transactions.amount }} {{ currency }}
+        {{ $formatPrice(data.total_transactions.amount, currency) }}
         <IconArrowBold
           v-if="data.total_transactions.hasIncreasedArrow"
           :class="['arrow', { '_is-decreased': !data.total_transactions.isIncreased }]"
@@ -71,7 +71,7 @@ export default {
     </div>
     <div class="box _main">
       <div class="value">
-        {{ data.arpu.amount }} {{ currency }}
+        {{ $formatPrice(data.arpu.amount, currency) }}
         <IconArrowBold
           v-if="data.arpu.hasIncreasedArrow"
           :class="['arrow', { '_is-decreased': !data.arpu.isIncreased }]"
@@ -87,7 +87,7 @@ export default {
     </div>
     <div class="box _main">
       <div class="value">
-        {{ data.vat.amount }} {{ currency }}
+        {{ $formatPrice(data.vat.amount, currency) }}
         <IconArrowBold
           v-if="data.vat.hasIncreasedArrow"
           :class="['arrow', { '_is-decreased': !data.vat.isIncreased }]"
@@ -114,7 +114,6 @@ export default {
   display: flex;
   flex-grow: 1;
   justify-content: space-between;
-  flex-wrap: wrap;
   margin-bottom: 8px;
 }
 .box {

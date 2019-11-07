@@ -7,13 +7,13 @@ export default function createLeaveFeedbackStore() {
     actions: {
       initState() { },
 
-      async postFeedback({ rootState }, review) {
+      async postFeedback({ rootState }, { review, url }) {
         try {
           await axios.post(
             `${rootState.config.apiUrl}/admin/api/v1/user/feedback`,
             {
               review,
-              page_id: 'primary_onboarding',
+              url,
             },
           );
         } catch (error) {

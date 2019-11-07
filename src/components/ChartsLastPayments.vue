@@ -90,8 +90,8 @@ export default {
           <UiTableCell align="left">
             {{ getCountryByCode(order.country_code) }}
           </UiTableCell>
-          <UiTableCell align="left">
-            {{ order.total_payment_amount }} {{ currency }}
+          <UiTableCell align="left" class="cian">
+            {{ $formatPrice(order.total_payment_amount, currency) }}
           </UiTableCell>
           <UiTableCell align="left">
             {{ $formatDate(get(order, 'created_at.seconds')) }}
@@ -149,5 +149,8 @@ export default {
 .table {
   padding-right: 20px;
   margin-bottom: 40px;
+}
+.cian {
+  color: #069697;
 }
 </style>

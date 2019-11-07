@@ -35,16 +35,16 @@ export default {
       },
       infoItems: [
         {
-          id: 'support', link: '#', icon: 'IconSupport', text: 'Support',
+          id: 'support', link: 'https://help.pay.super.com/', icon: 'IconSupport', text: 'Support', target: '_blank',
         },
         {
-          id: 'faq', link: '#', icon: 'IconQuestion', text: 'FAQ',
+          id: 'faq', link: 'https://help.pay.super.com/hc/categories/360002221019', icon: 'IconQuestion', text: 'FAQ', target: '_blank',
         },
         {
-          id: 'documentation', link: '#', icon: 'IconDocumentation', text: 'Documentation',
+          id: 'documentation', link: 'https://docs.pay.super.com/', icon: 'IconDocumentation', text: 'Documentation', target: '_blank',
         },
         {
-          id: 'leaveFeedback', link: '#', icon: 'IconPen', text: 'Leave Feedback',
+          id: 'leaveFeedback', link: '#', icon: 'IconPen', text: 'Leave Feedback', target: '_self',
         },
       ],
       userMenuItems: [
@@ -135,6 +135,10 @@ export default {
       this.setIsLoading(false);
       this.$router.push({ path: '/' });
     },
+
+    resetPopupFeedback() {
+      this.isLeaveFeedbackSuccess = false;
+    },
   },
 };
 </script>
@@ -142,12 +146,12 @@ export default {
 <template>
 <div class="layout-header">
   <div class="left">
-    <a href="#" class="logo">
-      <IconLayoutLogo />
+    <a href="/dashboard" class="logo">
+      PS
     </a>
 
     <div class="project">
-      <a href="#" class="name">{{ projectName }}</a>
+      <div class="name">{{ projectName }}</div>
       <div
         :class="['status', `_${status}`, { '_opened': hasStatusOpened }]"
         v-clickaway="hideStatusBlock"
@@ -205,6 +209,7 @@ export default {
         :visible="isLeaveFeedbackOpened"
         :closeDelay="isLeaveFeedbackSuccess ? 1500 : 0"
         :stayOpenedOnHover="isLeaveFeedbackSuccess ? true : false"
+        @afterClose="resetPopupFeedback"
       >
         <LeaveFeedbackPopup
           :isVisible="isLeaveFeedbackOpened"
@@ -236,6 +241,7 @@ export default {
             :key="index"
             class="info-item"
             :href="item.link"
+            :target="item.target"
             @click="handleInfoBoxItemClick(item)"
           >
             <component :is="item.icon" class="info-icon" />
@@ -355,6 +361,10 @@ export default {
   align-items: center;
   margin-right: 10px;
   text-decoration: none;
+  font-size: 20px;
+  font-weight: 500;
+  color: #5e6366;
+  font-family: Quicksand;
 }
 .project {
   display: flex;
