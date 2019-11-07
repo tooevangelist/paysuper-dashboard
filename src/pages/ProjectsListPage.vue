@@ -253,22 +253,11 @@ export default {
 }
 
 .panel-item {
-  @media screen and (max-width: 1169px) {
-    width: 40%;
-    margin-bottom: 24px;
-
-    &:not(:nth-child(2n)) {
-      margin-right: 24px;
-    }
-  }
-
-  @media screen and (min-width: 1170px) {
-    width: 31%;
-    margin-bottom: 24px;
-
-    &:not(:nth-child(3n)) {
-      margin-right: 24px;
-    }
+  width: 290px;
+  margin-right: 24px;
+  margin-bottom: 24px;
+  &:nth-child(3n + 3) {
+    margin-right: 0;
   }
 }
 </style>

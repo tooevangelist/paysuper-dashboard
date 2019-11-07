@@ -119,7 +119,6 @@ export default {
 .box {
   display: flex;
   justify-content: space-between;
-  flex-basis: 100%;
   background-color: #fff;
   box-shadow: 0px 1px 2px rgba(8, 35, 48, 0.24), 0px 2px 6px rgba(8, 35, 48, 0.16);
   border-radius: 12px;
@@ -136,18 +135,19 @@ export default {
     }
   }
   &._main {
-    max-height: 160px;
+    width: 218px;
+    height: 160px;
+    margin-right: 16px;
 
-    @media screen and (min-width: 768px) {
-      flex-basis: calc(50% - 8px);
-    }
-    @media screen and (min-width: 1170px) {
-      flex-basis: calc(25% - 12px);
+    flex-direction: column;
+    justify-content: flex-start;
+
+    &:last-child {
+      margin-right: 0;
     }
 
     & > .value,
     & > .additional {
-      flex-basis: 100%;
       white-space: nowrap;
     }
     & > .value {

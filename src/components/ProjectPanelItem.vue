@@ -135,8 +135,8 @@ $hover-deactivate-background-color: rgba($hover-deactivate-text-color, 0.08);
 .project-panel-item {
   position: relative;
   background: #ffffff;
-  box-shadow: 0px 1px 2px rgba(8, 35, 48, 0.24),
-    0px 2px 6px rgba(8, 35, 48, 0.16);
+  box-shadow: 0px 8px 16px rgba(8, 35, 48, 0.1),
+  0px 24px 32px rgba(8, 35, 48, 0.06);
   border-radius: 12px;
 }
 
@@ -289,6 +289,7 @@ $hover-deactivate-background-color: rgba($hover-deactivate-text-color, 0.08);
   justify-content: center;
   align-items: center;
   background-size: cover;
+  background-color: #f1f3f4;
 
   .project-panel-item._no-image & {
     background: #f1f3f4;
@@ -296,10 +297,11 @@ $hover-deactivate-background-color: rgba($hover-deactivate-text-color, 0.08);
 }
 
 .content {
-  padding: 16px;
+  margin: 16px;
   font-size: 14px;
   line-height: 20px;
   color: #000000;
+  overflow: hidden;
 }
 
 .id,
