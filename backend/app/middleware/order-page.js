@@ -111,11 +111,19 @@ module.exports = async function orderPage(ctx) {
   }
 
   const orderParams = getOrderParams(query);
-  let orderDataRaw;
+  let orderData;
   try {
     const orderId = query.order_id || await getOrderId(apiUrl, orderParams);
-    orderDataRaw = await getOrderData(apiUrl, orderId, {
+    const { cookie, ...data } = await getOrderData(apiUrl, orderId, {
       ip, userCookie, acceptLanguage, referer,
+    });
+    orderData = data;
+
+    // The cookie is required to identify a user. Common use is for saved bank cards
+    ctx.cookies.set(userIdentityCookieName, cookie, {
+      maxAge: 2592000 * 1000, // 30 days
+      httpOnly: true,
+      overwrite: true,
     });
   } catch (error) {
     let errorData = _.get(error, 'response.data');
@@ -128,16 +136,8 @@ module.exports = async function orderPage(ctx) {
     } else {
       console.error(errorData);
     }
-    orderDataRaw = { error: errorData };
+    orderData = { error: errorData };
   }
-  const { cookie, ...orderData } = orderDataRaw;
-
-  // The cookie is required to identify a user. Common use is for saved bank cards
-  ctx.cookies.set(userIdentityCookieName, cookie, {
-    maxAge: 2592000 * 1000, // 30 days
-    httpOnly: true,
-    overwrite: true,
-  });
 
   return renderOrder({
     data: JSON.stringify({
