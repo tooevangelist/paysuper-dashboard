@@ -113,9 +113,6 @@ export default {
       <div class="id">ID {{project.id}}</div>
       <div class="list">
         <div class="list-item">
-          0 subscriptions
-        </div>
-        <div class="list-item">
           {{project.products_count}} virtual items
         </div>
       </div>
