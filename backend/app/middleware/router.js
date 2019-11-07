@@ -6,6 +6,7 @@ const webappConfig = require('../../config/webappConfig');
 const auth1Middleware = require('./auth1.oauth2');
 const { uploadFile } = require('./s3-upload');
 const orderPage = require('./order-page');
+const removeSavedCard = require('./remove-saved-card');
 
 const router = new Router({
   prefix: config.routesPrefix,
@@ -29,6 +30,9 @@ router
   })
   .get('/order', async (ctx) => {
     ctx.body = await orderPage(ctx);
+  })
+  .post('/order/remove_saved_card', async (ctx) => {
+    ctx.body = await removeSavedCard(ctx);
   })
 
   .get(`${auth1RoutesNamespace}/login`, auth1Middleware.login)
