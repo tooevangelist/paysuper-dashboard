@@ -193,8 +193,6 @@ export default {
       });
       this.setIsLoading(false);
       this.showModal = false;
-
-      this.initWaitingFile();
     },
   },
 };
