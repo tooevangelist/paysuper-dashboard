@@ -127,9 +127,9 @@ $red-button-color: #ea3d2f;
 $transparent-gray-font-color: #78909c;
 $transparent-gray-transparent-font-color: #78909c;
 $transparent-gray-transparent-hover-box-color: #f7f9fa;
-$transparent-blue-font-color: #3D7BF5;
-$transparent-blue-transparent-font-color: #3D7BF5;
-$transparent-blue-transparent-hover-box-color: #3D7BF5;
+$transparent-blue-font-color: #3d7bf5;
+$transparent-blue-transparent-font-color: #3d7bf5;
+$transparent-blue-transparent-hover-box-color: #3d7bf5;
 $disabled-button-color: #f1f3f4;
 $disabled-font-color: #919699;
 
@@ -204,6 +204,12 @@ $primary-button-size: 14px;
     &:hover {
       background-color: $transparentHoverBoxColor;
       color: $transparentHoverColor;
+    }
+
+    &._disabled {
+      background-color: transparent;
+      border-color: transparent;
+      box-shadow: none;
     }
   }
 
@@ -281,7 +287,7 @@ $primary-button-size: 14px;
       transparent
     );
     &:not(._disabled) .icon-before svg {
-      fill: $transparent-blue-font-color
+      fill: $transparent-blue-font-color;
     }
   }
 }
