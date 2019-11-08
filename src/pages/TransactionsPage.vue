@@ -273,7 +273,7 @@ export default {
             <UiTableCell align="left">Country</UiTableCell>
             <UiTableCell align="left">Method</UiTableCell>
             <UiTableCell align="left">Transaction ID</UiTableCell>
-            <UiTableCell align="left">Net amount</UiTableCell>
+            <UiTableCell align="left">Amount</UiTableCell>
             <UiTableCell align="left" width="3%"></UiTableCell>
           </UiTableRow>
           <UiTableRow
@@ -304,8 +304,9 @@ export default {
             </UiTableCell>
             <UiTableCell align="left">
               <div class="transaction__refund"
+                   v-if="refundAvailable(transaction.status)"
                    @click.stop.prevent="showRefundModal = true, currentTransaction = transaction">
-                <IconRetry v-if="refundAvailable(transaction.status)"/>
+                <IconRetry/>
                 <UiTip
                   width="140px"
                   :visible="true"
