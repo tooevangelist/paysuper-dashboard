@@ -354,15 +354,9 @@ export default {
 .control-bar {
   display: flex;
   justify-content: space-between;
-
-  .quilin-packages-button {
-    margin-right: 10px;
-    &._disabled {
-      background-color: transparent !important;
-      border-color: transparent !important;
-      box-shadow: none !important;
-    }
-  }
+}
+.quilin-packages-button {
+  margin-right: 10px;
 }
 .items-panel {
   width: 800px;

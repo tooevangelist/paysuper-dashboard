@@ -390,15 +390,9 @@ $hover-deactivate-background-color: rgba($hover-deactivate-text-color, 0.08);
 
 .quilin-packages-button {
   margin-right: 10px;
-  &._disabled {
-    background-color: transparent !important;
-    border-color: transparent !important;
-    box-shadow: none !important;
-  }
 }
 .upload-icon {
   vertical-align: middle;
-  margin-right: 4px;
 }
 
 .dots-menu-trigger {
