@@ -49,7 +49,7 @@ export default {
       });
     },
     projectName() {
-      return this.merchant ? this.merchant.company.name : 'Pay Super';
+      return get(this.merchant, 'company.name') || 'Pay Super';
     },
   },
   mounted() {
@@ -298,6 +298,6 @@ $content-side-padding: 6vw;
 }
 .scrollbox-inner {
   margin: 37px $content-side-padding;
-  max-width: 920px;
+  width: 920px;
 }
 </style>

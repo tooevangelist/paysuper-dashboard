@@ -122,7 +122,6 @@ export default {
 
   &._head {
     color: #919699;
-    border-bottom: 2px solid #e3e5e6;
 
     &._is-sortable {
       color: #0c2441;

@@ -257,12 +257,12 @@ $focus-input-color: #3787ff;
 $error-input-color: #ff6f6f;
 
 $primary-input-size: 16px;
-$secondary-input-size: 12px;
+$secondary-input-size: 11px;
 $left-indent: 12px;
 
 .ui-text-field {
   display: inline-block;
-  padding: 24px 0;
+  padding: 24px 0 12px;
   position: relative;
   width: 100%;
 }
@@ -342,7 +342,7 @@ $left-indent: 12px;
   top: 0;
 }
 .error {
-  bottom: 0;
+  bottom: -4px;
   left: $left-indent;
   color: $error-input-color;
   display: block;

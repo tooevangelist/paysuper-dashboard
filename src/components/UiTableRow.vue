@@ -87,6 +87,9 @@ export default {
       .ui-no-text {
         color: #3d7bf5;
       }
+      .dots-menu-trigger svg {
+        fill: #3d7bf5;
+      }
     }
   }
 }

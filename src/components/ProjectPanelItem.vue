@@ -109,16 +109,10 @@ export default {
       </div>
     </header>
     <div class="content">
-      <UiHeader class="title" level="3">{{project.name.en}}</UiHeader>
+      <UiHeader class="title" level="3" :title="project.name.en">
+        {{project.name.en}}
+      </UiHeader>
       <div class="id">ID {{project.id}}</div>
-      <div class="list">
-        <div class="list-item">
-          0 subscriptions
-        </div>
-        <div class="list-item">
-          {{project.products_count}} virtual items
-        </div>
-      </div>
       <div class="date">{{date}}</div>
       <IconThinRightArrow class="arrow-right" />
     </div>
@@ -135,8 +129,8 @@ $hover-deactivate-background-color: rgba($hover-deactivate-text-color, 0.08);
 .project-panel-item {
   position: relative;
   background: #ffffff;
-  box-shadow: 0px 1px 2px rgba(8, 35, 48, 0.24),
-    0px 2px 6px rgba(8, 35, 48, 0.16);
+  box-shadow: 0px 1px 2px rgba(8, 35, 48, 0.1),
+  0px 3px 4px rgba(8, 35, 48, 0.06);
   border-radius: 12px;
 }
 
@@ -277,6 +271,11 @@ $hover-deactivate-background-color: rgba($hover-deactivate-text-color, 0.08);
 }
 
 .title {
+  display: block;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
   .link:hover & {
     color: $hover-text-color;
   }
@@ -289,6 +288,7 @@ $hover-deactivate-background-color: rgba($hover-deactivate-text-color, 0.08);
   justify-content: center;
   align-items: center;
   background-size: cover;
+  background-color: #f1f3f4;
 
   .project-panel-item._no-image & {
     background: #f1f3f4;
@@ -296,10 +296,11 @@ $hover-deactivate-background-color: rgba($hover-deactivate-text-color, 0.08);
 }
 
 .content {
-  padding: 16px;
+  margin: 16px;
   font-size: 14px;
   line-height: 20px;
   color: #000000;
+  overflow: hidden;
 }
 
 .id,
@@ -308,29 +309,12 @@ $hover-deactivate-background-color: rgba($hover-deactivate-text-color, 0.08);
   font-size: 12px;
   line-height: 16px;
 }
-
-.list {
-  margin: 12px 0 6px;
-  min-height: 60px;
+.id {
+  margin-top: 2px;
 }
-.list-item {
-  padding-left: 21px;
-  position: relative;
-
-  &::before {
-    display: block;
-    left: 8px;
-    top: 7px;
-    position: absolute;
-    background: #3e4345;
-    content: "";
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    box-shadow: 0 0 0 1px #3e4345;
-  }
+.date {
+  margin-top: 14px;
 }
-
 .arrow-right {
   position: absolute;
   right: 6px;
