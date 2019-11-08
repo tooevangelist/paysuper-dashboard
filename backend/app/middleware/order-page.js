@@ -53,6 +53,7 @@ async function getOrderData(apiUrl, orderId, {
       headers: {
         'Accept-Language': acceptLanguage,
         'X-Real-IP': ip,
+        'X-Forwarded-For': ip,
         Cookie: `${userIdentityCookieName}=${userCookie}`,
         referer,
       },
