@@ -69,7 +69,7 @@ const routes = [
   {
     path: '/projects/:id',
     component: () => import('@/pages/ProjectPage.vue'),
-    redirect: { name: 'ProjectSettings', permission: 'viewProjects' },
+    redirect: { name: 'ProjectSalesOptions', permission: 'viewProjects' },
     name: 'Project',
     children: [
       {

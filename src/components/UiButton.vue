@@ -36,6 +36,7 @@ export default {
           'light-gray',
           'red',
           'transparent-gray',
+          'transparent-blue',
         ], value);
       },
     },
@@ -126,6 +127,9 @@ $red-button-color: #ea3d2f;
 $transparent-gray-font-color: #78909c;
 $transparent-gray-transparent-font-color: #78909c;
 $transparent-gray-transparent-hover-box-color: #f7f9fa;
+$transparent-blue-font-color: #3d7bf5;
+$transparent-blue-transparent-font-color: #3d7bf5;
+$transparent-blue-transparent-hover-box-color: #3d7bf5;
 $disabled-button-color: #f1f3f4;
 $disabled-font-color: #919699;
 
@@ -201,6 +205,12 @@ $primary-button-size: 14px;
       background-color: $transparentHoverBoxColor;
       color: $transparentHoverColor;
     }
+
+    &._disabled {
+      background-color: transparent;
+      border-color: transparent;
+      box-shadow: none;
+    }
   }
 
   &._disabled {
@@ -266,12 +276,26 @@ $primary-button-size: 14px;
       $transparent-gray-transparent-hover-box-color
     );
   }
+  &._transparent-blue {
+    @include base-button(
+      transparent,
+      $transparent-blue-font-color,
+      normal,
+      $transparent-blue-transparent-font-color,
+      transparent,
+      $transparent-blue-transparent-font-color,
+      transparent
+    );
+    &:not(._disabled) .icon-before svg {
+      fill: $transparent-blue-font-color;
+    }
+  }
 }
 
 .icon-before {
   vertical-align: middle;
   display: inline-flex;
-  margin: 0 6px 0 -6px;
+  margin: -1px 6px 0 -6px;
 }
 .text {
   vertical-align: middle;

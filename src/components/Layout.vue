@@ -1,7 +1,9 @@
 <script>
 import Vue from 'vue';
 import { mapState } from 'vuex';
-import { includes, findIndex, get } from 'lodash-es';
+import {
+  includes, findIndex, isEmpty, get,
+} from 'lodash-es';
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
 import getMerchantMainNavItems from '@/helpers/getMerchantMainNavItems';
@@ -22,11 +24,14 @@ export default {
     LayoutTopControlsDatepicker,
     Loading,
   },
-  data() {
-    return {
-      projectName: 'CD Projects',
-    };
+  watch: {
+    $route(from) {
+      const emptyQuery = isEmpty(from.query);
+
+      if (emptyQuery) this.$refs.contentScrollbox.scrollTop(0);
+    },
   },
+
   computed: {
     ...mapState(['isLoading']),
     ...mapState('User', ['role']),
@@ -42,6 +47,9 @@ export default {
       return getMerchantMainNavItems({
         hasDefaultCurrency: !!get(this.merchant, 'banking.currency', false),
       });
+    },
+    projectName() {
+      return get(this.merchant, 'company.name') || 'Pay Super';
     },
   },
   mounted() {
@@ -116,6 +124,7 @@ export default {
     <section class="content">
       <UiScrollbarBox
         class="scrollbox"
+        id="contentBox"
         ref="contentScrollbox"
         @ps-y-reach-end="$appEvents.$emit('contentScrollReachEnd')"
         @ps-scroll-y="$appEvents.$emit('contentScroll')"
@@ -280,14 +289,6 @@ $content-side-padding: 6vw;
     height: 28px;
     width: calc(100% - 15px);
     content: "";
-    background-image: linear-gradient(
-      180deg,
-      rgba(#fff, 1) 0%,
-      rgba(#fff, 0.95) 20%,
-      rgba(#fff, 0.85) 40%,
-      rgba(#fff, 0.65) 60%,
-      rgba(#fff, 0) 100%
-    );
     pointer-events: none;
   }
 }
@@ -297,6 +298,6 @@ $content-side-padding: 6vw;
 }
 .scrollbox-inner {
   margin: 37px $content-side-padding;
-  max-width: 920px;
+  width: 920px;
 }
 </style>

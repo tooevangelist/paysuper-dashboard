@@ -82,6 +82,7 @@ export default {
 
         clearTimeout(this.timeoutId);
         this.timeoutId = 0;
+        this.$emit('afterClose');
       }, this.closeDelay);
     },
     show() {

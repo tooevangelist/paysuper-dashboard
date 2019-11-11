@@ -1,6 +1,7 @@
 import axios from 'axios/index';
 import Centrifuge from 'centrifuge';
 import { saveAs } from 'file-saver';
+import { once } from 'lodash-es';
 
 export default function exportFile() {
   return {
@@ -27,15 +28,17 @@ export default function exportFile() {
       * }
       * @returns {Promise<void>}
       */
-      async createReportFile({ rootState, commit }, params) {
+      async createReportFile({ rootState, commit, dispatch }, params) {
         commit('extension', params.file_type);
         await axios.post('{apiUrl}/admin/api/v1/report_file', {
           ...params,
           merchant_id: rootState.User.Merchant.merchant.id,
         });
+
+        dispatch('initWaitingFile');
       },
 
-      initWaitingFile({ rootState, state }) {
+      initWaitingFile: once(({ rootState, state }) => {
         const centrifuge = new Centrifuge(rootState.config.websocketUrl);
         centrifuge.setToken(rootState.User.Merchant.merchant.centrifugo_token);
         centrifuge.subscribe(`paysuper:user#${rootState.User.Merchant.merchant.id}`, ({ data }) => {
@@ -51,7 +54,7 @@ export default function exportFile() {
             });
         });
         centrifuge.connect();
-      },
+      }),
     },
 
     namespaced: true,

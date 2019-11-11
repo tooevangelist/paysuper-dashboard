@@ -165,7 +165,7 @@ export default {
     <PictureGameKeyWithDoor slot="picture" />
   </UiPageHeaderFrame>
 
-  <UiPanel>
+  <UiPanel class="items-panel">
     <div class="filters">
       <UiFilterSearchInput
         :isAlwaysExpanded="true"
@@ -173,8 +173,13 @@ export default {
         @input="handleQuickSearchInput"
       />
       <div class="filters-right">
-        <UiButton class="quilin-packages-button" :disabled="true">
-          <IconUpload class="upload-icon" fill="#919699" />
+        <UiButton
+          :isTransparent="true"
+          color="transparent-blue"
+          class="quilin-packages-button"
+          :disabled="true"
+          >
+          <IconUpload slot="iconBefore" class="upload-icon" fill="#919699" />
           QUILIN PACKAGES
         </UiButton>
         <RouterLink :to="`/projects/${project.id}/game-keys/new/`">
@@ -188,13 +193,13 @@ export default {
       layout="fixed"
     >
       <UiTableRow :isHead="true">
-        <UiTableCell width="5%" align="left">
+        <UiTableCell width="40px" align="center">
           <span class="leading-cell-content">№</span>
         </UiTableCell>
-        <UiTableCell width="5%" align="left">&nbsp;</UiTableCell>
-        <UiTableCell align="left">Package</UiTableCell>
-        <UiTableCell align="left">SKU</UiTableCell>
-        <UiTableCell align="left">DRM platform</UiTableCell>
+        <UiTableCell width="50px" align="left">&nbsp;</UiTableCell>
+        <UiTableCell width="115px" align="left">Package</UiTableCell>
+        <UiTableCell width="115px" align="left">SKU</UiTableCell>
+        <UiTableCell width="115px" align="left">DRM platform</UiTableCell>
         <UiTableCell width="10%" align="left">Available keys</UiTableCell>
         <UiTableCell width="10%" align="left">Price</UiTableCell>
         <UiTableCell align="left" width="3%">&nbsp;</UiTableCell>
@@ -207,10 +212,10 @@ export default {
         :key="keyProduct.id"
         :link="`/projects/${project.id}/game-keys/${keyProduct.id}`"
       >
-        <UiTableCell align="left" valign="top">
+        <UiTableCell align="center"  valign="middle">
           <span class="leading-cell-content">{{ index + 1 }}</span>
         </UiTableCell>
-        <UiTableCell align="left" valign="top">
+        <UiTableCell align="left" valign="middle">
           <span
             v-if="keyProduct.cover && keyProduct.cover.images.en"
             class="img"
@@ -218,19 +223,19 @@ export default {
           ></span>
           <IconNoImage
             v-else
-            class="no-img"
+            class="img"
             width="18"
             height="18"
             fill="#919699"
           />
         </UiTableCell>
-        <UiTableCell align="left" valign="top" :title="keyProduct.name.en">
+        <UiTableCell align="left"  valign="middle" :title="keyProduct.name.en">
           <span class="cell-text">{{ keyProduct.name.en }}</span>
         </UiTableCell>
-        <UiTableCell align="left" valign="top" :title="keyProduct.sku">
+        <UiTableCell align="left"  valign="middle" :title="keyProduct.sku">
           <span class="cell-text">{{ keyProduct.sku }}</span>
         </UiTableCell>
-        <UiTableCell align="left" valign="top">
+        <UiTableCell align="left"  valign="middle">
           <UiTableCellUnit
             v-for="platform in keyProduct.platforms"
             :key="platform.id"
@@ -240,7 +245,7 @@ export default {
           </UiTableCellUnit>
           <UiNoText v-if="!keyProduct.platforms" />
         </UiTableCell>
-        <UiTableCell align="left" valign="top">
+        <UiTableCell align="left"  valign="middle">
           <UiTableCellUnit
             v-for="platform in keyProduct.platforms"
             :key="platform.id"
@@ -250,7 +255,7 @@ export default {
           </UiTableCellUnit>
           <UiNoText v-if="!keyProduct.platforms" />
         </UiTableCell>
-        <UiTableCell align="left" valign="top">
+        <UiTableCell align="left"  valign="middle">
           <UiTableCellUnit
             v-for="platform in keyProduct.platforms"
             :key="platform.id"
@@ -262,8 +267,8 @@ export default {
           </UiTableCellUnit>
           <UiNoText v-if="!keyProduct.platforms" />
         </UiTableCell>
-        <UiTableCell align="left" valign="top">&nbsp;</UiTableCell>
-        <UiTableCell align="left" valign="top">
+        <UiTableCell align="left"  valign="middle">&nbsp;</UiTableCell>
+        <UiTableCell align="left"  valign="middle">
           <UiLabelTag
             :color="keyProduct.enabled ? 'green': 'transparent'"
           >
@@ -273,7 +278,7 @@ export default {
         <UiTableCell
           class="cell"
           align="left"
-          valign="top"
+           valign="middle"
           @mouseenter.native="openedTooltipId = keyProduct.id"
           @mouseleave.native="() => openedTooltipId = ''"
           :noPadding="true"
@@ -298,7 +303,7 @@ export default {
                 Edit
               </UiTooltipMenuItem>
               <UiTooltipMenuItem
-                iconComponent="IconDeactivate"
+                :iconComponent="keyProduct.enabled ? 'IconDeactivate' : 'IconPlayTriangle'"
                 @click.stop.prevent="handleToggleKeyProductEnabled(keyProduct)"
               >
                 {{ keyProduct.enabled ? 'Disable': 'Enable' }}
@@ -342,6 +347,10 @@ $hover-background-color: rgba($hover-text-color, 0.1);
 $hover-deactivate-text-color: #ea3d2f;
 $hover-deactivate-background-color: rgba($hover-deactivate-text-color, 0.08);
 
+.items-panel {
+  width: 800px;
+}
+
 .cell {
   position: relative;
 }
@@ -355,18 +364,14 @@ $hover-deactivate-background-color: rgba($hover-deactivate-text-color, 0.08);
   padding-right: 6px;
 }
 
-.no-img {
-  display: inline-flex;
-  vertical-align: middle;
-}
-
 .img {
   width: 18px;
   height: 18px;
   border-radius: 2px;
-  display: block;
+  display: inline-block;
   background-size: cover;
   background-position: center;
+  vertical-align: middle;
 }
 
 .dots-menu {
@@ -386,10 +391,8 @@ $hover-deactivate-background-color: rgba($hover-deactivate-text-color, 0.08);
 .quilin-packages-button {
   margin-right: 10px;
 }
-
 .upload-icon {
   vertical-align: middle;
-  margin-right: 4px;
 }
 
 .dots-menu-trigger {

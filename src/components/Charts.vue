@@ -111,8 +111,8 @@ export default {
         return {
           ...res,
           [key]: {
-            amount: current.toLocaleString(),
-            amountPrevious: previous.toLocaleString(),
+            amount: current,
+            amountPrevious: previous,
             hasIncreasedArrow: Boolean(current || previous),
             isIncreased: current > previous,
             hasTop: Boolean((item.top || []).length),

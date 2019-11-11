@@ -106,11 +106,9 @@ export default {
 <div class="payment-methods">
   <div class="section">
     <div class="info">
-      Choose payout currency and the main operational region,
-      where you plan your main sales volume.
       This important choice will define your future money flow rates and commissions,
-      so check the variants below carefully,
-      since you will not be able to change these parameters in future.
+      so check the variants below carefully, since you won’t be able
+      to change these parameters in future.
     </div>
 
     <div class="select">
@@ -177,7 +175,7 @@ export default {
         >
           You can check here how your choice of <span class="bolder">Home Region</span>
           and <span class="bolder">Payout Currency</span> will affect
-          on rates and fees, if your customer will get refund in another region
+          on rates and fees, if your customer will pay from another region.
         </UiTip>
       </div>
       External regions rates ({{ payerRegionAbbr }})

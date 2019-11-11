@@ -44,14 +44,18 @@ async function getOrderId(apiUrl, orderParams) {
   return data.id;
 }
 
-async function getOrderData(apiUrl, orderId, { ip, userCookie, acceptLanguage }) {
+async function getOrderData(apiUrl, orderId, {
+  ip, userCookie, acceptLanguage, referer,
+}) {
   const { data } = await axios.get(
     `${apiUrl}/api/v1/order/${orderId}`,
     {
       headers: {
         'Accept-Language': acceptLanguage,
         'X-Real-IP': ip,
+        'X-Forwarded-For': ip,
         Cookie: `${userIdentityCookieName}=${userCookie}`,
+        referer,
       },
     },
   );
@@ -76,11 +80,13 @@ module.exports = async function orderPage(ctx) {
   const ip = getIp(ctx.request);
   const userCookie = ctx.cookies.get(userIdentityCookieName);
   const acceptLanguage = ctx.get('accept-language');
+  const referer = ctx.get('referer');
 
   if (query.debug) {
     return {
       ip,
       acceptLanguage,
+      referer,
     };
   }
 
@@ -106,10 +112,20 @@ module.exports = async function orderPage(ctx) {
   }
 
   const orderParams = getOrderParams(query);
-  let orderDataRaw;
+  let orderData;
   try {
     const orderId = query.order_id || await getOrderId(apiUrl, orderParams);
-    orderDataRaw = await getOrderData(apiUrl, orderId, { ip, userCookie, acceptLanguage });
+    const { cookie, ...data } = await getOrderData(apiUrl, orderId, {
+      ip, userCookie, acceptLanguage, referer,
+    });
+    orderData = data;
+
+    // The cookie is required to identify a user. Common use is for saved bank cards
+    ctx.cookies.set(userIdentityCookieName, cookie, {
+      maxAge: 2592000 * 1000, // 30 days
+      httpOnly: true,
+      overwrite: true,
+    });
   } catch (error) {
     let errorData = _.get(error, 'response.data');
     if (!errorData) {
@@ -121,16 +137,8 @@ module.exports = async function orderPage(ctx) {
     } else {
       console.error(errorData);
     }
-    orderDataRaw = { error: errorData };
+    orderData = { error: errorData };
   }
-  const { cookie, ...orderData } = orderDataRaw;
-
-  // The cookie is required to identify a user. Common use is for saved bank cards
-  ctx.cookies.set(userIdentityCookieName, cookie, {
-    maxAge: 2592000 * 1000, // 30 days
-    httpOnly: true,
-    overwrite: true,
-  });
 
   return renderOrder({
     data: JSON.stringify({

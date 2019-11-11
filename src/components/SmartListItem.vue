@@ -128,6 +128,16 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+@mixin hoverStyle {
+   &:not(._expanded):hover{
+    background-color: #fff;
+    border-color: #fff;
+    box-shadow: 0px 1px 2px rgba(8, 35, 48, 0.24), 0px 2px 6px rgba(8, 35, 48, 0.16);
+    & .text {
+      color: #367BF5;
+    }
+   }
+}
 .smart-list-item {
   border-radius: 4px;
   display: block;
@@ -137,6 +147,7 @@ export default {
   &._status-default {
     background-color: #fff;
     border-color: #e3e5e6;
+    @include hoverStyle;
   }
 
   &._status-waiting {

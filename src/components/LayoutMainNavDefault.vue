@@ -55,13 +55,13 @@ export default {
     margin-top: 8px;
   }
 
-  &:hover,
-  &._current:hover {
+  &:not(._current):hover {
     background-color: #e6efff;
   }
 
   &._current {
     background-color: #f7f9fa;
+    cursor: default;
   }
   &._not-available {
     pointer-events: none;
@@ -82,7 +82,7 @@ export default {
     transition: fill 0.2s ease-out;
   }
 
-  .item:hover & > svg {
+  .item:not(._current):hover & > svg {
     fill: #3d7bf5;
   }
 }
@@ -95,7 +95,7 @@ export default {
   letter-spacing: 0.44px;
   transition: color 0.2s ease-out;
 
-  .item:hover & {
+  .item:not(._current):hover & {
     color: #3d7bf5;
   }
 }
@@ -106,7 +106,7 @@ export default {
   letter-spacing: 0.4px;
   transition: color 0.2s ease-out;
 
-  .item:hover & {
+  .item:not(._current):hover & {
     color: #3d7bf5;
   }
 }

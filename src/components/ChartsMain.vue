@@ -39,7 +39,7 @@ export default {
   <div class="section">
     <div class="box _main">
       <div class="value">
-        {{ data.gross_revenue.amount }} {{ currency }}
+        {{ $formatPrice(data.gross_revenue.amount, currency) }}
         <IconArrowBold
           v-if="data.gross_revenue.hasIncreasedArrow"
           :class="['arrow', { '_is-decreased': !data.gross_revenue.isIncreased }]"
@@ -55,7 +55,7 @@ export default {
     </div>
     <div class="box _main">
       <div class="value">
-        {{ data.total_transactions.amount }} {{ currency }}
+        {{ $formatPrice(data.total_transactions.amount, currency) }}
         <IconArrowBold
           v-if="data.total_transactions.hasIncreasedArrow"
           :class="['arrow', { '_is-decreased': !data.total_transactions.isIncreased }]"
@@ -71,7 +71,7 @@ export default {
     </div>
     <div class="box _main">
       <div class="value">
-        {{ data.arpu.amount }} {{ currency }}
+        {{ $formatPrice(data.arpu.amount, currency) }}
         <IconArrowBold
           v-if="data.arpu.hasIncreasedArrow"
           :class="['arrow', { '_is-decreased': !data.arpu.isIncreased }]"
@@ -87,7 +87,7 @@ export default {
     </div>
     <div class="box _main">
       <div class="value">
-        {{ data.vat.amount }} {{ currency }}
+        {{ $formatPrice(data.vat.amount, currency) }}
         <IconArrowBold
           v-if="data.vat.hasIncreasedArrow"
           :class="['arrow', { '_is-decreased': !data.vat.isIncreased }]"
@@ -114,13 +114,11 @@ export default {
   display: flex;
   flex-grow: 1;
   justify-content: space-between;
-  flex-wrap: wrap;
   margin-bottom: 8px;
 }
 .box {
   display: flex;
   justify-content: space-between;
-  flex-basis: 100%;
   background-color: #fff;
   box-shadow: 0px 1px 2px rgba(8, 35, 48, 0.24), 0px 2px 6px rgba(8, 35, 48, 0.16);
   border-radius: 12px;
@@ -137,18 +135,19 @@ export default {
     }
   }
   &._main {
-    max-height: 160px;
+    width: 218px;
+    height: 160px;
+    margin-right: 16px;
 
-    @media screen and (min-width: 768px) {
-      flex-basis: calc(50% - 8px);
-    }
-    @media screen and (min-width: 1170px) {
-      flex-basis: calc(25% - 12px);
+    flex-direction: column;
+    justify-content: flex-start;
+
+    &:last-child {
+      margin-right: 0;
     }
 
     & > .value,
     & > .additional {
-      flex-basis: 100%;
       white-space: nowrap;
     }
     & > .value {

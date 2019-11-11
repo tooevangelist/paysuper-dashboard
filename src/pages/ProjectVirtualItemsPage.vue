@@ -173,6 +173,14 @@ export default {
     },
 
     getItemPrice(item) {
+      if (item.billing_type === 'virtual') {
+        const price = find(item.prices, { is_virtual_currency: true });
+        if (!price) {
+          return '';
+        }
+        return `VC ${price.amount}`;
+      }
+
       const price = find(item.prices, this.defaultCurrency);
       if (!price) {
         return '';
@@ -196,7 +204,7 @@ export default {
       <PictureWoomanLooking slot="picture"/>
     </UiPageHeaderFrame>
 
-    <UiPanel>
+    <UiPanel class="items-panel">
       <div class="control-bar">
         <div class="control-bar__left">
           <UiFilterSearchInput
@@ -210,8 +218,13 @@ export default {
         </div>
 
         <div class="control-bar__right">
-          <UiButton class="quilin-packages-button" :disabled="true">
-            <IconUpload class="upload-icon" fill="#919699" />
+          <UiButton
+            :isTransparent="true"
+            color="transparent-blue"
+            class="quilin-packages-button"
+            :disabled="true"
+          >
+            <IconUpload slot="iconBefore" class="upload-icon" fill="#919699" />
             QUILIN PACKAGES
           </UiButton>
           <UiButton text="ADD ITEM" @click.prevent="createNew"></UiButton>
@@ -221,12 +234,12 @@ export default {
       <div class="items-list">
         <UiTable v-if="virtualItems.items.length">
           <UiTableRow :isHead="true">
-            <UiTableCell width="5%" align="left">
+            <UiTableCell width="40px" align="center">
               <span class="leading-cell-content">№</span>
             </UiTableCell>
-            <UiTableCell width="5%" align="left">&nbsp;</UiTableCell>
-            <UiTableCell align="left">Virtual item</UiTableCell>
-            <UiTableCell align="left">SKU</UiTableCell>
+            <UiTableCell width="50px" align="center">&nbsp;</UiTableCell>
+            <UiTableCell width="200px" align="left">Virtual item</UiTableCell>
+            <UiTableCell width="200px" align="left">SKU</UiTableCell>
             <UiTableCell align="left">Price</UiTableCell>
             <UiTableCell width="15%" align="left">Status</UiTableCell>
             <UiTableCell width="5%" align="left"></UiTableCell>
@@ -237,29 +250,38 @@ export default {
             :key="item.id"
             :link="`/projects/${project.id}/virtual-items/${item.id}`"
           >
-            <UiTableCell align="left" valign="top">
+            <UiTableCell width="40px" align="center" valign="middle">
               <span class="leading-cell-content">{{ index + 1 }}</span>
             </UiTableCell>
-            <UiTableCell align="left" valign="top">
+            <UiTableCell width="40px" align="center" valign="middle">
               <div
                 v-if="item.images !== null"
                 :style="{ backgroundImage: `url(${item.images[0]})` }"
-                class="item-image"></div>
-              <IconNoImage v-else class="img" width="18" height="18" fill="#919699" />
+                class="item-image">
+              </div>
+              <IconNoImage
+                v-else
+                class="item-image"
+                width="18"
+                height="18"
+                fill="#919699"
+              />
             </UiTableCell>
-            <UiTableCell align="left" valign="top" :title="item.name.en">
-              <span class="cell-text vi-name">{{ item.name.en }}</span>
+            <UiTableCell width="200px" align="left" valign="middle" :title="item.name.en">
+              <span class="cell-text vi-name">
+                {{ item.name.en }}
+              </span>
             </UiTableCell>
-            <UiTableCell align="left" valign="top" :title="item.sku">
-              <span class="cell-text">{{ item.sku }}</span>
+            <UiTableCell width="200px" align="left" valign="middle" :title="item.sku">
+              <span class="cell-text vi-name">{{ item.sku }}</span>
             </UiTableCell>
-            <UiTableCell align="left" valign="top" :title="item.prices">
+            <UiTableCell width="110px" align="left" valign="middle" :title="getItemPrice(item)">
               <UiNoText v-if="!getItemPrice(item)" />
               <span v-else class="cell-text">
                 {{ getItemPrice(item) }}
               </span>
             </UiTableCell>
-            <UiTableCell align="left" valign="top">
+            <UiTableCell width="100px" align="left" valign="middle">
               <UiLabelTag
                 :color="item.enabled ? 'green': 'transparent'"
               >
@@ -269,7 +291,7 @@ export default {
             <UiTableCell
               class="cell"
               align="left"
-              valign="top"
+              valign="middle"
               @mouseenter.native="openedTooltipId = item.id"
               @mouseleave.native="() => openedTooltipId = ''"
               :noPadding="true"
@@ -295,7 +317,7 @@ export default {
                   Edit
                 </UiTooltipMenuItem>
                 <UiTooltipMenuItem
-                  iconComponent="IconDeactivate"
+                  :iconComponent="item.enabled ? 'IconDeactivate' : 'IconPlayTriangle'"
                   @click.prevent="toggleItemStatus(item)"
                 >
                   {{ item.enabled ? 'Disable': 'Enable' }}
@@ -332,12 +354,13 @@ export default {
 .control-bar {
   display: flex;
   justify-content: space-between;
-
-  .quilin-packages-button {
-    margin-right: 10px;
-  }
 }
-
+.quilin-packages-button {
+  margin-right: 10px;
+}
+.items-panel {
+  width: 800px;
+}
 .items-list {
   margin-top: 32px;
 }
@@ -354,6 +377,9 @@ export default {
   width: 18px;
   height: 18px;
   background-size: contain;
+  margin-right: 10px;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .status-filter {
@@ -365,9 +391,8 @@ export default {
 .vi-name {
   text-overflow: ellipsis;
   white-space: nowrap;
-  padding-right: 6px;
   display: block;
-  max-width: 307px;
+  max-width: 184px;
   overflow: hidden;
 }
 </style>

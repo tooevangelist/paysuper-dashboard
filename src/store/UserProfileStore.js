@@ -104,7 +104,7 @@ export default function createUserStore() {
       async updateProfile({ rootState, commit }, props) {
         try {
           const { data } = await axios.patch(
-            `${rootState.config.apiUrl}/api/v1/user/profile`,
+            `${rootState.config.apiUrl}/admin/api/v1/user/profile`,
             props,
           );
           commit('profile', data);

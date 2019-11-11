@@ -23,6 +23,7 @@ export default {
       zip: { maxLength: maxLength(30), required },
     },
   },
+
   computed: {
     ...mapGetters('Dictionaries', ['countries']),
     ...mapGetters('Company/AccountInfo', ['accountInfo', 'cities']),
@@ -49,6 +50,7 @@ export default {
     updateField(key, value) {
       this.updateAccountInfo({ ...this.accountInfo, [key]: value });
     },
+
     async submit() {
       this.$v.accountInfo.$touch();
       if (!this.$v.accountInfo.$invalid) {
@@ -90,7 +92,7 @@ export default {
       :autocompleteUrlProtocol="true"
       @input="updateField('website', $event)"
       @blur="$v.accountInfo.website.$touch()"
-    />
+      />
     <UiTextField
       v-bind="$getValidatedFieldProps('accountInfo.alternativeName')"
       label="Operating name"

@@ -1,7 +1,13 @@
 <script>
-import { cloneDeep } from 'lodash-es';
+import {
+  get,
+  find,
+  map,
+  tail,
+} from 'lodash-es';
 import PaymentMethodsTable from '@/mixins/PaymentMethodsTable';
 import ExpandableCellText from '@/components/ExpandableCellText.vue';
+import prepareActiveFields from '@/helpers/prepareActiveFields';
 
 export default {
   name: 'MerchantAdminChannelCostsTable',
@@ -13,107 +19,35 @@ export default {
   },
 
   props: {
+    channelCosts: {
+      required: true,
+      type: Object,
+    },
+    countries: {
+      required: true,
+      type: Array,
+    },
   },
 
   data() {
-    const channelCostsItem = {
-      fee: {
-        value: '1',
-        hasChanges: false,
-        hasError: false,
-        hasFocus: false,
-      },
-      fixedFee: {
-        value: '1',
-        hasChanges: false,
-        hasError: false,
-        hasFocus: false,
-      },
-      overallFee: {
-        value: '1',
-        hasChanges: false,
-        hasError: false,
-        hasFocus: false,
-      },
-      psGeneralFixedFee: {
-        value: '1',
-        hasChanges: false,
-        hasError: false,
-        hasFocus: false,
-      },
-    };
+    const activeFieldNames = ['methodFee', 'fixedFee', 'overallFee', 'psGeneralFixedFee'];
     return {
-      activeFieldNames: ['fee', 'fixedFee', 'overallFee', 'psGeneralFixedFee'],
-      channelCosts: [
-        {
-          ...(cloneDeep(channelCostsItem)),
-          method: 'Visa',
-          icon: 'IconVisa',
-          isExpanded: false,
-          items: [
-            cloneDeep(channelCostsItem),
-            cloneDeep(channelCostsItem),
-            cloneDeep(channelCostsItem),
-          ],
-        },
-        {
-          ...(cloneDeep(channelCostsItem)),
-          method: 'Mastercard',
-          icon: 'IconMastercard',
-          isExpanded: false,
-          items: [
-            cloneDeep(channelCostsItem),
-            cloneDeep(channelCostsItem),
-          ],
-        },
-        {
-          ...(cloneDeep(channelCostsItem)),
-          method: 'QIWI',
-          icon: 'IconQiwi',
-          isExpanded: false,
-          items: [
-            cloneDeep(channelCostsItem),
-            cloneDeep(channelCostsItem),
-          ],
-        },
-        {
-          ...(cloneDeep(channelCostsItem)),
-          method: 'Ali Pay',
-          icon: 'IconAlipay',
-          isExpanded: false,
-          items: [
-            cloneDeep(channelCostsItem),
-            cloneDeep(channelCostsItem),
-            cloneDeep(channelCostsItem),
-          ],
-        },
-        {
-          ...(cloneDeep(channelCostsItem)),
-          method: 'WebMoney',
-          icon: 'IconWebMoney',
-          isExpanded: false,
-          items: [
-            cloneDeep(channelCostsItem),
-            cloneDeep(channelCostsItem),
-          ],
-        },
-        {
-          ...(cloneDeep(channelCostsItem)),
-          method: 'Yandex Money',
-          icon: 'IconYandexMoney',
-          isExpanded: false,
-          items: [
-            cloneDeep(channelCostsItem),
-            cloneDeep(channelCostsItem),
-          ],
-        },
-      ],
+      activeFieldNames,
+      innerChannelCosts: map(this.channelCosts, arrByMethod => ({
+        ...arrByMethod[0],
+        ...prepareActiveFields(arrByMethod[0], activeFieldNames),
+        isExpanded: false,
+        items: map(tail(arrByMethod), item => ({
+          ...item,
+          ...prepareActiveFields(item, activeFieldNames),
+        })),
+      })),
     };
   },
 
   computed: {
     channelCostsFlattened() {
-      return this.$_PaymentMethodsTable_flattenDataList(this.channelCosts, 'method');
+      return this.$_PaymentMethodsTable_flattenDataList(this.innerChannelCosts, 'method');
     },
   },
 
@@ -126,6 +60,9 @@ export default {
         activeFieldNames: this.activeFieldNames,
         flattenedDataList: this.channelCostsFlattened,
       });
+    },
+    getCountryByCode(code) {
+      return get(find(this.countries, ({ value }) => value === code), 'label', code);
     },
   },
 };
@@ -152,8 +89,7 @@ export default {
       :isPainted="index % 2 === 1"
     >
       <UiComplexTableCell
-        class="cell _method"
-        :class="{ '_leading': !data.parent}"
+        :class="['cell', '_method', { '_leading': !data.parent }]"
         align="left"
         :isCollapsed="!!data.parent"
         :hasChanges="$_PaymentMethodsTable_getIsGroupHasChanges(data, activeFieldNames)"
@@ -168,19 +104,21 @@ export default {
           {{ data.method }}
         </ExpandableCellText>
       </UiComplexTableCell>
-      <UiComplexTableCell class="cell _currency">USD</UiComplexTableCell>
-      <UiComplexTableCell class="cell _amount">501–1000$</UiComplexTableCell>
-      <UiComplexTableCell class="cell _region">EU</UiComplexTableCell>
-      <UiComplexTableCell class="cell _country">United States</UiComplexTableCell>
+      <UiComplexTableCell class="cell _currency">{{ data.payoutCurrency }}</UiComplexTableCell>
+      <UiComplexTableCell class="cell _amount">{{ data.amount }}</UiComplexTableCell>
+      <UiComplexTableCell class="cell _region">{{ data.region }}</UiComplexTableCell>
+      <UiComplexTableCell class="cell _country">
+        {{ getCountryByCode(data.country) }}
+      </UiComplexTableCell>
       <UiComplexTableCell
         class="cell _fee"
-        v-bind="$_PaymentMethodsTable_getEditableCellProps(data.fee)"
-        @toggleFocus="data.fee.hasFocus = $event"
-        @moveFocus="moveFocus(index, 'fee', $event)"
-        @change="$_PaymentMethodsTable_handleCellChange(data.fee, $event)"
+        v-bind="$_PaymentMethodsTable_getEditableCellProps(data.methodFee)"
+        @toggleFocus="data.methodFee.hasFocus = $event"
+        @moveFocus="moveFocus(index, 'methodFee', $event)"
+        @change="$_PaymentMethodsTable_handleCellChange(data.methodFee, $event)"
         mask="###"
       >
-        {{ $_PaymentMethodsTable_getCellText(data.fee.value, '%') }}
+        {{ $_PaymentMethodsTable_getCellText(data.methodFee.value, '%') }}
       </UiComplexTableCell>
       <UiComplexTableCell
         class="cell _fee"
@@ -190,7 +128,7 @@ export default {
         @change="$_PaymentMethodsTable_handleCellChange(data.fixedFee, $event)"
         mask="NNNNNN"
       >
-        {{ $_PaymentMethodsTable_getCellText(data.fixedFee.value, '$') }}
+        {{ $_PaymentMethodsTable_getCellText(data.fixedFee.value, data.fixedFeeCurrency) }}
       </UiComplexTableCell>
       <UiComplexTableCell
         class="cell _fee"
@@ -208,7 +146,12 @@ export default {
         @moveFocus="moveFocus(index, 'psGeneralFixedFee', $event)"
         @change="$_PaymentMethodsTable_handleCellChange(data.psGeneralFixedFee, $event)"
       >
-        {{ $_PaymentMethodsTable_getCellText(data.psGeneralFixedFee.value, '$') }}
+        {{
+          $_PaymentMethodsTable_getCellText(
+            data.psGeneralFixedFee.value,
+            data.psGeneralFixedFeeCurrency,
+          )
+        }}
       </UiComplexTableCell>
     </UiComplexTableRow>
   </template>
@@ -229,7 +172,7 @@ export default {
     width: 7%;
   }
   &._amount {
-    width: 14%;
+    width: 10%;
   }
   &._region {
     width: 7%;
@@ -238,7 +181,7 @@ export default {
     width: 18%;
   }
   &._fee {
-    width: 8%;
+    width: 9%;
   }
 }
 .method-icon {

@@ -152,11 +152,17 @@ export default {
       this.$emit('suggestClosed');
     },
 
-    handleNumericInput() {
-      const value = this.inputValue ? this.inputValue : '';
-      if (value !== this.value) {
+    handleInput() {
+      const prevValue = this.value || '';
+      const value = this.inputValue || '';
+      if (prevValue !== value) {
         this.$emit('input', value);
-        this.openSuggest();
+
+        if (value) {
+          this.openSuggest();
+        } else {
+          this.closeSuggest();
+        }
       }
     },
 
@@ -185,7 +191,7 @@ export default {
     :class="inputClasses"
     @blur="handleBlur"
     @focus="$emit('focus')"
-    @input="openSuggest(), $emit('input', inputValue)"
+    @input="handleInput"
   />
   <CurrencyInput
     v-if="isNumeric"
@@ -195,7 +201,7 @@ export default {
     :class="inputClasses"
     @blur="handleBlur"
     @focus="$emit('focus')"
-    @input="handleNumericInput()"
+    @input="handleInput"
   />
   <input
     v-if="!isMoney && !isNumeric"
@@ -204,7 +210,7 @@ export default {
     :class="inputClasses"
     @focus="$emit('focus')"
     @blur="handleBlur"
-    @input="openSuggest(), $emit('input', inputValue)"
+    @input="handleInput"
   />
   <label
     class="label"
@@ -251,12 +257,12 @@ $focus-input-color: #3787ff;
 $error-input-color: #ff6f6f;
 
 $primary-input-size: 16px;
-$secondary-input-size: 12px;
+$secondary-input-size: 11px;
 $left-indent: 12px;
 
 .ui-text-field {
   display: inline-block;
-  padding: 24px 0;
+  padding: 24px 0 12px;
   position: relative;
   width: 100%;
 }
@@ -336,7 +342,7 @@ $left-indent: 12px;
   top: 0;
 }
 .error {
-  bottom: 0;
+  bottom: -4px;
   left: $left-indent;
   color: $error-input-color;
   display: block;

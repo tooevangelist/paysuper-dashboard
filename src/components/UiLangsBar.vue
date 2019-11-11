@@ -62,13 +62,15 @@ export default {
   background-color: #fff;
   border: 1px solid #e3e5e6;
   border-radius: 14px;
-  font-size: 14px;
+  font-size: 12px;
   padding: 0 18px;
   outline: none;
   height: 28px;
   text-transform: uppercase;
   display: inline-flex;
   margin-bottom: 2px;
+  letter-spacing: 0.4px;
+  font-family: "Roboto", sans-serif;
 
   & + & {
     margin-left: 2px;

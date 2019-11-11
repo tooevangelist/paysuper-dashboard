@@ -211,8 +211,6 @@ export default {
       });
       this.setIsLoading(false);
       this.showExportModal = false;
-
-      this.initWaitingFile();
     },
 
     async confirmReport(id) {
@@ -232,6 +230,7 @@ export default {
       this.setIsLoading(true);
       this.showDisputeModal = false;
       await this.dispute({ reason, id: this.disputeReportId })
+        .then(this.$showSuccessMessage('Report disputed'))
         .catch(this.$showErrorMessage);
       this.setIsLoading(false);
     },

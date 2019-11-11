@@ -148,8 +148,6 @@ export default {
       });
       this.setIsLoading(false);
       this.showExportModal = false;
-
-      this.initWaitingFile();
     },
   },
 };
