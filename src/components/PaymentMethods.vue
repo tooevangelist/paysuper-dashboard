@@ -416,6 +416,7 @@ export default {
   letter-spacing: 0.25px;
   margin-bottom: 4px;
   margin-right: 4px;
+  padding: 6px 24px;
 }
 .method-icon {
   width: 32px;
