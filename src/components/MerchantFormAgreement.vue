@@ -188,7 +188,6 @@ export default {
 }
 
 .description {
-  // font-family: Lato;
   font-size: 16px;
   line-height: 20px;
   color: #b1b1b1;

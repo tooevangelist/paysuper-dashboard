@@ -320,11 +320,6 @@ const routes = [
     redirect: { name: 'PaymentFormSdk' },
   },
   {
-    path: '/payform-page/',
-    component: () => import('@/pages/PaymentFormPage.vue'),
-    meta: { layout: 'PageFormLayout', initStore: false },
-  },
-  {
     path: '/profile/',
     component: () => import('@/pages/UserProfilePage.vue'),
     meta: { layout: 'PageShallow', isAuthRequired: true },
