@@ -295,6 +295,10 @@ export default {
     font-size: 12px;
     line-height: 16px;
   }
+
+  &:not(._head) {
+    white-space: nowrap;
+  }
 }
 
 .input {
