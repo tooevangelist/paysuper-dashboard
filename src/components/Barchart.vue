@@ -42,15 +42,18 @@ export default {
 
 <template>
 <div class="chart-container">
-  <canvas ref="chart"></canvas>
+  <canvas class="chart-container__canvas" ref="chart"></canvas>
 </div>
 </template>
 
 <style lang="scss" scoped>
 .chart-container {
   position: relative;
-  width: 10vw;
   height: 100%;
-  flex-grow: 1;
+  width: 100%;
+  &__canvas {
+    position: relative;
+    bottom: -1px;
+  }
 }
 </style>
