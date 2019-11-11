@@ -169,7 +169,7 @@ export default {
 
   &._expanded {
     border-color: transparent;
-    box-shadow: 0px 6px 12px rgba(8, 35, 48, 0.14), 0px 16px 24px rgba(8, 35, 48, 0.08);
+    box-shadow: 0px 1px 2px rgba(8, 35, 48, 0.24), 0px 2px 6px rgba(8, 35, 48, 0.16);
   }
 }
 
