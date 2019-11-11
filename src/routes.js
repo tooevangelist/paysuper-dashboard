@@ -1,4 +1,3 @@
-
 import { signedStatusCode } from '@/schemes/merchantStatusScheme';
 
 function projectPagesMeta(url, label) {
@@ -6,9 +5,11 @@ function projectPagesMeta(url, label) {
     layout: 'Layout',
     isAuthRequired: true,
     specialNav: {
-      backLink() {
+      backLink({ store }) {
+        const projectId = store.state.Project.project.id;
+        const path = url ? `/projects/${projectId}/${url}` : '/projects/';
         return {
-          url: url || '/projects/',
+          url: path,
           label: label || 'Back to projects',
         };
       },
@@ -122,14 +123,14 @@ const routes = [
         path: 'game-keys/:keyProductId',
         component: () => import('@/pages/ProjectKeyProductPage.vue'),
         meta: {
-          ...projectPagesMeta('/', 'Back to list'),
+          ...projectPagesMeta('game-keys/', 'Back to list'),
         },
         name: 'ProjectKeyProduct',
       },
       {
         path: 'settings/',
         component: () => import('@/pages/ProjectSettingsPage.vue'),
-        meta: projectPagesMeta,
+        meta: projectPagesMeta(),
         name: 'ProjectSettings',
       },
       {
@@ -144,7 +145,7 @@ const routes = [
       {
         path: 'payment-form/',
         component: () => import('@/pages/ProjectPaymentFormPage.vue'),
-        meta: projectPagesMeta,
+        meta: projectPagesMeta(),
         name: 'ProjectPaymentForm',
       },
     ],
