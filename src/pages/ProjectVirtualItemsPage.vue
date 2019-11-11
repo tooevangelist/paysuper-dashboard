@@ -204,7 +204,7 @@ export default {
       <PictureWoomanLooking slot="picture"/>
     </UiPageHeaderFrame>
 
-    <UiPanel class="items-panel">
+    <UiPanel>
       <div class="control-bar">
         <div class="control-bar__left">
           <UiFilterSearchInput
@@ -357,9 +357,6 @@ export default {
 }
 .quilin-packages-button {
   margin-right: 10px;
-}
-.items-panel {
-  width: 800px;
 }
 .items-list {
   margin-top: 32px;
