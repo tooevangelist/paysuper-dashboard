@@ -58,6 +58,12 @@ export default {
       copyTextToClipboard(this.value);
     },
   },
+
+  mounted() {
+    if (this.value === '') {
+      this.generateKey();
+    }
+  },
 };
 </script>
 
