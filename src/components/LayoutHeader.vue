@@ -191,9 +191,9 @@ export default {
         />
       </UiTip>
     </div>
-    <a href="#" class="right-icon">
+    <router-link to="/settings" class="right-icon">
       <IconSettings />
-    </a>
+    </router-link>
 
     <div
       :class="['right-icon', { '_active': hasInfoOpened }]"

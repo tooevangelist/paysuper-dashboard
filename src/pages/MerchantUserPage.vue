@@ -1,5 +1,5 @@
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState, mapGetters } from 'vuex';
 import { find, get } from 'lodash-es';
 import roleScheme from '@/schemes/userRolesStatusScheme';
 import UserRolePageStore from '@/store/UserRolePageStore';
@@ -42,6 +42,7 @@ export default {
 
   computed: {
     ...mapState('UserRolePage', ['user']),
+    ...mapGetters('User/Profile', ['userPermissions']),
 
     userRole() {
       return find(this.scheme, { value: this.user.role });
@@ -75,11 +76,11 @@ export default {
     },
 
     getLabelColor(role) {
-      return get(find(this.roleScheme, { value: role }), 'color');
+      return get(find(this.scheme, { value: role }), 'color');
     },
 
     getRoleName(role) {
-      return get(find(this.roleScheme, { value: role }), 'status');
+      return get(find(this.scheme, { value: role }), 'status');
     },
 
     handleChangeRole(role) {
@@ -101,12 +102,19 @@ export default {
           <UiLabelTag color="orange">Invited</UiLabelTag>
         </template>
         <template v-else>
-          <UiLabelSwitch
-            v-if="user.role !== 'merchant_owner'"
-            :value="user.role"
-            :scheme="roleScheme"
-            @input="handleChangeRole($event, user)"/>
-          <UiLabelTag v-else color="red" class="owner-label">Owner</UiLabelTag>
+          <template v-if="userPermissions.inviteProjectUsers">
+            <UiLabelSwitch
+              v-if="user.role !== 'merchant_owner'"
+              :value="user.role"
+              :scheme="roleScheme"
+              @input="handleChangeRole($event, user)"/>
+            <UiLabelTag v-else color="red" class="owner-label">Owner</UiLabelTag>
+          </template>
+          <template v-else>
+            <UiLabelTag :color="getLabelColor(user.role)">
+              {{ getRoleName(user.role) }}
+            </UiLabelTag>
+          </template>
         </template>
       </span>
     </UiPageHeaderFrame>
@@ -145,7 +153,7 @@ export default {
         </div>
       </div>
 
-      <div class="controls" v-if="status !== 'Owner'">
+      <div class="controls" v-if="status !== 'Owner' && userPermissions.inviteProjectUsers">
         <UiButton
           class="controls__button"
           color="red"

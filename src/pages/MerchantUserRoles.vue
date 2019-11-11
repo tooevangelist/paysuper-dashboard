@@ -49,6 +49,7 @@ export default {
   computed: {
     ...mapState('userRoles', ['users', 'filterValues', 'query', 'apiQuery']),
     ...mapGetters('userRoles', ['getFilterValues']),
+    ...mapGetters('User/Profile', ['userPermissions']),
 
     handleQuickSearchInput() {
       return debounce(() => {
@@ -185,7 +186,7 @@ export default {
             @input="handleQuickSearchInput" />
         </div>
 
-        <div class="control-bar__right">
+        <div class="control-bar__right" v-if="userPermissions.inviteProjectUsers">
           <UiButton text="INVITE USER" @click="inviteModal = true"></UiButton>
         </div>
       </div>
@@ -195,7 +196,7 @@ export default {
           <UiTableCell align="left" width="4%"></UiTableCell>
           <UiTableCell align="left" width="73%">User</UiTableCell>
           <UiTableCell align="left">Role</UiTableCell>
-          <UiTableCell align="left" width="5%"></UiTableCell>
+          <UiTableCell align="left" width="5%" v-if="userPermissions.inviteProjectUsers"/>
         </UiTableRow>
         <UiTableRow
           v-for="user in filteredUsers"
@@ -209,14 +210,21 @@ export default {
             {{ user.email }}
           </UiTableCell>
           <UiTableCell align="left">
-            <UiLabelSwitch
-              v-if="user.role !== 'merchant_owner'"
-              :value="user.role"
-              :scheme="roleScheme"
-              @input="handleChangeRole($event, user)"/>
-            <UiLabelTag v-else color="red" class="owner-label">Owner</UiLabelTag>
+            <template v-if="userPermissions.inviteProjectUsers">
+              <UiLabelSwitch
+                v-if="user.role !== 'merchant_owner'"
+                :value="user.role"
+                :scheme="roleScheme"
+                @input="handleChangeRole($event, user)"/>
+              <UiLabelTag v-else color="red" class="owner-label">Owner</UiLabelTag>
+            </template>
+            <template v-else>
+              <UiLabelTag :color="getLabelColor(user.role)" class="owner-label">
+                {{ getRoleName(user.role) }}
+              </UiLabelTag>
+            </template>
           </UiTableCell>
-          <UiTableCell>
+          <UiTableCell v-if="userPermissions.inviteProjectUsers">
             <div
               class="delete-user"
               v-if="user.role !== 'merchant_owner'"

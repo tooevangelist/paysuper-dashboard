@@ -39,37 +39,37 @@ const routes = [
   {
     path: '/reports/',
     component: () => import('@/pages/RoyaltyReportsPage.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true },
+    meta: { layout: 'Layout', isAuthRequired: true, permission: 'viewRoyaltyReports' },
     name: 'RoyaltyReportsPage',
   },
   {
     path: '/reports/:reportId',
     component: () => import('@/pages/RoyaltyReportCard.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true },
+    meta: { layout: 'Layout', isAuthRequired: true, permission: 'viewRoyaltyReports' },
     name: 'RoyaltyReportCard',
   },
   {
     path: '/transactions/',
     component: () => import('@/pages/TransactionsPage.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true },
+    meta: { layout: 'Layout', isAuthRequired: true, permission: 'viewTransactions' },
     name: 'TransactionsPage',
   },
   {
     path: '/transactions/:transactionId',
     component: () => import('@/pages/TransactionCard.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true },
+    meta: { layout: 'Layout', isAuthRequired: true, permission: 'viewTransactions' },
     name: 'TransactionsCard',
   },
   {
     path: '/projects/',
     component: () => import('@/pages/ProjectsListPage.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true },
+    meta: { layout: 'Layout', isAuthRequired: true, permission: 'viewProjects' },
     name: 'ProjectsList',
   },
   {
     path: '/projects/:id',
     component: () => import('@/pages/ProjectPage.vue'),
-    redirect: { name: 'ProjectSettings' },
+    redirect: { name: 'ProjectSettings', permission: 'viewProjects' },
     name: 'Project',
     children: [
       {
@@ -222,6 +222,7 @@ const routes = [
         meta: {
           layout: 'Layout',
           isAuthRequired: true,
+          permission: 'viewProjectUsers',
           topControls: () => import('@/components/LayoutTopControlsSettings.vue'),
         },
         name: 'MerchantUserRoles',
@@ -232,6 +233,7 @@ const routes = [
         meta: {
           layout: 'Layout',
           isAuthRequired: true,
+          permission: 'viewProjectUsers',
           topControls: () => import('@/components/LayoutTopControlsSettings.vue'),
         },
         name: 'MerchantUserPage',
@@ -247,13 +249,13 @@ const routes = [
   {
     path: '/dashboard/',
     component: () => import('@/pages/Dashboard.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true },
+    meta: { layout: 'Layout', isAuthRequired: true, permission: 'viewDashboard' },
     name: 'Dashboard',
   },
   {
     path: '/company/',
     component: () => import('@/pages/Company.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true },
+    meta: { layout: 'Layout', isAuthRequired: true, permission: 'viewCompany' },
     name: 'company',
   },
   {
@@ -265,13 +267,13 @@ const routes = [
   {
     path: '/payouts/',
     component: () => import('@/pages/payouts.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true },
+    meta: { layout: 'Layout', isAuthRequired: true, permission: 'viewPayouts' },
     name: 'payouts',
   },
   {
     path: '/payouts/:id',
     component: () => import('@/pages/payoutCard.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true },
+    meta: { layout: 'Layout', isAuthRequired: true, permission: 'viewPayouts' },
     name: 'payoutCard',
   },
   {

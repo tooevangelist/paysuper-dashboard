@@ -4,6 +4,7 @@ import { get, kebabCase } from 'lodash-es';
 import store from './store/RootStore';
 import resources from './resources';
 import routes from './routes';
+import premissions from './schemes/merchantPermissionScheme';
 
 const router = new VueRouter(
   {
@@ -67,6 +68,15 @@ router.beforeResolve(async (to, from, next) => {
       return next({
         name: 'Dashboard',
       });
+    }
+    if (get(to.meta, 'permission', false)) {
+      if (!premissions[store.state.User.Profile.role][to.meta.permission]) {
+        resources.notifications.showErrorMessage('you don\'t have permission to access');
+        return next({
+          path: from.path,
+          query: { redirect: from.fullPath },
+        });
+      }
     }
   }
 

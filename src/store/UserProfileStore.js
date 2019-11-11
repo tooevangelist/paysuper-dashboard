@@ -3,6 +3,7 @@ import axios from 'axios';
 import { get, includes } from 'lodash-es';
 import Centrifuge from 'centrifuge';
 import mergeApiValuesWithDefaults from '@/helpers/mergeApiValuesWithDefaults';
+import permissions from '@/schemes/merchantPermissionScheme';
 
 function getDefaultProfileData() {
   return {
@@ -52,6 +53,13 @@ export default function createUserStore() {
     state: {
       profile: null,
       currentStepCode: 'personal',
+      role: null,
+    },
+
+    getters: {
+      userPermissions(state) {
+        return permissions[state.role];
+      },
     },
 
     mutations: {
@@ -67,6 +75,9 @@ export default function createUserStore() {
           state.currentStepCode = 'personal';
         }
       },
+      role(state, value) {
+        state.role = value;
+      },
     },
 
     actions: {
@@ -78,6 +89,7 @@ export default function createUserStore() {
         try {
           const { data } = await axios.get('{apiUrl}/admin/api/v1/user/profile/common');
           commit('profile', data.profile);
+          commit('role', data.role.role);
           if (data.last_step) {
             commit('currentStepCode', data.last_step);
           }
