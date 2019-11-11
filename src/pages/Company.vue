@@ -1,6 +1,6 @@
 <script>
 import { mapGetters, mapState } from 'vuex';
-import { reduce } from 'lodash-es';
+import { reduce, get } from 'lodash-es';
 import AccountInfo from '@/components/AccountInfo.vue';
 import BankingInfo from '@/components/BankingInfo.vue';
 import Contacts from '@/components/Contacts.vue';
@@ -118,12 +118,31 @@ export default {
         },
       };
     },
+    expandedItem() {
+      return `${get(this.$route, 'params.expandedItem', 'company')}`;
+    },
   },
   methods: {
     submited(key) {
       this.expandItems[key] = false;
       this.$appEvents.$emit('updateContentScroll');
     },
+    toggle(event, key) {
+      Object.keys(this.expandItems).forEach((k) => {
+        if (this.expandItems[k]) {
+          this.expandItems[k] = !this.expandItems[k];
+        }
+      });
+
+      this.expandItems[key] = event;
+
+      if (event) {
+        this.$appEvents.$emit('updateContentScroll', 200);
+      }
+    },
+  },
+  mounted() {
+    this.toggle(true, this.expandedItem);
   },
 };
 </script>
@@ -152,7 +171,7 @@ export default {
     :key="key"
     :expandable="true"
     :isExpanded="expandItems[key]"
-    @toggle="expandItems[key] = $event"
+    @toggle="toggle($event, key)"
   >
     <component
       v-if="item.componentName"
