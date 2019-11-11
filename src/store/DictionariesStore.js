@@ -61,7 +61,7 @@ export default function createDictionariesStore() {
         store.currencies = value;
       },
       countries(store, value) {
-        store.countries = value;
+        store.countries = value || [];
       },
       regionsCurrencies(store, value) {
         store.regionsCurrencies = value;
