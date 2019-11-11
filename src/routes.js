@@ -1,19 +1,21 @@
 
 import { signedStatusCode } from '@/schemes/merchantStatusScheme';
 
-const projectPagesMeta = {
-  layout: 'Layout',
-  isAuthRequired: true,
-  specialNav: {
-    backLink() {
-      return {
-        url: '/projects/',
-        label: 'Back to projects',
-      };
+function projectPagesMeta(url, label) {
+  return {
+    layout: 'Layout',
+    isAuthRequired: true,
+    specialNav: {
+      backLink() {
+        return {
+          url: url || '/projects/',
+          label: label || 'Back to projects',
+        };
+      },
     },
-  },
-  mainNav: () => import('@/components/LayoutMainNavProject.vue'),
-};
+    mainNav: () => import('@/components/LayoutMainNavProject.vue'),
+  };
+}
 
 const merchantPagesMeta = {
   layout: 'Layout',
@@ -76,7 +78,7 @@ const routes = [
         path: 'sales-options/',
         component: () => import('@/pages/ProjectSalesOptionsPage.vue'),
         meta: {
-          ...projectPagesMeta,
+          ...projectPagesMeta(),
           topControls: () => import('@/components/LayoutTopControlsProjectSalesOptions.vue'),
         },
         name: 'ProjectSalesOptions',
@@ -85,7 +87,7 @@ const routes = [
         path: 'virtual-currency/',
         component: () => import('@/pages/ProjectVirtualCurrencyPage.vue'),
         meta: {
-          ...projectPagesMeta,
+          ...projectPagesMeta(),
           topControls: () => import('@/components/LayoutTopControlsProjectSalesOptions.vue'),
         },
         name: 'ProjectVirtualCurrency',
@@ -94,7 +96,7 @@ const routes = [
         path: 'virtual-items/',
         component: () => import('@/pages/ProjectVirtualItemsPage.vue'),
         meta: {
-          ...projectPagesMeta,
+          ...projectPagesMeta(),
           topControls: () => import('@/components/LayoutTopControlsProjectSalesOptions.vue'),
         },
         name: 'ProjectVirtualItems',
@@ -102,14 +104,16 @@ const routes = [
       {
         path: 'virtual-items/:itemId/',
         component: () => import('@/pages/ProjectVirtualItemEditPage.vue'),
-        meta: projectPagesMeta,
+        meta: {
+          ...projectPagesMeta('virtual-items/', 'Back to list'),
+        },
         name: 'ProjectVirtualItemEdit',
       },
       {
         path: 'game-keys/',
         component: () => import('@/pages/ProjectKeyProductsListPage.vue'),
         meta: {
-          ...projectPagesMeta,
+          ...projectPagesMeta(),
           topControls: () => import('@/components/LayoutTopControlsProjectSalesOptions.vue'),
         },
         name: 'ProjectKeyProductsList',
@@ -117,7 +121,9 @@ const routes = [
       {
         path: 'game-keys/:keyProductId',
         component: () => import('@/pages/ProjectKeyProductPage.vue'),
-        meta: projectPagesMeta,
+        meta: {
+          ...projectPagesMeta('/', 'Back to list'),
+        },
         name: 'ProjectKeyProduct',
       },
       {
@@ -130,7 +136,7 @@ const routes = [
         path: 'webhooks/',
         component: () => import('@/pages/ProjectWebhooksPage.vue'),
         meta: {
-          ...projectPagesMeta,
+          ...projectPagesMeta(),
           // topControls: () => import('@/components/LayoutTopControlsProjectWebhooks.vue'),
         },
         name: 'ProjectWebhooks',
