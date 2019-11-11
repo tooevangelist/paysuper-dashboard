@@ -72,11 +72,10 @@ function getIp(request) {
   return ip;
 }
 
-
 module.exports = async function orderPage(ctx) {
   const [, queryString] = ctx.request.url.split('?');
+  const { apiUrl } = webappConfig;
   const query = qs.parse(queryString);
-  const apiUrl = query.apiUrl || webappConfig.apiUrl;
   const ip = getIp(ctx.request);
   const userCookie = ctx.cookies.get(userIdentityCookieName);
   const acceptLanguage = ctx.get('accept-language');
