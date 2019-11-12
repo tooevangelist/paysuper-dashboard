@@ -1,17 +1,14 @@
 <script>
 import { mapState, mapActions } from 'vuex';
-import { findKey, size } from 'lodash-es';
+import { cloneDeep, findKey, size } from 'lodash-es';
 import UserProfilePerson from '@/components/UserProfilePerson.vue';
 import UserProfileHelp from '@/components/UserProfileHelp.vue';
 import UserProfileCompany from '@/components/UserProfileCompany.vue';
 import StepsProgressBar from '@/components/StepsProgressBar.vue';
 import ConfirmYourEmail from '@/components/ConfirmYourEmail.vue';
-import Notifications from '@/mixins/Notifications';
 
 export default {
   name: 'UserProfilePage',
-
-  mixins: [Notifications],
 
   components: {
     UserProfilePerson,
@@ -23,6 +20,7 @@ export default {
 
   data() {
     return {
+      profileLocal: {},
       steps: {
         personal: {
           name: 'About yourself',
@@ -49,8 +47,17 @@ export default {
     };
   },
 
+  watch: {
+    profile: {
+      handler() {
+        this.profileLocal = cloneDeep(this.profile);
+      },
+      immediate: true,
+    },
+  },
+
   computed: {
-    ...mapState('User/Profile', ['profile', 'currentStepCode']),
+    ...mapState('User/Profile', ['profile']),
 
     isConfirmEmailStep() {
       return this.currentStepCode === 'confirmEmail';
@@ -75,9 +82,9 @@ export default {
     },
   },
 
-  mounted() {
+  async mounted() {
     if (this.currentStepCode === 'confirmEmail') {
-      this.waitForEmailConfirm();
+      await this.waitForEmailConfirm();
       this.$router.push({ name: 'Dashboard' });
     }
   },
@@ -96,7 +103,7 @@ export default {
       const { dataSectionName } = this.currentStep;
       try {
         await this.updateProfile({
-          [dataSectionName]: this.profile[dataSectionName],
+          [dataSectionName]: this.profileLocal[dataSectionName],
           ...(nextStepCode ? { last_step: nextStepCode } : {}),
         });
 
@@ -108,7 +115,7 @@ export default {
           this.$router.push({ name: 'Dashboard' });
         }
       } catch (error) {
-        this.$_Notifications_showErrorMessage(error.message);
+        this.$showErrorMessage(error.message);
       }
     },
 
@@ -135,7 +142,7 @@ export default {
       />
       <component
         :is="currentStep.component"
-        :profile="profile"
+        :profile="profileLocal"
         @valid="handleStepComplete"
       />
 
