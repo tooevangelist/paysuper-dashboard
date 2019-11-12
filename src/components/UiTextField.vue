@@ -342,12 +342,13 @@ $left-indent: 12px;
   top: 0;
 }
 .error {
-  bottom: -4px;
-  left: $left-indent;
+  margin-left: $left-indent;
   color: $error-input-color;
   display: block;
   font-size: $secondary-input-size;
-  position: absolute;
+  line-height: $secondary-input-size;
+  position: relative;
+  top: $secondary-input-size/2;
 }
 
 .suggest {
