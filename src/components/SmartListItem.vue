@@ -73,13 +73,12 @@ export default {
   },
   methods: {
     handleClick() {
-      if (this.expandable && !includes(['locked'], this.status)) {
+      if (this.expandable && this.status !== 'locked') {
         this.isToggleExpanded = !this.isToggleExpanded;
         this.$emit('toggle', this.isToggleExpanded);
       }
     },
     toggle(key, event) {
-      console.log(event);
       this.listItems[key] = event;
     },
   },

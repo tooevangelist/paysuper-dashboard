@@ -90,33 +90,38 @@ export default {
       };
     },
     listItems() {
-      return {
-        account: {
+      return [
+        {
+          id: 'account',
           title: 'Account Info',
           componentName: 'AccountInfo',
           ...this.companyInfoStatuses.company,
         },
-        contacts: {
+        {
+          id: 'contacts',
           title: 'Contacts',
           componentName: 'Contacts',
           ...this.companyInfoStatuses.contacts,
         },
-        banking: {
+        {
+          id: 'banking',
           title: 'Banking Info',
           componentName: 'BankingInfo',
           ...this.companyInfoStatuses.banking,
         },
-        tariff: {
+        {
+          id: 'tariff',
           title: 'Payment Methods',
           componentName: 'PaymentMethods',
           ...this.paymentMethodsStatus,
         },
-        license: {
+        {
+          id: 'license',
           title: 'License Agreement',
           componentName: 'LicenseAgreement',
           ...this.licenseStatus,
         },
-      };
+      ];
     },
     expandedItem() {
       return `${get(this.$route, 'params.expandedItem', 'company')}`;
@@ -137,7 +142,8 @@ export default {
       this.expandItems[key] = event;
 
       if (event) {
-        this.$appEvents.$emit('updateContentScroll', 200);
+        this.$appEvents.$emit('updateContentScroll');
+        this.$appEvents.$emit('contentScrollToY', 200);
       }
     },
   },
@@ -166,17 +172,17 @@ export default {
 
   <SmartListItem
     class="item"
-    v-for="(item, key) in listItems"
+    v-for="(item, index) in listItems"
     v-bind="item"
-    :key="key"
+    :key="index"
     :expandable="true"
-    :isExpanded="expandItems[key]"
-    @toggle="toggle($event, key)"
+    :isExpanded="expandItems[item.id]"
+    @toggle="toggle($event, item.id)"
   >
     <component
       v-if="item.componentName"
       :is="item.componentName"
-      @hasSubmit="submited(key)"
+      @hasSubmit="submited(item.id)"
     />
   </SmartListItem>
 </div>

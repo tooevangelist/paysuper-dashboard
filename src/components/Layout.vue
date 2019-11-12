@@ -53,11 +53,15 @@ export default {
     },
   },
   mounted() {
-    this.$appEventsOn('updateContentScroll', (scrollX) => {
+    this.$appEventsOn('updateContentScroll', () => {
       this.$nextTick(() => {
         this.$refs.contentScrollbox.update();
-        if (scrollX) {
-          this.$refs.contentScrollbox.scrollTop(scrollX);
+      });
+    });
+    this.$appEventsOn('contentScrollToY', (scrollY) => {
+      this.$nextTick(() => {
+        if (scrollY) {
+          this.$refs.contentScrollbox.scrollTop(scrollY);
         }
       });
     });

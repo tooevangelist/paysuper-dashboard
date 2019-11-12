@@ -94,58 +94,65 @@ export default {
       };
     },
     listItems() {
-      return {
-        account: {
+      return [
+        {
+          id: 'account',
           title: '1. Complete “Account Info” about your сompany in “Settings” section',
           performText: 'Provide your official and public company names as well as your official site WEB address, so we could understand your company is related to a video games industry.',
           ...this.companyInfoStatuses.company,
-          url: 'company',
+          page: 'company',
         },
-        contacts: {
+        {
+          id: 'contacts',
           title: '2. Complete “Contacts” about your company in “Settings” section',
           performText: 'Identify your company’s official representative person. He or she will be mentioned in legal documentation, signing documents, resolving banking and payment issues and will participate in possible disputes with your customers.',
           ...this.companyInfoStatuses.contacts,
-          url: 'company',
+          page: 'company',
         },
-        banking: {
+        {
+          id: 'banking',
           title: '3. Complete “Banking Info” about your сompany in “Settings” section',
           performText: 'Enter your bank account details here to receive your payouts. First specify the SWIFT-code and we will fill-in your bank details automatically.',
           ...this.companyInfoStatuses.banking,
-          url: 'company',
+          page: 'company',
         },
-        tariff: {
+        {
+          id: 'tariff',
           title: '4. Complete “Payment Methods” in “Settings” section',
           performText: 'Choose payout currency and the main operational region, where you plan your main sales volume. This important choice will define your future money flow rates and commissions, so check the variants below carefully, since you will not be able to change these parameters in future.',
           ...this.paymentMethodsStatus,
-          url: 'company',
+          page: 'company',
         },
-        license: {
+        {
+          id: 'license',
           title: '5. Complete “License Agreement” in “Settings” section',
           performText: 'Here you can initiate a License Agreement signing procedure. Please double-check your Company info and Payment Methods above, since it will be mentioned in this document. For e-signing we use “Hellosign” service, which provides legally binding electronic signatures.',
           ...this.licenseStatus,
-          url: 'company',
+          page: 'company',
         },
-        project: {
+        {
+          id: 'project',
           title: '6. Create a project in “Projects” section',
           performText: 'There is your full list of projects here. Setup every parameter, add products, proceed with technical S2S integration to activate every project sales.',
           ...this.projectStatus,
-          url: 'projects',
+          page: 'projects',
         },
-      };
+      ];
     },
   },
   methods: {
-    toggle(event, key) {
-      Object.keys(this.expandItems).forEach((k) => {
-        if (this.expandItems[k]) {
-          this.expandItems[k] = !this.expandItems[k];
+    toggle(event, index) {
+      Object.keys(this.expandItems).forEach((i) => {
+        if (this.expandItems[i]) {
+          this.expandItems[i] = !this.expandItems[i];
         }
       });
 
-      this.expandItems[key] = event;
+      this.expandItems[index] = event;
 
       if (event) {
-        this.$appEvents.$emit('updateContentScroll', 200);
+        this.$appEvents.$emit('updateContentScroll');
+        this.$appEvents.$emit('contentScrollToY', 200);
       }
     },
   },
@@ -169,23 +176,23 @@ export default {
     </div>
   </div>
   <div
-    v-for="(item, key) in listItems"
-    :key="key"
+    v-for="(item, index) in listItems"
+    :key="index"
     >
     <SmartListItem
       v-if="item.status !== 'complete'"
       class="item"
       v-bind="item"
       :expandable="true"
-      :isExpanded="expandItems[key]"
-      @toggle="toggle($event, key)"
+      :isExpanded="expandItems[item.id]"
+      @toggle="toggle($event, item.id)"
     >
       <div class="perform" v-if="item.status === 'default'">
         <div class="perform__text">
           {{ item.performText }}
         </div>
         <div class="perform__button">
-          <RouterLink :to="{ name: `${item.url}`, params: { expandedItem: `${key}` }}" >
+          <RouterLink :to="{ name: `${item.page}`, params: { expandedItem: `${item.id}` }}" >
             <UiButton>
               PERFORM THIS STEP
             </UiButton>
