@@ -42,19 +42,19 @@ const routes = [
   {
     path: '/reports/',
     component: () => import('@/pages/RoyaltyReportsPage.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true },
+    meta: { layout: 'Layout', isAuthRequired: true, mainContentSize: 'large' },
     name: 'RoyaltyReportsPage',
   },
   {
     path: '/reports/:reportId',
     component: () => import('@/pages/RoyaltyReportCard.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true },
+    meta: { layout: 'Layout', isAuthRequired: true, mainContentSize: 'large' },
     name: 'RoyaltyReportCard',
   },
   {
     path: '/transactions/',
     component: () => import('@/pages/TransactionsPage.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true },
+    meta: { layout: 'Layout', isAuthRequired: true, mainContentSize: 'large' },
     name: 'TransactionsPage',
   },
   {
@@ -66,7 +66,7 @@ const routes = [
   {
     path: '/projects/',
     component: () => import('@/pages/ProjectsListPage.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true },
+    meta: { layout: 'Layout', isAuthRequired: true, mainContentSize: 'large' },
     name: 'ProjectsList',
   },
   {
@@ -163,13 +163,13 @@ const routes = [
       {
         path: '',
         component: () => import('@/pages/TaxesCardCountryPage.vue'),
-        meta: { layout: 'Layout', isAuthRequired: true },
+        meta: { layout: 'Layout', isAuthRequired: true, mainContentSize: 'large' },
         name: 'TaxesCardCountryPage',
       },
       {
         path: 'period/:periodId',
         component: () => import('@/pages/TaxesCardPeriodPage.vue'),
-        meta: { layout: 'Layout', isAuthRequired: true },
+        meta: { layout: 'Layout', isAuthRequired: true, mainContentSize: 'large' },
         name: 'TaxesCardPeriodPage',
       },
     ],
@@ -254,7 +254,7 @@ const routes = [
   {
     path: '/dashboard/',
     component: () => import('@/pages/Dashboard.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true },
+    meta: { layout: 'Layout', isAuthRequired: true, mainContentSize: 'large' },
     name: 'Dashboard',
   },
   {
@@ -272,13 +272,13 @@ const routes = [
   {
     path: '/payouts/',
     component: () => import('@/pages/payouts.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true },
+    meta: { layout: 'Layout', isAuthRequired: true, mainContentSize: 'large' },
     name: 'payouts',
   },
   {
     path: '/payouts/:id',
     component: () => import('@/pages/payoutCard.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true },
+    meta: { layout: 'Layout', isAuthRequired: true, mainContentSize: 'large' },
     name: 'payoutCard',
   },
   {
@@ -325,11 +325,6 @@ const routes = [
   {
     path: '/payform-sdk/',
     redirect: { name: 'PaymentFormSdk' },
-  },
-  {
-    path: '/payform-page/',
-    component: () => import('@/pages/PaymentFormPage.vue'),
-    meta: { layout: 'PageFormLayout', initStore: false },
   },
   {
     path: '/profile/',

@@ -5,7 +5,6 @@ import Layout from '@/components/Layout.vue';
 import Page from '@/components/Page.vue';
 import PageNoLayout from '@/components/PageNoLayout.vue';
 import PageShallow from '@/components/PageShallow.vue';
-import PageFormLayout from '@/components/PageFormLayout.vue';
 
 export default {
   name: 'App',
@@ -13,7 +12,6 @@ export default {
     ErrorPage,
     Layout,
     Page,
-    PageFormLayout,
     PageNoLayout,
     PageShallow,
   },

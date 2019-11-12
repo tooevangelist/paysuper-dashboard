@@ -134,6 +134,10 @@ export default {
       }
     }
   }
+
+  &:not(._head) {
+    white-space: nowrap;
+  }
 }
 .sort-arrow {
   fill: #919699;

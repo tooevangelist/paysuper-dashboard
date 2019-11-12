@@ -99,31 +99,37 @@ export default {
           title: '1. Complete “Account Info” about your сompany in “Settings” section',
           performText: 'Provide your official and public company names as well as your official site WEB address, so we could understand your company is related to a video games industry.',
           ...this.companyInfoStatuses.company,
+          url: 'company',
         },
         contacts: {
           title: '2. Complete “Contacts” about your company in “Settings” section',
           performText: 'Identify your company’s official representative person. He or she will be mentioned in legal documentation, signing documents, resolving banking and payment issues and will participate in possible disputes with your customers.',
           ...this.companyInfoStatuses.contacts,
+          url: 'company',
         },
         banking: {
           title: '3. Complete “Banking Info” about your сompany in “Settings” section',
           performText: 'Enter your bank account details here to receive your payouts. First specify the SWIFT-code and we will fill-in your bank details automatically.',
           ...this.companyInfoStatuses.banking,
+          url: 'company',
         },
         tariff: {
           title: '4. Complete “Payment Methods” in “Settings” section',
           performText: 'Choose payout currency and the main operational region, where you plan your main sales volume. This important choice will define your future money flow rates and commissions, so check the variants below carefully, since you will not be able to change these parameters in future.',
           ...this.paymentMethodsStatus,
+          url: 'company',
         },
         license: {
           title: '5. Complete “License Agreement” in “Settings” section',
           performText: 'Here you can initiate a License Agreement signing procedure. Please double-check your Company info and Payment Methods above, since it will be mentioned in this document. For e-signing we use “Hellosign” service, which provides legally binding electronic signatures.',
           ...this.licenseStatus,
+          url: 'company',
         },
         project: {
           title: '6. Create a project in “Projects” section',
           performText: 'There is your full list of projects here. Setup every parameter, add products, proceed with technical S2S integration to activate every project sales.',
           ...this.projectStatus,
+          url: 'projects',
         },
       };
     },
@@ -179,7 +185,7 @@ export default {
           {{ item.performText }}
         </div>
         <div class="perform__button">
-          <RouterLink :to="{ name: 'company', params: { expandedItem: `${key}` }}" >
+          <RouterLink :to="{ name: `${item.url}`, params: { expandedItem: `${key}` }}" >
             <UiButton>
               PERFORM THIS STEP
             </UiButton>

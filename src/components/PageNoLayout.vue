@@ -11,11 +11,11 @@ export default {
 </template>
 
 <style lang="scss">
-@import url("//static.protocol.one/common/fonts/Lato.css");
+@import url("https://fonts.googleapis.com/css?family=Quicksand:400,500|Roboto:400,500&display=swap");
 @import "@/assets/scss/_custom.scss";
 .page-no-layout-body {
   margin: 0;
-  font-family: Lato, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 16px;
   line-height: 1.25;
 }

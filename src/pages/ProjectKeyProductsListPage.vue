@@ -165,7 +165,7 @@ export default {
     <PictureGameKeyWithDoor slot="picture" />
   </UiPageHeaderFrame>
 
-  <UiPanel class="items-panel">
+  <UiPanel>
     <div class="filters">
       <UiFilterSearchInput
         :isAlwaysExpanded="true"
@@ -346,10 +346,6 @@ $hover-text-color: #3d7bf5;
 $hover-background-color: rgba($hover-text-color, 0.1);
 $hover-deactivate-text-color: #ea3d2f;
 $hover-deactivate-background-color: rgba($hover-deactivate-text-color, 0.08);
-
-.items-panel {
-  width: 800px;
-}
 
 .cell {
   position: relative;
