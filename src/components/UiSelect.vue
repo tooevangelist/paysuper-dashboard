@@ -282,7 +282,7 @@ $left-indent: 12px;
 }
 .selected {
   display: block;
-  height: 32px;
+  height: 38px;
   line-height: 32px;
   transform-origin: bottom;
   transition: transform 0.2s ease-out;

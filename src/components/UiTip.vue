@@ -148,8 +148,8 @@ export default {
 
   &._framed {
     border: 1px solid #f1f3f4;
-    box-shadow: 0px 8px 16px rgba(8, 35, 48, 0.1),
-      0px 24px 32px rgba(8, 35, 48, 0.06);
+    box-shadow: 0px 2px 8px rgba(8, 35, 48, 0.16),
+      0px 8px 16px rgba(8, 35, 48, 0.1);
   }
 
   @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {

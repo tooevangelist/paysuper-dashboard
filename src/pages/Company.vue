@@ -1,6 +1,6 @@
 <script>
 import { mapGetters, mapState } from 'vuex';
-import { reduce } from 'lodash-es';
+import { reduce, get } from 'lodash-es';
 import AccountInfo from '@/components/AccountInfo.vue';
 import BankingInfo from '@/components/BankingInfo.vue';
 import Contacts from '@/components/Contacts.vue';
@@ -90,33 +90,41 @@ export default {
       };
     },
     listItems() {
-      return {
-        account: {
+      return [
+        {
+          id: 'account',
           title: 'Account Info',
           componentName: 'AccountInfo',
           ...this.companyInfoStatuses.company,
         },
-        contacts: {
+        {
+          id: 'contacts',
           title: 'Contacts',
           componentName: 'Contacts',
           ...this.companyInfoStatuses.contacts,
         },
-        banking: {
+        {
+          id: 'banking',
           title: 'Banking Info',
           componentName: 'BankingInfo',
           ...this.companyInfoStatuses.banking,
         },
-        tariff: {
+        {
+          id: 'tariff',
           title: 'Payment Methods',
           componentName: 'PaymentMethods',
           ...this.paymentMethodsStatus,
         },
-        license: {
+        {
+          id: 'license',
           title: 'License Agreement',
           componentName: 'LicenseAgreement',
           ...this.licenseStatus,
         },
-      };
+      ];
+    },
+    expandedItem() {
+      return `${get(this.$route, 'params.expandedItem', 'company')}`;
     },
   },
   methods: {
@@ -124,6 +132,23 @@ export default {
       this.expandItems[key] = false;
       this.$appEvents.$emit('updateContentScroll');
     },
+    toggle(event, key) {
+      Object.keys(this.expandItems).forEach((k) => {
+        if (this.expandItems[k]) {
+          this.expandItems[k] = !this.expandItems[k];
+        }
+      });
+
+      this.expandItems[key] = event;
+
+      if (event) {
+        this.$appEvents.$emit('updateContentScroll');
+        this.$appEvents.$emit('contentScrollToY', 200);
+      }
+    },
+  },
+  mounted() {
+    this.toggle(true, this.expandedItem);
   },
 };
 </script>
@@ -147,17 +172,17 @@ export default {
 
   <SmartListItem
     class="item"
-    v-for="(item, key) in listItems"
+    v-for="(item, index) in listItems"
     v-bind="item"
-    :key="key"
+    :key="index"
     :expandable="true"
-    :isExpanded="expandItems[key]"
-    @toggle="expandItems[key] = $event"
+    :isExpanded="expandItems[item.id]"
+    @toggle="toggle($event, item.id)"
   >
     <component
       v-if="item.componentName"
       :is="item.componentName"
-      @hasSubmit="submited(key)"
+      @hasSubmit="submited(item.id)"
     />
   </SmartListItem>
 </div>

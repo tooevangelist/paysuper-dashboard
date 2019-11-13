@@ -274,10 +274,10 @@ $left-indent: 12px;
   color: $primary-input-color;
   display: block;
   font-size: $primary-input-size;
-  height: 32px;
-  line-height: 32px;
+  height: 38px;
+  line-height: 38px;
   outline: none;
-  padding: 0 0 0 12px;
+  padding: 0 0 4px 12px;
   transition: border-color 0.2s ease-out;
   width: 100%;
   // for ios
@@ -342,12 +342,13 @@ $left-indent: 12px;
   top: 0;
 }
 .error {
-  bottom: -4px;
-  left: $left-indent;
+  margin-left: $left-indent;
   color: $error-input-color;
   display: block;
   font-size: $secondary-input-size;
-  position: absolute;
+  line-height: $secondary-input-size;
+  position: relative;
+  top: $secondary-input-size/2;
 }
 
 .suggest {

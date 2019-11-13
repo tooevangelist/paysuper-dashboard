@@ -58,6 +58,13 @@ export default {
         this.$refs.contentScrollbox.update();
       });
     });
+    this.$appEventsOn('contentScrollToY', (scrollY) => {
+      this.$nextTick(() => {
+        if (scrollY) {
+          this.$refs.contentScrollbox.scrollTop(scrollY);
+        }
+      });
+    });
   },
   methods: {
     get,

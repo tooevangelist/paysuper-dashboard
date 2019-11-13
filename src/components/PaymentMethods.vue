@@ -50,6 +50,9 @@ export default {
     payerRegionAbbr() {
       return get(find(this.prepareRegions, { value: this.payerRegion }), 'abbr', '');
     },
+    payerRegionLabel() {
+      return get(find(this.prepareRegions, { value: this.payerRegion }), 'label', '');
+    },
     channelCosts() {
       return get(
         this.regions,
@@ -111,33 +114,9 @@ export default {
       to change these parameters in future.
     </div>
 
-    <div class="select">
-      <UiSelect
-        v-bind="$getValidatedFieldProps('region')"
-        label="Home Region"
-        :options="prepareRegions"
-        :value="region"
-        @input="updateRegion($event)"
-        @blur="$v.region.$touch()"
-      />
-      <div
-        class="icon-wrapper"
-        @mouseenter="hasCountriesOpened = true"
-        @mouseleave="hasCountriesOpened = false"
-      >
-        <IconQuestion class="question" />
-        <UiTip
-          :class="['tip', { '_nowrap': isOneLineCountries }]"
-          innerPosition="left"
-          position="top"
-          maxWidth="280px"
-          :width="isOneLineCountries ? 'auto' : 'calc(100vw - 320px)'"
-          :hasCaret="true"
-          :visible="hasCountriesOpened"
-        >
-          {{ prepareCountries }}
-        </UiTip>
-      </div>
+    <div class="title">Home Region</div>
+    <div class="info">
+      {{ payerRegionLabel }}
     </div>
   </div>
 
@@ -416,6 +395,7 @@ export default {
   letter-spacing: 0.25px;
   margin-bottom: 4px;
   margin-right: 4px;
+  padding: 6px 24px;
 }
 .method-icon {
   width: 32px;
