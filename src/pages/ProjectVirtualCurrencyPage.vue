@@ -49,6 +49,11 @@ export default {
   computed: {
     ...mapState('Project', ['project', 'defaultCurrency']),
     ...mapGetters('Project', ['currenciesTags', 'defaultCurrencyValue']),
+    ...mapGetters('User/Profile', ['userPermissions']),
+
+    viewOnly() {
+      return !this.userPermissions.editProjects;
+    },
   },
 
   validations() {
@@ -130,22 +135,30 @@ export default {
   <UiPanel>
     <section class="section">
       <UiImageUpload
+        v-if="!viewOnly"
         class="section"
         title="logo"
         description="200x200 px, .png, .jpg"
         :uploadImage="uploadImage"
         v-model="virtualCurrency.logo"
       />
+      <div
+        class="_logo-view-only"
+        v-if="viewOnly && virtualCurrency.logo"
+        :style="{backgroundImage: `url(${virtualCurrency.logo})`}">
+      </div>
       <UiLangTextField
         label="Virtual currency name"
         :langs="project.localizations"
         :value="virtualCurrency.name"
+        :disabled="viewOnly"
         v-bind="$getValidatedFieldProps('virtualCurrency.name.en')"
       />
       <UiLangTextField
         label="Custom message on successful payment"
         :langs="project.localizations"
         :value="virtualCurrency.success_message"
+        :disabled="viewOnly"
       />
     </section>
 
@@ -167,6 +180,7 @@ export default {
         :currencies="project.currencies"
         :getRecommendedPrices="getRecommendedPrices"
         :defaultCurrency="defaultCurrency"
+        :disabled="viewOnly"
         v-model="virtualCurrency.prices"
       />
     </section>
@@ -182,6 +196,7 @@ export default {
         v-bind="$getValidatedFieldProps('virtualCurrency.min_purchase_value')"
         :required="false"
         :isNumeric="true"
+        :disabled="viewOnly"
       />
       <UiTextField
         label="Maximum purchase value"
@@ -189,6 +204,7 @@ export default {
         v-bind="$getValidatedFieldProps('virtualCurrency.max_purchase_value')"
         :required="false"
         :isNumeric="true"
+        :disabled="viewOnly"
       />
     </section>
 
@@ -203,6 +219,7 @@ export default {
           v-for="item in valueSellMethodsList"
           :key="item.value"
           :value="item.value"
+          :disabled="viewOnly"
           v-model="virtualCurrency.sell_count_type"
         >
           {{ item.label }}
@@ -210,7 +227,7 @@ export default {
       </div>
     </section>
 
-    <div class="controls">
+    <div class="controls" v-if="!viewOnly">
       <UiButton
         class="submit-button"
         @click="handleSave"
@@ -257,5 +274,12 @@ export default {
 .tag {
   top: -8px;
   margin-left: 8px;
+}
+
+._logo-view-only {
+  width: 64px;
+  height: 64px;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 </style>

@@ -1,6 +1,6 @@
 <script>
 import Vue from 'vue';
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import {
   includes, findIndex, isEmpty, get,
 } from 'lodash-es';
@@ -36,6 +36,8 @@ export default {
     ...mapState(['isLoading']),
     ...mapState('User', ['role']),
     ...mapState('User/Merchant', ['merchant']),
+    ...mapGetters('User/Profile', ['userPermissions']),
+
     currentNavigationItem() {
       return findIndex(this.mainNavItems, item => includes(item.routeNames, this.$route.name));
     },
@@ -44,12 +46,19 @@ export default {
       if (this.role === 'admin') {
         return getAdminMainNavItems();
       }
-      return getMerchantMainNavItems({
-        hasDefaultCurrency: !!get(this.merchant, 'banking.currency', false),
-      });
+      return getMerchantMainNavItems(this.permissions);
     },
     projectName() {
       return get(this.merchant, 'company.name') || 'Pay Super';
+    },
+    permissions() {
+      return {
+        dashboard: this.userPermissions.viewDashboard,
+        projects: this.userPermissions.viewProjects && !!get(this.merchant, 'banking.currency', false),
+        reports: this.userPermissions.viewRoyaltyReports,
+        payouts: this.userPermissions.viewPayouts,
+        transactions: this.userPermissions.viewTransactions,
+      };
     },
   },
   mounted() {

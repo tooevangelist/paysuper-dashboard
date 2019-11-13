@@ -57,6 +57,7 @@ export default {
     ...mapState('Transactions', ['transactionsList', 'filterValues', 'query', 'apiQuery']),
     ...mapGetters('Transactions', ['getFilterValues']),
     ...mapGetters('Dictionaries', ['countries']),
+    ...mapGetters('User/Profile', ['userPermissions']),
 
     handleQuickSearchInput() {
       return debounce(() => {
@@ -274,7 +275,7 @@ export default {
             <UiTableCell align="left">Method</UiTableCell>
             <UiTableCell align="left">Transaction ID</UiTableCell>
             <UiTableCell align="left">Amount</UiTableCell>
-            <UiTableCell align="left" width="3%"></UiTableCell>
+            <UiTableCell align="left" width="3%" v-if="userPermissions.cancelTransactions" />
           </UiTableRow>
           <UiTableRow
             class="transaction"
@@ -302,7 +303,7 @@ export default {
             <UiTableCell align="left" :class="`status-${transaction.status}`">
               {{$formatPrice(transaction.total_payment_amount, transaction.currency)}}
             </UiTableCell>
-            <UiTableCell align="left">
+            <UiTableCell align="left" v-if="userPermissions.cancelTransactions">
               <div class="transaction__refund"
                    v-if="refundAvailable(transaction.status)"
                    @click.stop.prevent="showRefundModal = true, currentTransaction = transaction">

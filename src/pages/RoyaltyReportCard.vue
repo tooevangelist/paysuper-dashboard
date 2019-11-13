@@ -1,5 +1,5 @@
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState, mapGetters } from 'vuex';
 import { format } from 'date-fns';
 import moment from 'moment';
 import {
@@ -62,6 +62,7 @@ export default {
       'report',
       'transactionsList',
     ]),
+    ...mapGetters('User/Profile', ['userPermissions']),
   },
 
   methods: {
@@ -176,7 +177,7 @@ export default {
       </span>
     </UiPageHeaderFrame>
     <div class="report-buttons" v-if="report.status === 'pending'">
-      <span>
+      <span v-if="userPermissions.acceptRoyaltyReports">
         <UiButton
           size="default"
           :isTransparent="true"
@@ -186,7 +187,7 @@ export default {
           Confirm
         </UiButton>
       </span>
-      <span>
+      <span v-if="userPermissions.viewDisputs">
         <UiButton
           size="default"
           :color="`transparent-gray`"

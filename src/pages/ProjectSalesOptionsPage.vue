@@ -1,4 +1,5 @@
 <script>
+import { mapGetters } from 'vuex';
 import PicturePapersCheckingProgress from '@/components/PicturePapersCheckingProgress.vue';
 import TestingTag from '@/components/TestingTag.vue';
 
@@ -8,6 +9,14 @@ export default {
   components: {
     PicturePapersCheckingProgress,
     TestingTag,
+  },
+
+  computed: {
+    ...mapGetters('User/Profile', ['userPermissions']),
+
+    buttonText() {
+      return this.userPermissions.editProjects ? 'CONFIGURE' : 'VIEW';
+    },
   },
 
   methods: {
@@ -50,7 +59,7 @@ export default {
           class="button"
           @click="configure('ProjectVirtualCurrency')"
         >
-          CONFIGURE
+          {{ buttonText }}
         </UiButton>
       </div>
     </section>
@@ -75,7 +84,7 @@ export default {
           class="button"
           @click="configure('ProjectVirtualItems')"
         >
-          CONFIGURE
+          {{ buttonText }}
         </UiButton>
       </div>
     </section>
@@ -101,7 +110,7 @@ export default {
           class="button"
           @click="configure('ProjectKeyProductsList')"
         >
-          CONFIGURE
+          {{ buttonText }}
         </UiButton>
       </div>
     </section>

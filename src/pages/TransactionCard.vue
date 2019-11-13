@@ -47,6 +47,7 @@ export default {
   computed: {
     ...mapState('TransactionPage', ['transaction', 'refunds']),
     ...mapGetters('Dictionaries', ['countries']),
+    ...mapGetters('User/Profile', ['userPermissions']),
 
     refundAvailable() {
       const badStatus = [
@@ -55,7 +56,9 @@ export default {
         'rejected',
         'chargeback',
       ];
-      return !badStatus.includes(this.transaction.status);
+      return !badStatus.includes(this.transaction.status)
+        && !this.hasRefund
+        && this.userPermissions.cancelTransactions;
     },
 
     // the refund process has started
@@ -121,9 +124,8 @@ export default {
         slot="picture"
         color="blue"
         class="refund-button"
-        v-if="refundAvailable & !hasRefund"
+        v-if="refundAvailable"
         :isTransparent="true"
-        :disabled="hasRefund"
         @click="showRefundModal = true">
         REFUND
       </UiButton>

@@ -43,6 +43,11 @@ export default {
     ...mapState('Project', ['project', 'defaultCurrency']),
     ...mapState('ProjectVirtualItems', ['virtualItems', 'filterValues', 'query', 'apiQuery', 'currentItem']),
     ...mapGetters('ProjectVirtualItems', ['getFilterValues']),
+    ...mapGetters('User/Profile', ['userPermissions']),
+
+    viewOnly() {
+      return !this.userPermissions.editProjects;
+    },
 
     handleQuickSearchInput() {
       return debounce(() => {
@@ -227,7 +232,7 @@ export default {
             <IconUpload slot="iconBefore" class="upload-icon" fill="#919699" />
             QUILIN PACKAGES
           </UiButton>
-          <UiButton text="ADD ITEM" @click.prevent="createNew"></UiButton>
+          <UiButton text="ADD ITEM" @click.prevent="createNew" v-if="!viewOnly"></UiButton>
         </div>
       </div>
 
@@ -242,7 +247,7 @@ export default {
             <UiTableCell width="200px" align="left">SKU</UiTableCell>
             <UiTableCell align="left">Price</UiTableCell>
             <UiTableCell width="15%" align="left">Status</UiTableCell>
-            <UiTableCell width="5%" align="left"></UiTableCell>
+            <UiTableCell width="5%" align="left" v-if="!viewOnly"></UiTableCell>
           </UiTableRow>
           <UiTableRow
             class="content-row"
@@ -292,6 +297,7 @@ export default {
               class="cell"
               align="left"
               valign="middle"
+              v-if="!viewOnly"
               @mouseenter.native="openedTooltipId = item.id"
               @mouseleave.native="() => openedTooltipId = ''"
               :noPadding="true"

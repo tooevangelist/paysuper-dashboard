@@ -210,19 +210,20 @@ export default {
             {{ user.email }}
           </UiTableCell>
           <UiTableCell align="left">
-            <template v-if="userPermissions.inviteProjectUsers">
-              <UiLabelSwitch
-                v-if="user.role !== 'merchant_owner'"
-                :value="user.role"
-                :scheme="roleScheme"
-                @input="handleChangeRole($event, user)"/>
-              <UiLabelTag v-else color="red" class="owner-label">Owner</UiLabelTag>
+            <template v-if="user.role !== 'merchant_owner'">
+              <template v-if="userPermissions.inviteProjectUsers">
+                <UiLabelSwitch
+                  :value="user.role"
+                  :scheme="roleScheme"
+                  @input="handleChangeRole($event, user)"/>
+              </template>
+              <template v-else>
+                <UiLabelTag :color="getLabelColor(user.role)" class="owner-label">
+                  {{ getRoleName(user.role) }}
+                </UiLabelTag>
+              </template>
             </template>
-            <template v-else>
-              <UiLabelTag :color="getLabelColor(user.role)" class="owner-label">
-                {{ getRoleName(user.role) }}
-              </UiLabelTag>
-            </template>
+            <UiLabelTag v-else color="red" class="owner-label">Owner</UiLabelTag>
           </UiTableCell>
           <UiTableCell v-if="userPermissions.inviteProjectUsers">
             <div
