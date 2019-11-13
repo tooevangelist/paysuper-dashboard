@@ -57,7 +57,7 @@ export default {
   },
 
   computed: {
-    ...mapState('User/Profile', ['profile']),
+    ...mapState('User/Profile', ['profile', 'currentStepCode']),
 
     isConfirmEmailStep() {
       return this.currentStepCode === 'confirmEmail';
