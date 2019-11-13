@@ -46,10 +46,6 @@ export default {
     ],
   },
   1: {
-    text: 'Payment method',
-    value: 'method',
-  },
-  2: {
     text: 'Clear filter',
     value: 'all',
     color: 'archieved ',

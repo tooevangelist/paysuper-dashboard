@@ -21,7 +21,8 @@ export default function exportFile() {
       * @param state
       * @param params {Object} - {
       *   file_type, // (csv, pdf, xlsx)
-      *   report_type, //(vat, vat_transactions, royalty, royalty_transactions, payout)
+      *   report_type, // vat, vat_transactions, royalty,
+      *                // royalty_transactions, payout, transactions
       *   params: {
       *     id // (document id)
       *   }

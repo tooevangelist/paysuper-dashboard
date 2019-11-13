@@ -11,7 +11,7 @@ export default {
 
   data() {
     return {
-      formats: ['PDF', 'XLS', 'CSV'],
+      formats: ['PDF', 'XLSX', 'CSV'],
       selected: 'PDF',
     };
   },

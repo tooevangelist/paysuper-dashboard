@@ -10,8 +10,8 @@ import transactionsStatusScheme from '@/schemes/transactionsStatusScheme';
 import PictureTabletWithChart from '@/components/PictureTabletWithChart.vue';
 import TransactionsListStore from '@/store/TransactionsListStore';
 import NoResults from '@/components/NoResults.vue';
-import TransactionsListExport from '@/components/TransactionsListExport.vue';
 import TransactionRefund from '@/components/TransactionRefund.vue';
+import ExportModal from '@/components/ExportModal.vue';
 
 const STATUS_COLOR = {
   created: 'blue',
@@ -27,10 +27,10 @@ export default {
   name: 'TransactionsPage',
 
   components: {
-    TransactionsListExport,
     PictureTabletWithChart,
     NoResults,
     TransactionRefund,
+    ExportModal,
   },
 
   async asyncData({ store, registerStoreModule, route }) {
@@ -50,6 +50,7 @@ export default {
       filterCounts: {},
       showRefundModal: false,
       currentTransaction: null,
+      showExportModal: false,
     };
   },
 
@@ -96,6 +97,7 @@ export default {
 
   methods: {
     ...mapActions(['setIsLoading']),
+    ...mapActions('ExportFile', ['createReportFile', 'initWaitingFile']),
     ...mapActions('Transactions', [
       'initQuery',
       'createItem',
@@ -226,6 +228,22 @@ export default {
       this.filterTransactions();
       this.setIsLoading(false);
     },
+
+    async exportFile(fileType) {
+      console.log(this.filters);
+      this.setIsLoading(true);
+      await this.createReportFile({
+        file_type: fileType.toLowerCase(),
+        report_type: 'transactions',
+        params: {
+          dateFrom: this.filters.dateFrom || '',
+          dateTo: this.filters.dateTo || '',
+          status: this.filters.status,
+        },
+      });
+      this.setIsLoading(false);
+      this.showExportModal = false;
+    },
   },
 };
 </script>
@@ -260,7 +278,11 @@ export default {
         </div>
 
         <div class="control-bar__right">
-          <transactions-list-export></transactions-list-export>
+          <div class="export-button"
+            @click="showExportModal = !showExportModal"
+            v-if="transactionsList.items.length">
+            <IconDownload/>
+          </div>
         </div>
       </div>
 
@@ -330,6 +352,13 @@ export default {
       :showModal="showRefundModal"
       @close="showRefundModal = false"
       @input="handleRefund($event)"></TransactionRefund>
+
+    <ExportModal
+      title="Export list of transactions per period"
+      v-show="showExportModal"
+      @export="exportFile"
+      @close="showExportModal = false"
+      />
   </div>
 </template>
 
@@ -431,5 +460,32 @@ export default {
 
 .status-refunded {
   color: #EA3D2F;
+}
+
+.export-button {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  border: 1px solid #e3e5e6;
+  box-sizing: border-box;
+  border-radius: 4px;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+
+  & > svg {
+    fill: #78909C;
+    transition: fill 0.2s ease-out;
+  }
+
+  &:hover {
+     background: rgba(61, 123, 245, 0.08);
+
+  & > svg {
+      fill: #3d7bf5;
+    }
+  }
 }
 </style>
