@@ -31,6 +31,7 @@ function mapDataApiToForm(data, { langFields, defaultCurrency }) {
     currencies: [
       defaultCurrency,
     ],
+    callback_protocol: 'empty',
   }, data);
 
   if (!find(mergedData.currencies, defaultCurrency)) {
