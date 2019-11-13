@@ -326,6 +326,12 @@ const routes = [
     name: 'UserProfile',
   },
   {
+    path: '/invite-profile/',
+    component: () => import('@/pages/UserInviteProfilePage.vue'),
+    meta: { layout: 'PageShallow', isAuthRequired: true },
+    name: 'UserInviteProfile',
+  },
+  {
     path: '/sign-up/',
     component: () => import('@/pages/SignUp.vue'),
     meta: { layout: 'PageShallow' },
