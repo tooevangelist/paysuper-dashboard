@@ -97,7 +97,7 @@ export default {
 
   methods: {
     ...mapActions(['setIsLoading']),
-    ...mapActions('ExportFile', ['createReportFile', 'initWaitingFile']),
+    ...mapActions('ExportFile', ['createReportFile']),
     ...mapActions('Transactions', [
       'initQuery',
       'createItem',
