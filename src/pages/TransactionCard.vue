@@ -1,7 +1,7 @@
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex';
 import {
-  get, find,
+  get, find, isEmpty,
 } from 'lodash-es';
 import { format } from 'date-fns';
 import TransactionPageStore from '@/store/TransactionPageStore';
@@ -102,7 +102,7 @@ export default {
     },
 
     hasCurrency(value) {
-      if (value === undefined) {
+      if (value === undefined || isEmpty(value) || value.amount === undefined) {
         return false;
       }
       return value.currency !== '';
@@ -278,13 +278,14 @@ export default {
                 transaction.refund_reverse_revenue.currency)}}
               </div>
             </div>
-            <div class="details__item" v-if="transaction.refund !== null">
+            <div class="details__item" v-if="transaction.refund && transaction.refund !== null">
               <div class="details__item--label">Refund reason</div>
               <div class="details__item--info">
                 {{transaction.refund.reason}}
               </div>
             </div>
-            <div class="details__item" v-if="transaction.parent_order !== null">
+            <div class="details__item"
+                 v-if="transaction.parent_order && transaction.parent_order !== null">
               <div class="details__item--label">Original transaction</div>
               <div class="details__item--info">
                 <router-link

@@ -6,7 +6,7 @@ export default function getMerchantMainNavItems(permissions) {
       link: '/dashboard',
       title: 'Dashboard',
       routeNames: ['Dashboard'],
-      isAvailable: permissions.dashboard,
+      isAvailable: true,
     },
     {
       additional: 'Organise your products for sales',
@@ -30,7 +30,7 @@ export default function getMerchantMainNavItems(permissions) {
       icon: 'IconCash',
       link: '/payouts',
       title: 'Payouts',
-      isAvailable: permissions.payuots,
+      isAvailable: permissions.payouts,
     },
     {
       additional: 'Full list of customer transactions',

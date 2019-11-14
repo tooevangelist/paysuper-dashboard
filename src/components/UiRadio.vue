@@ -110,11 +110,26 @@ $disabled-radio-color: #e1e1e1;
   visibility: hidden;
   width: 0;
 
-  &:checked {
+  &:checked:not([disabled]) {
     & ~ .icon-checked {
       display: block;
     }
     & ~ .icon-default {
+      display: none;
+    }
+  }
+
+  &:checked[disabled] {
+    & ~ .icon-checked {
+      display: block;
+      fill: gray;
+    }
+
+    & ~ .icon-default {
+      display: none;
+    }
+
+    & ~ .icon-disabled {
       display: none;
     }
   }
