@@ -1,19 +1,22 @@
-
 import { signedStatusCode } from '@/schemes/merchantStatusScheme';
 
-const projectPagesMeta = {
-  layout: 'Layout',
-  isAuthRequired: true,
-  specialNav: {
-    backLink() {
-      return {
-        url: '/projects/',
-        label: 'Back to projects',
-      };
+function projectPagesMeta(url, label) {
+  return {
+    layout: 'Layout',
+    isAuthRequired: true,
+    specialNav: {
+      backLink({ store }) {
+        const projectId = store.state.Project.project.id;
+        const path = url ? `/projects/${projectId}/${url}` : '/projects/';
+        return {
+          url: path,
+          label: label || 'Back to projects',
+        };
+      },
     },
-  },
-  mainNav: () => import('@/components/LayoutMainNavProject.vue'),
-};
+    mainNav: () => import('@/components/LayoutMainNavProject.vue'),
+  };
+}
 
 const merchantPagesMeta = {
   layout: 'Layout',
@@ -39,19 +42,34 @@ const routes = [
   {
     path: '/reports/',
     component: () => import('@/pages/RoyaltyReportsPage.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true, permission: 'viewRoyaltyReports' },
+    meta: {
+      layout: 'Layout',
+      isAuthRequired: true,
+      permission: 'viewRoyaltyReports',
+      mainContentSize: 'large',
+    },
     name: 'RoyaltyReportsPage',
   },
   {
     path: '/reports/:reportId',
     component: () => import('@/pages/RoyaltyReportCard.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true, permission: 'viewRoyaltyReports' },
+    meta: {
+      layout: 'Layout',
+      isAuthRequired: true,
+      permission: 'viewRoyaltyReports',
+      mainContentSize: 'large',
+    },
     name: 'RoyaltyReportCard',
   },
   {
     path: '/transactions/',
     component: () => import('@/pages/TransactionsPage.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true, permission: 'viewTransactions' },
+    meta: {
+      layout: 'Layout',
+      isAuthRequired: true,
+      permission: 'viewTransactions',
+      mainContentSize: 'large',
+    },
     name: 'TransactionsPage',
   },
   {
@@ -63,7 +81,12 @@ const routes = [
   {
     path: '/projects/',
     component: () => import('@/pages/ProjectsListPage.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true, permission: 'viewProjects' },
+    meta: {
+      layout: 'Layout',
+      isAuthRequired: true,
+      permission: 'viewProjects',
+      mainContentSize: 'large',
+    },
     name: 'ProjectsList',
   },
   {
@@ -76,7 +99,7 @@ const routes = [
         path: 'sales-options/',
         component: () => import('@/pages/ProjectSalesOptionsPage.vue'),
         meta: {
-          ...projectPagesMeta,
+          ...projectPagesMeta(),
           topControls: () => import('@/components/LayoutTopControlsProjectSalesOptions.vue'),
         },
         name: 'ProjectSalesOptions',
@@ -85,7 +108,7 @@ const routes = [
         path: 'virtual-currency/',
         component: () => import('@/pages/ProjectVirtualCurrencyPage.vue'),
         meta: {
-          ...projectPagesMeta,
+          ...projectPagesMeta(),
           topControls: () => import('@/components/LayoutTopControlsProjectSalesOptions.vue'),
         },
         name: 'ProjectVirtualCurrency',
@@ -94,7 +117,7 @@ const routes = [
         path: 'virtual-items/',
         component: () => import('@/pages/ProjectVirtualItemsPage.vue'),
         meta: {
-          ...projectPagesMeta,
+          ...projectPagesMeta(),
           topControls: () => import('@/components/LayoutTopControlsProjectSalesOptions.vue'),
         },
         name: 'ProjectVirtualItems',
@@ -102,14 +125,16 @@ const routes = [
       {
         path: 'virtual-items/:itemId/',
         component: () => import('@/pages/ProjectVirtualItemEditPage.vue'),
-        meta: projectPagesMeta,
+        meta: {
+          ...projectPagesMeta('virtual-items/', 'Back to list'),
+        },
         name: 'ProjectVirtualItemEdit',
       },
       {
         path: 'game-keys/',
         component: () => import('@/pages/ProjectKeyProductsListPage.vue'),
         meta: {
-          ...projectPagesMeta,
+          ...projectPagesMeta(),
           topControls: () => import('@/components/LayoutTopControlsProjectSalesOptions.vue'),
         },
         name: 'ProjectKeyProductsList',
@@ -117,20 +142,22 @@ const routes = [
       {
         path: 'game-keys/:keyProductId',
         component: () => import('@/pages/ProjectKeyProductPage.vue'),
-        meta: projectPagesMeta,
+        meta: {
+          ...projectPagesMeta('game-keys/', 'Back to list'),
+        },
         name: 'ProjectKeyProduct',
       },
       {
         path: 'settings/',
         component: () => import('@/pages/ProjectSettingsPage.vue'),
-        meta: projectPagesMeta,
+        meta: projectPagesMeta(),
         name: 'ProjectSettings',
       },
       {
         path: 'webhooks/',
         component: () => import('@/pages/ProjectWebhooksPage.vue'),
         meta: {
-          ...projectPagesMeta,
+          ...projectPagesMeta(),
           // topControls: () => import('@/components/LayoutTopControlsProjectWebhooks.vue'),
         },
         name: 'ProjectWebhooks',
@@ -138,7 +165,7 @@ const routes = [
       {
         path: 'payment-form/',
         component: () => import('@/pages/ProjectPaymentFormPage.vue'),
-        meta: projectPagesMeta,
+        meta: projectPagesMeta(),
         name: 'ProjectPaymentForm',
       },
     ],
@@ -156,13 +183,13 @@ const routes = [
       {
         path: '',
         component: () => import('@/pages/TaxesCardCountryPage.vue'),
-        meta: { layout: 'Layout', isAuthRequired: true },
+        meta: { layout: 'Layout', isAuthRequired: true, mainContentSize: 'large' },
         name: 'TaxesCardCountryPage',
       },
       {
         path: 'period/:periodId',
         component: () => import('@/pages/TaxesCardPeriodPage.vue'),
-        meta: { layout: 'Layout', isAuthRequired: true },
+        meta: { layout: 'Layout', isAuthRequired: true, mainContentSize: 'large' },
         name: 'TaxesCardPeriodPage',
       },
     ],
@@ -249,7 +276,12 @@ const routes = [
   {
     path: '/dashboard/',
     component: () => import('@/pages/Dashboard.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true, permission: 'viewDashboard' },
+    meta: {
+      layout: 'Layout',
+      isAuthRequired: true,
+      permission: 'viewDashboard',
+      mainContentSize: 'large',
+    },
     name: 'Dashboard',
   },
   {
@@ -267,13 +299,23 @@ const routes = [
   {
     path: '/payouts/',
     component: () => import('@/pages/payouts.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true, permission: 'viewPayouts' },
+    meta: {
+      layout: 'Layout',
+      isAuthRequired: true,
+      permission: 'viewPayouts',
+      mainContentSize: 'large',
+    },
     name: 'payouts',
   },
   {
     path: '/payouts/:id',
     component: () => import('@/pages/payoutCard.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true, permission: 'viewPayouts' },
+    meta: {
+      layout: 'Layout',
+      isAuthRequired: true,
+      permission: 'viewPayouts',
+      mainContentSize: 'large',
+    },
     name: 'payoutCard',
   },
   {
@@ -322,15 +364,16 @@ const routes = [
     redirect: { name: 'PaymentFormSdk' },
   },
   {
-    path: '/payform-page/',
-    component: () => import('@/pages/PaymentFormPage.vue'),
-    meta: { layout: 'PageFormLayout', initStore: false },
-  },
-  {
     path: '/profile/',
     component: () => import('@/pages/UserProfilePage.vue'),
     meta: { layout: 'PageShallow', isAuthRequired: true },
     name: 'UserProfile',
+  },
+  {
+    path: '/invite-profile/',
+    component: () => import('@/pages/UserInviteProfilePage.vue'),
+    meta: { layout: 'PageShallow', isAuthRequired: true },
+    name: 'UserInviteProfile',
   },
   {
     path: '/sign-up/',

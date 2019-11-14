@@ -67,6 +67,13 @@ export default {
         this.$refs.contentScrollbox.update();
       });
     });
+    this.$appEventsOn('contentScrollToY', (scrollY) => {
+      this.$nextTick(() => {
+        if (scrollY) {
+          this.$refs.contentScrollbox.scrollTop(scrollY);
+        }
+      });
+    });
   },
   methods: {
     get,
@@ -138,7 +145,7 @@ export default {
         @ps-y-reach-end="$appEvents.$emit('contentScrollReachEnd')"
         @ps-scroll-y="$appEvents.$emit('contentScroll')"
       >
-        <div class="scrollbox-inner">
+        <div :class="['scrollbox-inner', `_${get($route, 'meta.mainContentSize', 'medium')}`]">
           <slot />
         </div>
       </UiScrollbarBox>
@@ -307,6 +314,12 @@ $content-side-padding: 6vw;
 }
 .scrollbox-inner {
   margin: 37px $content-side-padding;
-  width: 920px;
+
+  &._medium {
+    max-width: 802px;
+  }
+  &._large {
+    max-width: 920px;
+  }
 }
 </style>

@@ -10,6 +10,17 @@ export default {
     PictureWelcomeSheets,
     SmartListItem,
   },
+  data() {
+    return {
+      expandItems: {
+        account: false,
+        contacts: false,
+        banking: false,
+        tariff: false,
+        license: false,
+      },
+    };
+  },
   computed: {
     ...mapState('User/Merchant', [
       'onboardingCompleteStepsCount',
@@ -85,36 +96,64 @@ export default {
     listItems() {
       return [
         {
+          id: 'account',
           title: '1. Complete “Account Info” about your сompany in “Settings” section',
           performText: 'Provide your official and public company names as well as your official site WEB address, so we could understand your company is related to a video games industry.',
           ...this.companyInfoStatuses.company,
+          page: 'company',
         },
         {
+          id: 'contacts',
           title: '2. Complete “Contacts” about your company in “Settings” section',
           performText: 'Identify your company’s official representative person. He or she will be mentioned in legal documentation, signing documents, resolving banking and payment issues and will participate in possible disputes with your customers.',
           ...this.companyInfoStatuses.contacts,
+          page: 'company',
         },
         {
+          id: 'banking',
           title: '3. Complete “Banking Info” about your сompany in “Settings” section',
           performText: 'Enter your bank account details here to receive your payouts. First specify the SWIFT-code and we will fill-in your bank details automatically.',
           ...this.companyInfoStatuses.banking,
+          page: 'company',
         },
         {
+          id: 'tariff',
           title: '4. Complete “Payment Methods” in “Settings” section',
           performText: 'Choose payout currency and the main operational region, where you plan your main sales volume. This important choice will define your future money flow rates and commissions, so check the variants below carefully, since you will not be able to change these parameters in future.',
           ...this.paymentMethodsStatus,
+          page: 'company',
         },
         {
+          id: 'license',
           title: '5. Complete “License Agreement” in “Settings” section',
           performText: 'Here you can initiate a License Agreement signing procedure. Please double-check your Company info and Payment Methods above, since it will be mentioned in this document. For e-signing we use “Hellosign” service, which provides legally binding electronic signatures.',
           ...this.licenseStatus,
+          page: 'company',
         },
         {
+          id: 'project',
           title: '6. Create a project in “Projects” section',
           performText: 'There is your full list of projects here. Setup every parameter, add products, proceed with technical S2S integration to activate every project sales.',
           ...this.projectStatus,
+          page: 'projects',
         },
       ];
+    },
+  },
+  methods: {
+    toggle(event, index) {
+      Object.keys(this.expandItems).forEach((i) => {
+        if (this.expandItems[i]) {
+          this.expandItems[i] = !this.expandItems[i];
+        }
+      });
+
+      this.expandItems[index] = event;
+
+      if (event) {
+        this.$appEvents.$emit('updateContentScroll');
+        this.$appEvents.$emit('contentScrollToY', 200);
+      }
     },
   },
 };
@@ -145,15 +184,15 @@ export default {
       class="item"
       v-bind="item"
       :expandable="true"
-      :isExpanded="listItems[key]"
-      @toggle="listItems[key] = $event"
+      :isExpanded="expandItems[item.id]"
+      @toggle="toggle($event, item.id)"
     >
       <div class="perform" v-if="item.status === 'default'">
         <div class="perform__text">
           {{ item.performText }}
         </div>
         <div class="perform__button">
-          <RouterLink to="/company" >
+          <RouterLink :to="{ name: `${item.page}`, params: { expandedItem: `${item.id}` }}" >
             <UiButton>
               PERFORM THIS STEP
             </UiButton>

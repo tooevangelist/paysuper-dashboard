@@ -34,10 +34,10 @@ export default function getBarchartOptionsByType(type) {
             displayFormats: { week: 'D MMM' },
             round: true,
           },
-          ticks: { padding: 1 },
+          ticks: { padding: 4 },
           gridLines: { drawOnChartArea: false },
           categoryPercentage: 1,
-          maxBarThickness: 25,
+          maxBarThickness: 22,
         }],
       },
       layout: {
@@ -68,6 +68,7 @@ export default function getBarchartOptionsByType(type) {
           gridLines: { display: false },
         }],
         xAxes: [{
+          ticks: { padding: 2 },
           display: false,
           type: 'time',
           time: {
@@ -78,6 +79,11 @@ export default function getBarchartOptionsByType(type) {
           categoryPercentage: 1,
           maxBarThickness: 6,
         }],
+      },
+      layout: {
+        padding: {
+          top: 18,
+        },
       },
       tooltips: {
         backgroundColor: '#000',

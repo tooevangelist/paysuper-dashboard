@@ -333,6 +333,7 @@ export default {
         Enable package
       </UiSwitchBox>
       <UiButton
+        :disabled="$v.keyProductLocal.$invalid"
         class="submit-button"
         text="SAVE"
         @click="handleKeyProductSave"

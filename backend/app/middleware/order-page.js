@@ -25,9 +25,10 @@ function getOrderParams({
     project,
     ...(isDev ? {
       project: '5cc7f1cf790c2900010849ee',
-      amount: 25,
-      currency: 'USD',
-      type: 'simple',
+      products: ['5dbac6de120a810001a8fe7e'],
+      // amount: 25,
+      // currency: 'USD',
+      type: 'product',
     } : {}),
     ...(token ? { token } : {}),
     ...(products ? { products } : {}),
@@ -71,16 +72,17 @@ function getIp(request) {
   return ip;
 }
 
-const sdkUrl = isDev ? 'http://localhost:4040/paysuper-form.js' : config.paysuperSdkUrl;
-
 module.exports = async function orderPage(ctx) {
   const [, queryString] = ctx.request.url.split('?');
+  const { apiUrl } = webappConfig;
   const query = qs.parse(queryString);
-  const apiUrl = query.apiUrl || webappConfig.apiUrl;
   const ip = getIp(ctx.request);
   const userCookie = ctx.cookies.get(userIdentityCookieName);
   const acceptLanguage = ctx.get('accept-language');
   const referer = ctx.get('referer');
+
+  const [host] = ctx.request.host.split(':');
+  const sdkUrl = isDev ? `http://${host}:4040/paysuper-form.js` : config.paysuperSdkUrl;
 
   if (query.debug) {
     return {

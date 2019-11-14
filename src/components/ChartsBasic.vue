@@ -245,6 +245,7 @@ export default {
 }
 .chart {
   height: 70px;
+  border-bottom: 1px solid #e3e5e6;
 }
 .box-header {
   display: flex;

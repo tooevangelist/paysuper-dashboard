@@ -315,6 +315,7 @@ export default {
       <div class="controls" v-if="!viewOnly">
         <UiSwitchBox v-model="item.enabled">Enabled</UiSwitchBox>
         <UiButton
+          :disabled="$v.item.$invalid"
           class="submit-button"
           @click="saveItem"
           text="SAVE"

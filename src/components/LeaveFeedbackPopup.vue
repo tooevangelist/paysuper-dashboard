@@ -26,11 +26,16 @@ export default {
     };
   },
 
+  computed: {
+    showAfterSuccessAndClose() {
+      return this.isVisible && !this.isSucces;
+    },
+  },
+
   watch: {
     isVisible(value) {
       if (!this.isSuccess && value) {
         this.message = '';
-        this.$refs.textarea.$el.focus();
       }
     },
   },
@@ -71,7 +76,7 @@ export default {
       We really appreciate your feedback.
     </p>
   </template>
-  <template v-else>
+  <template v-if="showAfterSuccessAndClose">
     <UiHeader level="3" align="center" :hasMargin="true">
       Leave Feedback
     </UiHeader>
