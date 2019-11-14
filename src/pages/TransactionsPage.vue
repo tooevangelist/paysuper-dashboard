@@ -211,6 +211,7 @@ export default {
         this.filters[data.filter].push(data.value);
       }
 
+      this.fillCounts();
       this.filterTransactions();
     },
 
@@ -230,7 +231,6 @@ export default {
     },
 
     async exportFile(fileType) {
-      console.log(this.filters);
       this.setIsLoading(true);
       await this.createReportFile({
         file_type: fileType.toLowerCase(),
