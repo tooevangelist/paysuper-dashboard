@@ -24,17 +24,19 @@ export default {
     },
   },
 
+  data() {
+    return {
+      isLoadingAutocomplete: true,
+    };
+  },
+
   computed: {
-    ...mapGetters('Dictionaries', ['countries']),
-    ...mapGetters('Company/AccountInfo', ['accountInfo', 'cities']),
+    ...mapGetters('Dictionaries', ['countries', 'cities']),
+    ...mapGetters('Company/AccountInfo', ['accountInfo']),
     ...mapState('User/Merchant', ['merchant']),
 
     status() {
       return this.merchant.status;
-    },
-    // Cities must be into Dictionaries store
-    preparedCities() {
-      return this.cities.map(city => ({ label: city, value: city }));
     },
   },
   async mounted() {
@@ -46,9 +48,21 @@ export default {
   },
   methods: {
     ...mapActions('Company/AccountInfo', ['initState', 'updateAccountInfo', 'submitAccountInfo']),
+    ...mapActions('Dictionaries', ['fetchCities']),
 
     updateField(key, value) {
       this.updateAccountInfo({ ...this.accountInfo, [key]: value });
+    },
+
+    handleAutocompeteInput(search) {
+      this.fetchCities(search);
+    },
+
+    preparedCities() {
+      if (this.cities.length > 0) {
+        this.cities.map(city => ({ label: city, value: city }));
+      }
+      return this.cities;
     },
 
     async submit() {
@@ -141,13 +155,14 @@ export default {
       @input="updateField('state', $event)"
       @blur="$v.accountInfo.state.$touch()"
     />
-    <UiSelect
+    <UiAutocomplete
       v-bind="$getValidatedFieldProps('accountInfo.city')"
       label="City"
-      :options="preparedCities"
       :value="accountInfo.city"
-      @input="updateField('city', $event)"
+      :required="true"
+      @input="handleAutocompeteInput($event)"
       @blur="$v.accountInfo.city.$touch()"
+      :resultsAutocomplete="preparedCities()"
     />
     <UiTextField
       v-bind="$getValidatedFieldProps('accountInfo.zip')"
