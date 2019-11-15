@@ -62,22 +62,25 @@ export default {
     },
   },
 
-  validations() {
-    return {
-      keyProductLocal: {
-        name: {
-          en: {
-            required,
-          },
-        },
-        sku: {
+  validations: {
+    keyProductLocal: {
+      name: {
+        en: {
           required,
-          uniqueSku() {
-            return this.isSkuUnique;
-          },
         },
       },
-    };
+      description: {
+        en: {
+          required,
+        },
+      },
+      sku: {
+        required,
+        uniqueSku() {
+          return this.isSkuUnique;
+        },
+      },
+    },
   },
 
   async beforeRouteUpdate(to, from, next) {
@@ -249,6 +252,12 @@ export default {
         :langs="project.localizations"
         v-model="keyProductLocal.name"
         v-bind="$getValidatedFieldProps('keyProductLocal.name.en')"
+      />
+      <UiLangTextField
+        label="Description"
+        :langs="project.localizations"
+        v-model="keyProductLocal.description"
+        v-bind="$getValidatedFieldProps('keyProductLocal.description.en')"
       />
       <UiTextField
         label="SKU"
