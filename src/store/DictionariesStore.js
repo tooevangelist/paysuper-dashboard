@@ -57,7 +57,7 @@ export default function createDictionariesStore() {
       },
       cities(state) {
         const cities = state.cities.map((item) => {
-          const value = item.indexOf(',') !== -1 ? item.split(',')[0] : item;
+          const [value] = item.split(',');
           return { label: value, value };
         });
         return cities;

@@ -39,19 +39,6 @@ export default {
     status() {
       return this.merchant.status;
     },
-
-    preparedCities() {
-      if (this.cities.length > 0) {
-        this.cities.map(city => ({ label: city, value: city }));
-      }
-      return this.cities;
-    },
-  },
-
-  watch: {
-    cities() {
-      this.isLoadingCities = false;
-    },
   },
 
   async mounted() {
@@ -70,9 +57,10 @@ export default {
     },
 
     // eslint-disable-next-line
-    handleAutocompeteInput: debounce(function (search) {
+    handleAutocompeteInput: debounce(async function (search) {
       this.isLoadingCities = true;
-      this.fetchCities(search);
+      await this.fetchCities(search);
+      this.isLoadingCities = false;
     }, 500),
 
     async submit() {
@@ -172,9 +160,9 @@ export default {
       :required="true"
       @input="handleAutocompeteInput($event)"
       @blur="$v.accountInfo.city.$touch()"
-      :resultsAutocomplete="preparedCities"
+      :resultsAutocomplete="cities"
       :isLoading="isLoadingCities"
-      :disabled="!accountInfo.country || isLoadingCities"
+      :disabled="!accountInfo.country"
     />
     <UiTextField
       v-bind="$getValidatedFieldProps('accountInfo.zip')"
