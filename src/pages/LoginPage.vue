@@ -75,6 +75,5 @@ export default {
 }
 
 .iframe {
-  // box-shadow: 0 0 10px #000;
 }
 </style>

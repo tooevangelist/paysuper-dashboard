@@ -12,7 +12,6 @@ export default {
 
 <template>
 <div>
-  <UiRadio :disabled="true" :checked="true">fff</UiRadio>
   <table class="table">
     <tr>
       <td class="cell">

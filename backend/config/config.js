@@ -24,10 +24,10 @@ const config = {
 
   postMessageTargetOrigin: getEnvVariable('POST_MESSAGE_TARGET_ORIGIN', 'http://localhost:3030'),
 
-  auth1ClientId: getEnvVariable('AUTH1_CLIENT_ID', '5dcaf274acda5200db813482'),
-  auth1ClientSecret: getEnvVariable('AUTH1_CLIENT_SECRET', 'QV8SMUEM4f5GMrbcGKKTHDPwgnKGc2hguCsBDcxkyP7jdyAru4rG07DGRgUimCpC'),
+  auth1ClientId: getEnvVariable('AUTH1_CLIENT_ID', '5c77953f51c0950001436152'),
+  auth1ClientSecret: getEnvVariable('AUTH1_CLIENT_SECRET', 'tGtL8HcRDY5X7VxEhyIye2EhiN9YyTJ5Ny0AndLNXQFgKCSgUKE0Ti4X9fHK6Qib'),
   auth1Scope: getEnvVariableArray('AUTH1_CLIENT_SCOPE', 'openid,offline'),
-  auth1Issuer: getEnvVariable('AUTH1_ISSUER_URL', 'http://localhost'),
+  auth1Issuer: getEnvVariable('AUTH1_ISSUER_URL', 'https://auth1.tst.protocol.one'),
   auth1PostmessageHtmlTemplatePath: path.resolve('backend/templates/auth1.postmessage.html.template'),
   auth1SessionNamespace: 'auth1',
 
