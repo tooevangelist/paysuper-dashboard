@@ -103,10 +103,9 @@ export default {
       const prevValue = this.value || '';
       const value = this.inputValue || '';
       if (prevValue !== value) {
-        this.$emit('input', value);
-
-        if (value && value.length > 2 && !this.isEmptyResults) {
+        if (value && value.length > 2) {
           this.isOpenAutocomplete = true;
+          this.$emit('input', value);
         } else {
           this.isOpenAutocomplete = false;
         }
@@ -129,7 +128,7 @@ export default {
 
 <template>
 <div
-  class="ui-text-field"
+  class="ui-autocomplete"
 >
   <input
     v-model="inputValue"
@@ -201,7 +200,7 @@ $primary-input-size: 16px;
 $secondary-input-size: 11px;
 $left-indent: 12px;
 
-.ui-text-field {
+.ui-autocomplete {
   display: inline-block;
   padding: 24px 0 12px;
   position: relative;

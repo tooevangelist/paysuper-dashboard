@@ -27,6 +27,7 @@ export default {
   data() {
     return {
       isLoadingAutocomplete: true,
+      isLoadingCities: false,
     };
   },
 
@@ -34,12 +35,25 @@ export default {
     ...mapGetters('Dictionaries', ['countries', 'cities']),
     ...mapGetters('Company/AccountInfo', ['accountInfo']),
     ...mapState('User/Merchant', ['merchant']),
-    ...mapState('Dictionaries', ['isLoadingCities']),
 
     status() {
       return this.merchant.status;
     },
+
+    preparedCities() {
+      if (this.cities.length > 0) {
+        this.cities.map(city => ({ label: city, value: city }));
+      }
+      return this.cities;
+    },
   },
+
+  watch: {
+    cities() {
+      this.isLoadingCities = false;
+    },
+  },
+
   async mounted() {
     try {
       await this.initState();
@@ -55,22 +69,11 @@ export default {
       this.updateAccountInfo({ ...this.accountInfo, [key]: value });
     },
 
-    handleAutocompeteInput(search) {
-      const updateFetchCities = debounce(() => {
-        if (search.length > 2) {
-          this.fetchCities(search);
-        }
-      }, 500);
-
-      updateFetchCities();
-    },
-
-    preparedCities() {
-      if (this.cities.length > 0) {
-        this.cities.map(city => ({ label: city, value: city }));
-      }
-      return this.cities;
-    },
+    // eslint-disable-next-line
+    handleAutocompeteInput: debounce(function (search) {
+      this.isLoadingCities = true;
+      this.fetchCities(search);
+    }, 500),
 
     async submit() {
       this.$v.accountInfo.$touch();
@@ -169,9 +172,9 @@ export default {
       :required="true"
       @input="handleAutocompeteInput($event)"
       @blur="$v.accountInfo.city.$touch()"
-      :resultsAutocomplete="preparedCities()"
+      :resultsAutocomplete="preparedCities"
       :isLoading="isLoadingCities"
-      :disabled="isLoadingCities"
+      :disabled="!accountInfo.country || isLoadingCities"
     />
     <UiTextField
       v-bind="$getValidatedFieldProps('accountInfo.zip')"

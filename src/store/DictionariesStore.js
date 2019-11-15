@@ -28,7 +28,6 @@ export default function createDictionariesStore() {
       regionsCurrencies: [],
       countries: [],
       cities: [],
-      isLoadingCities: false,
     }),
 
     getters: {
@@ -58,7 +57,7 @@ export default function createDictionariesStore() {
       },
       cities(state) {
         const cities = state.cities.map((item) => {
-          const value = item.split(',')[0];
+          const value = item.indexOf(',') !== -1 ? item.split(',')[0] : item;
           return { label: value, value };
         });
         return cities;
@@ -77,9 +76,6 @@ export default function createDictionariesStore() {
       },
       cities(store, value) {
         store.cities = value || [];
-      },
-      isLoadingCities(store, value) {
-        store.isLoadingCities = value || false;
       },
     },
 
@@ -134,21 +130,14 @@ export default function createDictionariesStore() {
         commit('countries', response.countries);
       },
 
-      getCities({ commit, rootState }, query) {
-        const country = get(rootState, 'Company.AccountInfo.accountInfo.country') || 'RU';
+      async fetchCities({ commit, rootState }, query) {
+        const country = get(rootState, 'Company.AccountInfo.accountInfo.country');
         const url = `https://cors-anywhere.herokuapp.com/secure.geobytes.com/AutoCompleteCity?filter=${country}&q=${query}`;
-        commit('isLoadingCities', true);
-        commit('cities', []);
-
-        return axios.get(url)
+        const cities = await axios.get(url)
           .then(response => response.data)
           .catch(() => []);
-      },
 
-      async fetchCities({ commit, dispatch }, query) {
-        const response = await dispatch('getCities', query);
-        commit('cities', response);
-        commit('isLoadingCities', false);
+        commit('cities', cities);
       },
     },
   };
