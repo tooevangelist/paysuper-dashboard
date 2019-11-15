@@ -309,6 +309,7 @@ const routes = [
   {
     path: '/login/',
     component: () => import('@/pages/LoginPage.vue'),
+    meta: { layout: 'PageShallow' },
     name: 'Login',
   },
   {

@@ -31,6 +31,17 @@ export default {
           this.redirectOnSuccessfulAuth();
         }
       });
+
+      window.addEventListener('message', (event) => {
+        if (event.data && event.data.source !== 'P1_AUTH_FORM') {
+          return;
+        }
+        if (event.data.name === 'formResize') {
+          const { width, height } = event.data.data;
+          this.$refs.iframe.setAttribute('width', width);
+          this.$refs.iframe.setAttribute('height', height);
+        }
+      });
     },
 
     redirectOnSuccessfulAuth() {
@@ -45,11 +56,17 @@ export default {
 </script>
 
 <template>
-  <div class="login-page">
-    <iframe class="iframe" width="360" height="500" :src="authIframeSrc" frameborder="0"></iframe>
-  </div>
+<div class="login-page">
+  <iframe
+    class="iframe"
+    ref="iframe"
+    width="360"
+    height="200"
+    :src="authIframeSrc"
+    frameborder="0"
+  ></iframe>
+</div>
 </template>
-
 
 <style lang="scss" scoped>
 .login-page {
@@ -58,6 +75,5 @@ export default {
 }
 
 .iframe {
-  margin-top: 20px;
 }
 </style>

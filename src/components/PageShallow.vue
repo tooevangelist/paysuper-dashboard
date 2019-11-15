@@ -20,8 +20,8 @@ export default {
     <slot></slot>
   </main>
   <div class="footer">
-    <a class="footer__link" href="#">Terms of Use</a>
-    <a class="footer__link" href="#">Agreement</a>
+    <a class="footer__link" href="https://pay.super.com/policy/tou" target="_blank">Terms of Use</a>
+    <a class="footer__link" href="https://pay.super.com/policy/eula" target="_blank">Agreement</a>
   </div>
 </div>
 </template>
