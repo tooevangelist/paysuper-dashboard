@@ -1,5 +1,6 @@
 <script>
 import { mapGetters, mapState } from 'vuex';
+import { get } from 'lodash-es';
 import MerchantTariffStore from '@/store/MerchantTariffStore';
 import MerchantAdminFormPaymentMethods from '@/components/MerchantAdminFormPaymentMethods.vue';
 
@@ -23,10 +24,10 @@ export default {
     ...mapGetters('Dictionaries', ['countries']),
 
     homeRegion() {
-      return this.merchant.home_region || 'europe';
+      return get(this.merchant, 'tariff.home_region') || 'europe';
     },
     payoutCurrency() {
-      return this.merchant.banking.currency || 'USD';
+      return get(this.merchant, 'banking.currency') || 'USD';
     },
   },
 };
