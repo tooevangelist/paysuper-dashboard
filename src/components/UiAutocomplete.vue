@@ -1,5 +1,6 @@
 <script>
 import ClickOutside from 'vue-click-outside';
+import { isEmpty } from 'lodash-es';
 
 export default {
   model: {
@@ -8,9 +9,9 @@ export default {
   },
 
   /**
-   * We can't just close suggest on blur
-   * if we do so, the tip will be closed before a click is handled by suggest item
-   * So we're closing th suggest on the click to outside
+   * We can't just close autocomplete-results on blur
+   * if we do so, the tip will be closed before a click is handled by autocomplete-results item
+   * So we're closing the autocomplete-results on the click to outside
    */
   directives: {
     ClickOutside,
@@ -38,6 +39,10 @@ export default {
       type: String,
     },
     required: {
+      default: false,
+      type: Boolean,
+    },
+    isLoading: {
       default: false,
       type: Boolean,
     },
@@ -73,14 +78,18 @@ export default {
      * @return {Array<string>}
      */
     inputClasses() {
-      const isEmpty = !this.inputValue && this.inputValue !== 0;
+      const isEmptyVal = !this.inputValue && this.inputValue !== 0;
       return [
         'input',
-        isEmpty ? '_empty' : '',
+        isEmptyVal ? '_empty' : '',
         this.isVisibleError ? '_error' : '',
         this.disabled ? '_disabled' : '',
         this.required ? '_required' : '',
       ];
+    },
+    isEmptyResults() {
+      const empty = !isEmpty(this.resultsAutocomplete) && this.resultsAutocomplete[0].value === '';
+      return empty;
     },
   },
   watch: {
@@ -96,7 +105,7 @@ export default {
       if (prevValue !== value) {
         this.$emit('input', value);
 
-        if (value) {
+        if (value && value.length > 2 && !this.isEmptyResults) {
           this.isOpenAutocomplete = true;
         } else {
           this.isOpenAutocomplete = false;
@@ -130,16 +139,31 @@ export default {
     @blur="handleBlur"
     @input="handleInput"
   />
-  <ul class="autocomplete-results" v-if="isOpenAutocomplete && resultsAutocomplete.length > 0">
-    <li
-      v-for="(item, i) in resultsAutocomplete"
-      :key="i"
-      @click="setResult(item.value)"
-      class="autocomplete-result"
-      >
-      {{ item.label }}
-    </li>
-  </ul>
+  <div class="box"
+    v-if="isOpenAutocomplete"
+    :class="{'_open': isOpenAutocomplete}"
+    >
+    <ul class="autocomplete-results options">
+      <UiScrollbarBox class="scrollbox">
+        <li class="option _empty" v-if="isLoading">
+          Loading...
+        </li>
+        <li class="option _empty" v-if="isEmptyResults && !isLoading">
+          Nothing found
+        </li>
+        <template v-if="!isEmptyResults && !isLoading">
+          <li
+            v-for="(item, i) in resultsAutocomplete"
+            :key="i"
+            @click="setResult(item.value)"
+            class="option"
+            >
+            {{ item.label }}
+          </li>
+        </template>
+      </UiScrollbarBox>
+    </ul>
+  </div>
   <label
     class="label"
     :title="label"
@@ -170,6 +194,8 @@ $primary-input-color: #000000;
 $secondary-input-color: #5e6366;
 $focus-input-color: #3787ff;
 $error-input-color: #ff6f6f;
+$hover-option-color: rgba($focus-input-color, 0.1);
+$selected-color: #c6cacc;
 
 $primary-input-size: 16px;
 $secondary-input-size: 11px;
@@ -265,10 +291,58 @@ $left-indent: 12px;
   position: relative;
   top: $secondary-input-size/2;
 }
+.box {
+  background-color: $input-background-color;
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.1);
+  left: 0px;
+  position: absolute;
+  z-index: 10;
+  text-overflow: ellipsis;
+  top: 64px;
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.2s ease-out;
+  white-space: nowrap;
+  width: 100%;
+  border-radius: 4px;
+  &._open {
+    transform: scaleY(1);
+  }
+}
+.options {
+  background-color: $input-background-color;
+  overflow: hidden;
+  width: 100%;
+  border-radius: 4px;
+}
+.scrollbox {
+  width: 100%;
+  height: 100%;
+  max-height: 200px;
+}
+.option {
+  cursor: pointer;
+  display: block;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 16px;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
-.suggest {
-  &:empty {
-    display: none;
+  &:hover:not(._empty) {
+     background-color: $hover-option-color;
+     color: #3d7bf5;
+  }
+
+  &._current {
+     color: $selected-color;
+     cursor: default;
+  }
+
+  &._empty {
+     color: $secondary-input-color;
   }
 }
 </style>

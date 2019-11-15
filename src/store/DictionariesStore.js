@@ -28,6 +28,7 @@ export default function createDictionariesStore() {
       regionsCurrencies: [],
       countries: [],
       cities: [],
+      isLoadingCities: false,
     }),
 
     getters: {
@@ -76,6 +77,9 @@ export default function createDictionariesStore() {
       },
       cities(store, value) {
         store.cities = value || [];
+      },
+      isLoadingCities(store, value) {
+        store.isLoadingCities = value || false;
       },
     },
 
@@ -130,9 +134,11 @@ export default function createDictionariesStore() {
         commit('countries', response.countries);
       },
 
-      getCities({ rootState }, query) {
+      getCities({ commit, rootState }, query) {
         const country = get(rootState, 'Company.AccountInfo.accountInfo.country') || 'RU';
         const url = `https://cors-anywhere.herokuapp.com/secure.geobytes.com/AutoCompleteCity?filter=${country}&q=${query}`;
+        commit('isLoadingCities', true);
+        commit('cities', []);
 
         return axios.get(url)
           .then(response => response.data)
@@ -142,6 +148,7 @@ export default function createDictionariesStore() {
       async fetchCities({ commit, dispatch }, query) {
         const response = await dispatch('getCities', query);
         commit('cities', response);
+        commit('isLoadingCities', false);
       },
     },
   };

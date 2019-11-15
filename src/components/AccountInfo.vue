@@ -1,6 +1,6 @@
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex';
-import { get } from 'lodash-es';
+import { get, debounce } from 'lodash-es';
 import { maxLength, required, url } from 'vuelidate/lib/validators';
 import { onlyRusAndLat, onlyRusAndLatAndNum } from '@/helpers/customValidators';
 import Notifications from '@/mixins/Notifications';
@@ -34,6 +34,7 @@ export default {
     ...mapGetters('Dictionaries', ['countries', 'cities']),
     ...mapGetters('Company/AccountInfo', ['accountInfo']),
     ...mapState('User/Merchant', ['merchant']),
+    ...mapState('Dictionaries', ['isLoadingCities']),
 
     status() {
       return this.merchant.status;
@@ -55,7 +56,13 @@ export default {
     },
 
     handleAutocompeteInput(search) {
-      this.fetchCities(search);
+      const updateFetchCities = debounce(() => {
+        if (search.length > 2) {
+          this.fetchCities(search);
+        }
+      }, 500);
+
+      updateFetchCities();
     },
 
     preparedCities() {
@@ -163,6 +170,8 @@ export default {
       @input="handleAutocompeteInput($event)"
       @blur="$v.accountInfo.city.$touch()"
       :resultsAutocomplete="preparedCities()"
+      :isLoading="isLoadingCities"
+      :disabled="isLoadingCities"
     />
     <UiTextField
       v-bind="$getValidatedFieldProps('accountInfo.zip')"
