@@ -145,6 +145,7 @@ export default {
   z-index: 20;
   background-color: #fff;
   cursor: auto;
+  white-space: normal;
 
   &._framed {
     border: 1px solid #f1f3f4;
