@@ -1,5 +1,5 @@
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions, mapGetters } from 'vuex';
 import { get, findKey, toNumber } from 'lodash-es';
 import MerchantLicenseAgreementStore from '@/store/MerchantLicenseAgreementStore';
 import PictureExcellentWork from '@/components/PictureExcellentWork.vue';
@@ -33,7 +33,8 @@ export default {
   },
   computed: {
     ...mapState('Merchant', ['merchant']),
-    ...mapState('MerchantLicenseAgreement', ['agreement']),
+    ...mapState('MerchantLicenseAgreement', ['agreement', 'operatingCompanies']),
+    ...mapGetters('MerchantLicenseAgreement', ['operatingCompanyId']),
 
     status() {
       return get(merchantStatusScheme, this.merchant.status, merchantStatusScheme[0]).value;
@@ -51,7 +52,12 @@ export default {
   },
   methods: {
     ...mapActions('Merchant', ['changeMerchantStatus', 'sendNotification']),
-    ...mapActions('MerchantLicenseAgreement', ['uploadDocument', 'openLicense', 'initHellosign']),
+    ...mapActions('MerchantLicenseAgreement', [
+      'uploadDocument',
+      'openLicense',
+      'initHellosign',
+      'setOperatingCompany',
+    ]),
 
     async sendMessage(message) {
       const success = await this.sendNotification({
@@ -73,6 +79,9 @@ export default {
         showSuccessMessage('Status changed', { position: 'bottom-center' });
       }
     },
+    async confirmOperatingCompany(id) {
+      this.setOperatingCompany(id);
+    },
   },
 };
 </script>
@@ -93,10 +102,13 @@ export default {
     :agreement="agreement"
     :merchantStatus="status"
     :hasSignature="hasSignature"
+    :operatingCompanies="operatingCompanies"
+    :operatingCompanyId="operatingCompanyId"
     @sendMessage="sendMessage"
     @changeStatus="changeStatus"
     @openLicense="openLicense"
     @uploadDocument="uploadDocument"
+    @confirm="confirmOperatingCompany"
   />
 
   <UiModal
