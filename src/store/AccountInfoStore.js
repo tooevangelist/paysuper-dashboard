@@ -1,7 +1,5 @@
 import axios from 'axios';
 import { camelCase, reduce, snakeCase } from 'lodash-es';
-// TODO: it will be service, and must be located in DictionariesStore
-import citiesByCountry from '@/citiesByCountry.json';
 
 export default function createAccountInfoStore() {
   return {
@@ -29,11 +27,6 @@ export default function createAccountInfoStore() {
           ...res,
           [camelCase(key)]: item,
         }), {});
-      },
-      cities(state) {
-        const currentCountry = state.accountInfo.country || 'US';
-
-        return citiesByCountry[currentCountry] || [];
       },
     },
     mutations: {

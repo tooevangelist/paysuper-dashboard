@@ -152,7 +152,6 @@ export default {
       this.showDeleteConfirm = false;
       this.setIsLoading(true);
       await this.deleteItem(this.selectedItem.id).catch(this.$showErrorMessage);
-      await this.searchItems();
       this.selectedItem = null;
       this.setIsLoading(false);
     },
@@ -312,7 +311,7 @@ export default {
               >
                 <UiTooltipMenuItem
                   iconComponent="IconPen"
-                  @click="goToItemPage(item)"
+                  @click.stop.prevent="goToItemPage(item)"
                 >
                   Edit
                 </UiTooltipMenuItem>
@@ -325,7 +324,7 @@ export default {
                 <UiTooltipMenuItem
                   iconComponent="IconDelete"
                   type="delete"
-                  @click="showConfirm(item)"
+                  @click.stop.prevent="showConfirm(item)"
                 >
                   Delete
                 </UiTooltipMenuItem>
