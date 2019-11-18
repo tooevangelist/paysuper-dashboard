@@ -104,7 +104,6 @@ export default function createTariffStore() {
           const { amounts, channelCosts } = preparePayerRegion(payment);
           const minimalPayout = response.data.minimal_payout;
 
-          commit('payment', payment);
           commit('chargeback', chargeback);
           commit('payout', payout);
           commit('minimalPayout', minimalPayout);

@@ -36,7 +36,6 @@ export default {
       'region',
       'regions',
       'operationsType',
-      'payment',
       'chargeback',
       'payout',
       'minimalPayout',
