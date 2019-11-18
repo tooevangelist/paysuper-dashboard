@@ -167,7 +167,7 @@ export default {
       <UiRadio
         class="radio"
         v-for="item in operatingCompanies"
-        :checked="item.value === operatingCompany"
+        :checked="item.value === operatingCompanyId"
         :disabled="operatingCompanyId !== null && item.value !== operatingCompanyId"
         :key="item.value"
         :value="item.value"
