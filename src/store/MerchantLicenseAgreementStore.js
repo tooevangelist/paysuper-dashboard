@@ -156,7 +156,7 @@ export default function createMerchantLicenseAgreementStore() {
           state.helloSign.open(state.signature.sign_url);
         }
       },
-      async setOperatingCompany({ commit, state }, id) {
+      async setOperatingCompany({ commit, state, dispatch }, id) {
         const { merchantId } = state;
 
         if (merchantId) {
@@ -166,6 +166,7 @@ export default function createMerchantLicenseAgreementStore() {
           );
           if (response) {
             commit('operatingCompany', response.id);
+            dispatch('Merchant/fetchMerchantById', state.merchantId, { root: true });
           }
         }
       },
