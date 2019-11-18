@@ -12,6 +12,16 @@ export default {
       hasCountriesOpened: false,
       hasCustomersTipOpened: false,
       hasOverallFeeOpened: false,
+      riskLevelList: [
+        {
+          label: 'Low risk',
+          value: 'low-risk',
+        },
+        {
+          label: 'High risk',
+          value: 'high-risk',
+        },
+      ],
     };
   },
   validations: {
@@ -25,6 +35,10 @@ export default {
       'payerRegion',
       'region',
       'regions',
+      'operationsType',
+      'chargeback',
+      'payout',
+      'minimalPayout',
     ]),
     ...mapState('User/Merchant', ['merchant', 'onboardingSteps']),
 
@@ -60,12 +74,6 @@ export default {
         {},
       )[this.amount] || [];
     },
-    chargeback() {
-      return get(this.regions, `${this.region}.chargeback`, {});
-    },
-    payout() {
-      return get(this.regions, `${this.region}.payout`, {});
-    },
     isOneLineCountries() {
       return this.prepareCountries.length < 44;
     },
@@ -84,6 +92,7 @@ export default {
       'updateAmount',
       'updatePayerRegion',
       'updateRegion',
+      'updateOperationsType',
     ]),
 
     async submit() {
@@ -119,6 +128,27 @@ export default {
       {{ payerRegionLabel }}
     </div>
   </div>
+
+  <section class="section">
+    <div class="title">Risk level of company products</div>
+    <p class="text">
+      Choose high risk variant if you plan to sell any age restricted content, —
+      high level of gore and violence. If you plan to sell products
+      without any distribution limitations choose low risk
+    </p>
+    <div class="radio-group">
+      <UiRadio
+        class="radio"
+        v-for="item in riskLevelList"
+        :checked="item.value === operationsType"
+        :key="item.value"
+        :value="item.value"
+        @change="updateOperationsType($event)"
+        >
+          {{ item.label }}
+      </UiRadio>
+    </div>
+  </section>
 
   <div class="section">
     <div class="title">Channel costs</div>
@@ -262,13 +292,22 @@ export default {
     <UiTable>
       <UiTableRow :isHead="true" class="row-indent">
         <UiTableCell class="cell _second" align="left">Payment Method</UiTableCell>
-        <UiTableCell class="cell _merch">Chargeback fixed fee, {{ currency }}</UiTableCell>
+        <UiTableCell class="cell _merch">Chargeback fixed fee</UiTableCell>
         <UiTableCell class="cell _merch">Chargeback fee payout party</UiTableCell>
       </UiTableRow>
-      <UiTableRow class="row-indent">
-        <UiTableCell class="cell _second" align="left">All Methods</UiTableCell>
-        <UiTableCell class="cell _merch">{{ $formatPrice(chargeback.fee, currency) }}</UiTableCell>
-        <UiTableCell class="cell _merch">{{ chargeback.payoutParty}}</UiTableCell>
+      <UiTableRow class="row-indent"
+        v-for="(item, index) in chargeback"
+        :key="index"
+        >
+        <UiTableCell class="cell _second" align="left">
+            {{ item.method_name }}
+        </UiTableCell>
+        <UiTableCell class="cell _merch">
+            {{ $formatPrice(item.method_fixed_fee, item.method_fixed_fee_currency) }}
+        </UiTableCell>
+        <UiTableCell class="cell _merch">
+            {{ item.is_paid_by_merchant ? 'Merchant' : 'PaySuper' }}
+        </UiTableCell>
       </UiTableRow>
     </UiTable>
   </div>
@@ -281,14 +320,30 @@ export default {
 
     <UiTable>
       <UiTableRow :isHead="true" class="row-indent">
-        <UiTableCell class="cell _second" align="left">Payment Method</UiTableCell>
-        <UiTableCell class="cell _merch">Payout fixed fee, {{ currency }}</UiTableCell>
+        <UiTableCell class="cell _second" align="left">Payment currency</UiTableCell>
+        <UiTableCell class="cell _merch">Payout fixed fee</UiTableCell>
         <UiTableCell class="cell _merch">Fee payout party</UiTableCell>
+        <UiTableCell class="cell _merch">Minimal payout</UiTableCell>
       </UiTableRow>
-      <UiTableRow class="row-indent">
-        <UiTableCell class="cell _second" align="left">All Methods</UiTableCell>
-        <UiTableCell class="cell _merch">{{ $formatPrice(payout.fee, currency) }}</UiTableCell>
-        <UiTableCell class="cell _merch">{{ payout.payoutParty}}</UiTableCell>
+      <UiTableRow class="row-indent"
+        v-for="(item, key) in payout"
+        :key="key"
+        >
+        <UiTableCell class="cell _second" align="left">{{ key }}</UiTableCell>
+        <UiTableCell class="cell _merch">
+            {{ $formatPrice(item.method_fixed_fee, item.method_fixed_fee_currency) }}
+        </UiTableCell>
+        <UiTableCell class="cell _merch">
+            {{ item.is_paid_by_merchant ? 'Merchant' : 'PaySuper' }}
+        </UiTableCell>
+        <UiTableCell class="cell _merch">
+            {{
+              $formatPrice(
+                minimalPayout[item.method_fixed_fee_currency],
+                item.method_fixed_fee_currency
+              )
+            }}
+        </UiTableCell>
       </UiTableRow>
     </UiTable>
   </div>
@@ -470,4 +525,14 @@ export default {
     border: 1px solid rgba(#069697, 0.2);
   }
 }
+.radio-group {
+  margin: 22px 0 20px;
+}
+
+.radio {
+  & + & {
+    margin-top: 12px;
+  }
+}
+
 </style>

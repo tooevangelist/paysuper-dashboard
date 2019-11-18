@@ -25,6 +25,8 @@ export default function createMerchantLicenseAgreementStore() {
       signature: null,
       agreement: getDefaultAgreementDocument(),
       document: null,
+      operatingCompanies: [],
+      operatingCompany: null,
     },
     getters: {
       isUsingHellosign(state, getters) {
@@ -35,9 +37,22 @@ export default function createMerchantLicenseAgreementStore() {
       },
     },
     actions: {
-      async initState({ commit }, merchantId) {
+      async initState({ commit, dispatch }, merchantId) {
         commit('merchantId', merchantId);
+        await dispatch('fetchOperatingCompanies');
       },
+
+      async fetchOperatingCompanies({ commit, rootState }) {
+        const response = await axios.get(
+          `${rootState.config.apiUrl}/admin/api/v1/operating_company`,
+        );
+
+        if (response.data) {
+          const companies = response.data.map(item => ({ label: item.name, value: item.id }));
+          commit('operatingCompanies', companies);
+        }
+      },
+
       async initHellosign({
         commit,
         dispatch,
@@ -141,6 +156,20 @@ export default function createMerchantLicenseAgreementStore() {
           state.helloSign.open(state.signature.sign_url);
         }
       },
+      async setOperatingCompany({ commit, state, dispatch }, id) {
+        const { merchantId } = state;
+
+        if (merchantId) {
+          const response = await axios.post(
+            `{apiUrl}/admin/api/v1/merchants/${merchantId}/set_operating_company`,
+            { operating_company_id: id },
+          );
+          if (response) {
+            commit('operatingCompany', response.id);
+            dispatch('Merchant/fetchMerchantById', state.merchantId, { root: true });
+          }
+        }
+      },
     },
     mutations: {
       merchantId(store, value) {
@@ -163,6 +192,12 @@ export default function createMerchantLicenseAgreementStore() {
       },
       status(state, data) {
         state.status = data;
+      },
+      operatingCompanies(state, data) {
+        state.operatingCompanies = data;
+      },
+      operatingCompany(state, data) {
+        state.operatingCompany = data;
       },
     },
   };

@@ -57,7 +57,9 @@ export default {
     },
 
     // eslint-disable-next-line
-    handleAutocompeteInput: debounce(async function (search) {
+    handleAutocompeteInput: debounce(async function (e) {
+      const search = e.target && e.target.value ? e.target.value : '';
+
       this.isLoadingCities = true;
       await this.fetchCities(search);
       this.isLoadingCities = false;
@@ -156,9 +158,10 @@ export default {
     <UiAutocomplete
       v-bind="$getValidatedFieldProps('accountInfo.city')"
       label="City"
-      :value="accountInfo.city"
+      v-model="accountInfo.city"
       :required="true"
-      @input="handleAutocompeteInput($event)"
+      @keyup.native="handleAutocompeteInput"
+      @input="updateField('city', $event)"
       @blur="$v.accountInfo.city.$touch()"
       :resultsAutocomplete="cities"
       :isLoading="isLoadingCities"

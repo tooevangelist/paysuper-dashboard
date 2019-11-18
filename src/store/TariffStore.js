@@ -44,6 +44,11 @@ export default function createTariffStore() {
       payerRegion: 'europe',
       region: 'europe',
       regions: [],
+      operationsType: 'low-risk',
+      refund: {},
+      chargeback: [],
+      payout: {},
+      minimalPayout: {},
     },
     getters: {},
     mutations: {
@@ -62,6 +67,21 @@ export default function createTariffStore() {
       regions(state, data) {
         state.regions = data;
       },
+      operationsType(state, data) {
+        state.operationsType = data;
+      },
+      refund(state, data) {
+        state.refund = data;
+      },
+      chargeback(state, data) {
+        state.chargeback = data;
+      },
+      payout(state, data) {
+        state.payout = data;
+      },
+      minimalPayout(state, data) {
+        state.minimalPayout = data;
+      },
     },
     actions: {
       async initState({ dispatch }) {
@@ -69,7 +89,11 @@ export default function createTariffStore() {
       },
       async fetchTariffs({ commit, state }) {
         const { payerRegion, region } = state;
-        const queryString = qs.stringify({ payer_region: payerRegion, region });
+        const queryString = qs.stringify({
+          region,
+          payer_region: payerRegion,
+          merchant_operations_type: state.operationsType,
+        });
 
         const response = await axios.get(
           `{apiUrl}/admin/api/v1/merchants/tariffs?${queryString}`,
@@ -78,6 +102,11 @@ export default function createTariffStore() {
         if (response.data) {
           const { payment, chargeback, payout } = response.data;
           const { amounts, channelCosts } = preparePayerRegion(payment);
+          const minimalPayout = response.data.minimal_payout;
+
+          commit('chargeback', chargeback);
+          commit('payout', payout);
+          commit('minimalPayout', minimalPayout);
 
           if (amounts && amounts.length) {
             commit('amounts', amounts);
@@ -111,7 +140,10 @@ export default function createTariffStore() {
       async submitTariffs({ dispatch, state }, merchantId) {
         const response = await axios.post(
           `{apiUrl}/admin/api/v1/merchants/${merchantId}/tariffs`,
-          { home_region: state.region },
+          {
+            home_region: state.region,
+            merchant_operations_type: state.operationsType,
+          },
         );
 
         if (response.status === 200) {
@@ -146,6 +178,11 @@ export default function createTariffStore() {
       },
       updateAmount({ commit }, amount) {
         commit('amount', amount);
+      },
+      updateOperationsType({ commit, dispatch }, operationsType) {
+        commit('operationsType', operationsType);
+
+        dispatch('fetchTariffs');
       },
     },
   };

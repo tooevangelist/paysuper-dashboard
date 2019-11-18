@@ -33,10 +33,13 @@ export default {
   },
   computed: {
     ...mapState('Merchant', ['merchant']),
-    ...mapState('MerchantLicenseAgreement', ['agreement']),
+    ...mapState('MerchantLicenseAgreement', ['agreement', 'operatingCompanies']),
 
     status() {
       return get(merchantStatusScheme, this.merchant.status, merchantStatusScheme[0]).value;
+    },
+    operatingCompanyId() {
+      return get(this.merchant, 'operating_company_id', null);
     },
     hasSignature() {
       return this.merchant.has_merchant_signature || false;
@@ -51,7 +54,12 @@ export default {
   },
   methods: {
     ...mapActions('Merchant', ['changeMerchantStatus', 'sendNotification']),
-    ...mapActions('MerchantLicenseAgreement', ['uploadDocument', 'openLicense', 'initHellosign']),
+    ...mapActions('MerchantLicenseAgreement', [
+      'uploadDocument',
+      'openLicense',
+      'initHellosign',
+      'setOperatingCompany',
+    ]),
 
     async sendMessage(message) {
       const success = await this.sendNotification({
@@ -73,6 +81,9 @@ export default {
         showSuccessMessage('Status changed', { position: 'bottom-center' });
       }
     },
+    async confirmOperatingCompany(id) {
+      this.setOperatingCompany(id);
+    },
   },
 };
 </script>
@@ -93,10 +104,13 @@ export default {
     :agreement="agreement"
     :merchantStatus="status"
     :hasSignature="hasSignature"
+    :operatingCompanies="operatingCompanies"
+    :operatingCompanyId="operatingCompanyId"
     @sendMessage="sendMessage"
     @changeStatus="changeStatus"
     @openLicense="openLicense"
     @uploadDocument="uploadDocument"
+    @confirm="confirmOperatingCompany"
   />
 
   <UiModal

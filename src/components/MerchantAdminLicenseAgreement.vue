@@ -20,12 +20,23 @@ export default {
       default: 'new',
       type: String,
     },
+    operatingCompanies: {
+      default: () => [],
+      type: Array,
+    },
+    operatingCompanyId: {
+      default: null,
+      type: String,
+    },
   },
   data() {
     return {
       newStatus: this.merchantStatus,
       modalOpened: false,
       modalType: 'contact',
+      operatingCompany: null,
+      operatingCompanyLabel: '',
+      showOperatingCompanyConfirm: false,
     };
   },
   computed: {
@@ -85,6 +96,15 @@ export default {
     openLicense() {
       this.$emit('openLicense');
     },
+    updateOperatingCompany(value, label) {
+      this.operatingCompany = value;
+      this.operatingCompanyLabel = label;
+      this.showOperatingCompanyConfirm = true;
+    },
+    async confirmOperatingCompany() {
+      await this.$emit('confirm', this.operatingCompany);
+      this.showOperatingCompanyConfirm = false;
+    },
   },
   watch: {
     merchantStatus(val) {
@@ -132,6 +152,29 @@ export default {
         <IconPen class="icon" />
         E-SIGN
       </div>
+    </div>
+  </section>
+  <section class="section">
+    <UiHeader level="3" :hasMargin="true">
+        Signing companies
+    </UiHeader>
+    <UiText>
+      Maltese signing company is for merchants from Russia, Belarus,
+      Cyprus — high risk merchants, signing fompany of United Kingdom
+      is for the rest low risk merchants.
+    </UiText>
+    <div class="radio-group">
+      <UiRadio
+        class="radio"
+        v-for="item in operatingCompanies"
+        :checked="item.value === operatingCompanyId"
+        :disabled="operatingCompanyId !== null && item.value !== operatingCompanyId"
+        :key="item.value"
+        :value="item.value"
+        @change="updateOperatingCompany($event, item.label)"
+        >
+          {{ item.label }}
+      </UiRadio>
     </div>
   </section>
   <section class="section">
@@ -186,6 +229,17 @@ export default {
     @close="closeModal"
     @send="sendMessage"
   />
+  <UiConfirm
+    v-if="showOperatingCompanyConfirm"
+    :title="operatingCompanyLabel"
+    buttonText="CONFIRM"
+    buttonColor="blue"
+    @close="showOperatingCompanyConfirm=false"
+    @confirm="confirmOperatingCompany">
+      Are you sure of choosing
+      {{ operatingCompanyLabel }}
+      because you can’t change it in the future?
+  </UiConfirm>
 </UiPanel>
 </template>
 
@@ -270,5 +324,13 @@ export default {
 .icon {
   margin-right: 8px;
   fill: #3d7bf5;
+}
+.radio-group {
+  margin: 22px 0 20px;
+}
+.radio {
+  & + & {
+    margin-top: 12px;
+  }
 }
 </style>

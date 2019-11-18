@@ -40,9 +40,12 @@ export default {
     };
   },
   computed: {
-    ...mapState('User/Merchant', ['onboardingCompleteStepsCount', 'onboardingSteps']),
+    ...mapState('User/Merchant', ['merchant', 'onboardingCompleteStepsCount', 'onboardingSteps']),
     ...mapGetters('Company/LicenseAgreement', ['status']),
 
+    isNotOperatingCompany() {
+      return this.merchant.operating_company_id === undefined || this.merchant.operating_company_id === '';
+    },
     isCompanyInfoLocked() {
       return this.onboardingCompleteStepsCount > 2;
     },
@@ -77,13 +80,13 @@ export default {
     licenseNotice() {
       return this.isLicenseLocked
         ? 'After Previous Steps'
-        : this.status < 3 ? 'Not Signed' : 'Checking agreement…';
+        : this.status < 3 ? this.isNotOperatingCompany ? 'Checking…' : 'Not Signed' : 'Checking agreement…';
     },
     licenseStatus() {
       return {
         status: this.status === 4
           ? 'complete'
-          : this.isLicenseLocked ? 'locked' : 'default',
+          : this.isLicenseLocked ? 'locked' : this.isNotOperatingCompany ? 'waiting' : 'default',
         notice: this.status === 4
           ? ''
           : this.licenseNotice,
