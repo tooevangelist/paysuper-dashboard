@@ -109,10 +109,6 @@ export default function createProjectVirtualItemsStore() {
         commit('query', query);
       },
 
-      async deleteItem({ rootState }, id) {
-        await axios.delete(`${rootState.config.apiUrl}/admin/api/v1/products/${id}`);
-      },
-
       /**
        * Edit Virtual item
        * @param rootState
@@ -125,6 +121,18 @@ export default function createProjectVirtualItemsStore() {
           ...data,
           project_id: projectId,
         });
+      },
+
+      /**
+       * Delete virtual item
+       * @param dispatch
+       * @param id - item id
+       * @returns {Promise<AxiosResponse<T>>}
+       */
+      async deleteItem({ dispatch }, id) {
+        const response = await axios.delete(`{apiUrl}/admin/api/v1/products/${id}`);
+        dispatch('fetchItems');
+        return response;
       },
     },
 

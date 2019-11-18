@@ -84,7 +84,6 @@ export default function createProjectVirtualItemPageStore() {
           project_id: projectId,
         });
       },
-
     },
 
     namespaced: true,
