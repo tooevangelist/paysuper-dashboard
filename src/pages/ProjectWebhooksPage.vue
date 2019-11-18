@@ -18,6 +18,17 @@ export default {
   data() {
     return {
       projectLocal: null,
+      modes: [
+        {
+          label: 'Default',
+          value: '0',
+        },
+        {
+          label: 'Pre-approval',
+          value: '1',
+        },
+      ],
+      mode: '0',
     };
   },
 
@@ -131,6 +142,32 @@ export default {
         v-model="projectLocal.url_process_payment"
         v-bind="$getValidatedFieldProps('projectLocal.url_process_payment')"
       />
+    </div>
+
+    <div class="section">
+      <UiHeader
+        :hasMargin="true"
+        level="3"
+      >
+        Webhook mode
+      </UiHeader>
+
+      <UiText indentBottom="small">
+        Select <strong>Default</strong> for webhook notifications in you need
+        asynchronous notifications and <strong>Pre-approval</strong> if you want
+        to validate payment in synchronious mode. In <strong>Pre-approval</strong> mode you
+        must implement endpoint for <strong>user.validate</strong> callback.
+      </UiText>
+
+      <UiRadio
+        class="radio"
+        v-for="option in modes"
+        v-model="mode"
+        :key="option.value"
+        :value="option.value"
+      >
+        {{ option.label }}
+      </UiRadio>
     </div>
 
     <div class="section">
