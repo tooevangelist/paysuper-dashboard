@@ -1,17 +1,5 @@
 <script>
-import { mapState } from 'vuex';
-
 export default {
-  computed: {
-    ...mapState('User', ['isAuthorised']),
-  },
-
-  created() {
-    if (this.isAuthorised) {
-      this.$router.push({ name: 'Dashboard' });
-    }
-  },
-
   methods: {
     goAuthoriseOrRegister() {
       this.$router.push({ name: 'Login', query: { redirect: this.$route.query.redirect } });
