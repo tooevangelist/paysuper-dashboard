@@ -156,7 +156,7 @@ export default {
     <UiAutocomplete
       v-bind="$getValidatedFieldProps('accountInfo.city')"
       label="City"
-      :value="accountInfo.city"
+      v-model="accountInfo.city"
       :required="true"
       @input="handleAutocompeteInput($event)"
       @blur="$v.accountInfo.city.$touch()"

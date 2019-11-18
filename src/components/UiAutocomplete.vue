@@ -119,6 +119,7 @@ export default {
     },
 
     setResult(value) {
+      this.$emit('input', value);
       this.inputValue = value;
       this.isOpenAutocomplete = false;
     },
