@@ -37,6 +37,7 @@ const routes = [
   {
     path: '/',
     component: () => import('@/pages/index.vue'),
+    meta: { layout: 'PageShallow' },
     name: 'Index',
   },
   {
