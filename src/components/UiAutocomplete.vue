@@ -105,7 +105,7 @@ export default {
       if (prevValue !== value) {
         if (value && value.length > 2) {
           this.isOpenAutocomplete = true;
-          this.$emit('input', value);
+          this.$emit('keyup', value);
         } else {
           this.isOpenAutocomplete = false;
         }
