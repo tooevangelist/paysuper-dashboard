@@ -1,13 +1,7 @@
 <script>
 import { mapState } from 'vuex';
-import { UiButton } from '@protocol-one/ui-kit';
-import IconComputer from '@/components/IconComputer.vue';
 
 export default {
-  components: {
-    IconComputer, UiButton,
-  },
-
   computed: {
     ...mapState('User', ['isAuthorised']),
   },
@@ -42,13 +36,6 @@ export default {
       :text="$t('buttonText')"
       @click="goAuthoriseOrRegister"
     />
-    <!-- <UiButton
-      class="button"
-      :isTransparent="true"
-      :text="$t('buttonLogin')"
-      @click="showAuth('login')"
-    /> -->
-
   </div>
 </template>
 
@@ -62,10 +49,14 @@ export default {
   flex-direction: column;
   color: #b1b1b1;
   flex: 1;
+  padding-bottom: 50px;
 }
 .title {
+  font-family: Quicksand;
+  color: #b1b1b1;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 22px;
+  line-height: 30px;
   margin: 0;
   display: block;
   margin-top: 12px;
@@ -79,6 +70,7 @@ export default {
 }
 .button {
   margin-bottom: 8px;
+  text-transform: uppercase;
 }
 </style>
 
