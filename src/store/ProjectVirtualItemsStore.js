@@ -1,6 +1,7 @@
 import axios from 'axios';
 import qs from 'qs';
 import assert from 'simple-assert';
+import { findIndex, merge } from 'lodash-es';
 import SearchBuilder from '@/tools/SearchBuilder/SearchBuilder';
 import projectVirtualItemsScheme from '@/schemes/projectVirtualItemsScheme';
 
@@ -129,9 +130,12 @@ export default function createProjectVirtualItemsStore() {
        * @param id - item id
        * @returns {Promise<AxiosResponse<T>>}
        */
-      async deleteItem({ dispatch }, id) {
+      async deleteItem({ commit, state }, id) {
         const response = await axios.delete(`{apiUrl}/admin/api/v1/products/${id}`);
-        dispatch('fetchItems');
+        const index = findIndex(state.virtualItems.items, { id });
+        const items = state.virtualItems.items.splice(index)
+        commit('virtualItems', merge(state.virtualItems, { items }));
+
         return response;
       },
     },
