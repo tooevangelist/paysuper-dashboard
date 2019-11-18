@@ -126,14 +126,15 @@ export default function createProjectVirtualItemsStore() {
 
       /**
        * Delete virtual item
-       * @param dispatch
+       * @param commit
+       * @param state
        * @param id - item id
        * @returns {Promise<AxiosResponse<T>>}
        */
       async deleteItem({ commit, state }, id) {
         const response = await axios.delete(`{apiUrl}/admin/api/v1/products/${id}`);
         const index = findIndex(state.virtualItems.items, { id });
-        const items = state.virtualItems.items.splice(index)
+        const items = state.virtualItems.items.splice(index);
         commit('virtualItems', merge(state.virtualItems, { items }));
 
         return response;
