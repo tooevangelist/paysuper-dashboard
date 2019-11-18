@@ -1,6 +1,6 @@
 <script>
 import { mapActions, mapState } from 'vuex';
-import { required } from 'vuelidate/lib/validators';
+import { required, maxLength } from 'vuelidate/lib/validators';
 import {
   debounce, get, cloneDeep, find,
 } from 'lodash-es';
@@ -101,20 +101,24 @@ export default {
         name: {
           en: {
             required,
+            maxLength: maxLength(50),
           },
         },
         description: {
           en: {
             required,
+            maxLength: maxLength(500),
           },
         },
         long_description: {
           en: {
             required,
+            maxLength: maxLength(1500),
           },
         },
         sku: {
           required,
+          maxLength: maxLength(20),
           uniqueSku() {
             return this.isSkuUnique;
           },
