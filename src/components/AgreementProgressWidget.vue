@@ -32,6 +32,9 @@ export default {
     status() {
       return this.merchant.status;
     },
+    isNotOperatingCompany() {
+      return this.merchant.operating_company_id === undefined || this.merchant.operating_company_id === '';
+    },
     isCompanyInfoLocked() {
       return this.onboardingCompleteStepsCount > 2;
     },
@@ -66,7 +69,7 @@ export default {
     licenseNotice() {
       return this.isLicenseLocked
         ? 'After Previous Steps'
-        : this.status < 3 ? 'Not Signed' : 'Checking agreement…';
+        : this.status < 3 ? this.isNotOperatingCompany ? 'Checking…' : 'Not Signed' : 'Checking agreement…';
     },
     licenseStatus() {
       return {
@@ -74,7 +77,7 @@ export default {
           ? 'complete'
           : this.isLicenseLocked
             ? 'locked'
-            : this.status === 3 ? 'waiting' : 'default',
+            : this.status === 3 || this.isNotOperatingCompany ? 'waiting' : 'default',
         notice: this.status === 4
           ? ''
           : this.licenseNotice,
