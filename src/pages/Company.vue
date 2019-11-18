@@ -44,7 +44,7 @@ export default {
     ...mapGetters('Company/LicenseAgreement', ['status']),
 
     isNotOperatingCompany() {
-      return this.merchant.operating_company_id === null || this.merchant.operating_company_id === '';
+      return this.merchant.operating_company_id === undefined || this.merchant.operating_company_id === '';
     },
     isCompanyInfoLocked() {
       return this.onboardingCompleteStepsCount > 2;
