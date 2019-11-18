@@ -1,6 +1,6 @@
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex';
-import { get } from 'lodash-es';
+import { get, debounce } from 'lodash-es';
 import { maxLength, required, url } from 'vuelidate/lib/validators';
 import { onlyRusAndLat, onlyRusAndLatAndNum } from '@/helpers/customValidators';
 import Notifications from '@/mixins/Notifications';
@@ -24,19 +24,23 @@ export default {
     },
   },
 
+  data() {
+    return {
+      isLoadingAutocomplete: true,
+      isLoadingCities: false,
+    };
+  },
+
   computed: {
-    ...mapGetters('Dictionaries', ['countries']),
-    ...mapGetters('Company/AccountInfo', ['accountInfo', 'cities']),
+    ...mapGetters('Dictionaries', ['countries', 'cities']),
+    ...mapGetters('Company/AccountInfo', ['accountInfo']),
     ...mapState('User/Merchant', ['merchant']),
 
     status() {
       return this.merchant.status;
     },
-    // Cities must be into Dictionaries store
-    preparedCities() {
-      return this.cities.map(city => ({ label: city, value: city }));
-    },
   },
+
   async mounted() {
     try {
       await this.initState();
@@ -46,10 +50,18 @@ export default {
   },
   methods: {
     ...mapActions('Company/AccountInfo', ['initState', 'updateAccountInfo', 'submitAccountInfo']),
+    ...mapActions('Dictionaries', ['fetchCities']),
 
     updateField(key, value) {
       this.updateAccountInfo({ ...this.accountInfo, [key]: value });
     },
+
+    // eslint-disable-next-line
+    handleAutocompeteInput: debounce(async function (search) {
+      this.isLoadingCities = true;
+      await this.fetchCities(search);
+      this.isLoadingCities = false;
+    }, 500),
 
     async submit() {
       this.$v.accountInfo.$touch();
@@ -141,13 +153,16 @@ export default {
       @input="updateField('state', $event)"
       @blur="$v.accountInfo.state.$touch()"
     />
-    <UiSelect
+    <UiAutocomplete
       v-bind="$getValidatedFieldProps('accountInfo.city')"
       label="City"
-      :options="preparedCities"
       :value="accountInfo.city"
-      @input="updateField('city', $event)"
+      :required="true"
+      @input="handleAutocompeteInput($event)"
       @blur="$v.accountInfo.city.$touch()"
+      :resultsAutocomplete="cities"
+      :isLoading="isLoadingCities"
+      :disabled="!accountInfo.country"
     />
     <UiTextField
       v-bind="$getValidatedFieldProps('accountInfo.zip')"

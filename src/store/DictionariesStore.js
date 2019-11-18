@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { sortBy, flatten } from 'lodash-es';
+import { sortBy, flatten, get } from 'lodash-es';
 import i18n from '@/plugins/i18n';
 
 export default function createDictionariesStore() {
@@ -27,6 +27,7 @@ export default function createDictionariesStore() {
       ],
       regionsCurrencies: [],
       countries: [],
+      cities: [],
     }),
 
     getters: {
@@ -54,6 +55,13 @@ export default function createDictionariesStore() {
           region: region.region,
         }))));
       },
+      cities(state) {
+        const cities = state.cities.map((item) => {
+          const [value] = item.split(',');
+          return { label: value, value };
+        });
+        return cities;
+      },
     },
 
     mutations: {
@@ -65,6 +73,9 @@ export default function createDictionariesStore() {
       },
       regionsCurrencies(store, value) {
         store.regionsCurrencies = value;
+      },
+      cities(store, value) {
+        store.cities = value || [];
       },
     },
 
@@ -117,6 +128,16 @@ export default function createDictionariesStore() {
       async fetchCountries({ commit, dispatch }) {
         const response = await dispatch('getCountries');
         commit('countries', response.countries);
+      },
+
+      async fetchCities({ commit, rootState }, query) {
+        const country = get(rootState, 'Company.AccountInfo.accountInfo.country');
+        const url = `https://cors-anywhere.herokuapp.com/secure.geobytes.com/AutoCompleteCity?filter=${country}&q=${query}`;
+        const cities = await axios.get(url)
+          .then(response => response.data)
+          .catch(() => []);
+
+        commit('cities', cities);
       },
     },
   };
