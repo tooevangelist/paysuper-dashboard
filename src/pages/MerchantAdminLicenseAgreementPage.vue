@@ -1,5 +1,5 @@
 <script>
-import { mapState, mapActions, mapGetters } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import { get, findKey, toNumber } from 'lodash-es';
 import MerchantLicenseAgreementStore from '@/store/MerchantLicenseAgreementStore';
 import PictureExcellentWork from '@/components/PictureExcellentWork.vue';
@@ -34,10 +34,12 @@ export default {
   computed: {
     ...mapState('Merchant', ['merchant']),
     ...mapState('MerchantLicenseAgreement', ['agreement', 'operatingCompanies']),
-    ...mapGetters('MerchantLicenseAgreement', ['operatingCompanyId']),
 
     status() {
       return get(merchantStatusScheme, this.merchant.status, merchantStatusScheme[0]).value;
+    },
+    operatingCompanyId() {
+      return get(this.merchant, 'operating_company_id', null);
     },
     hasSignature() {
       return this.merchant.has_merchant_signature || false;

@@ -35,9 +35,6 @@ export default function createMerchantLicenseAgreementStore() {
       status(state, getters, rootState) {
         return get(rootState, 'Merchant.merchant.status', 0);
       },
-      operatingCompanyId(state, getters, rootState) {
-        return get(rootState, 'Merchant.merchant.operating_company_id', null);
-      },
     },
     actions: {
       async initState({ commit, dispatch }, merchantId) {
