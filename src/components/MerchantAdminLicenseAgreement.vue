@@ -34,7 +34,7 @@ export default {
       newStatus: this.merchantStatus,
       modalOpened: false,
       modalType: 'contact',
-      operatingCompany: null,
+      checkedCompanyId: null,
       operatingCompanyLabel: '',
       showOperatingCompanyConfirm: false,
     };
@@ -97,12 +97,12 @@ export default {
       this.$emit('openLicense');
     },
     updateOperatingCompany(value, label) {
-      this.operatingCompany = value;
+      this.checkedCompanyId = value;
       this.operatingCompanyLabel = label;
       this.showOperatingCompanyConfirm = true;
     },
     async confirmOperatingCompany() {
-      await this.$emit('confirm', this.operatingCompany);
+      await this.$emit('confirm', this.checkedCompanyId);
       this.showOperatingCompanyConfirm = false;
     },
   },
@@ -167,7 +167,7 @@ export default {
       <UiRadio
         class="radio"
         v-for="item in operatingCompanies"
-        :checked="item.value === operatingCompanyId"
+        :checked="item.value === checkedCompanyId || item.value === operatingCompanyId"
         :disabled="operatingCompanyId !== null && item.value !== operatingCompanyId"
         :key="item.value"
         :value="item.value"
