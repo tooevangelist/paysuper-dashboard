@@ -158,13 +158,8 @@ export default function createTariffStore() {
 
         return false;
       },
-      updatePayerRegion({ commit, dispatch, state }, region) {
+      updatePayerRegion({ commit, dispatch }, region) {
         commit('payerRegion', region);
-
-        if (get(state.regions, `${state.region}.payerRegions.${region}`, null)) {
-          return;
-        }
-
         dispatch('fetchTariffs');
       },
       updateRegion({ commit, dispatch, state }, region) {
