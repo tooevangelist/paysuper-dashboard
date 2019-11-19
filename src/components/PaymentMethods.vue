@@ -61,6 +61,9 @@ export default {
         { label: 'Worldwide', value: 'worldwide', abbr: 'WW' },
       ];
     },
+    homeRegionLabel() {
+      return get(find(this.prepareRegions, { value: this.region }), 'label', '');
+    },
     payerRegionAbbr() {
       return get(find(this.prepareRegions, { value: this.payerRegion }), 'abbr', '');
     },
@@ -125,7 +128,7 @@ export default {
 
     <div class="title">Home Region</div>
     <div class="info">
-      {{ payerRegionLabel }}
+      {{ homeRegionLabel }}
     </div>
   </div>
 
