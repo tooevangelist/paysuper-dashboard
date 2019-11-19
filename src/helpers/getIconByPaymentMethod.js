@@ -15,5 +15,9 @@ export default function getIconByPaymentMethod(method) {
     return 'IconUnionPay';
   }
 
+  if (includes(lowerCase(method), 'paypal')) {
+    return 'IconPayPal';
+  }
+
   return `Icon${upperFirst(camelCase(toLower(method)))}`;
 }

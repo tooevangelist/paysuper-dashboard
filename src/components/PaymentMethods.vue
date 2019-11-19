@@ -248,7 +248,10 @@ export default {
           :key="index"
         >
           <UiTableCell class="cell _first">
-            <component :is="data.icon" class="method-icon" />
+            <component
+              :is="$options.components[data.icon] ? data.icon : 'IconDirectBanking'"
+              class="method-icon"
+            />
           </UiTableCell>
           <UiTableCell class="cell _second" align="left">
             {{ data.method }}
@@ -302,7 +305,7 @@ export default {
         v-for="(item, index) in chargeback"
         :key="index"
         >
-        <UiTableCell class="cell _second" align="left">
+        <UiTableCell class="cell _second" align="left" :title="item.method_name">
             {{ item.method_name }}
         </UiTableCell>
         <UiTableCell class="cell _merch">
@@ -479,7 +482,7 @@ export default {
     width: 40px;
   }
   &._second {
-    width: 120px;
+    min-width: 170px;
   }
   &._channel {
     width: 19.5%;
