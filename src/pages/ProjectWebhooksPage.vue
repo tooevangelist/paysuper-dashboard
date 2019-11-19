@@ -6,11 +6,13 @@ import {
 } from 'vuelidate/lib/validators';
 import PictureDotsAndSquaresScheme from '@/components/PictureDotsAndSquaresScheme.vue';
 import KeyGenerateField from '@/components/KeyGenerateField.vue';
+import WebhookTestResult from '@/components/WebhookTestResult.vue';
 
 export default {
   name: 'ProjectWebhooksPage',
 
   components: {
+    WebhookTestResult,
     PictureDotsAndSquaresScheme,
     KeyGenerateField,
   },
@@ -199,6 +201,10 @@ export default {
         @click="handleSave"
       />
     </div>
+  </UiPanel>
+
+  <UiPanel>
+    <WebhookTestResult></WebhookTestResult>
   </UiPanel>
 </div>
 </template>
