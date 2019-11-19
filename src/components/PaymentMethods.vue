@@ -305,7 +305,7 @@ export default {
         v-for="(item, index) in chargeback"
         :key="index"
         >
-        <UiTableCell class="cell _second" align="left" :title="item.method_name">
+        <UiTableCell class="cell _second" align="left">
             {{ item.method_name }}
         </UiTableCell>
         <UiTableCell class="cell _merch">
