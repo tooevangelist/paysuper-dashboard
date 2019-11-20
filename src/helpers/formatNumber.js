@@ -1,3 +1,3 @@
-export default function formatNumber(num) {
-  return num.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$& ');
+export default function formatNumber(num, locale = 'en') {
+  return new Intl.NumberFormat(locale).format(num.toFixed(2));
 }

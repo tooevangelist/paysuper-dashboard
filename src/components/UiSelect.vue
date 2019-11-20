@@ -37,7 +37,7 @@
     <div class="options" v-if="focused">
       <UiScrollbarBox
         class="scrollbox"
-        :style="{ maxHeight: maxHeight || '200px' }"
+        :style="{ maxHeight }"
       >
         <label
           v-for="option in optionsView"

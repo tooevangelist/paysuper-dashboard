@@ -11,6 +11,7 @@ import qs from 'qs';
 import getCountriesByRegion from '@/helpers/getCountriesByRegion';
 import getIconByPaymentMethod from '@/helpers/getIconByPaymentMethod';
 import formatNumber from '@/helpers/formatNumber';
+import i18n from '@/plugins/i18n';
 
 function preparePayerRegion(data) {
   let amounts = [];
@@ -26,7 +27,7 @@ function preparePayerRegion(data) {
       max: item.max_amount,
     })),
     (item) => {
-      const amount = `${formatNumber(item.min)} - ${formatNumber(item.max)}`;
+      const amount = `${formatNumber(item.min, i18n.locale)} - ${formatNumber(item.max, i18n.locale)}`;
       amounts = union(amounts, [amount]);
       return amount;
     },
