@@ -248,7 +248,10 @@ export default {
           :key="index"
         >
           <UiTableCell class="cell _first">
-            <component :is="data.icon" class="method-icon" />
+            <component
+              :is="$options.components[data.icon] ? data.icon : 'IconDirectBanking'"
+              class="method-icon"
+            />
           </UiTableCell>
           <UiTableCell class="cell _second" align="left">
             {{ data.method }}
@@ -479,7 +482,7 @@ export default {
     width: 40px;
   }
   &._second {
-    width: 120px;
+    min-width: 170px;
   }
   &._channel {
     width: 19.5%;

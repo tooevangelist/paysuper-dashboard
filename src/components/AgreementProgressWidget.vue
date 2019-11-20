@@ -138,7 +138,7 @@ export default {
           title: '6. Create a project in “Projects” section',
           performText: 'There is your full list of projects here. Setup every parameter, add products, proceed with technical S2S integration to activate every project sales.',
           ...this.projectStatus,
-          page: 'projects',
+          page: 'ProjectsList',
         },
       ];
     },
