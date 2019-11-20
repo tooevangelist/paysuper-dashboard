@@ -18,6 +18,15 @@ export default function getMerchantMainNavItems({ hasDefaultCurrency }) {
       isAvailable: hasDefaultCurrency,
     },
     {
+      additional: 'Payment links',
+      unavailableReason: 'Payment links',
+      icon: 'IconBlank',
+      link: '/payment-links',
+      title: 'Payment links',
+      routeNames: ['PaymentLinksPage'],
+      isAvailable: true,
+    },
+    {
       additional: 'Weekly royalty reports',
       icon: 'IconBlank',
       link: '/reports',
