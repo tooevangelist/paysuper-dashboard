@@ -21,6 +21,8 @@ export default {
 
   data() {
     return {
+      inviteEmail: this.email,
+      inviteRole: this.role,
       roles: [
         {
           label: 'Developer',
@@ -44,7 +46,7 @@ export default {
 
   validations() {
     return {
-      email: { maxLength: maxLength(100), email, required },
+      inviteEmail: { maxLength: maxLength(100), email, required },
     };
   },
 };
@@ -67,8 +69,8 @@ export default {
         </div>
 
         <UiTextField
-          v-bind="$getValidatedFieldProps('email')"
-          v-model="email"
+          v-bind="$getValidatedFieldProps('inviteEmail')"
+          v-model="inviteEmail"
           type="email"
           label="Email"
           :required="true" />
@@ -77,7 +79,7 @@ export default {
           label="User role"
           :required="true"
           :options="roles"
-          v-model="role"
+          v-model="inviteRole"
         />
       </div>
 
@@ -85,8 +87,8 @@ export default {
         <UiButton
           class="modal-button"
           color="blue"
-          :disabled="$v.email.$invalid"
-          @click="$emit('input', { email, role })"
+          :disabled="$v.inviteEmail.$invalid"
+          @click="$emit('input', { email: inviteEmail, role: inviteRole })"
         >
           CONFIRM
         </UiButton>

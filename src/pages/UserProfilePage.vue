@@ -6,6 +6,7 @@ import UserProfileHelp from '@/components/UserProfileHelp.vue';
 import UserProfileCompany from '@/components/UserProfileCompany.vue';
 import StepsProgressBar from '@/components/StepsProgressBar.vue';
 import ConfirmYourEmail from '@/components/ConfirmYourEmail.vue';
+import redirectOnboardedUser from '@/helpers/redirectOnboardedUser';
 
 export default {
   name: 'UserProfilePage',
@@ -90,7 +91,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('User', ['setEmailConfirmed']),
+    ...mapActions('User', ['initState', 'setPrimaryOnboardingStep']),
     ...mapActions('User/Profile', ['updateProfile', 'setCurrentStepCode', 'waitForEmailConfirm']),
 
     handleStepComplete(value) {
@@ -111,11 +112,11 @@ export default {
 
         if (nextStepCode === 'confirmEmail') {
           await this.waitForEmailConfirm();
-          this.setEmailConfirmed(true);
-          this.$router.push({ name: 'Dashboard' });
+          await this.initState();
+          redirectOnboardedUser(params => this.$navigate(params), this.userPermissions);
         }
       } catch (error) {
-        this.$showErrorMessage(error.message);
+        this.$showErrorMessage(error);
       }
     },
 

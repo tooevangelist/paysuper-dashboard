@@ -71,6 +71,7 @@ export default {
     ...mapState('Reports', ['reportsList', 'filterValues', 'query', 'apiQuery', 'balance']),
     ...mapGetters('Reports', ['getFilterValues']),
     ...mapGetters('Dictionaries', ['countries']),
+    ...mapGetters('User', ['userPermissions']),
 
     dateFilter: {
       get() {
@@ -385,7 +386,7 @@ export default {
                     Confirm
                   </UiTooltipMenuItem>
                   <UiTooltipMenuItem
-                    v-if="report.status === 'pending'"
+                    v-if="report.status === 'pending' && userPermissions.viewDisputs"
                     class="dots-menu__item"
                     iconComponent="IconDispute"
                     @click.stop.prevent="openDispute(report.id)"

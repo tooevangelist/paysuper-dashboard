@@ -86,25 +86,9 @@ export default function createDictionariesStore() {
           dispatch('fetchCountries'),
         ]);
       },
-      fetchCurrencies({ commit, rootState }, search = '') {
-        let url = `${rootState.config.apiUrl}/api/v1/currency`;
-
-        if (search.length > 0) {
-          url += `?name=${search}`;
-        }
-
-        axios.get(url)
-          .then((response) => {
-            if (response.data.length <= 0) {
-              return;
-            }
-
-            commit('currencies', response.data);
-          }).catch(() => { });
-      },
 
       async fetchRegionsCurrencies({ commit, rootState }) {
-        const url = `${rootState.config.apiUrl}/api/v1/price_group/currencies`;
+        const url = `${rootState.config.apiUrl}/price_group/currencies`;
 
         const result = await axios.get(url)
           .then(response => response.data)
@@ -116,7 +100,7 @@ export default function createDictionariesStore() {
       },
 
       getCountries({ rootState }) {
-        const url = `${rootState.config.apiUrl}/api/v1/country`;
+        const url = `${rootState.config.apiUrl}/country`;
 
         return axios.get(url)
           .then(response => response.data)

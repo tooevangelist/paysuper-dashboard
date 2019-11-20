@@ -75,7 +75,7 @@ export default function createMerchantListStore() {
           ...state.apiQuery,
           status,
         }, { arrayFormat: 'brackets' });
-        const url = `${rootState.config.apiUrl}/admin/api/v1/merchants?${query}`;
+        const url = `${rootState.config.apiUrl}/system/api/v1/merchants?${query}`;
 
         const response = await axios.get(url);
         const merchants = get(response, 'data.items') ? response.data : {
@@ -116,7 +116,7 @@ export default function createMerchantListStore() {
 
       async sendNotification({ rootState }, { merchantId, notification }) {
         await axios.post(
-          `${rootState.config.apiUrl}/admin/api/v1/merchants/${merchantId}/notifications`,
+          `${rootState.config.apiUrl}/system/api/v1/merchants/${merchantId}/notifications`,
           notification,
         );
       },

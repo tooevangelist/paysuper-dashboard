@@ -9,7 +9,6 @@ import {
 import axios from 'axios';
 import qs from 'qs';
 import mergeApiValuesWithDefaults from '@/helpers/mergeApiValuesWithDefaults';
-import { UNAUTHORIZED } from '@/errors';
 
 // const merchantStatues = {
 //   draft: 0,
@@ -167,8 +166,12 @@ export default function createMerchantStore() {
     },
 
     actions: {
-      async initState({ dispatch }, id) {
-        await dispatch('fetchMerchantById', id);
+      async initState({ commit, dispatch }, { id, merchant }) {
+        if (id) {
+          await dispatch('fetchMerchantById', id);
+        }
+        commit('merchant', mapDataApiToForm(merchant));
+        await dispatch('fetchMerchantStatus');
       },
 
       async fetchMerchantById({ commit, rootState }, id) {
@@ -233,21 +236,6 @@ export default function createMerchantStore() {
           commit('hasProjects', true);
         }
         commit('onboardingCompleteStepsCount', state.onboardingCompleteStepsCount + 1);
-      },
-
-      async fetchMerchant({ commit, dispatch, rootState }) {
-        const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/merchants/user`)
-          .catch((error) => {
-            const errorCode = get(error, 'response.status');
-            if (errorCode === 401) {
-              throw UNAUTHORIZED;
-            }
-            console.warn(error);
-          });
-
-        commit('merchant', mapDataApiToForm(get(response, 'data', {})));
-
-        await dispatch('fetchMerchantStatus');
       },
 
       async fetchMerchantPaymentMethods({ state, commit, rootState }, id) {
@@ -336,7 +324,7 @@ export default function createMerchantStore() {
 
       async changeMerchantStatus({ state, commit, rootState }, { status, message = '' }) {
         const response = await axios.put(
-          `${rootState.config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}/change-status`,
+          `${rootState.config.apiUrl}/system/api/v1/merchants/${state.merchant.id}/change-status`,
           { status, message },
         ).catch(console.warn);
 
@@ -367,7 +355,7 @@ export default function createMerchantStore() {
 
       async sendNotification({ state, rootState }, notification) {
         const response = await axios.post(
-          `${rootState.config.apiUrl}/admin/api/v1/merchants/${state.merchant.id}/notifications`,
+          `${rootState.config.apiUrl}/system/api/v1/merchants/${state.merchant.id}/notifications`,
           notification,
         );
 

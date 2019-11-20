@@ -78,6 +78,7 @@ export default {
   text-align: center;
   margin-bottom: 24px;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .controls {

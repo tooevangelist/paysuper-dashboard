@@ -1,4 +1,4 @@
-export default function getMerchantMainNavItems({ hasDefaultCurrency }) {
+export default function getMainNavItems(permissions) {
   return [
     {
       additional: 'Homepage for main controls',
@@ -6,7 +6,7 @@ export default function getMerchantMainNavItems({ hasDefaultCurrency }) {
       link: '/dashboard',
       title: 'Dashboard',
       routeNames: ['Dashboard'],
-      isAvailable: true,
+      isAvailable: permissions.dashboard,
     },
     {
       additional: 'Organise your products for sales',
@@ -15,7 +15,7 @@ export default function getMerchantMainNavItems({ hasDefaultCurrency }) {
       link: '/projects',
       title: 'Projects',
       routeNames: ['ProjectsList'],
-      isAvailable: hasDefaultCurrency,
+      isAvailable: permissions.projects,
     },
     {
       additional: 'Weekly royalty reports',
@@ -23,14 +23,14 @@ export default function getMerchantMainNavItems({ hasDefaultCurrency }) {
       link: '/reports',
       title: 'Royalty reports',
       routeNames: ['RoyaltyReportsPage'],
-      isAvailable: true,
+      isAvailable: permissions.reports,
     },
     {
       additional: 'Need license agreement',
       icon: 'IconCash',
       link: '/payouts',
       title: 'Payouts',
-      isAvailable: true,
+      isAvailable: permissions.payouts,
     },
     {
       additional: 'Full list of customer transactions',
@@ -38,7 +38,23 @@ export default function getMerchantMainNavItems({ hasDefaultCurrency }) {
       link: '/transactions',
       title: 'Transaction Search',
       routeNames: ['TransactionsPage'],
-      isAvailable: true,
+      isAvailable: permissions.transactions,
+    },
+    {
+      title: 'Merchants',
+      additional: 'Description',
+      icon: 'IconBlank',
+      link: '/merchants',
+      routeNames: ['MerchantsList'],
+      isAvailable: permissions.merchants,
+    },
+    {
+      title: 'Agreement requests',
+      additional: 'Description',
+      icon: 'IconBlank',
+      link: '/agreement-requests',
+      routeNames: ['AgreementRequestsList'],
+      isAvailable: permissions.merchants,
     },
     {
       additional: 'Technical integrations',

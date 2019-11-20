@@ -1,5 +1,5 @@
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import { directive as clickaway } from 'vue-clickaway';
 import UserNotifications from '@/components/UserNotifications.vue';
 import LeaveFeedbackPopup from '@/components/LeaveFeedbackPopup.vue';
@@ -80,7 +80,6 @@ export default {
     ...mapActions(['setIsLoading']),
     ...mapActions('User', ['logout']),
     ...mapActions('User/Notifications', ['markNotificationAsReaded']),
-    ...mapMutations('User', { setRole: 'role' }),
     ...mapActions('LeaveFeedback', ['postFeedback']),
 
     hideInfoBlock() {
@@ -182,20 +181,6 @@ export default {
   </div>
 
   <div class="right">
-    <div style="margin-right: 30px;">
-      <span
-        class="role-switch"
-        :class="{ '_current': role === 'merchant' }"
-        @click="setRole('merchant')"
-      >merchant</span>
-      /
-      <span
-        class="role-switch"
-        :class="{ '_current': role === 'admin' }"
-        @click="setRole('admin')"
-      >admin</span>&nbsp;
-      <span style="font-size: 8px;">(It's fake)</span>
-    </div>
     <div style="position: relative">
       <a
         class="feedback"
@@ -473,7 +458,7 @@ export default {
 }
 .info-line {
   margin: 8px 0;
-  background: #F1F3F4;
+  background: #f1f3f4;
   height: 1px;
 }
 .info-text {

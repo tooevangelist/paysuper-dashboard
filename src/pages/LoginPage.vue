@@ -11,10 +11,11 @@ export default {
 
   created() {
     this.listenToMessages();
+    this.handleInviteToken();
   },
 
   methods: {
-    ...mapActions('User', ['initState', 'setAccessToken']),
+    ...mapActions('User', ['initState', 'setAccessToken', 'setInviteToken']),
     listenToMessages() {
       window.addEventListener('message', async (event) => {
         if (!event.data || event.data.source !== 'PAYSUPER_MANAGEMENT_SERVER') {
@@ -38,17 +39,28 @@ export default {
         }
         if (event.data.name === 'formResize') {
           const { width, height } = event.data.data;
-          this.$refs.iframe.setAttribute('width', width);
-          this.$refs.iframe.setAttribute('height', height);
+          if (this.$refs.iframe) {
+            this.$refs.iframe.setAttribute('width', width);
+            this.$refs.iframe.setAttribute('height', height);
+          }
         }
       });
+    },
+
+    handleInviteToken() {
+      const { name, query } = this.$route;
+      const { invite_token: inviteToken, ...restQuery } = query;
+      if (inviteToken) {
+        this.setInviteToken(inviteToken);
+        this.$navigate({ name, query: restQuery });
+      }
     },
 
     redirectOnSuccessfulAuth() {
       if (this.$route.query.redirect) {
         this.$router.push({ path: this.$route.query.redirect });
       } else {
-        this.$router.push({ path: '/dashboard' });
+        this.$router.push({ path: '/' });
       }
     },
   },

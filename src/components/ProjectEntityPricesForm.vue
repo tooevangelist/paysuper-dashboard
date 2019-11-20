@@ -38,6 +38,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   model: {
@@ -181,6 +185,7 @@ export default {
       :isNumeric="true"
       :decimalLength="2"
       :label="getCurrencyName(price, index)"
+      :disabled="disabled"
       v-model="price.amount"
       v-show="price.region === price.currency"
       v-bind="$getValidatedFieldProps(`priceData[${index}].amount`)"
@@ -217,6 +222,7 @@ export default {
         :key="index"
         :isNumeric="true"
         :decimalLength="2"
+        :disabled="disabled"
         v-model="price.amount"
         v-bind="$getValidatedFieldProps(`priceData[${index}].amount`)"
         @input="updatePrice"

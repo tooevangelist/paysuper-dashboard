@@ -1,13 +1,12 @@
 <script>
 import Vue from 'vue';
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import {
   includes, findIndex, isEmpty, get,
 } from 'lodash-es';
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
-import getMerchantMainNavItems from '@/helpers/getMerchantMainNavItems';
-import getAdminMainNavItems from '@/helpers/getAdminMainNavItems';
+import getMainNavItems from '@/helpers/getMainNavItems';
 import LayoutMainNavDefault from '@/components/LayoutMainNavDefault.vue';
 import LayoutHeader from '@/components/LayoutHeader.vue';
 import LayoutSpecialNavProgress from '@/components/LayoutSpecialNavProgress.vue';
@@ -36,20 +35,27 @@ export default {
     ...mapState(['isLoading']),
     ...mapState('User', ['role']),
     ...mapState('User/Merchant', ['merchant']),
+    ...mapGetters('User', ['userPermissions']),
+
     currentNavigationItem() {
       return findIndex(this.mainNavItems, item => includes(item.routeNames, this.$route.name));
     },
 
     mainNavItems() {
-      if (this.role === 'admin') {
-        return getAdminMainNavItems();
-      }
-      return getMerchantMainNavItems({
-        hasDefaultCurrency: !!get(this.merchant, 'banking.currency', false),
-      });
+      return getMainNavItems(this.permissions);
     },
     projectName() {
       return get(this.merchant, 'company.name') || 'Pay Super';
+    },
+    permissions() {
+      return {
+        dashboard: this.userPermissions.viewDashboard,
+        projects: this.userPermissions.viewProjects && !!get(this.merchant, 'banking.currency', false),
+        reports: this.userPermissions.viewRoyaltyReports,
+        payouts: this.userPermissions.viewPayouts,
+        transactions: this.userPermissions.viewTransactions,
+        merchants: this.userPermissions.viewMerchants,
+      };
     },
   },
   mounted() {

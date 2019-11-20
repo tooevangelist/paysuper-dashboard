@@ -55,6 +55,11 @@ export default {
     ...mapState('Project', ['project', 'defaultCurrency']),
     ...mapGetters('Project', ['defaultCurrencyValue']),
     ...mapState('ProjectKeyProduct', ['keyProductId', 'keyProduct', 'platforms', 'keyCounts']),
+    ...mapGetters('User', ['userPermissions']),
+
+    viewOnly() {
+      return !this.userPermissions.editProjects;
+    },
 
     platformNameForDelete() {
       const platform = find(this.keyProductLocal.platforms, { id: this.platformIdForDisable });
@@ -234,6 +239,7 @@ export default {
   <UiPanel>
     <section class="section">
       <UiSwitchBox
+        :disabled="viewOnly"
         class="localization-switch"
         v-model="keyProductLocal.cover.use_one_for_all"
       >
@@ -250,6 +256,7 @@ export default {
       <UiLangTextField
         label="Game title"
         :langs="project.localizations"
+        :disabled="viewOnly"
         v-model="keyProductLocal.name"
         v-bind="$getValidatedFieldProps('keyProductLocal.name.en')"
       />
@@ -263,7 +270,7 @@ export default {
         label="SKU"
         v-bind="$getValidatedFieldProps('keyProductLocal.sku')"
         v-model="keyProductLocal.sku"
-        :disabled="keyProductId && !!keyProductLocal.sku"
+        :disabled="(keyProductId && !!keyProductLocal.sku) || viewOnly"
         @input="handleSkuFieldInput"
       />
     </section>
@@ -280,6 +287,7 @@ export default {
         :key="index"
       >
         <UiSwitchBox
+          :disabled="viewOnly"
           :checked="isPlatformEnabled(platform.id)"
           @change="togglePlatform(platform.id, $event)"
         >
@@ -303,6 +311,7 @@ export default {
         :getRecommendedPrices="getRecommendedPrices"
         :defaultCurrency="defaultCurrency"
         :recommendedPricesTable="recommendedPricesTable"
+        :disabled="viewOnly"
       />
 
     </section>
@@ -323,11 +332,12 @@ export default {
     >
       <span>{{ platform.name }} — {{ keyCounts[platform.id] || 'no' }} keys</span>
       <UiUploadControls
+        v-if="!viewOnly"
         title="keys"
       />
     </div>
 
-    <div class="controls">
+    <div class="controls" v-if="!viewOnly">
       <UiSwitchBox v-model="keyProductLocal.enabled">
         Enable package
       </UiSwitchBox>

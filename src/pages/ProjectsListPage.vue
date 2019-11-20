@@ -42,6 +42,7 @@ export default {
   computed: {
     ...mapState('ProjectsListing', ['projects', 'query']),
     ...mapGetters('ProjectsListing', ['getFilterValues']),
+    ...mapGetters('User', ['userPermissions']),
 
     handleQuickSearchInput() {
       return debounce(() => {
@@ -167,6 +168,7 @@ export default {
   </p>
   <div class="controls">
     <UiButton
+      v-if="userPermissions.createProjects"
       :noSidePaddings="true"
       @click="isNewProjectModalOpened = true"
     >

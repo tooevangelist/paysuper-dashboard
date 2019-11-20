@@ -128,7 +128,6 @@ export default function createMerchantLicenseAgreementStore() {
         }
       },
       async fetchDocument({ commit, state }) {
-        const { merchantId } = state;
         const { url } = state.agreement;
         const { size, extension } = state.agreement.metadata;
 
@@ -137,7 +136,7 @@ export default function createMerchantLicenseAgreementStore() {
         }
 
         const response = await axios.get(
-          `{apiUrl}/admin/api/v1/merchants/${merchantId}/agreement/document`,
+          '{apiUrl}/admin/api/v1/merchants/agreement/document',
           {
             headers: { Accept: `application/${extension}` },
             responseType: 'blob',

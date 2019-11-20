@@ -59,6 +59,11 @@ export default {
     ...mapState('Project', ['project', 'defaultCurrency']),
     ...mapState('ProjectKeyProductsList', ['gameKeys', 'filterValues', 'query', 'apiQuery']),
     ...mapGetters('ProjectKeyProductsList', ['getFilterValues']),
+    ...mapGetters('User', ['userPermissions']),
+
+    viewOnly() {
+      return !this.userPermissions.editProjects;
+    },
 
     handleQuickSearchInput() {
       return debounce(() => {
@@ -182,7 +187,7 @@ export default {
           <IconUpload slot="iconBefore" class="upload-icon" fill="#919699" />
           QUILIN PACKAGES
         </UiButton>
-        <RouterLink :to="`/projects/${project.id}/game-keys/new/`">
+        <RouterLink :to="`/projects/${project.id}/game-keys/new/`" v-if="!viewOnly">
           <UiButton>ADD KEYS</UiButton>
         </RouterLink>
       </div>
@@ -204,7 +209,7 @@ export default {
         <UiTableCell width="10%" align="left">Price</UiTableCell>
         <UiTableCell align="left" width="3%">&nbsp;</UiTableCell>
         <UiTableCell width="12%" align="left">Status</UiTableCell>
-        <UiTableCell width="5%" align="left">&nbsp;</UiTableCell>
+        <UiTableCell width="5%" align="left" v-if="!viewOnly">&nbsp;</UiTableCell>
       </UiTableRow>
       <UiTableRow
         class="content-row"
@@ -276,6 +281,7 @@ export default {
           </UiLabelTag>
         </UiTableCell>
         <UiTableCell
+          v-if="!viewOnly"
           class="cell"
           align="left"
            valign="middle"

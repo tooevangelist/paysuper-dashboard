@@ -1,5 +1,22 @@
 <script>
+import { mapState, mapGetters } from 'vuex';
+
 export default {
+  computed: {
+    ...mapState('User', ['isAuthorised']),
+    ...mapGetters('User/Profile', ['userPermissions']),
+  },
+
+  created() {
+    if (this.isAuthorised) {
+      if (this.userPermissions && this.userPermissions.viewDashboard) {
+        this.$router.push({ name: 'Dashboard' });
+      } else {
+        this.$router.push({ name: 'ProjectsList' });
+      }
+    }
+  },
+
   methods: {
     goAuthoriseOrRegister() {
       this.$router.push({ name: 'Login', query: { redirect: this.$route.query.redirect } });
