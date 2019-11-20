@@ -70,11 +70,9 @@ export default function createUserStore() {
     },
 
     actions: {
-      initState({ commit }, profile) {
+      initState({ commit, dispatch }, profile) {
         commit('profile', profile);
-        if (profile.last_step) {
-          commit('currentStepCode', profile.last_step);
-        }
+        dispatch('setCurrentStepCode', profile.last_step);
       },
 
       async updateProfile({ rootState, commit }, props) {

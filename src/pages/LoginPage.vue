@@ -10,8 +10,8 @@ export default {
   },
 
   created() {
-    this.listenToMessages();
     this.handleInviteToken();
+    this.listenToMessages();
   },
 
   methods: {
@@ -47,11 +47,11 @@ export default {
       });
     },
 
-    handleInviteToken() {
+    async handleInviteToken() {
       const { name, query } = this.$route;
       const { invite_token: inviteToken, ...restQuery } = query;
       if (inviteToken) {
-        this.setInviteToken(inviteToken);
+        await this.setInviteToken(inviteToken);
         this.$navigate({ name, query: restQuery });
       }
     },

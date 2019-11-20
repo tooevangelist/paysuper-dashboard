@@ -24,7 +24,7 @@ export default function createUserStore(resources) {
         state.accessToken = value;
       },
       inviteToken(state, value) {
-        state.accessToken = value;
+        state.inviteToken = value;
       },
       isAuthorised(state, value) {
         state.isAuthorised = value;
@@ -74,13 +74,15 @@ export default function createUserStore(resources) {
         }
       },
 
-      setInviteToken({ commit }, token) {
+      async setInviteToken({ state, commit, dispatch }, token) {
         localStorage.setItem('inviteToken', token);
         commit('inviteToken', token);
+        if (state.isAuthorised) {
+          await dispatch('checkPrimaryOnboardingStep');
+        }
       },
 
       async checkPrimaryOnboardingStep({ state, commit }) {
-        console.log(11111, 'state.inviteToken', state.inviteToken);
         if (state.Profile.profile.email.confirmed) {
           commit('primaryOnboardingStep', 'finished');
           return;
