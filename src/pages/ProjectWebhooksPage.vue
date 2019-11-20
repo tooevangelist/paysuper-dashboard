@@ -6,13 +6,13 @@ import {
 } from 'vuelidate/lib/validators';
 import PictureDotsAndSquaresScheme from '@/components/PictureDotsAndSquaresScheme.vue';
 import KeyGenerateField from '@/components/KeyGenerateField.vue';
-import WebhookTestResult from '@/components/WebhookTestResult.vue';
+import WebhookTestMethods from '@/components/WebhookTestMethods.vue';
 
 export default {
   name: 'ProjectWebhooksPage',
 
   components: {
-    WebhookTestResult,
+    WebhookTestMethods,
     PictureDotsAndSquaresScheme,
     KeyGenerateField,
   },
@@ -203,9 +203,9 @@ export default {
     </div>
   </UiPanel>
 
-  <UiPanel>
-    <WebhookTestResult></WebhookTestResult>
-  </UiPanel>
+  <div v-if="project.url_process_payment">
+    <WebhookTestMethods></WebhookTestMethods>
+  </div>
 </div>
 </template>
 
