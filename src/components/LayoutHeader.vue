@@ -39,21 +39,18 @@ export default {
           url: 'http://help.pay.super.com/',
           icon: 'IconSupport',
           text: 'Support',
-          external: true,
         },
         {
           id: 'faq',
           url: 'http://help.pay.super.com/hc/categories/360002221019',
           icon: 'IconQuestion',
           text: 'FAQ',
-          external: true,
         },
         {
           id: 'documentation',
           url: 'https://docs.pay.super.com/',
           icon: 'IconDocumentation',
           text: 'Documentation',
-          external: true,
         },
         {
           id: 'leaveFeedback',
@@ -167,14 +164,6 @@ export default {
 
     resetPopupFeedback() {
       this.isLeaveFeedbackSuccess = false;
-    },
-
-    getLinkTagProps(item) {
-      return {
-        is: item.external ? 'a' : 'RouterLink',
-        target: "item.external ? '_blank' : undefined",
-        [item.external ? 'href' : 'to']: item.url,
-      };
     },
   },
 };

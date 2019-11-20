@@ -276,7 +276,7 @@ export default {
     </UiConfirm>
 
     <InviteUserModal
-      v-show="inviteModal"
+      v-if="inviteModal"
       @close="inviteModal = false"
       @input="handleAddUser" />
 

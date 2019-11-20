@@ -185,7 +185,8 @@ export default {
       title="Resend invitation"
       :role="user.role"
       :email="user.email"
-      v-show="inviteModal"
+      :disabled="true"
+      v-if="inviteModal"
       @close="inviteModal = false"
       @input="handleAddUser" />
 

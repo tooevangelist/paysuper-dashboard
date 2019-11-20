@@ -17,6 +17,10 @@ export default {
       type: String,
       default: 'merchant_developer',
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -73,12 +77,14 @@ export default {
           v-model="inviteEmail"
           type="email"
           label="Email"
+          :disabled="disabled"
           :required="true" />
 
         <UiSelect
           label="User role"
           :required="true"
           :options="roles"
+          :disabled="disabled"
           v-model="inviteRole"
         />
       </div>
