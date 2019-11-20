@@ -236,8 +236,8 @@ export default {
         file_type: fileType.toLowerCase(),
         report_type: 'transactions',
         params: {
-          dateFrom: this.filters.dateFrom || '',
-          dateTo: this.filters.dateTo || '',
+          date_from: this.filters.dateFrom || '',
+          date_to: this.filters.dateTo || '',
           status: this.filters.status,
         },
       });
