@@ -80,6 +80,7 @@ export default function createUserStore(resources) {
       },
 
       async checkPrimaryOnboardingStep({ state, commit }) {
+        console.log(11111, 'state.inviteToken', state.inviteToken);
         if (state.Profile.profile.email.confirmed) {
           commit('primaryOnboardingStep', 'finished');
           return;
@@ -182,7 +183,7 @@ export default function createUserStore(resources) {
         commit('isAuthorised', false);
         commit('primaryOnboardingStep', 'initial');
         commit('accessToken', '');
-        dispatch('Profile/setCurrentStepCode');
+        dispatch('Profile/initState', {});
       },
     },
 
