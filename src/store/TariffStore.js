@@ -10,6 +10,7 @@ import {
 import qs from 'qs';
 import getCountriesByRegion from '@/helpers/getCountriesByRegion';
 import getIconByPaymentMethod from '@/helpers/getIconByPaymentMethod';
+import formatNumber from '@/helpers/formatNumber';
 
 function preparePayerRegion(data) {
   let amounts = [];
@@ -25,7 +26,7 @@ function preparePayerRegion(data) {
       max: item.max_amount,
     })),
     (item) => {
-      const amount = `${item.min}-${item.max}`;
+      const amount = `${formatNumber(item.min)} - ${formatNumber(item.max)}`;
       amounts = union(amounts, [amount]);
       return amount;
     },
@@ -38,7 +39,7 @@ export default function createTariffStore() {
   return {
     namespaced: true,
     state: {
-      amount: '0-4.99',
+      amount: '0.00 - 4.99',
       amounts: [],
       currency: 'USD',
       payerRegion: 'europe',

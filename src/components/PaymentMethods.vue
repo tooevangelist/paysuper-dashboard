@@ -163,6 +163,7 @@ export default {
     <div class="select">
       <UiSelect
         label="Payment Amount"
+        maxHeight="240px"
         :options="amountsOptions"
         :value="amount"
         @input="updateAmount($event)"
