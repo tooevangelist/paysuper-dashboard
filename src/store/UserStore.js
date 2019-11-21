@@ -187,7 +187,7 @@ export default function createUserStore(resources) {
         commit('accessToken', '');
         dispatch('Profile/initState', {});
         dispatch('Merchant/initState', {});
-        dispatch('Notifications/stopWatchForNotifications');
+        dispatch('Notifications/initState');
       },
     },
 

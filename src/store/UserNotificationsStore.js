@@ -13,7 +13,10 @@ export default function createUserNotificationsStore() {
     },
     getters: {
       isEnabled(state, getters, rootState, rootGetters) {
-        return rootGetters['User/userPermissions'].viewNotifications || false;
+        return Boolean(
+          rootState.User.Merchant.merchant.id
+          && rootGetters['User/userPermissions'].viewNotifications,
+        );
       },
     },
     mutations: {
@@ -25,7 +28,9 @@ export default function createUserNotificationsStore() {
       },
     },
     actions: {
-      async initState({ dispatch, getters }) {
+      async initState({ commit, dispatch, getters }) {
+        commit('notifications', []);
+        dispatch('stopWatchForNotifications');
         if (!getters.isEnabled) {
           return;
         }
