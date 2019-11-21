@@ -3,11 +3,9 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import { get, debounce } from 'lodash-es';
 import { maxLength, required, url } from 'vuelidate/lib/validators';
 import { onlyRusAndLat, onlyRusAndLatAndNum } from '@/helpers/customValidators';
-import Notifications from '@/mixins/Notifications';
 
 export default {
   name: 'AccountInfo',
-  mixins: [Notifications],
   validations: {
     accountInfo: {
       address: { maxLength: maxLength(100), required },
@@ -50,7 +48,7 @@ export default {
     try {
       await this.initState();
     } catch (error) {
-      this.$_Notifications_showErrorMessage(error);
+      this.$showErrorMessage(error);
     }
   },
   methods: {
@@ -80,7 +78,7 @@ export default {
             this.$emit('hasSubmit');
           }
         } catch (error) {
-          this.$_Notifications_showErrorMessage(get(error, 'response.data.details'));
+          this.$showErrorMessage(get(error, 'response.data.details'));
         }
       }
     },

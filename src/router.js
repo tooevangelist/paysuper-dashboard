@@ -49,7 +49,16 @@ router.beforeResolve(async (to, from, next) => {
     'initState',
     get(to, 'meta.initStore', undefined),
   );
+
   store.dispatch('setPageError', null);
+  const permission = get(to.meta, 'permission', false);
+  if (permission) {
+    const { role } = store.state.User;
+    if (!premissions[role][permission]) {
+      resources.notifications.showErrorMessage('You don\'t have permission to access this page');
+      store.dispatch('setPageError', 403);
+    }
+  }
 
   document.querySelector('#preloader').style.display = 'none';
 
@@ -75,14 +84,6 @@ router.beforeResolve(async (to, from, next) => {
         path: '/',
         query: { redirect: to.fullPath },
       });
-    }
-
-    const permission = get(to.meta, 'permission', false);
-    if (permission) {
-      const { role } = store.state.User;
-      if (!premissions[role][permission]) {
-        resources.notifications.showErrorMessage('You don\'t have permission to access this page');
-      }
     }
   }
 

@@ -42,9 +42,9 @@ export default function createMerchantLicenseAgreementStore() {
         await dispatch('fetchOperatingCompanies');
       },
 
-      async fetchOperatingCompanies({ commit, rootState }) {
+      async fetchOperatingCompanies({ commit }) {
         const response = await axios.get(
-          `${rootState.config.apiUrl}/admin/api/v1/operating_company`,
+          '{apiUrl}/system/api/v1/operating_company',
         );
 
         if (response.data) {
@@ -87,7 +87,7 @@ export default function createMerchantLicenseAgreementStore() {
 
         if (merchantId) {
           const response = await axios.put(
-            `{apiUrl}/admin/api/v1/merchants/${merchantId}/agreement/signature`,
+            `{apiUrl}/system/api/v1/merchants/${merchantId}/agreement/signature`,
             { signer_type: 1 },
           );
 
@@ -105,7 +105,7 @@ export default function createMerchantLicenseAgreementStore() {
 
         if (merchantId && status >= 3) {
           const response = await axios.get(
-            `{apiUrl}/admin/api/v1/merchants/${merchantId}/agreement`,
+            `{apiUrl}/system/api/v1/merchants/${merchantId}/agreement`,
           );
           const agreement = get(response, 'data', getDefaultAgreementDocument());
 
@@ -128,15 +128,16 @@ export default function createMerchantLicenseAgreementStore() {
         }
       },
       async fetchDocument({ commit, state }) {
+        const { merchantId } = state;
         const { url } = state.agreement;
         const { size, extension } = state.agreement.metadata;
 
-        if (url === '#' || size === 0) {
+        if (!merchantId || url === '#' || size === 0) {
           return false;
         }
 
         const response = await axios.get(
-          '{apiUrl}/admin/api/v1/merchants/agreement/document',
+          `{apiUrl}/system/api/v1/merchants/${merchantId}/agreement/document`,
           {
             headers: { Accept: `application/${extension}` },
             responseType: 'blob',
@@ -160,7 +161,7 @@ export default function createMerchantLicenseAgreementStore() {
 
         if (merchantId) {
           const response = await axios.post(
-            `{apiUrl}/admin/api/v1/merchants/${merchantId}/set_operating_company`,
+            `{apiUrl}/system/api/v1/merchants/${merchantId}/set_operating_company`,
             { operating_company_id: id },
           );
           if (response) {

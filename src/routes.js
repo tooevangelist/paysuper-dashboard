@@ -193,7 +193,7 @@ const routes = [
   {
     path: '/merchants/:id',
     component: () => import('@/pages/MerchantAdminPage.vue'),
-    redirect: { name: 'MerchantAdminPersonalProfile' },
+    redirect: { name: 'MerchantAdminCompanyInfo' },
     children: [
       {
         path: 'personal-profile/',

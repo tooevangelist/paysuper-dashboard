@@ -4,10 +4,17 @@ import Centrifuge from 'centrifuge';
 import getUnixTime from 'date-fns/getUnixTime';
 
 export default function createUserNotificationsStore() {
+  let centrifuge = null;
+
   return {
     state: {
       isWatchingInited: false,
       notifications: [],
+    },
+    getters: {
+      isEnabled(state, getters, rootState, rootGetters) {
+        return rootGetters['User/userPermissions'].viewNotifications || false;
+      },
     },
     mutations: {
       isWatchingInited(state, value) {
@@ -18,18 +25,18 @@ export default function createUserNotificationsStore() {
       },
     },
     actions: {
-      async initState({ dispatch, rootState }) {
-        if (rootState.User.Merchant.merchant && rootState.User.Merchant.merchant.id) {
-          await dispatch('fetchNotifications');
-          dispatch('watchForNotifications');
+      async initState({ dispatch, getters }) {
+        if (!getters.isEnabled) {
+          return;
         }
+        await dispatch('fetchNotifications');
+        dispatch('watchForNotifications');
       },
 
-      async fetchNotifications({ commit, rootState }) {
-        const { id } = rootState.User.Merchant.merchant;
+      async fetchNotifications({ commit }) {
         try {
           const { data } = await axios.get(
-            `{apiUrl}/admin/api/v1/merchants/${id}/notifications?sort[]=-created_at`,
+            '{apiUrl}/admin/api/v1/merchants/notifications?sort[]=-created_at',
           );
           commit('notifications', data.items || []);
         } catch (error) {
@@ -37,11 +44,10 @@ export default function createUserNotificationsStore() {
         }
       },
 
-      async markNotificationAsReaded({ state, commit, rootState }, notificationId) {
-        const { id } = rootState.User.Merchant.merchant;
+      async markNotificationAsReaded({ state, commit }, notificationId) {
         try {
           const { data } = await axios.put(
-            `{apiUrl}/admin/api/v1/merchants/${id}/notifications/${notificationId}/mark-as-read`,
+            `{apiUrl}/admin/api/v1/merchants/notifications/${notificationId}/mark-as-read`,
           );
           const newNotifications = state.notifications.map((item) => {
             if (item.id === data.id) {
@@ -55,12 +61,16 @@ export default function createUserNotificationsStore() {
         }
       },
 
-      watchForNotifications({ state, commit, rootState }) {
-        if (state.isWatchingInited) {
+      watchForNotifications({
+        state, commit, getters, rootState,
+      }) {
+        const { merchant } = rootState.User.Merchant;
+        if (
+          !getters.isEnabled || state.isWatchingInited || !merchant.id || !merchant.centrifugo_token
+        ) {
           return;
         }
-        const centrifuge = new Centrifuge(rootState.config.websocketUrl);
-        const { merchant } = rootState.User.Merchant;
+        centrifuge = new Centrifuge(rootState.config.websocketUrl);
 
         centrifuge.setToken(merchant.centrifugo_token);
         centrifuge.subscribe(`paysuper:merchant#${merchant.id}`, async ({ data }) => {
@@ -76,6 +86,14 @@ export default function createUserNotificationsStore() {
         });
         centrifuge.connect();
         commit('isWatchingInited', true);
+      },
+
+      stopWatchForNotifications({ commit }) {
+        if (centrifuge) {
+          centrifuge.disconnect();
+          centrifuge = null;
+        }
+        commit('isWatchingInited', false);
       },
     },
 

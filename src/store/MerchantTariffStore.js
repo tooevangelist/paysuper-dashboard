@@ -101,7 +101,7 @@ export default function createMerchantTariffStore() {
       },
       async fetchChannelCosts({ commit }, merchantId) {
         const response = await axios.get(
-          `{apiUrl}/admin/api/v1/payment_costs/channel/merchant/${merchantId}/all`,
+          `{apiUrl}/system/api/v1/payment_costs/channel/merchant/${merchantId}/all`,
         );
 
         if (response.data) {
@@ -113,7 +113,7 @@ export default function createMerchantTariffStore() {
       },
       async fetchMoneyBack({ commit }, merchantId) {
         const response = await axios.get(
-          `{apiUrl}/admin/api/v1/payment_costs/money_back/merchant/${merchantId}/all`,
+          `{apiUrl}/system/api/v1/payment_costs/money_back/merchant/${merchantId}/all`,
         );
 
         if (response.data) {

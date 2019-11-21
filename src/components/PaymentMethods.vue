@@ -108,7 +108,7 @@ export default {
 
       if (!this.$v.region.$invalid) {
         try {
-          const hasSubmit = await this.submitTariffs(this.merchant.id);
+          const hasSubmit = await this.submitTariffs();
 
           if (hasSubmit) {
             this.$emit('hasSubmit');

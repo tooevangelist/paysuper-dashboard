@@ -60,12 +60,12 @@ export default function createMerchantHistoryStore() {
         await dispatch('fetchHistory');
       },
 
-      async fetchHistory({ state, commit, rootState }) {
+      async fetchHistory({ state, commit }) {
         const query = qs.stringify({
           ...state.apiQuery,
           is_system: true,
         }, { arrayFormat: 'brackets' });
-        const url = `${rootState.config.apiUrl}/admin/api/v1/merchants/${state.merchantId}/notifications?${query}`;
+        const url = `{apiUrl}/system/api/v1/merchants/${state.merchantId}/notifications?${query}`;
 
         const response = await axios.get(url);
         const history = !isEmpty(response.data) ? response.data : {

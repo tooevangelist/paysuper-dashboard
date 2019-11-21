@@ -42,20 +42,12 @@ export default {
     },
 
     mainNavItems() {
-      return getMainNavItems(this.permissions);
+      return getMainNavItems(this.userPermissions, {
+        hasDefaultCurrency: !!get(this.merchant, 'banking.currency'),
+      });
     },
     projectName() {
       return get(this.merchant, 'company.name') || 'Pay Super';
-    },
-    permissions() {
-      return {
-        dashboard: this.userPermissions.viewDashboard,
-        projects: this.userPermissions.viewProjects && !!get(this.merchant, 'banking.currency', false),
-        reports: this.userPermissions.viewRoyaltyReports,
-        payouts: this.userPermissions.viewPayouts,
-        transactions: this.userPermissions.viewTransactions,
-        merchants: this.userPermissions.viewMerchants,
-      };
     },
   },
   mounted() {
@@ -108,7 +100,7 @@ export default {
         :link="getBackLink($route.meta.specialNav.backLink)"
       />
       <LayoutSpecialNavProgress
-        v-if="!get($route, 'meta.specialNav')"
+        v-if="!get($route, 'meta.specialNav') && userPermissions.viewCompany"
       />
     </div>
     <div

@@ -1,9 +1,9 @@
 import axios from 'axios';
 import assert from 'simple-assert';
 import { get, includes } from 'lodash-es';
-import MerchantStore from '@/store/MerchantStore';
-import UserNotificationsStore from './UserNotificationsStore';
-import UserProfileStore from './UserProfileStore';
+import UserNotificationsStore from '@/store/UserNotificationsStore';
+import UserMerchantStore from '@/store/UserMerchantStore';
+import UserProfileStore from '@/store/UserProfileStore';
 import permissions from '@/schemes/permissionsScheme';
 import { UNAUTHORIZED } from '@/errors';
 
@@ -58,7 +58,7 @@ export default function createUserStore(resources) {
           }
           const { profile, merchant, role } = await dispatch('getMetaProfile');
           dispatch('Profile/initState', profile);
-          dispatch('Merchant/initState', { merchant });
+          dispatch('Merchant/initState', merchant);
           commit('role', role.role);
           commit('isAuthorised', true);
           await dispatch('checkPrimaryOnboardingStep');
@@ -186,14 +186,16 @@ export default function createUserStore(resources) {
         commit('primaryOnboardingStep', 'initial');
         commit('accessToken', '');
         dispatch('Profile/initState', {});
+        dispatch('Merchant/initState', {});
+        dispatch('Notifications/stopWatchForNotifications');
       },
     },
 
     namespaced: true,
 
     modules: {
-      Merchant: MerchantStore(resources),
       Notifications: UserNotificationsStore(resources),
+      Merchant: UserMerchantStore(resources),
       Profile: UserProfileStore(resources),
     },
   };

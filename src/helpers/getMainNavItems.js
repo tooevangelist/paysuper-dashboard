@@ -1,4 +1,4 @@
-export default function getMainNavItems(permissions) {
+export default function getMainNavItems(permissions, { hasDefaultCurrency }) {
   return [
     {
       additional: 'Homepage for main controls',
@@ -6,7 +6,7 @@ export default function getMainNavItems(permissions) {
       link: '/dashboard',
       title: 'Dashboard',
       routeNames: ['Dashboard'],
-      isAvailable: permissions.dashboard,
+      isAvailable: permissions.viewDashboard,
     },
     {
       additional: 'Organise your products for sales',
@@ -15,7 +15,7 @@ export default function getMainNavItems(permissions) {
       link: '/projects',
       title: 'Projects',
       routeNames: ['ProjectsList'],
-      isAvailable: permissions.projects,
+      isAvailable: permissions.viewProjects && hasDefaultCurrency,
     },
     {
       additional: 'Weekly royalty reports',
@@ -23,14 +23,14 @@ export default function getMainNavItems(permissions) {
       link: '/reports',
       title: 'Royalty reports',
       routeNames: ['RoyaltyReportsPage'],
-      isAvailable: permissions.reports,
+      isAvailable: permissions.viewRoyaltyReports,
     },
     {
       additional: 'Need license agreement',
       icon: 'IconCash',
       link: '/payouts',
       title: 'Payouts',
-      isAvailable: permissions.payouts,
+      isAvailable: permissions.viewPayouts,
     },
     {
       additional: 'Full list of customer transactions',
@@ -38,7 +38,7 @@ export default function getMainNavItems(permissions) {
       link: '/transactions',
       title: 'Transaction Search',
       routeNames: ['TransactionsPage'],
-      isAvailable: permissions.transactions,
+      isAvailable: permissions.viewTransactions,
     },
     {
       title: 'Merchants',
@@ -46,7 +46,7 @@ export default function getMainNavItems(permissions) {
       icon: 'IconBlank',
       link: '/merchants',
       routeNames: ['MerchantsList'],
-      isAvailable: permissions.merchants,
+      isAvailable: permissions.viewMerchantsList,
     },
     {
       title: 'Agreement requests',
@@ -54,7 +54,7 @@ export default function getMainNavItems(permissions) {
       icon: 'IconBlank',
       link: '/agreement-requests',
       routeNames: ['AgreementRequestsList'],
-      isAvailable: permissions.merchants,
+      isAvailable: permissions.viewMerchantsList,
     },
     {
       additional: 'Technical integrations',

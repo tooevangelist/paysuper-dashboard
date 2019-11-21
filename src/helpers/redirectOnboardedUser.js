@@ -6,7 +6,7 @@ export default function redirectOnboardedUser(redirect, userPermissions) {
     if (userPermissions.viewProjects) {
       return redirect({ name: 'ProjectsList' });
     }
-    if (userPermissions.viewMerchants) {
+    if (userPermissions.viewMerchantsList) {
       return redirect({ name: 'MerchantsList' });
     }
   }

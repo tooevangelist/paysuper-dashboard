@@ -1,33 +1,64 @@
+const merchantPermissions = {
+  editCompany: false, // Редактирование данных компании
+  viewCompany: false, // Просмотр данных компании
+  signing: false, // Подписание договора с компанией
+  inviteProjectUsers: false, // Приглашение новых пользователей в проект и изменение их прав
+  viewProjectUsers: false, // Просмотр пользователей проекта
+  createProjects: false, // Создание проектов
+  editProjects: false, // Редактирование проектов
+  viewProjects: false, // Просмотр проектов
+  createPaylinks: false, // Создание платежных ссылок
+  viewPaylinks: false, // Просмотр платежных ссылок
+  viewUsers: false, // Просмотр данных пользователей
+  viewTransactions: false, // Просмотр списка транзакций
+  cancelTransactions: false, // Отмена транзакции
+  viewRoyaltyReports: false, // Просмотр роялти отчетов
+  acceptRoyaltyReports: false, // Согласование роялти отчетов
+  viewPayouts: false, // Просмотр отчетов о выплате
+  createPayouts: false, // Инициация выплаты
+  exportPayouts: false, // Экспорт отчетов
+  viewDashboard: false, // Просмотр данных дашборда
+  viewDisputs: false, // Просмотр диспутов
+  resolveDisputs: false, // Резолюция диспутов
+  viewNotifications: false, // Получать и просматривать нотификации
+};
+
+const adminPermissions = {
+  assignNewMerchantOwner: false, // Назначить нового владельца у мерчанта
+  inviteProjectUsers: false, // Приглашение новых пользователей в проект
+  viewProjectUsers: false, // Просмотр пользователей проекта
+  viewMerchantsList: false, // Просмотр списка компаний
+  viewMerchants: false, // Просмотр деталей компании
+  editMerchants: false, // Редактирование компании
+  approveAgreements: false, // Согласование договора
+  viewCompanyProjects: false, // Просмотр проектов компании
+  editCompanyProjects: false, // Редактирование проектов компании
+  viewUserData: false, // Просмотр данных пользователей
+  editUserData: false, // Редактирование данных пользователей
+  viewPaylinks: false, // Просмотр платежных ссылок
+  editPaylinks: false, // Редактирование платежных ссылок
+  manageTaxReports: false, // Просмотр и загрузка данных налоговых отчетов
+  viewTransactions: false, // Просмотр информации о транзакциях
+  viewRoyaltyReports: false, // Просмотр роялти отчетов
+  viewRoyaltyReportsEditHistory: false, // Получение информации о коррекции роялти отчетов
+  viewPayouts: false, // Просмотр отчетов о выплате
+  exportPayouts: false, // Экспорт отчетов
+};
+
+
 export default {
-  merchant_owner: {
-    editCompany: true, // Редактирование данных компании
-    viewCompany: true, // Просмотр данных компании
-    signing: true, // Подписание договора с компанией
-    inviteProjectUsers: true, // Приглашение новых пользователей в проект и изменение их прав
-    viewProjectUsers: true, // Просмотр пользователей проекта
-    createProjects: true, // Создание проектов
-    editProjects: true, // Редактирование проектов
-    viewProjects: true, // Просмотр проектов
-    createPaylinks: true, // Создание платежных ссылок
-    viewPaylinks: true, // Просмотр платежных ссылок
-    viewUsers: true, // Просмотр данных пользователей
-    viewTransactions: true, // Просмотр списка транзакций
-    cancelTransactions: true, // Отмена транзакции
-    viewRoyaltyReports: true, // Просмотр роялти отчетов
-    acceptRoyaltyReports: true, // Согласование роялти отчетов
-    viewPayouts: true, // Просмотр отчетов о выплате
-    createPayouts: true, // Инициация выплаты
-    exportPayouts: true, // Экспорт отчетов
-    viewDashboard: true, // Просмотр данных дашборда
-    viewDisputs: true, // Просмотр диспутов
-    resolveDisputs: true, // Резолюция диспутов
-    viewMerchants: false, // Видеть других мерчантов
+  system_admin: {
+    ...adminPermissions,
+    viewMerchantsList: true,
+    viewMerchants: true,
+    editMerchants: true,
   },
-  merchant_developer: {
-    editCompany: false,
+  merchant_owner: {
+    ...merchantPermissions,
+    editCompany: true,
     viewCompany: true,
-    signing: false,
-    inviteProjectUsers: false,
+    signing: true,
+    inviteProjectUsers: true,
     viewProjectUsers: true,
     createProjects: true,
     editProjects: true,
@@ -38,133 +69,62 @@ export default {
     viewTransactions: true,
     cancelTransactions: true,
     viewRoyaltyReports: true,
-    acceptRoyaltyReports: false,
-    viewPayouts: false,
-    createPayouts: false,
+    acceptRoyaltyReports: true,
+    viewPayouts: true,
+    createPayouts: true,
     exportPayouts: true,
     viewDashboard: true,
     viewDisputs: true,
-    resolveDisputs: false,
-    viewMerchants: false,
+    resolveDisputs: true,
+    viewNotifications: true,
+  },
+  merchant_developer: {
+    ...merchantPermissions,
+    viewCompany: true,
+    viewProjectUsers: true,
+    createProjects: true,
+    editProjects: true,
+    viewProjects: true,
+    createPaylinks: true,
+    viewPaylinks: true,
+    viewUsers: true,
+    viewTransactions: true,
+    cancelTransactions: true,
+    viewRoyaltyReports: true,
+    exportPayouts: true,
+    viewDashboard: true,
+    viewDisputs: true,
   },
   merchant_accounting: {
-    editCompany: false,
+    ...merchantPermissions,
     viewCompany: true,
-    signing: false,
-    inviteProjectUsers: false,
     viewProjectUsers: true,
-    createProjects: false,
-    editProjects: false,
     viewProjects: true,
-    createPaylinks: false,
     viewPaylinks: true,
-    viewUsers: false,
     viewTransactions: true,
-    cancelTransactions: false,
     viewRoyaltyReports: true,
     acceptRoyaltyReports: true,
     viewPayouts: true,
     createPayouts: true,
     exportPayouts: true,
     viewDashboard: true,
-    viewDisputs: false,
-    resolveDisputs: false,
-    viewMerchants: false,
   },
   merchant_support: {
-    editCompany: false,
-    viewCompany: false,
-    signing: false,
-    inviteProjectUsers: false,
+    ...merchantPermissions,
     viewProjectUsers: true,
-    createProjects: false,
-    editProjects: false,
     viewProjects: true,
-    createPaylinks: false,
-    viewPaylinks: false,
     viewUsers: true,
     viewTransactions: true,
     cancelTransactions: true,
-    viewRoyaltyReports: false,
-    acceptRoyaltyReports: false,
-    viewPayouts: false,
-    createPayouts: false,
     exportPayouts: true,
-    viewDashboard: false,
     viewDisputs: true,
     resolveDisputs: true,
-    viewMerchants: false,
   },
   merchant_view_only: {
-    editCompany: false,
-    viewCompany: false,
-    signing: false,
-    inviteProjectUsers: false,
-    viewProjectUsers: false,
-    createProjects: false,
-    editProjects: false,
+    ...merchantPermissions,
     viewProjects: true,
-    createPaylinks: false,
     viewPaylinks: true,
-    viewUsers: false,
     viewTransactions: true,
-    cancelTransactions: false,
-    viewRoyaltyReports: false,
-    acceptRoyaltyReports: false,
-    viewPayouts: false,
-    createPayouts: false,
-    exportPayouts: false,
-    viewDashboard: false,
-    viewDisputs: false,
-    resolveDisputs: false,
-    viewMerchants: false,
   },
-  system_admin: {
-    editCompany: false,
-    viewCompany: false,
-    signing: false,
-    inviteProjectUsers: false,
-    viewProjectUsers: false,
-    createProjects: false,
-    editProjects: false,
-    viewProjects: false,
-    createPaylinks: false,
-    viewPaylinks: false,
-    viewUsers: false,
-    viewTransactions: false,
-    cancelTransactions: false,
-    viewRoyaltyReports: false,
-    acceptRoyaltyReports: false,
-    viewPayouts: false,
-    createPayouts: false,
-    exportPayouts: false,
-    viewDashboard: false,
-    viewDisputs: false,
-    resolveDisputs: false,
-    viewMerchants: true,
-  },
-  newbie: {
-    editCompany: false,
-    viewCompany: false,
-    signing: false,
-    inviteProjectUsers: false,
-    viewProjectUsers: false,
-    createProjects: false,
-    editProjects: false,
-    viewProjects: false,
-    createPaylinks: false,
-    viewPaylinks: false,
-    viewUsers: false,
-    viewTransactions: false,
-    cancelTransactions: false,
-    viewRoyaltyReports: false,
-    acceptRoyaltyReports: false,
-    viewPayouts: false,
-    createPayouts: false,
-    exportPayouts: false,
-    viewDashboard: false,
-    viewDisputs: false,
-    resolveDisputs: false,
-    viewMerchants: false,
-  },
+  newbie: {},
 };
