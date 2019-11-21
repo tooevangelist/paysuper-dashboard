@@ -239,7 +239,7 @@ const routes = [
         meta: {
           layout: 'Layout',
           isAuthRequired: true,
-          permission: 'viewProjectUsers',
+          permission: 'inviteProjectUsers',
           topControls: () => import('@/components/LayoutTopControlsSettings.vue'),
         },
         name: 'MerchantUserRoles',
@@ -250,7 +250,7 @@ const routes = [
         meta: {
           layout: 'Layout',
           isAuthRequired: true,
-          permission: 'viewProjectUsers',
+          permission: 'inviteProjectUsers',
           topControls: () => import('@/components/LayoutTopControlsSettings.vue'),
         },
         name: 'MerchantUserPage',
