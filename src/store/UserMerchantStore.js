@@ -165,16 +165,16 @@ export default function createMerchantStore() {
     },
 
     actions: {
-      async initState({ commit, dispatch, rootGetters }, merchant) {
+      async initState({ commit, dispatch }, merchant) {
         commit('merchant', mapDataApiToForm(merchant));
-        if (rootGetters['User/userPermissions'].viewDashboard) {
-          await dispatch('fetchMerchantStatus');
-        }
+        await dispatch('fetchMerchantStatus');
       },
 
-      async fetchMerchantStatus({ state, commit, rootState }) {
+      async fetchMerchantStatus({
+        state, commit, rootState, rootGetters,
+      }) {
         let result = {};
-        if (state.merchant.id) {
+        if (state.merchant.id && rootGetters['User/userPermissions'].viewDashboard) {
           const response = await axios.get(
             `${rootState.config.apiUrl}/admin/api/v1/merchants/status`,
           ).catch((error) => {

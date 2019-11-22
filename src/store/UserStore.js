@@ -57,10 +57,10 @@ export default function createUserStore(resources) {
             await dispatch('refreshToken').catch(() => { throw UNAUTHORIZED; });
           }
           const { profile, merchant, role } = await dispatch('getMetaProfile');
-          dispatch('Profile/initState', profile);
-          dispatch('Merchant/initState', merchant);
           commit('role', role.role);
           commit('isAuthorised', true);
+          dispatch('Profile/initState', profile);
+          dispatch('Merchant/initState', merchant);
           await dispatch('checkPrimaryOnboardingStep');
 
           dispatch('Notifications/initState');
