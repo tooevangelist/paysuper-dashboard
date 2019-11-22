@@ -48,7 +48,7 @@ export default {
           icon: 'IconSettings',
           url: `${baseUrl}/settings/`,
           routeNames: ['ProjectSettings'],
-          available: this.userPermissions.editProjects,
+          available: true,
         },
 
         // {

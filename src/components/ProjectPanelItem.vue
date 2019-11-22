@@ -54,6 +54,7 @@ export default {
 <div class="project-panel-item" :class="{ '_no-image': !image }">
   <span
     class="menu-opener-holder"
+    v-if="userPermissions.editProjects"
   >
     <span
       class="menu-opener"
@@ -63,7 +64,7 @@ export default {
     >
       <IconThreeVerticalDots />
     </span>
-    <span class="menu-tip-holder" v-if="userPermissions.editProjects">
+    <span class="menu-tip-holder">
       <UiTip
         innerPosition="left"
         position="bottom"

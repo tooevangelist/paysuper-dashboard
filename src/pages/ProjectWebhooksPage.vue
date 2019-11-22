@@ -153,6 +153,7 @@ export default {
 
       <KeyGenerateField
         label="Secret key"
+        :disabled="viewOnly"
         v-model="projectLocal.secret_key"
         v-bind="$getValidatedFieldProps('projectLocal.secret_key')"
       />

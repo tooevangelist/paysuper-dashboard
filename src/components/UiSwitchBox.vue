@@ -90,6 +90,10 @@ $checked-switch-color: #2fa84f;
   position: relative;
   cursor: pointer;
   align-items: center;
+
+  &._disabled {
+    cursor: default;
+  }
 }
 .input {
   height: 0;

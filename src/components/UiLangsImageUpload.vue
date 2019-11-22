@@ -38,6 +38,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     errorText: {
       default: '',
       type: String,
@@ -81,6 +85,7 @@ export default {
     v-bind="{ title, description, uploadImage, hasError, errorText }"
     v-model="value.en"
     :tag="isLocalizationEnabled ? 'EN' : ''"
+    :disabled="disabled"
     @change="updateValue('en', $event)"
   />
 
@@ -102,6 +107,7 @@ export default {
         description="File-fomat is the same as for the main one"
         :key="lang"
         :tag="lang.toUpperCase()"
+        :disabled="disabled"
         @change="updateValue(lang, $event)"
       />
     </template>

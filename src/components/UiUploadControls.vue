@@ -11,6 +11,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
 };
 </script>
@@ -18,6 +22,7 @@ export default {
 <template>
 <div
   class="ui-upload-controls"
+  :class="{'_disabled': disabled}"
   @click="$emit('click', $event)"
 >
   <span
@@ -53,6 +58,15 @@ export default {
 
   & > svg {
     margin: 0 8px 0 0;
+  }
+
+  .ui-upload-controls._disabled & {
+    color: #c6cacc;
+    cursor: default;
+
+    & > svg {
+      fill: #c6cacc;
+    }
   }
 }
 

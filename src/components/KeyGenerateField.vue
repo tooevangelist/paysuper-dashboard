@@ -23,6 +23,10 @@ export default {
       type: [String, Number],
       default: '',
     },
+    disabled: {
+      default: false,
+      type: Boolean,
+    },
     errorText: {
       default: '',
       type: String,
@@ -46,6 +50,9 @@ export default {
 
   methods: {
     generateKey() {
+      if (this.disabled) {
+        return;
+      }
       const value = randomString({
         length: 15,
         special: true,
@@ -70,7 +77,7 @@ export default {
 <template>
 <div
   class="key-generate-field"
-  :class="{ '_error': isVisibleError }"
+  :class="{ '_error': isVisibleError, '_disabled': disabled }"
 >
   <div
     class="title"
@@ -97,9 +104,9 @@ export default {
       <input
         class="input"
         type="text"
-        placeholder="Search"
         ref="input"
         :value="value"
+        :disabled="disabled"
         @blur="$emit('blur')"
         @focus="$emit('focus')"
         @input="$emit('input', $event.target.value)"
@@ -181,6 +188,14 @@ $hover-background-color: #e6efff;
   box-sizing: border-box;
   border-radius: 4px;
   margin-right: 4px;
+
+  .key-generate-field._disabled & {
+    cursor: default;
+
+    & > svg {
+      fill: #c6cacc;
+    }
+  }
 }
 
 .input-holder {
@@ -203,9 +218,15 @@ $hover-background-color: #e6efff;
   line-height: 20px;
   color: #000000;
   flex-grow: 1;
+  background: #fff;
 
   &::placeholder {
     color: #c6cacc;
+  }
+
+  .key-generate-field._disabled & {
+    pointer-events: none;
+    color: #5e6366;
   }
 }
 

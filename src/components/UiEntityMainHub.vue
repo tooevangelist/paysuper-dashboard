@@ -19,6 +19,10 @@ export default {
       type: String,
       required: true,
     },
+    disabled: {
+      default: false,
+      type: Boolean,
+    },
   },
 
   computed: {
@@ -43,6 +47,7 @@ export default {
   <div class="title">{{ label }}</div>
   <div>
     <button
+      v-if="!disabled"
       class="add-button"
       @click="$emit('add')"
     >
