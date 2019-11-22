@@ -9,6 +9,11 @@ export default {
     ...mapGetters('User/Merchant', ['isOnboardingStepsComplete']),
     ...mapGetters('Company/LicenseAgreement', ['isSigendYou', 'isSigendPS']),
     ...mapState('Company/LicenseAgreement', ['document', 'agreement', 'signature']),
+    ...mapGetters('User', ['userPermissions']),
+
+    viewOnly() {
+      return !this.userPermissions.editCompany;
+    },
 
     isCheckingAgreement() {
       return this.isSigendYou && !this.isSigendPS;
@@ -110,7 +115,7 @@ export default {
   </div>
 
   <UiButton
-    v-if="(!isSigendYou || !isSigendPS)"
+    v-if="(!isSigendYou || !isSigendPS) && !viewOnly"
     class="submit"
     :disabled="isSigendYou || !signature"
     @click="openLicense"

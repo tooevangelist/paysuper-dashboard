@@ -3,11 +3,9 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import { get, debounce } from 'lodash-es';
 import { maxLength, required, url } from 'vuelidate/lib/validators';
 import { onlyRusAndLat, onlyRusAndLatAndNum } from '@/helpers/customValidators';
-import Notifications from '@/mixins/Notifications';
 
 export default {
   name: 'AccountInfo',
-  mixins: [Notifications],
   validations: {
     accountInfo: {
       address: { maxLength: maxLength(100), required },
@@ -35,6 +33,11 @@ export default {
     ...mapGetters('Dictionaries', ['countries', 'cities']),
     ...mapGetters('Company/AccountInfo', ['accountInfo']),
     ...mapState('User/Merchant', ['merchant']),
+    ...mapGetters('User', ['userPermissions']),
+
+    viewOnly() {
+      return !this.userPermissions.editCompany;
+    },
 
     status() {
       return this.merchant.status;
@@ -45,7 +48,7 @@ export default {
     try {
       await this.initState();
     } catch (error) {
-      this.$_Notifications_showErrorMessage(error);
+      this.$showErrorMessage(error);
     }
   },
   methods: {
@@ -75,7 +78,7 @@ export default {
             this.$emit('hasSubmit');
           }
         } catch (error) {
-          this.$_Notifications_showErrorMessage(get(error, 'response.data.details'));
+          this.$showErrorMessage(get(error, 'response.data.details'));
         }
       }
     },
@@ -96,6 +99,7 @@ export default {
       v-bind="$getValidatedFieldProps('accountInfo.name')"
       label="Legal name"
       :value="accountInfo.name"
+      :disabled="viewOnly"
       @input="updateField('name', $event)"
       @blur="$v.accountInfo.name.$touch()"
     />
@@ -104,6 +108,7 @@ export default {
       label="Website"
       :value="accountInfo.website"
       :autocompleteUrlProtocol="true"
+      :disabled="viewOnly"
       @input="updateField('website', $event)"
       @blur="$v.accountInfo.website.$touch()"
       />
@@ -111,6 +116,7 @@ export default {
       v-bind="$getValidatedFieldProps('accountInfo.alternativeName')"
       label="Operating name"
       :value="accountInfo.alternativeName"
+      :disabled="viewOnly"
       @input="updateField('alternativeName', $event)"
       @blur="$v.accountInfo.alternativeName.$touch()"
     />
@@ -118,6 +124,7 @@ export default {
       v-bind="$getValidatedFieldProps('accountInfo.registrationNumber')"
       label="Registration number"
       :value="accountInfo.registrationNumber"
+      :disabled="viewOnly"
       @input="updateField('registrationNumber', $event)"
       @blur="$v.accountInfo.registrationNumber.$touch()"
     />
@@ -126,6 +133,7 @@ export default {
       label="VAT number (EU)"
       :value="accountInfo.taxId"
       :required="false"
+      :disabled="viewOnly"
       @input="updateField('taxId', $event)"
       @blur="$v.accountInfo.taxId.$touch()"
     />
@@ -144,6 +152,7 @@ export default {
       label="Country"
       :options="countries"
       :value="accountInfo.country"
+      :disabled="viewOnly"
       @input="updateField('country', $event)"
       @blur="$v.accountInfo.country.$touch()"
     />
@@ -152,6 +161,7 @@ export default {
       label="State / Province / Region"
       :value="accountInfo.state"
       :required="false"
+      :disabled="viewOnly"
       @input="updateField('state', $event)"
       @blur="$v.accountInfo.state.$touch()"
     />
@@ -165,12 +175,13 @@ export default {
       @blur="$v.accountInfo.city.$touch()"
       :resultsAutocomplete="cities"
       :isLoading="isLoadingCities"
-      :disabled="!accountInfo.country"
+      :disabled="viewOnly || !accountInfo.country"
     />
     <UiTextField
       v-bind="$getValidatedFieldProps('accountInfo.zip')"
       label="Zip Code"
       :value="accountInfo.zip"
+      :disabled="viewOnly"
       @input="updateField('zip', $event)"
       @blur="$v.accountInfo.zip.$touch()"
     />
@@ -178,6 +189,7 @@ export default {
       v-bind="$getValidatedFieldProps('accountInfo.address')"
       label="Address 1"
       :value="accountInfo.address"
+      :disabled="viewOnly"
       @input="updateField('address', $event)"
       @blur="$v.accountInfo.address.$touch()"
     />
@@ -186,12 +198,14 @@ export default {
       label="Address 2"
       :value="accountInfo.addressAdditional"
       :required="false"
+      :disabled="viewOnly"
       @input="updateField('addressAdditional', $event)"
       @blur="$v.accountInfo.addressAdditional.$touch()"
     />
   </div>
 
   <UiButton
+    v-if="!viewOnly"
     class="submit"
     :disabled="$v.accountInfo.$invalid || status !== 0"
     @click="submit"

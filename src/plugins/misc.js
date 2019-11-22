@@ -3,8 +3,12 @@ import { extend } from 'lodash-es';
 import { format } from 'date-fns';
 import { showSuccessMessage, showErrorMessage } from '@/helpers/notifications';
 
-function $navigate(path, query = {}) {
-  this.$router.push({ path, query });
+function $navigate(pathOrOptions, query = {}) {
+  if (typeof pathOrOptions === 'string') {
+    this.$router.push({ path: pathOrOptions, query });
+  } else {
+    this.$router.push(pathOrOptions);
+  }
 }
 
 function $formatPrice(value, currency) {

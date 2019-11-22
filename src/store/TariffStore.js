@@ -140,8 +140,12 @@ export default function createTariffStore() {
         }
       },
       async submitTariffs({ dispatch, state }, merchantId) {
+        const path = merchantId
+          ? `/system/api/v1/merchants/${merchantId}/tariffs`
+          : '/admin/api/v1/merchants/tariffs';
+
         const response = await axios.post(
-          `{apiUrl}/admin/api/v1/merchants/${merchantId}/tariffs`,
+          `{apiUrl}${path}`,
           {
             home_region: state.region,
             merchant_operations_type: state.operationsType,

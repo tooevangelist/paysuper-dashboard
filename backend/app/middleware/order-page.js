@@ -40,7 +40,7 @@ function getOrderParams({
 
 async function getOrderId(apiUrl, orderParams) {
   const { data } = await axios.post(
-    `${apiUrl}/api/v1/order`,
+    `${apiUrl}/order`,
     orderParams,
   );
   return data.id;
@@ -50,7 +50,7 @@ async function getOrderData(apiUrl, orderId, {
   ip, userCookie, acceptLanguage, referer,
 }) {
   const { data } = await axios.get(
-    `${apiUrl}/api/v1/order/${orderId}`,
+    `${apiUrl}/order/${orderId}`,
     {
       headers: {
         'Accept-Language': acceptLanguage,
@@ -83,7 +83,7 @@ module.exports = async function orderPage(ctx) {
   const referer = ctx.get('referer');
 
   const [host] = ctx.request.host.split(':');
-  const sdkUrl = isDev ? `http://${host}:4040/paysuper-form.js` : config.paysuperSdkUrl;
+  const formUrl = isDev ? `http://${host}:4040/paysuper-form.js` : config.paysuperSdkUrl;
 
   if (query.debug) {
     return {
@@ -110,7 +110,7 @@ module.exports = async function orderPage(ctx) {
           layout: 'loading',
         },
       }),
-      sdkUrl,
+      formUrl,
     });
   }
 
@@ -151,6 +151,6 @@ module.exports = async function orderPage(ctx) {
         ...(isDev && query.modal ? { layout: 'modal' } : {}),
       },
     }),
-    sdkUrl,
+    formUrl,
   });
 };

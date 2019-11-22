@@ -1,4 +1,5 @@
 <script>
+import { mapState } from 'vuex';
 import LocaleSwitcher from '@/components/LocaleSwitcher.vue';
 
 export default {
@@ -7,6 +8,10 @@ export default {
   components: {
     LocaleSwitcher,
   },
+
+  computed: {
+    ...mapState('User', ['isAuthorised']),
+  },
 };
 </script>
 
@@ -14,7 +19,16 @@ export default {
 <div class="template-page-shallow">
   <div class="header">
     <h1 class="title">Pay Super</h1>
-    <LocaleSwitcher />
+    <div class="menu">
+      <RouterLink
+        v-if="isAuthorised"
+        to="/logout"
+        title="Log out"
+      >
+        <IconLogoutShallow class="logout" />
+      </RouterLink>
+      <LocaleSwitcher />
+    </div>
   </div>
   <main class="content">
     <slot></slot>
@@ -71,6 +85,23 @@ export default {
   line-height: 24px;
   color: #000000;
   font-family: "Quicksand", sans-serif;
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+}
+
+.logout {
+  fill: #363636;
+  margin-right: 18px;
+  margin-top: -2px;
+  cursor: pointer;
+  vertical-align: middle;
+
+  &:hover {
+    fill: #3d7bf5;
+  }
 }
 
 .content {

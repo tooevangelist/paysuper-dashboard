@@ -1,5 +1,5 @@
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import { cloneDeep } from 'lodash-es';
 import { required, maxLength, url } from 'vuelidate/lib/validators';
 
@@ -14,6 +14,11 @@ export default {
 
   computed: {
     ...mapState('Project', ['project']),
+    ...mapGetters('User', ['userPermissions']),
+
+    viewOnly() {
+      return !this.userPermissions.editProjects;
+    },
   },
 
   validations: {
@@ -77,17 +82,19 @@ export default {
     <UiTextField
       label="Payment success redirect URL"
       :autocompleteUrlProtocol="true"
+      :disabled="viewOnly"
       v-model="projectLocal.url_redirect_success"
       v-bind="$getValidatedFieldProps('projectLocal.url_redirect_success')"
     />
     <UiTextField
       label="Payment fail redirect URL"
       :autocompleteUrlProtocol="true"
+      :disabled="viewOnly"
       v-model="projectLocal.url_redirect_fail"
       v-bind="$getValidatedFieldProps('projectLocal.url_redirect_fail')"
     />
 
-    <div class="controls">
+    <div class="controls" v-if="!viewOnly">
       <UiButton
         class="submit-button"
         text="SAVE"

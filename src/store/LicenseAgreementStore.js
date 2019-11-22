@@ -39,9 +39,6 @@ export default function createLicenseAgreementStore() {
       status(state, getter, rootState) {
         return rootState.User.Merchant.merchant.status;
       },
-      merchantId(state, getter, rootState) {
-        return rootState.User.Merchant.merchant.id;
-      },
       centrifugoToken(state, getter, rootState) {
         return rootState.User.Merchant.merchant.centrifugo_token;
       },
@@ -90,11 +87,11 @@ export default function createLicenseAgreementStore() {
         }
       },
       async fetchAgreementSignature({ commit, getters }, isOnboardingStepsComplete) {
-        const { merchantId, isUsingHellosign } = getters;
+        const { isUsingHellosign } = getters;
 
-        if (merchantId && isOnboardingStepsComplete && isUsingHellosign) {
+        if (isOnboardingStepsComplete && isUsingHellosign) {
           const response = await axios.put(
-            `{apiUrl}/admin/api/v1/merchants/${merchantId}/agreement/signature`,
+            '{apiUrl}/admin/api/v1/merchants/agreement/signature',
             { signer_type: 0 },
           );
 
@@ -102,11 +99,11 @@ export default function createLicenseAgreementStore() {
         }
       },
       async fetchAgreementMetadata({ commit, getters }, isOnboardingStepsComplete) {
-        const { merchantId, status } = getters;
+        const { status } = getters;
 
-        if (merchantId && isOnboardingStepsComplete && status) {
+        if (isOnboardingStepsComplete && status) {
           const response = await axios.get(
-            `{apiUrl}/admin/api/v1/merchants/${merchantId}/agreement`,
+            '{apiUrl}/admin/api/v1/merchants/agreement',
           );
           const agreement = get(response, 'data', getDefaultAgreementDocument());
 

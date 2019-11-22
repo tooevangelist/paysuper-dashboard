@@ -22,6 +22,11 @@ export default {
     ...mapGetters('Company/BankingInfo', ['bankingInfo']),
     ...mapState('Company/Tariff', ['currency']),
     ...mapState('User/Merchant', ['merchant']),
+    ...mapGetters('User', ['userPermissions']),
+
+    viewOnly() {
+      return !this.userPermissions.editCompany;
+    },
 
     status() {
       return this.merchant.status;
@@ -71,6 +76,7 @@ export default {
       v-bind="$getValidatedFieldProps('bankingInfo.swift')"
       label="SWIFT"
       :value="bankingInfo.swift"
+      :disabled="viewOnly"
       @input="updateField('swift', $event)"
       @blur="$v.bankingInfo.swift.$touch()"
     />
@@ -79,6 +85,7 @@ export default {
       label="Account Currency"
       :options="currenciesThreeLetters"
       :value="bankingInfo.currency"
+      :disabled="viewOnly"
       @input="updateField('currency', $event)"
       @blur="$v.bankingInfo.currency.$touch()"
     />
@@ -86,6 +93,7 @@ export default {
       v-bind="$getValidatedFieldProps('bankingInfo.accountNumber')"
       label="IBAN"
       :value="bankingInfo.accountNumber"
+      :disabled="viewOnly"
       @input="updateField('accountNumber', $event)"
       @blur="$v.bankingInfo.accountNumber.$touch()"
     />
@@ -93,6 +101,7 @@ export default {
       v-bind="$getValidatedFieldProps('bankingInfo.name')"
       label="Bank name"
       :value="bankingInfo.name"
+      :disabled="viewOnly"
       @input="updateField('name', $event)"
       @blur="$v.bankingInfo.name.$touch()"
     />
@@ -100,6 +109,7 @@ export default {
       v-bind="$getValidatedFieldProps('bankingInfo.address')"
       label="Bank address"
       :value="bankingInfo.address"
+      :disabled="viewOnly"
       @input="updateField('address', $event)"
       @blur="$v.bankingInfo.address.$touch()"
     />
@@ -107,6 +117,7 @@ export default {
       v-bind="$getValidatedFieldProps('bankingInfo.correspondentAccount')"
       label="Correspondent bank account"
       :required="false"
+      :disabled="viewOnly"
       :value="bankingInfo.correspondentAccount"
       @input="updateField('correspondentAccount', $event)"
       @blur="$v.bankingInfo.correspondentAccount.$touch()"
@@ -114,6 +125,7 @@ export default {
   </div>
 
   <UiButton
+    v-if="!viewOnly"
     class="submit"
     :disabled="$v.bankingInfo.$invalid || status !== 0"
     @click="submit"

@@ -243,7 +243,7 @@ export default {
 
 .perform {
   &__text {
-    color: #5E6366;
+    color: #5e6366;
     font-size: 14px;
     line-height: 20px;
     margin-bottom: 8px;

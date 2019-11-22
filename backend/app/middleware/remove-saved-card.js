@@ -10,7 +10,7 @@ module.exports = async function removeSavedCard(ctx) {
   const cookie = ctx.cookies.get(userIdentityCookieName);
   try {
     await axios.delete(
-      `${apiUrl}/api/v1/saved_card`,
+      `${apiUrl}/saved_card`,
       {
         data: {
           id,

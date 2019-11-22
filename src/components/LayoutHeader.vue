@@ -1,5 +1,5 @@
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex';
+import { mapState, mapGetters, mapActions } from 'vuex';
 import { directive as clickaway } from 'vue-clickaway';
 import UserNotifications from '@/components/UserNotifications.vue';
 import LeaveFeedbackPopup from '@/components/LeaveFeedbackPopup.vue';
@@ -35,36 +35,34 @@ export default {
       },
       infoItems: [
         {
-          id: 'support', link: 'https://help.pay.super.com/', icon: 'IconSupport', text: 'Support', target: '_blank',
+          id: 'support',
+          url: 'http://help.pay.super.com/',
+          icon: 'IconSupport',
+          text: 'Support',
         },
         {
-          id: 'faq', link: 'https://help.pay.super.com/hc/categories/360002221019', icon: 'IconQuestion', text: 'FAQ', target: '_blank',
+          id: 'faq',
+          url: 'http://help.pay.super.com/hc/categories/360002221019',
+          icon: 'IconQuestion',
+          text: 'FAQ',
         },
         {
-          id: 'documentation', link: 'https://docs.pay.super.com/', icon: 'IconDocumentation', text: 'Documentation', target: '_blank',
+          id: 'documentation',
+          url: 'https://docs.pay.super.com/',
+          icon: 'IconDocumentation',
+          text: 'Documentation',
         },
         {
-          id: 'leaveFeedback', link: '#', icon: 'IconPen', text: 'Leave Feedback', target: '_self',
-        },
-      ],
-      userMenuItems: [
-        {
-          id: 'payoutSettings', link: '#', icon: 'IconCash', text: 'Payout settings', active: false,
-        },
-        {
-          id: 'company', link: '/company/', icon: 'IconCompany', text: 'Company info', active: true,
-        },
-        {
-          id: 'userRoles', link: '/company/', icon: 'IconUsers', text: 'User roles', active: false,
-        },
-        {
-          id: 'logout', link: '/logout/', icon: 'IconLogout', text: 'Log out', active: true,
+          id: 'leaveFeedback',
+          url: '#',
+          icon: 'IconPen',
+          text: 'Leave Feedback',
         },
       ],
     };
   },
   computed: {
-    ...mapState('User', ['role']),
+    ...mapGetters('User', ['userPermissions']),
     ...mapState('User/Merchant', ['merchantStatus']),
     ...mapState('User/Notifications', ['notifications']),
 
@@ -75,12 +73,44 @@ export default {
     newNotificationsCount() {
       return this.notifications.filter(item => item.is_read === false).length;
     },
+
+    userMenuItems() {
+      return [
+        {
+          id: 'payoutSettings',
+          url: '#',
+          icon: 'IconCash',
+          text: 'Payout settings',
+          active: false,
+        },
+        {
+          id: 'company',
+          url: '/company/',
+          icon: 'IconCompany',
+          text: 'Company info',
+          active: this.userPermissions.viewCompany,
+        },
+        {
+          id: 'userRoles',
+          url: '/settings/user-roles/',
+          icon: 'IconUsers',
+          text: 'User roles',
+          active: this.userPermissions.inviteProjectUsers,
+        },
+        {
+          id: 'logout',
+          url: '/logout/',
+          icon: 'IconLogout',
+          text: 'Log out',
+          active: true,
+        },
+      ].filter(item => item.active);
+    },
   },
   methods: {
     ...mapActions(['setIsLoading']),
     ...mapActions('User', ['logout']),
     ...mapActions('User/Notifications', ['markNotificationAsReaded']),
-    ...mapMutations('User', { setRole: 'role' }),
     ...mapActions('LeaveFeedback', ['postFeedback']),
 
     hideInfoBlock() {
@@ -98,14 +128,10 @@ export default {
     notifyToggle() {
       this.hasNotificationsOpened = !this.hasNotificationsOpened;
     },
-    handleInfoBoxItemClick(item) {
+    handleInfoBoxItemClick(event, item) {
       if (item.id === 'leaveFeedback') {
+        event.preventDefault();
         this.toggleLeaveFeedback();
-      }
-    },
-    handleUserMenuClick(item) {
-      if (item.id === 'logout') {
-        this.handleLogoutk();
       }
     },
     toggleLeaveFeedback() {
@@ -182,20 +208,6 @@ export default {
   </div>
 
   <div class="right">
-    <div style="margin-right: 30px;">
-      <span
-        class="role-switch"
-        :class="{ '_current': role === 'merchant' }"
-        @click="setRole('merchant')"
-      >merchant</span>
-      /
-      <span
-        class="role-switch"
-        :class="{ '_current': role === 'admin' }"
-        @click="setRole('admin')"
-      >admin</span>&nbsp;
-      <span style="font-size: 8px;">(It's fake)</span>
-    </div>
     <div style="position: relative">
       <a
         class="feedback"
@@ -237,12 +249,12 @@ export default {
       >
         <div class="info-box">
           <a
+            class="info-item"
             v-for="(item, index) in infoItems"
             :key="index"
-            class="info-item"
-            :href="item.link"
-            :target="item.target"
-            @click="handleInfoBoxItemClick(item)"
+            :href="item.url"
+            target="_blank"
+            @click="handleInfoBoxItemClick($event, item)"
           >
             <component :is="item.icon" class="info-icon" />
             <div class="info-text">{{ item.text }}</div>
@@ -302,21 +314,17 @@ export default {
         :stayOpenedOnHover="false"
       >
         <div class="info-box">
-          <div v-for="(item, index) in userMenuItems" :key="index">
-            <div class="info-line" v-if="item.id === 'logout'"/>
-            <a
-              v-if="item.active"
-              class="info-item"
-              :href="item.link"
-              :id="item.id"
-              @click="handleInfoBoxItemClick(item)"
-            >
-              <component :is="item.icon" class="info-icon" />
-              <div class="info-text">
-                {{ item.text }}
-              </div>
-            </a>
-          </div>
+          <RouterLink
+            v-for="(item, index) in userMenuItems"
+            :key="index"
+            :class="['info-item', { '_logout': item.id === 'logout' }]"
+            :to="item.url"
+          >
+            <component :is="item.icon" class="info-icon" />
+            <div class="info-text">
+              {{ item.text }}
+            </div>
+          </RouterLink>
         </div>
       </UiTip>
     </div>
@@ -459,6 +467,7 @@ export default {
   flex-direction: column;
 }
 .info-item {
+  position: relative;
   display: flex;
   height: 32px;
   background-color: transparent;
@@ -467,14 +476,24 @@ export default {
   transition: background-color 0.2s ease-out, color 0.2s ease-out;
   color: #000;
   cursor: pointer;
+
   &:hover {
     background-color: rgba(#3d7bf5, 0.1);
   }
-}
-.info-line {
-  margin: 8px 0;
-  background: #F1F3F4;
-  height: 1px;
+
+  &:not(:first-child)._logout {
+    margin-top: 17px;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: -9px;
+      left: 0;
+      background: #f1f3f4;
+      height: 1px;
+      width: 100%;
+    }
+  }
 }
 .info-text {
   font-size: 14px;

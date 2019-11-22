@@ -10,45 +10,65 @@ export default {
   },
 
   created() {
+    this.handleInviteToken();
     this.listenToMessages();
   },
 
+  destroyed() {
+    window.removeEventListener('message', this.listenForOwnMessages);
+    window.removeEventListener('message', this.listenForAuthFormMessages);
+  },
+
   methods: {
-    ...mapActions('User', ['initState', 'setAccessToken']),
+    ...mapActions('User', ['initState', 'setAccessToken', 'setInviteToken']),
     listenToMessages() {
-      window.addEventListener('message', async (event) => {
-        if (!event.data || event.data.source !== 'PAYSUPER_MANAGEMENT_SERVER') {
-          return;
-        }
+      window.addEventListener('message', this.listenForOwnMessages);
+      window.addEventListener('message', this.listenForAuthFormMessages);
+    },
 
-        if (event.data.access_token && event.data.success) {
-          this.setAccessToken(event.data.access_token);
-          await this.initState();
-          this.redirectOnSuccessfulAuth();
-        }
+    async listenForOwnMessages(event) {
+      if (!event.data || event.data.source !== 'PAYSUPER_MANAGEMENT_SERVER') {
+        return;
+      }
 
-        if (event.data.error === 'user-already-logged') {
-          this.redirectOnSuccessfulAuth();
-        }
-      });
+      if (event.data.access_token && event.data.success) {
+        this.setAccessToken(event.data.access_token);
+        await this.initState();
+        this.redirectOnSuccessfulAuth();
+      }
 
-      window.addEventListener('message', (event) => {
-        if (event.data && event.data.source !== 'P1_AUTH_FORM') {
-          return;
-        }
-        if (event.data.name === 'formResize') {
-          const { width, height } = event.data.data;
+      if (event.data.error === 'user-already-logged') {
+        this.redirectOnSuccessfulAuth();
+      }
+    },
+
+    listenForAuthFormMessages(event) {
+      if (event.data && event.data.source !== 'P1_AUTH_FORM') {
+        return;
+      }
+      if (event.data.name === 'formResize') {
+        const { width, height } = event.data.data;
+        if (this.$refs.iframe) {
           this.$refs.iframe.setAttribute('width', width);
           this.$refs.iframe.setAttribute('height', height);
         }
-      });
+      }
+    },
+
+    async handleInviteToken() {
+      const { name, query } = this.$route;
+      const { invite_token: inviteToken, ...restQuery } = query;
+      if (inviteToken) {
+        await this.setInviteToken(inviteToken);
+        this.$navigate({ name, query: restQuery });
+      }
     },
 
     redirectOnSuccessfulAuth() {
       if (this.$route.query.redirect) {
         this.$router.push({ path: this.$route.query.redirect });
       } else {
-        this.$router.push({ path: '/dashboard' });
+        this.$router.push({ path: '/' });
       }
     },
   },

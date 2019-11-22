@@ -1,4 +1,4 @@
-export default function getMerchantMainNavItems({ hasDefaultCurrency }) {
+export default function getMainNavItems(permissions, { hasDefaultCurrency }) {
   return [
     {
       additional: 'Homepage for main controls',
@@ -6,7 +6,7 @@ export default function getMerchantMainNavItems({ hasDefaultCurrency }) {
       link: '/dashboard',
       title: 'Dashboard',
       routeNames: ['Dashboard'],
-      isAvailable: true,
+      isAvailable: permissions.viewDashboard,
     },
     {
       additional: 'Organise your products for sales',
@@ -15,7 +15,7 @@ export default function getMerchantMainNavItems({ hasDefaultCurrency }) {
       link: '/projects',
       title: 'Projects',
       routeNames: ['ProjectsList'],
-      isAvailable: hasDefaultCurrency,
+      isAvailable: permissions.viewProjects && hasDefaultCurrency,
     },
     {
       additional: 'Weekly royalty reports',
@@ -23,14 +23,15 @@ export default function getMerchantMainNavItems({ hasDefaultCurrency }) {
       link: '/reports',
       title: 'Royalty reports',
       routeNames: ['RoyaltyReportsPage'],
-      isAvailable: true,
+      isAvailable: permissions.viewRoyaltyReports,
     },
     {
-      additional: 'Need license agreement',
+      additional: 'Cash reports',
       icon: 'IconCash',
       link: '/payouts',
       title: 'Payouts',
-      isAvailable: true,
+      routeNames: ['payouts', 'payoutCard'],
+      isAvailable: permissions.viewPayouts,
     },
     {
       additional: 'Full list of customer transactions',
@@ -38,7 +39,23 @@ export default function getMerchantMainNavItems({ hasDefaultCurrency }) {
       link: '/transactions',
       title: 'Transaction Search',
       routeNames: ['TransactionsPage'],
-      isAvailable: true,
+      isAvailable: permissions.viewTransactions,
+    },
+    {
+      title: 'Merchants',
+      additional: 'Description',
+      icon: 'IconBlank',
+      link: '/merchants',
+      routeNames: ['MerchantsList'],
+      isAvailable: permissions.viewMerchantsList,
+    },
+    {
+      title: 'Agreement requests',
+      additional: 'Description',
+      icon: 'IconBlank',
+      link: '/agreement-requests',
+      routeNames: ['AgreementRequestsList'],
+      isAvailable: permissions.viewMerchantsList,
     },
     {
       additional: 'Technical integrations',

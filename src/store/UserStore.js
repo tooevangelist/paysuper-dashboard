@@ -1,32 +1,43 @@
 import axios from 'axios';
-import MerchantStore from '@/store/MerchantStore';
-import UserNotificationsStore from './UserNotificationsStore';
-import UserProfileStore from './UserProfileStore';
+import assert from 'simple-assert';
+import { get, includes } from 'lodash-es';
+import UserNotificationsStore from '@/store/UserNotificationsStore';
+import UserMerchantStore from '@/store/UserMerchantStore';
+import UserProfileStore from '@/store/UserProfileStore';
+import permissions from '@/schemes/permissionsScheme';
 import { UNAUTHORIZED } from '@/errors';
 
 export default function createUserStore(resources) {
   const accessToken = localStorage.getItem('token') || '';
+  const inviteToken = localStorage.getItem('inviteToken') || '';
   return {
     state: {
       accessToken,
+      inviteToken,
       isAuthorised: false,
-      isEmailConfirmed: false,
-      role: localStorage.getItem('userRole') || 'merchant',
+      primaryOnboardingStep: 'initial',
+      role: 'newbie',
     },
 
     mutations: {
       accessToken(state, value) {
         state.accessToken = value;
       },
+      inviteToken(state, value) {
+        state.inviteToken = value;
+      },
       isAuthorised(state, value) {
         state.isAuthorised = value;
       },
-      isEmailConfirmed(state, value) {
-        state.isEmailConfirmed = value;
+      primaryOnboardingStep(state, value) {
+        assert(
+          includes(['initial', 'profile', 'inviteProfile', 'finished'], value),
+          `invalid primaryOnboardingStep value: ${value}`,
+        );
+        state.primaryOnboardingStep = value;
       },
       role(state, value) {
         state.role = value;
-        localStorage.setItem('userRole', value);
       },
     },
 
@@ -34,33 +45,95 @@ export default function createUserStore(resources) {
       authIframeSrc(state, getters, rootState) {
         return `${rootState.config.ownBackendUrl}/auth1/login`;
       },
+      userPermissions(state) {
+        return permissions[state.role];
+      },
     },
 
     actions: {
       async initState({ state, commit, dispatch }) {
         try {
           if (!state.accessToken) {
-            await dispatch('refreshToken');
+            await dispatch('refreshToken').catch(() => { throw UNAUTHORIZED; });
           }
-          await Promise.all([
-            dispatch('initUserMerchantData'),
-            dispatch('Profile/initState'),
-          ]);
-          if (state.Profile.profile.email.confirmed) {
-            commit('isEmailConfirmed', true);
-          }
+          const { profile, merchant, role } = await dispatch('getMetaProfile');
+          commit('role', role.role);
+          commit('isAuthorised', true);
+          dispatch('Profile/initState', profile);
+          dispatch('Merchant/initState', merchant);
+          await dispatch('checkPrimaryOnboardingStep');
 
           dispatch('Notifications/initState');
         } catch (error) {
           if (error !== UNAUTHORIZED) {
             console.error(error);
+            resources.notifications.showErrorMessage(
+              'User initialization failed. Please reload the page',
+            );
           }
         }
       },
 
-      async initUserMerchantData({ commit, dispatch }) {
-        await dispatch('Merchant/fetchMerchant');
-        commit('isAuthorised', true);
+      async setInviteToken({ state, commit, dispatch }, token) {
+        localStorage.setItem('inviteToken', token);
+        commit('inviteToken', token);
+        if (state.isAuthorised) {
+          await dispatch('checkPrimaryOnboardingStep');
+        }
+      },
+
+      async checkPrimaryOnboardingStep({ state, commit }) {
+        if (state.Profile.profile.email.confirmed) {
+          commit('primaryOnboardingStep', 'finished');
+          return;
+        }
+        if (!state.inviteToken) {
+          commit('primaryOnboardingStep', 'profile');
+          return;
+        }
+        try {
+          await axios.post('{apiUrl}/api/v1/user/invite/check', {
+            token: state.inviteToken,
+          });
+          commit('primaryOnboardingStep', 'inviteProfile');
+        } catch (error) {
+          commit('primaryOnboardingStep', 'profile');
+          console.error(error);
+        }
+      },
+
+      async approveInvitation({ state, commit }) {
+        await axios.post('{apiUrl}/api/v1/user/invite/approve', {
+          token: state.inviteToken,
+        });
+        localStorage.removeItem('inviteToken');
+        commit('inviteToken', '');
+      },
+
+      async getMetaProfile() {
+        const defaults = {
+          profile: {},
+          merchant: {},
+          role: {
+            role: 'newbie',
+          },
+        };
+        try {
+          const { data } = await axios.get('{apiUrl}/api/v1/user/profile/common');
+          return {
+            ...defaults,
+            ...data,
+          };
+        } catch (error) {
+          const errorCode = get(error, 'response.status');
+          if (errorCode === 404) {
+            return defaults;
+          }
+          if (errorCode === 401) {
+            throw UNAUTHORIZED;
+          }
+          throw error;
+        }
       },
 
       /**
@@ -74,8 +147,8 @@ export default function createUserStore(resources) {
         commit('accessToken', token);
       },
 
-      setEmailConfirmed({ commit }, value) {
-        commit('isEmailConfirmed', value);
+      setPrimaryOnboardingStep({ commit }, value) {
+        commit('primaryOnboardingStep', value);
       },
 
       /**
@@ -110,17 +183,19 @@ export default function createUserStore(resources) {
         } catch { }
         localStorage.removeItem('token');
         commit('isAuthorised', false);
-        commit('isEmailConfirmed', false);
+        commit('primaryOnboardingStep', 'initial');
         commit('accessToken', '');
-        dispatch('Profile/setCurrentStepCode');
+        dispatch('Profile/initState', {});
+        dispatch('Merchant/initState', {});
+        dispatch('Notifications/initState');
       },
     },
 
     namespaced: true,
 
     modules: {
-      Merchant: MerchantStore(resources),
       Notifications: UserNotificationsStore(resources),
+      Merchant: UserMerchantStore(resources),
       Profile: UserProfileStore(resources),
     },
   };

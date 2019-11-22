@@ -40,7 +40,11 @@ export default function createUserRolePageStore() {
           email: user.email,
           role: user.role,
         });
-        commit('user', response.data.user_role);
+        if (response.data.user_role) {
+          commit('user', response.data.user_role);
+        }
+
+        return response.data;
       },
     },
 

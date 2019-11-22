@@ -2,6 +2,7 @@
 import { get } from 'lodash-es';
 import { format } from 'date-fns';
 import { directive as clickaway } from 'vue-clickaway';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'ProjectPanelItem',
@@ -24,6 +25,8 @@ export default {
   },
 
   computed: {
+    ...mapGetters('User', ['userPermissions']),
+
     projectCardUrl() {
       return `/projects/${this.project.id}`;
     },
@@ -60,7 +63,7 @@ export default {
     >
       <IconThreeVerticalDots />
     </span>
-    <span class="menu-tip-holder">
+    <span class="menu-tip-holder" v-if="userPermissions.editProjects">
       <UiTip
         innerPosition="left"
         position="bottom"
@@ -130,7 +133,7 @@ $hover-deactivate-background-color: rgba($hover-deactivate-text-color, 0.08);
   position: relative;
   background: #ffffff;
   box-shadow: 0px 1px 2px rgba(8, 35, 48, 0.1),
-  0px 3px 4px rgba(8, 35, 48, 0.06);
+    0px 3px 4px rgba(8, 35, 48, 0.06);
   border-radius: 12px;
 }
 

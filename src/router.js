@@ -1,9 +1,11 @@
 import VueRouter from 'vue-router';
 import qs from 'qs';
-import { get, kebabCase } from 'lodash-es';
+import { get, kebabCase, find } from 'lodash-es';
 import store from './store/RootStore';
 import resources from './resources';
 import routes from './routes';
+import premissions from './schemes/permissionsScheme';
+import redirectOnboardedUser from '@/helpers/redirectOnboardedUser';
 
 const router = new VueRouter(
   {
@@ -47,13 +49,33 @@ router.beforeResolve(async (to, from, next) => {
     'initState',
     get(to, 'meta.initStore', undefined),
   );
+
   store.dispatch('setPageError', null);
+  const permission = get(to.meta, 'permission', false);
+  if (permission) {
+    const { role } = store.state.User;
+    if (!premissions[role][permission]) {
+      resources.notifications.showErrorMessage('You don\'t have permission to access this page');
+      store.dispatch('setPageError', 403);
+    }
+  }
 
   document.querySelector('#preloader').style.display = 'none';
-  if (to.name === 'Index' && store.state.User.isAuthorised) {
-    return next({
-      name: 'Dashboard',
-    });
+
+  const { primaryOnboardingStep } = store.state.User;
+  if (store.state.User.isAuthorised && to.name !== 'Login' && to.name !== 'Logout') {
+    const primaryOnboardingRoute = find(routes, { meta: { primaryOnboardingStep } });
+    if (primaryOnboardingRoute && primaryOnboardingRoute.name !== to.name) {
+      return next({ name: primaryOnboardingRoute.name });
+    }
+  }
+
+  if (
+    (to.name === 'Index' && store.state.User.isAuthorised)
+    || (get(to, 'meta.primaryOnboardingStep') && primaryOnboardingStep === 'finished')
+  ) {
+    const userPermissions = store.getters['User/userPermissions'];
+    return redirectOnboardedUser(next, userPermissions);
   }
 
   if (to.matched.some(record => record.meta.isAuthRequired)) {
@@ -61,16 +83,6 @@ router.beforeResolve(async (to, from, next) => {
       return next({
         path: '/',
         query: { redirect: to.fullPath },
-      });
-    }
-    if (to.name !== 'UserProfile' && !store.state.User.isEmailConfirmed) {
-      return next({
-        name: 'UserProfile',
-      });
-    }
-    if (to.name === 'UserProfile' && store.state.User.isEmailConfirmed) {
-      return next({
-        name: 'Dashboard',
       });
     }
   }

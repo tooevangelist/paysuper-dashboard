@@ -1,7 +1,8 @@
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapGetters, mapActions } from 'vuex';
 import { cloneDeep } from 'lodash-es';
 import UserProfilePerson from '@/components/UserProfilePerson.vue';
+import redirectOnboardedUser from '@/helpers/redirectOnboardedUser';
 
 export default {
   name: 'UserInviteProfilePage',
@@ -18,6 +19,7 @@ export default {
   },
 
   computed: {
+    ...mapGetters('User', ['userPermissions']),
     ...mapState('User/Profile', ['profile', 'currentStepCode']),
   },
 
@@ -31,6 +33,7 @@ export default {
   },
 
   methods: {
+    ...mapActions('User', ['initState', 'approveInvitation']),
     ...mapActions('User/Profile', ['updateProfile']),
 
     async submitForm() {
@@ -38,9 +41,12 @@ export default {
         await this.updateProfile({
           personal: this.profileLocal.personal,
         });
-        this.$router.push({ name: 'Dashboard' });
+
+        await this.approveInvitation();
+        await this.initState();
+        redirectOnboardedUser(params => this.$navigate(params), this.userPermissions);
       } catch (error) {
-        this.$showErrorMessage(error.message);
+        this.$showErrorMessage(error);
       }
     },
   },

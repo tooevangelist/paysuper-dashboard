@@ -1,5 +1,5 @@
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions, mapGetters } from 'vuex';
 import { required } from 'vuelidate/lib/validators';
 import { get, find } from 'lodash-es';
 import Notifications from '@/mixins/Notifications';
@@ -41,6 +41,11 @@ export default {
       'minimalPayout',
     ]),
     ...mapState('User/Merchant', ['merchant', 'onboardingSteps']),
+    ...mapGetters('User', ['userPermissions']),
+
+    viewOnly() {
+      return !this.userPermissions.editCompany;
+    },
 
     status() {
       return this.merchant.status;
@@ -103,7 +108,7 @@ export default {
 
       if (!this.$v.region.$invalid) {
         try {
-          const hasSubmit = await this.submitTariffs(this.merchant.id);
+          const hasSubmit = await this.submitTariffs();
 
           if (hasSubmit) {
             this.$emit('hasSubmit');
@@ -166,6 +171,7 @@ export default {
         maxHeight="240px"
         :options="amountsOptions"
         :value="amount"
+        :disabled="viewOnly"
         @input="updateAmount($event)"
       />
     </div>
@@ -356,6 +362,7 @@ export default {
   </div>
 
   <UiButton
+    v-if="!viewOnly"
     class="submit"
     color="green"
     :disabled="onboardingSteps.tariff || status !== 0"
@@ -472,7 +479,7 @@ export default {
 }
 .row-indent {
   &::before {
-    content: '';
+    content: "";
     display: table-cell;
     width: 40px;
     border-bottom: 2px solid #e3e5e6;
@@ -519,7 +526,7 @@ export default {
   height: 28px;
   line-height: 28px;
   text-align: center;
-  background: rgba(#DAF5F2, 0.5);
+  background: rgba(#daf5f2, 0.5);
   border-radius: 2px;
   border: 1px solid transparent;
   &-transparent {
@@ -541,5 +548,4 @@ export default {
     margin-top: 12px;
   }
 }
-
 </style>

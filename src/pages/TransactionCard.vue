@@ -1,7 +1,7 @@
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex';
 import {
-  get, find,
+  get, find, isEmpty,
 } from 'lodash-es';
 import { format } from 'date-fns';
 import TransactionPageStore from '@/store/TransactionPageStore';
@@ -47,6 +47,7 @@ export default {
   computed: {
     ...mapState('TransactionPage', ['transaction', 'refunds']),
     ...mapGetters('Dictionaries', ['countries']),
+    ...mapGetters('User', ['userPermissions']),
 
     refundAvailable() {
       const badStatus = [
@@ -55,7 +56,9 @@ export default {
         'rejected',
         'chargeback',
       ];
-      return !badStatus.includes(this.transaction.status);
+      return !badStatus.includes(this.transaction.status)
+        && !this.hasRefund
+        && this.userPermissions.cancelTransactions;
     },
 
     // the refund process has started
@@ -99,7 +102,7 @@ export default {
     },
 
     hasCurrency(value) {
-      if (value === undefined) {
+      if (value === undefined || isEmpty(value) || value.amount === undefined) {
         return false;
       }
       return value.currency !== '';
@@ -121,9 +124,8 @@ export default {
         slot="picture"
         color="blue"
         class="refund-button"
-        v-if="refundAvailable & !hasRefund"
+        v-if="refundAvailable"
         :isTransparent="true"
-        :disabled="hasRefund"
         @click="showRefundModal = true">
         REFUND
       </UiButton>
@@ -276,13 +278,14 @@ export default {
                 transaction.refund_reverse_revenue.currency)}}
               </div>
             </div>
-            <div class="details__item" v-if="transaction.refund !== null">
+            <div class="details__item" v-if="transaction.refund && transaction.refund !== null">
               <div class="details__item--label">Refund reason</div>
               <div class="details__item--info">
                 {{transaction.refund.reason}}
               </div>
             </div>
-            <div class="details__item" v-if="transaction.parent_order !== null">
+            <div class="details__item"
+                 v-if="transaction.parent_order && transaction.parent_order !== null">
               <div class="details__item--label">Original transaction</div>
               <div class="details__item--info">
                 <router-link
@@ -450,76 +453,76 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-  .transaction-page-header{
-    position: relative;
+.transaction-page-header {
+  position: relative;
+}
+
+.refund-button {
+  width: 140px;
+  height: 40px;
+  position: absolute !important;
+  top: 20px;
+  right: 0;
+}
+
+.details {
+  margin-bottom: 32px;
+
+  &.bordered {
+    border-bottom: 1px solid rgba(227, 229, 230, 0.8);
   }
 
-  .refund-button {
-    width: 140px;
-    height: 40px;
-    position: absolute !important;
-    top: 20px;
-    right: 0;
+  &__header {
+    margin-bottom: 16px;
   }
 
-  .details {
+  &__container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  &__column {
+    flex-basis: 50%;
+  }
+
+  &__item {
+    padding: 0 0 20px 12px;
+
+    &--label {
+      color: #5e6366;
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    &--info {
+      color: #000;
+      letter-spacing: 0.44px;
+    }
+  }
+
+  .products {
+    flex-basis: 100%;
+    width: 100%;
+    padding: 0 0 20px 12px;
     margin-bottom: 32px;
 
-    &.bordered {
-      border-bottom: 1px solid rgba(227, 229, 230, .8);
+    &__head {
+      color: #5e6366;
+      font-size: 12px;
+      padding: 0;
+      border-bottom: none;
     }
 
-    &__header {
-      margin-bottom: 16px;
+    &__cell {
+      color: #000;
+      letter-spacing: 0.44px;
+      padding: 10px 0;
+      border-bottom: 1px dashed #c6cacc;
     }
 
-    &__container {
-      display: flex;
-      flex-wrap: wrap;
-    }
-
-    &__column {
-      flex-basis: 50%;
-    }
-
-    &__item {
-      padding: 0 0 20px 12px;
-
-      &--label {
-        color: #5E6366;
-        font-size: 12px;
-        margin-bottom: 5px;
-      }
-
-      &--info {
-        color: #000;
-        letter-spacing: 0.44px;
-      }
-    }
-
-    .products {
-      flex-basis: 100%;
-      width: 100%;
-      padding: 0 0 20px 12px;
-      margin-bottom: 32px;
-
-      &__head {
-        color: #5E6366;
-        font-size: 12px;
-        padding: 0;
-        border-bottom: none;
-      }
-
-      &__cell {
-        color: #000;
-        letter-spacing: 0.44px;
-        padding: 10px 0;
-        border-bottom: 1px dashed #C6CACC;
-      }
-
-      &__shift {
-        padding-left: 5px;
-      }
+    &__shift {
+      padding-left: 5px;
     }
   }
+}
 </style>

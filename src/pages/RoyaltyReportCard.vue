@@ -1,5 +1,5 @@
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState, mapGetters } from 'vuex';
 import { format } from 'date-fns';
 import moment from 'moment';
 import {
@@ -62,6 +62,7 @@ export default {
       'report',
       'transactionsList',
     ]),
+    ...mapGetters('User', ['userPermissions']),
   },
 
   methods: {
@@ -176,7 +177,7 @@ export default {
       </span>
     </UiPageHeaderFrame>
     <div class="report-buttons" v-if="report.status === 'pending'">
-      <span>
+      <span v-if="userPermissions.acceptRoyaltyReports">
         <UiButton
           size="default"
           :isTransparent="true"
@@ -186,7 +187,7 @@ export default {
           Confirm
         </UiButton>
       </span>
-      <span>
+      <span v-if="userPermissions.viewDisputs">
         <UiButton
           size="default"
           :color="`transparent-gray`"
@@ -464,7 +465,7 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.report-page-header{
+.report-page-header {
   position: relative;
 }
 
@@ -500,7 +501,7 @@ export default {
     &:first-child {
       margin-right: 8px;
       & button svg {
-        fill: #3D7BF5;
+        fill: #3d7bf5;
       }
     }
     & button {
@@ -510,7 +511,7 @@ export default {
 }
 
 .transaction-amount {
-  color: aqua
+  color: aqua;
 }
 
 .tabs {
@@ -523,7 +524,7 @@ export default {
   justify-content: space-between;
   align-items: center;
 
-  background-color: #F7F9FA;
+  background-color: #f7f9fa;
   margin: 0 0 24px;
   &__col {
     text-align: center;
@@ -543,7 +544,7 @@ export default {
 .summary-table {
   font-size: 12px;
   .product:nth-child(2n + 1) {
-    background-color: #F7F9FA;
+    background-color: #f7f9fa;
   }
   .ui-table-cell {
     padding-right: 8px;
@@ -589,9 +590,9 @@ export default {
 }
 
 .status-refunded {
-  color: #EA3D2F;
+  color: #ea3d2f;
   &-dot {
-    background: #EA3D2F;
+    background: #ea3d2f;
   }
 }
 
@@ -618,7 +619,7 @@ export default {
     cursor: pointer;
     transition: all 0.2s ease-out;
     & > svg {
-      fill: #78909C;
+      fill: #78909c;
       transition: fill 0.2s ease-out;
     }
 

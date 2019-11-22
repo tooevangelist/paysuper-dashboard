@@ -1,5 +1,5 @@
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState, mapGetters } from 'vuex';
 import { required, maxLength } from 'vuelidate/lib/validators';
 import {
   debounce, get, cloneDeep, find,
@@ -49,6 +49,12 @@ export default {
   computed: {
     ...mapState('Project', ['project', 'defaultCurrency']),
     ...mapState('ProjectVirtualItemPage', ['virtualItem']),
+    ...mapGetters('User', ['userPermissions']),
+
+    viewOnly() {
+      return !this.userPermissions.editProjects;
+    },
+
 
     isNewItem() {
       return this.$route.params.itemId === 'new';
@@ -219,26 +225,35 @@ export default {
     <UiPanel>
       <section class="section">
         <UiImageUpload
+          v-if="!viewOnly"
           class="section"
           title="cover"
           description=".png, .jpg, .jpeg, max size 30Mb, min 200x300px; max 1000x1500px"
           :uploadImage="uploadImage"
           v-model="image"
         />
+        <div
+          class="logo-view-only"
+          v-if="viewOnly && image"
+          :style="{backgroundImage: `url(${image})`}">
+        </div>
         <UiLangTextField
           :langs="project.localizations"
+          :disabled="viewOnly"
           v-model="item.name"
           label="Item name"
           v-bind="$getValidatedFieldProps('item.name.en')"
         />
         <UiLangTextField
           :langs="project.localizations"
+          :disabled="viewOnly"
           v-model="item.description"
           label="Short description"
           v-bind="$getValidatedFieldProps('item.description.en')"
         />
         <UiLangTextField
           :langs="project.localizations"
+          :disabled="viewOnly"
           v-model="item.long_description"
           label="Full description"
           v-bind="$getValidatedFieldProps('item.long_description.en')"
@@ -248,7 +263,7 @@ export default {
           Use SKU to identify this item. Item SKU is unique within parent project.
         </p>
         <UiTextField
-          :disabled="!isNewItem"
+          :disabled="!isNewItem || viewOnly"
           label="SKU"
           v-model="item.sku"
           @input="handleSkuFieldInput"
@@ -273,7 +288,7 @@ export default {
             v-for="option in pricingMethodOptions"
             v-model="item.billing_type"
             :key="option.value"
-            :disabled="checkIsBillingTypeDisabled(option.value)"
+            :disabled="checkIsBillingTypeDisabled(option.value) || viewOnly"
             :value="option.value"
           >
             {{ option.label }}
@@ -287,6 +302,7 @@ export default {
           :currencies="project.currencies"
           :getRecommendedPrices="getRecommendedPrices"
           :defaultCurrency="defaultCurrency"
+          :disabled="viewOnly"
           v-model="item.prices"
         />
         <UiTextField
@@ -294,12 +310,13 @@ export default {
           :label="virtualCurrencyFieldLabel"
           :isNumeric="true"
           :decimalLength="virtualCurrencySellCountType === 'fractional' ? 2 : 0"
+          :disabled="viewOnly"
           v-model="virtualCurrencyPrice"
           v-bind="$getValidatedFieldProps('virtualCurrencyPrice')"
         />
       </section>
 
-      <div class="controls">
+      <div class="controls" v-if="!viewOnly">
         <UiSwitchBox v-model="item.enabled">Enabled</UiSwitchBox>
         <UiButton
           :disabled="$v.item.$invalid"
