@@ -10,5 +10,5 @@ export default function redirectOnboardedUser(redirect, userPermissions) {
       return redirect({ name: 'MerchantsList' });
     }
   }
-  return undefined;
+  return redirect({ name: 'UserHandlingError' });
 }

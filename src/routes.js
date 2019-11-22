@@ -358,6 +358,12 @@ const routes = [
     name: 'UserInviteProfile',
   },
   {
+    path: '/user-handling-error/',
+    component: () => import('@/pages/UserHandlingErrorPage.vue'),
+    meta: { layout: 'PageShallow', isAuthRequired: true },
+    name: 'UserHandlingError',
+  },
+  {
     path: '/sign-up/',
     component: () => import('@/pages/SignUp.vue'),
     meta: { layout: 'PageShallow' },
