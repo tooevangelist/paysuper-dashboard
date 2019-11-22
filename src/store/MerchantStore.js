@@ -177,37 +177,6 @@ export default function createMerchantStore() {
         commit('merchant', mapDataApiToForm(get(response, 'data', {})));
       },
 
-      async fetchMerchantStatus({ commit, state }) {
-        const merchantId = get(state.merchant, 'id', 0);
-
-        if (merchantId) {
-          const response = await axios.get(
-            `{apiUrl}/system/api/v1/merchants/${merchantId}/status`,
-          ).catch((error) => {
-            console.error(error);
-            // A fallback if something REALLY gone wrong. Not useful in normal flow
-            return { data: {} };
-          });
-
-          if (response.data) {
-            const merchantStatus = get(response, 'data.status', 'draft');
-            const stepsCount = get(response, 'data.complete_steps_count', 0);
-
-            commit('onboardingCompleteStepsCount', stepsCount + (merchantStatus === 'life' ? 1 : 0));
-            commit('merchantStatus', merchantStatus);
-            commit(
-              'onboardingSteps',
-              get(response, 'data.steps', {
-                company: false,
-                contacts: false,
-                banking: false,
-                tariff: false,
-              }),
-            );
-          }
-        }
-      },
-
       closeCompleteShown({ commit }) {
         commit('isCompleteShown', false);
       },

@@ -16,7 +16,6 @@ const merchantPermissions = {
   acceptRoyaltyReports: false, // Согласование роялти отчетов
   viewPayouts: false, // Просмотр отчетов о выплате
   createPayouts: false, // Инициация выплаты
-  exportPayouts: false, // Экспорт отчетов
   viewDashboard: false, // Просмотр данных дашборда
   viewDisputs: false, // Просмотр диспутов
   resolveDisputs: false, // Резолюция диспутов
@@ -72,7 +71,6 @@ export default {
     acceptRoyaltyReports: true,
     viewPayouts: true,
     createPayouts: true,
-    exportPayouts: true,
     viewDashboard: true,
     viewDisputs: true,
     resolveDisputs: true,
@@ -91,7 +89,6 @@ export default {
     viewTransactions: true,
     cancelTransactions: true,
     viewRoyaltyReports: true,
-    exportPayouts: true,
     viewDashboard: true,
     viewDisputs: true,
   },
@@ -106,7 +103,6 @@ export default {
     acceptRoyaltyReports: true,
     viewPayouts: true,
     createPayouts: true,
-    exportPayouts: true,
     viewDashboard: true,
   },
   merchant_support: {
@@ -116,7 +112,6 @@ export default {
     viewUsers: true,
     viewTransactions: true,
     cancelTransactions: true,
-    exportPayouts: true,
     viewDisputs: true,
     resolveDisputs: true,
   },

@@ -165,9 +165,11 @@ export default function createMerchantStore() {
     },
 
     actions: {
-      async initState({ commit, dispatch }, merchant) {
+      async initState({ commit, dispatch, rootGetters }, merchant) {
         commit('merchant', mapDataApiToForm(merchant));
-        await dispatch('fetchMerchantStatus');
+        if (rootGetters['User/userPermissions'].viewDashboard) {
+          await dispatch('fetchMerchantStatus');
+        }
       },
 
       async fetchMerchantStatus({ state, commit, rootState }) {
