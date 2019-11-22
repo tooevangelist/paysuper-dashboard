@@ -81,13 +81,13 @@ export default function createProjectsListStore() {
         commit('query', query);
       },
 
-      async fetchCountryTaxes({ state, commit, rootState }) {
+      async fetchCountryTaxes({ state, commit }) {
         const query = qs.stringify({
           ...state.apiQuery,
         }, { arrayFormat: 'brackets' });
 
         const { data } = await axios.get(
-          `${rootState.config.apiUrl}/system/api/v1/vat_reports/country/${state.countryId}?${query}`,
+          `{apiUrl}/system/api/v1/vat_reports/country/${state.countryId}?${query}`,
         );
         commit('countryTaxes', data);
       },

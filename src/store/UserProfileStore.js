@@ -75,10 +75,10 @@ export default function createUserStore() {
         dispatch('setCurrentStepCode', profile.last_step);
       },
 
-      async updateProfile({ rootState, commit }, props) {
+      async updateProfile({ commit }, props) {
         try {
           const { data } = await axios.patch(
-            `${rootState.config.apiUrl}/api/v1/user/profile`,
+            '{apiUrl}/api/v1/user/profile',
             props,
           );
           commit('profile', data);

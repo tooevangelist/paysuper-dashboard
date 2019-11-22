@@ -26,10 +26,11 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency }) {
       isAvailable: permissions.viewRoyaltyReports,
     },
     {
-      additional: 'Need license agreement',
+      additional: 'Cash reports',
       icon: 'IconCash',
       link: '/payouts',
       title: 'Payouts',
+      routeNames: ['payouts', 'payoutCard'],
       isAvailable: permissions.viewPayouts,
     },
     {

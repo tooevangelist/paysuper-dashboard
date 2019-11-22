@@ -378,7 +378,7 @@ export default {
                   :stayOpenedOnHover="false"
                 >
                   <UiTooltipMenuItem
-                    v-if="report.status === 'pending'"
+                    v-if="report.status === 'pending' && userPermissions.acceptRoyaltyReports"
                     class="dots-menu__item"
                     iconComponent="IconCheckInCircle"
                     @click.stop.prevent="confirmReport(report.id)"
