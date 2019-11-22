@@ -9,7 +9,7 @@ addons:
 stages:
   - test
   - name: deploy 
-    if: branch in master
+    if: branch = master
 
 jobs:
   include:
