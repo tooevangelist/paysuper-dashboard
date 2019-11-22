@@ -88,6 +88,7 @@ export default {
     viewUsers: true,
     viewTransactions: true,
     cancelTransactions: true,
+    viewRoyaltyReports: true,
     viewDashboard: true,
     viewDisputs: true,
   },
