@@ -6,7 +6,7 @@ const requestIp = require('request-ip');
 const ip6addr = require('ip6addr');
 const _ = require('lodash');
 const Handlebars = require('handlebars');
-// const config = require('../../config/config');
+const config = require('../../config/config');
 const webappConfig = require('../../config/webappConfig');
 
 const orderTemplate = fs.readFileSync(path.resolve('backend/templates/order-page.hbs'), 'utf-8');
@@ -82,9 +82,8 @@ module.exports = async function orderPage(ctx) {
   const acceptLanguage = ctx.get('accept-language');
   const referer = ctx.get('referer');
 
-  // const [host] = ctx.request.host.split(':');
-  // const formUrl = isDev ? `http://${host}:4040/paysuper-form.js` : config.paysuperSdkUrl;
-  const formUrl = 'https://s3.eu-west-1.amazonaws.com/paysupermgmt.img.dev/19da146e-386f-49be-bc16-f5b2836023ef.js';
+  const [host] = ctx.request.host.split(':');
+  const formUrl = isDev ? `http://${host}:4040/paysuper-form.js` : config.paysuperSdkUrl;
 
   if (query.debug) {
     return {
