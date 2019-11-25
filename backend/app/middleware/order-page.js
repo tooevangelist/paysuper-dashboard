@@ -19,11 +19,11 @@ const isDev = process.env.NODE_ENV === 'local';
 const userIdentityCookieName = '_ps_ctkn';
 
 function getOrderParams({
-  project, token, products, amount, type, currency, sdk,
+  project, token, products, amount, type, currency, sdk, devPreset,
 }) {
   return {
     project,
-    ...(isDev ? {
+    ...(devPreset ? {
       project: '5cc7f1cf790c2900010849ee',
       products: ['5dbac6de120a810001a8fe7e'],
       // amount: 25,

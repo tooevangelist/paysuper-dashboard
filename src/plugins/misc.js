@@ -12,7 +12,13 @@ function $navigate(pathOrOptions, query = {}) {
 }
 
 function $formatPrice(value, currency) {
-  return new Intl.NumberFormat(this.$i18n.locale, { style: 'currency', currency }).format(value);
+  if (!value) {
+    return '';
+  }
+  return new Intl.NumberFormat(
+    this.$i18n.locale,
+    (currency ? { style: 'currency', currency } : {}),
+  ).format(value);
 }
 
 /**
