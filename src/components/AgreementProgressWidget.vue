@@ -3,6 +3,7 @@ import { mapGetters, mapState } from 'vuex';
 import { reduce } from 'lodash-es';
 import PictureWelcomeSheets from '@/components/PictureWelcomeSheets.vue';
 import SmartListItem from '@/components/SmartListItem.vue';
+import merchantStatusScheme from '@/schemes/merchantStatusScheme';
 
 export default {
   name: 'AgreementProgressWidget',
@@ -32,8 +33,14 @@ export default {
     status() {
       return this.merchant.status;
     },
-    isNotOperatingCompany() {
-      return this.merchant.operating_company_id === undefined || this.merchant.operating_company_id === '';
+    isPending() {
+      return merchantStatusScheme(this.status).value === 'pending';
+    },
+    isSigning() {
+      return merchantStatusScheme(this.status).value === 'signing';
+    },
+    isSigned() {
+      return merchantStatusScheme(this.status).value === 'signed';
     },
     isCompanyInfoLocked() {
       return this.onboardingCompleteStepsCount > 2;
@@ -69,18 +76,16 @@ export default {
     licenseNotice() {
       return this.isLicenseLocked
         ? 'After Previous Steps'
-        : this.status < 3 ? this.isNotOperatingCompany ? 'Checking…' : 'Not Signed' : 'Checking agreement…';
+        : this.isPending
+          ? 'Checking…'
+          : this.isSigning ? 'Checking agreement…' : 'Not Signed';
     },
     licenseStatus() {
       return {
-        status: this.status === 4
+        status: this.isSigned
           ? 'complete'
-          : this.isLicenseLocked
-            ? 'locked'
-            : this.status === 3 || this.isNotOperatingCompany ? 'waiting' : 'default',
-        notice: this.status === 4
-          ? ''
-          : this.licenseNotice,
+          : this.isLicenseLocked ? 'locked' : this.isPending ? 'waiting' : 'default',
+        notice: this.isSigned ? '' : this.licenseNotice,
       };
     },
     isProjectLocked() {

@@ -21,6 +21,16 @@ const merchantStatusScheme = {
     color: 'red',
     value: 'rejected',
   },
+  7: {
+    label: 'Pending',
+    color: 'yellow',
+    value: 'pending',
+  },
+  8: {
+    label: 'Accepted',
+    color: 'teal',
+    value: 'accepted',
+  },
   5: {
     label: 'Archived',
     color: 'red',

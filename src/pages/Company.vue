@@ -9,6 +9,7 @@ import PaymentMethods from '@/components/PaymentMethods.vue';
 import PictureCompanyPage from '@/components/PictureCompanyPage.vue';
 import SmartListItem from '@/components/SmartListItem.vue';
 import CompanyStore from '@/store/CompanyStore';
+import merchantStatusScheme from '@/schemes/merchantStatusScheme';
 
 export default {
   name: 'Company',
@@ -40,11 +41,17 @@ export default {
     };
   },
   computed: {
-    ...mapState('User/Merchant', ['merchant', 'onboardingCompleteStepsCount', 'onboardingSteps']),
+    ...mapState('User/Merchant', ['onboardingCompleteStepsCount', 'onboardingSteps']),
     ...mapGetters('Company/LicenseAgreement', ['status']),
 
-    isNotOperatingCompany() {
-      return this.merchant.operating_company_id === undefined || this.merchant.operating_company_id === '';
+    isPending() {
+      return merchantStatusScheme(this.status).value === 'pending';
+    },
+    isSigning() {
+      return merchantStatusScheme(this.status).value === 'signing';
+    },
+    isSigned() {
+      return merchantStatusScheme(this.status).value === 'signed';
     },
     isCompanyInfoLocked() {
       return this.onboardingCompleteStepsCount > 2;
@@ -80,16 +87,16 @@ export default {
     licenseNotice() {
       return this.isLicenseLocked
         ? 'After Previous Steps'
-        : this.status < 3 ? this.isNotOperatingCompany ? 'Checking…' : 'Not Signed' : 'Checking agreement…';
+        : this.isPending
+          ? 'Checking…'
+          : this.isSigning ? 'Checking agreement…' : 'Not Signed';
     },
     licenseStatus() {
       return {
-        status: this.status === 4
+        status: this.isSigned
           ? 'complete'
-          : this.isLicenseLocked ? 'locked' : this.isNotOperatingCompany ? 'waiting' : 'default',
-        notice: this.status === 4
-          ? ''
-          : this.licenseNotice,
+          : this.isLicenseLocked ? 'locked' : this.isPending ? 'waiting' : 'default',
+        notice: this.isSigned ? '' : this.licenseNotice,
       };
     },
     listItems() {
