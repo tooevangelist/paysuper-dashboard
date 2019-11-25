@@ -51,6 +51,7 @@ export default {
     ...mapState('Payouts', ['payoutsList', 'filterValues', 'query', 'apiQuery', 'balance']),
     ...mapState('User/Merchant', ['merchant']),
     ...mapGetters('Payouts', ['getFilterValues']),
+    ...mapGetters('User', ['userPermissions']),
 
     dateFilter: {
       get() {
@@ -209,22 +210,24 @@ export default {
         On a quarterly basis you will get an automatically formed payout invoice to close
         a quarter taxation period.
 
-        <div class="create-button" v-if="manualPayout">
-          <UiButton @click="newPayout" color="blue" :disabled="!payoutAvailable">
-            CREATE PAYOUT
-          </UiButton>
-        </div>
-        <div class="autopayouts" v-else>
-          <div class="autopayouts__ico">
-            <IconHistory />
+        <template v-if="userPermissions.createPayouts">
+          <div class="create-button" v-if="manualPayout">
+            <UiButton @click="newPayout" color="blue" :disabled="!payoutAvailable">
+              CREATE PAYOUT
+            </UiButton>
           </div>
-          <div class="autopayouts__info">
-            <UiHeader level="4">Autopayouts enabled</UiHeader>
-            <p>If you want to change it pls go to
-              <router-link to="/">payout settings</router-link>
-            </p>
+          <div class="autopayouts" v-else>
+            <div class="autopayouts__ico">
+              <IconHistory />
+            </div>
+            <div class="autopayouts__info">
+              <UiHeader level="4">Autopayouts enabled</UiHeader>
+              <p>If you want to change it pls go to
+                <router-link to="/">payout settings</router-link>
+              </p>
+            </div>
           </div>
-        </div>
+        </template>
       </span>
     </UiPageHeaderFrame>
 
@@ -367,7 +370,7 @@ export default {
 
   &__description {
     font-size: 12px;
-    color: #5E6366;
+    color: #5e6366;
   }
 }
 
@@ -397,11 +400,12 @@ export default {
   }
 
   &:hover svg {
-    fill: #3D7BF5;
+    fill: #3d7bf5;
   }
 }
 
-.success-payout, .fail-payout {
+.success-payout,
+.fail-payout {
   &__content {
     text-align: center;
   }
@@ -412,7 +416,7 @@ export default {
 
   &__text {
     font-size: 14px;
-    color: #5E6366;
+    color: #5e6366;
   }
 
   &__controls {
@@ -450,7 +454,7 @@ export default {
 
     &:after {
       display: block;
-      content: '';
+      content: "";
       width: 6px;
       height: 6px;
       position: absolute;

@@ -70,29 +70,15 @@ export default function createUserStore() {
     },
 
     actions: {
-      initState({ dispatch }) {
-        return dispatch('fetchProfile');
+      initState({ commit, dispatch }, profile) {
+        commit('profile', profile);
+        dispatch('setCurrentStepCode', profile.last_step);
       },
 
-      async fetchProfile({ commit }) {
-        try {
-          const { data } = await axios.get('{apiUrl}/admin/api/v1/user/profile');
-          commit('profile', data);
-          if (data.last_step) {
-            commit('currentStepCode', data.last_step);
-          }
-        } catch (error) {
-          if (get(error, 'response.status') !== 404) {
-            console.error(error);
-          }
-          commit('profile', {});
-        }
-      },
-
-      async updateProfile({ rootState, commit }, props) {
+      async updateProfile({ commit }, props) {
         try {
           const { data } = await axios.patch(
-            `${rootState.config.apiUrl}/admin/api/v1/user/profile`,
+            '{apiUrl}/api/v1/user/profile',
             props,
           );
           commit('profile', data);

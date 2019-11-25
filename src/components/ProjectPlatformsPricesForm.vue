@@ -32,6 +32,10 @@ export default {
       required: true,
       type: Array,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   model: {
@@ -131,6 +135,7 @@ export default {
     :defaultCurrency="defaultCurrency"
     :hasSteamRecommendations="true"
     :recommendedPricesTable="recommendedPricesTable"
+    :disabled="disabled"
     v-model="currentPlatformPricing"
   />
 </div>

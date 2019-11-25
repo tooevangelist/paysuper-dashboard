@@ -58,6 +58,7 @@ export default {
     ...mapState('Transactions', ['transactionsList', 'filterValues', 'query', 'apiQuery']),
     ...mapGetters('Transactions', ['getFilterValues']),
     ...mapGetters('Dictionaries', ['countries']),
+    ...mapGetters('User', ['userPermissions']),
 
     handleQuickSearchInput() {
       return debounce(() => {
@@ -236,8 +237,8 @@ export default {
         file_type: fileType.toLowerCase(),
         report_type: 'transactions',
         params: {
-          dateFrom: this.filters.dateFrom || '',
-          dateTo: this.filters.dateTo || '',
+          date_from: this.filters.dateFrom || 0,
+          date_to: this.filters.dateTo || 0,
           status: this.filters.status,
         },
       });
@@ -296,7 +297,7 @@ export default {
             <UiTableCell align="left">Method</UiTableCell>
             <UiTableCell align="left">Transaction ID</UiTableCell>
             <UiTableCell align="left">Amount</UiTableCell>
-            <UiTableCell align="left" width="3%"></UiTableCell>
+            <UiTableCell align="left" width="3%" v-if="userPermissions.cancelTransactions" />
           </UiTableRow>
           <UiTableRow
             class="transaction"
@@ -324,7 +325,7 @@ export default {
             <UiTableCell align="left" :class="`status-${transaction.status}`">
               {{$formatPrice(transaction.total_payment_amount, transaction.currency)}}
             </UiTableCell>
-            <UiTableCell align="left">
+            <UiTableCell align="left" v-if="userPermissions.cancelTransactions">
               <div class="transaction__refund"
                    v-if="refundAvailable(transaction.status)"
                    @click.stop.prevent="showRefundModal = true, currentTransaction = transaction">
@@ -388,7 +389,7 @@ export default {
 .transaction {
   &:hover {
     background: rgba(61, 123, 245, 0.08);
-    color: #3D7BF5;
+    color: #3d7bf5;
     cursor: pointer;
   }
 
@@ -407,7 +408,7 @@ export default {
 
       &:after {
         display: block;
-        content: '';
+        content: "";
         width: 6px;
         height: 6px;
         position: absolute;
@@ -459,7 +460,7 @@ export default {
 }
 
 .status-refunded {
-  color: #EA3D2F;
+  color: #ea3d2f;
 }
 
 .export-button {
@@ -476,14 +477,14 @@ export default {
   transition: all 0.2s ease-out;
 
   & > svg {
-    fill: #78909C;
+    fill: #78909c;
     transition: fill 0.2s ease-out;
   }
 
   &:hover {
-     background: rgba(61, 123, 245, 0.08);
+    background: rgba(61, 123, 245, 0.08);
 
-  & > svg {
+    & > svg {
       fill: #3d7bf5;
     }
   }

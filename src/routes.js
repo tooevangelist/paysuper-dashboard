@@ -21,6 +21,7 @@ function projectPagesMeta(url, label) {
 const merchantPagesMeta = {
   layout: 'Layout',
   isAuthRequired: true,
+  permission: 'viewMerchants',
   specialNav: {
     backLink({ store }) {
       const isSigned = store.state.Merchant.merchant.status === Number(signedStatusCode);
@@ -43,37 +44,45 @@ const routes = [
   {
     path: '/reports/',
     component: () => import('@/pages/RoyaltyReportsPage.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true, mainContentSize: 'large' },
+    meta: {
+      layout: 'Layout', isAuthRequired: true, mainContentSize: 'large', permission: 'viewRoyaltyReports',
+    },
     name: 'RoyaltyReportsPage',
   },
   {
     path: '/reports/:reportId',
     component: () => import('@/pages/RoyaltyReportCard.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true, mainContentSize: 'large' },
+    meta: {
+      layout: 'Layout', isAuthRequired: true, mainContentSize: 'large', permission: 'viewRoyaltyReports',
+    },
     name: 'RoyaltyReportCard',
   },
   {
     path: '/transactions/',
     component: () => import('@/pages/TransactionsPage.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true, mainContentSize: 'large' },
+    meta: {
+      layout: 'Layout', isAuthRequired: true, mainContentSize: 'large', permission: 'viewTransactions',
+    },
     name: 'TransactionsPage',
   },
   {
     path: '/transactions/:transactionId',
     component: () => import('@/pages/TransactionCard.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true },
+    meta: { layout: 'Layout', isAuthRequired: true, permission: 'viewTransactions' },
     name: 'TransactionsCard',
   },
   {
     path: '/projects/',
     component: () => import('@/pages/ProjectsListPage.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true, mainContentSize: 'large' },
+    meta: {
+      layout: 'Layout', isAuthRequired: true, mainContentSize: 'large', permission: 'viewProjects',
+    },
     name: 'ProjectsList',
   },
   {
     path: '/projects/:id',
     component: () => import('@/pages/ProjectPage.vue'),
-    redirect: { name: 'ProjectSalesOptions' },
+    redirect: { name: 'ProjectSalesOptions', permission: 'viewProjects' },
     name: 'Project',
     children: [
       {
@@ -184,13 +193,13 @@ const routes = [
   {
     path: '/merchants/',
     component: () => import('@/pages/MerchantsListPage.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true },
+    meta: { layout: 'Layout', isAuthRequired: true, permission: 'viewMerchants' },
     name: 'MerchantsList',
   },
   {
     path: '/merchants/:id',
     component: () => import('@/pages/MerchantAdminPage.vue'),
-    redirect: { name: 'MerchantAdminPersonalProfile' },
+    redirect: { name: 'MerchantAdminCompanyInfo' },
     children: [
       {
         path: 'personal-profile/',
@@ -236,6 +245,7 @@ const routes = [
         meta: {
           layout: 'Layout',
           isAuthRequired: true,
+          permission: 'inviteProjectUsers',
           topControls: () => import('@/components/LayoutTopControlsSettings.vue'),
         },
         name: 'MerchantUserRoles',
@@ -246,6 +256,7 @@ const routes = [
         meta: {
           layout: 'Layout',
           isAuthRequired: true,
+          permission: 'inviteProjectUsers',
           topControls: () => import('@/components/LayoutTopControlsSettings.vue'),
         },
         name: 'MerchantUserPage',
@@ -255,19 +266,21 @@ const routes = [
   {
     path: '/agreement-requests/',
     component: () => import('@/pages/AgreementRequestsListPage.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true },
+    meta: { layout: 'Layout', isAuthRequired: true, permission: 'viewMerchants' },
     name: 'AgreementRequestsList',
   },
   {
     path: '/dashboard/',
     component: () => import('@/pages/Dashboard.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true, mainContentSize: 'large' },
+    meta: {
+      layout: 'Layout', isAuthRequired: true, mainContentSize: 'large', permission: 'viewDashboard',
+    },
     name: 'Dashboard',
   },
   {
     path: '/company/',
     component: () => import('@/pages/Company.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true },
+    meta: { layout: 'Layout', isAuthRequired: true, permission: 'viewCompany' },
     name: 'company',
   },
   {
@@ -279,13 +292,17 @@ const routes = [
   {
     path: '/payouts/',
     component: () => import('@/pages/payouts.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true, mainContentSize: 'large' },
+    meta: {
+      layout: 'Layout', isAuthRequired: true, mainContentSize: 'large', permission: 'viewPayouts',
+    },
     name: 'payouts',
   },
   {
     path: '/payouts/:id',
     component: () => import('@/pages/payoutCard.vue'),
-    meta: { layout: 'Layout', isAuthRequired: true, mainContentSize: 'large' },
+    meta: {
+      layout: 'Layout', isAuthRequired: true, mainContentSize: 'large', permission: 'viewPayouts',
+    },
     name: 'payoutCard',
   },
   {
@@ -337,14 +354,20 @@ const routes = [
   {
     path: '/profile/',
     component: () => import('@/pages/UserProfilePage.vue'),
-    meta: { layout: 'PageShallow', isAuthRequired: true },
+    meta: { layout: 'PageShallow', isAuthRequired: true, primaryOnboardingStep: 'profile' },
     name: 'UserProfile',
   },
   {
     path: '/invite-profile/',
     component: () => import('@/pages/UserInviteProfilePage.vue'),
-    meta: { layout: 'PageShallow', isAuthRequired: true },
+    meta: { layout: 'PageShallow', isAuthRequired: true, primaryOnboardingStep: 'inviteProfile' },
     name: 'UserInviteProfile',
+  },
+  {
+    path: '/user-handling-error/',
+    component: () => import('@/pages/UserHandlingErrorPage.vue'),
+    meta: { layout: 'PageShallow', isAuthRequired: true },
+    name: 'UserHandlingError',
   },
   {
     path: '/sign-up/',

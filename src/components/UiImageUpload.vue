@@ -29,6 +29,10 @@ export default {
       type: String,
       default: '',
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     errorText: {
       default: 'Upload cover',
       type: String,
@@ -68,22 +72,29 @@ export default {
       }
     },
     dropFile(event) {
+      if (this.disabled) {
+        return;
+      }
       event.stopPropagation();
       event.preventDefault();
       this.isDragOver = false;
       this.uploadFile(event.dataTransfer.files[0]);
     },
     removeImage() {
+      if (this.disabled) {
+        return;
+      }
       this.$emit('change', '');
     },
-    selectFile() {
-      OpenFileDialog('image/*', this.uploadFile);
-    },
     handleAreaClick() {
+      if (this.disabled) {
+        return;
+      }
+
       if (this.errorMessage) {
         this.errorMessage = '';
       } else {
-        this.selectFile();
+        OpenFileDialog('image/*', this.uploadFile);
       }
     },
   },
@@ -92,7 +103,8 @@ export default {
 
 <template>
 <div
-  class="image-upload"
+  class="ui-image-upload"
+  :class="{'_disabled': disabled}"
   @click="handleAreaClick"
   @dragover.prevent="isDragOver = true"
   @dragleave="isDragOver = false"
@@ -125,6 +137,7 @@ export default {
       <UiUploadControls
         :title="title"
         :isFilled="Boolean(value)"
+        :disabled="disabled"
         @delete.stop="removeImage"
       />
       <div class="description">
@@ -149,11 +162,15 @@ $error-text-color: #ea3d2f;
 $secondary-input-size: 12px;
 $left-indent: 80px;
 
-.image-upload {
+.ui-image-upload {
   display: flex;
   cursor: pointer;
   position: relative;
   padding-bottom: 24px;
+
+  &._disabled {
+    cursor: default;
+  }
 }
 .image {
   width: 64px;

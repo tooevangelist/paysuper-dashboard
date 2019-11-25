@@ -142,7 +142,7 @@ export default function createContactsStore() {
         const queryString = qs.stringify({ period });
 
         const response = await axios.get(
-          `${apiUrl}/admin/api/v1/merchants/${merchantId}/dashboard/${type}?${queryString}`,
+          `${apiUrl}/admin/api/v1/merchants/dashboard/${type}?${queryString}`,
         );
 
         if (response.data) {

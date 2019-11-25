@@ -1,5 +1,5 @@
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions, mapGetters } from 'vuex';
 import { required } from 'vuelidate/lib/validators';
 import { get, find } from 'lodash-es';
 import Notifications from '@/mixins/Notifications';
@@ -41,6 +41,11 @@ export default {
       'minimalPayout',
     ]),
     ...mapState('User/Merchant', ['merchant', 'onboardingSteps']),
+    ...mapGetters('User', ['userPermissions']),
+
+    viewOnly() {
+      return !this.userPermissions.editCompany;
+    },
 
     status() {
       return this.merchant.status;
@@ -60,6 +65,9 @@ export default {
         { label: 'Latin America', value: 'latin_america', abbr: 'LA' },
         { label: 'Worldwide', value: 'worldwide', abbr: 'WW' },
       ];
+    },
+    homeRegionLabel() {
+      return get(find(this.prepareRegions, { value: this.region }), 'label', '');
     },
     payerRegionAbbr() {
       return get(find(this.prepareRegions, { value: this.payerRegion }), 'abbr', '');
@@ -100,7 +108,7 @@ export default {
 
       if (!this.$v.region.$invalid) {
         try {
-          const hasSubmit = await this.submitTariffs(this.merchant.id);
+          const hasSubmit = await this.submitTariffs();
 
           if (hasSubmit) {
             this.$emit('hasSubmit');
@@ -125,7 +133,7 @@ export default {
 
     <div class="title">Home Region</div>
     <div class="info">
-      {{ payerRegionLabel }}
+      {{ homeRegionLabel }}
     </div>
   </div>
 
@@ -160,8 +168,10 @@ export default {
     <div class="select">
       <UiSelect
         label="Payment Amount"
+        maxHeight="240px"
         :options="amountsOptions"
         :value="amount"
+        :disabled="viewOnly"
         @input="updateAmount($event)"
       />
     </div>
@@ -245,7 +255,10 @@ export default {
           :key="index"
         >
           <UiTableCell class="cell _first">
-            <component :is="data.icon" class="method-icon" />
+            <component
+              :is="$options.components[data.icon] ? data.icon : 'IconDirectBanking'"
+              class="method-icon"
+            />
           </UiTableCell>
           <UiTableCell class="cell _second" align="left">
             {{ data.method }}
@@ -349,6 +362,7 @@ export default {
   </div>
 
   <UiButton
+    v-if="!viewOnly"
     class="submit"
     color="green"
     :disabled="onboardingSteps.tariff || status !== 0"
@@ -465,7 +479,7 @@ export default {
 }
 .row-indent {
   &::before {
-    content: '';
+    content: "";
     display: table-cell;
     width: 40px;
     border-bottom: 2px solid #e3e5e6;
@@ -476,7 +490,7 @@ export default {
     width: 40px;
   }
   &._second {
-    width: 120px;
+    min-width: 170px;
   }
   &._channel {
     width: 19.5%;
@@ -512,7 +526,7 @@ export default {
   height: 28px;
   line-height: 28px;
   text-align: center;
-  background: rgba(#DAF5F2, 0.5);
+  background: rgba(#daf5f2, 0.5);
   border-radius: 2px;
   border: 1px solid transparent;
   &-transparent {
@@ -534,5 +548,4 @@ export default {
     margin-top: 12px;
   }
 }
-
 </style>

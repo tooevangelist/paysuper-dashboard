@@ -1,5 +1,5 @@
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState, mapGetters } from 'vuex';
 import { email, maxLength, required } from 'vuelidate/lib/validators';
 import { onlyRusAndLat, phone } from '@/helpers/customValidators';
 import Notifications from '@/mixins/Notifications';
@@ -25,6 +25,11 @@ export default {
   computed: {
     ...mapState('Company/Contacts', ['contacts']),
     ...mapState('User/Merchant', ['merchant']),
+    ...mapGetters('User', ['userPermissions']),
+
+    viewOnly() {
+      return !this.userPermissions.editCompany;
+    },
 
     status() {
       return this.merchant.status;
@@ -82,6 +87,7 @@ export default {
       v-bind="$getValidatedFieldProps('contacts.authorized.name')"
       label="Name"
       :value="contacts.authorized.name"
+      :disabled="viewOnly"
       @input="updateField('authorized', 'name', $event)"
       @blur="$v.contacts.authorized.name.$touch()"
     />
@@ -89,6 +95,7 @@ export default {
       v-bind="$getValidatedFieldProps('contacts.authorized.position')"
       label="Position"
       :value="contacts.authorized.position"
+      :disabled="viewOnly"
       @input="updateField('authorized', 'position', $event)"
       @blur="$v.contacts.authorized.position.$touch()"
     />
@@ -96,6 +103,7 @@ export default {
       v-bind="$getValidatedFieldProps('contacts.authorized.email')"
       label="Email"
       :value="contacts.authorized.email"
+      :disabled="viewOnly"
       @input="updateField('authorized', 'email', $event)"
       @blur="$v.contacts.authorized.email.$touch()"
     />
@@ -103,6 +111,7 @@ export default {
       v-bind="$getValidatedFieldProps('contacts.authorized.phone')"
       label="Phone"
       :value="contacts.authorized.phone"
+      :disabled="viewOnly"
       @input="updateField('authorized', 'phone', $event)"
       @blur="$v.contacts.authorized.phone.$touch()"
     />
@@ -119,6 +128,7 @@ export default {
       v-bind="$getValidatedFieldProps('contacts.technical.name')"
       label="Name"
       :value="contacts.technical.name"
+      :disabled="viewOnly"
       @input="updateField('technical', 'name', $event)"
       @blur="$v.contacts.technical.name.$touch()"
     />
@@ -126,6 +136,7 @@ export default {
       v-bind="$getValidatedFieldProps('contacts.technical.email')"
       label="Email"
       :value="contacts.technical.email"
+      :disabled="viewOnly"
       @input="updateField('technical', 'email', $event)"
       @blur="$v.contacts.technical.email.$touch()"
     />
@@ -133,12 +144,14 @@ export default {
       v-bind="$getValidatedFieldProps('contacts.technical.phone')"
       label="Phone"
       :value="contacts.technical.phone"
+      :disabled="viewOnly"
       @input="updateField('technical', 'phone', $event)"
       @blur="$v.contacts.technical.phone.$touch()"
     />
   </div>
 
   <UiButton
+    v-if="!viewOnly"
     class="submit"
     :disabled="$v.contacts.$invalid || status !== 0"
     @click="submit"

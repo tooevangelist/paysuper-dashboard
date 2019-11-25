@@ -63,7 +63,7 @@ export default function createMerchantListStore() {
         await dispatch('fetchMerchants');
       },
 
-      async fetchMerchants({ state, commit, rootState }) {
+      async fetchMerchants({ state, commit }) {
         let { status } = state.apiQuery;
         if (state.page === 'merchantsList') {
           status = [signedStatusCode];
@@ -75,7 +75,7 @@ export default function createMerchantListStore() {
           ...state.apiQuery,
           status,
         }, { arrayFormat: 'brackets' });
-        const url = `${rootState.config.apiUrl}/admin/api/v1/merchants?${query}`;
+        const url = `{apiUrl}/system/api/v1/merchants?${query}`;
 
         const response = await axios.get(url);
         const merchants = get(response, 'data.items') ? response.data : {
@@ -114,9 +114,9 @@ export default function createMerchantListStore() {
         commit('query', query);
       },
 
-      async sendNotification({ rootState }, { merchantId, notification }) {
+      async sendNotification(ctx, { merchantId, notification }) {
         await axios.post(
-          `${rootState.config.apiUrl}/admin/api/v1/merchants/${merchantId}/notifications`,
+          `{apiUrl}/system/api/v1/merchants/${merchantId}/notifications`,
           notification,
         );
       },

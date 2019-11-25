@@ -1,7 +1,8 @@
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import { findIndex, includes, get } from 'lodash-es';
 import LayoutMainNavInnerBase from '@/components/LayoutMainNavInnerBase.vue';
+
 
 export default {
   name: 'LayoutMainNavProject',
@@ -12,6 +13,7 @@ export default {
 
   computed: {
     ...mapState('Project', ['project', 'projectPublicName']),
+    ...mapGetters('User', ['userPermissions']),
 
     items() {
       const projectId = this.project.id || 'new';

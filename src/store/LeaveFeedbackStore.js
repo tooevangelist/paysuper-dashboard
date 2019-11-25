@@ -10,7 +10,7 @@ export default function createLeaveFeedbackStore() {
       async postFeedback({ rootState }, { review, url }) {
         try {
           await axios.post(
-            `${rootState.config.apiUrl}/admin/api/v1/user/feedback`,
+            `${rootState.config.apiUrl}/api/v1/user/feedback`,
             {
               review,
               url,

@@ -1,5 +1,5 @@
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import { cloneDeep } from 'lodash-es';
 import {
   required, minLength, maxLength, url,
@@ -24,6 +24,11 @@ export default {
   computed: {
     ...mapState('Project', ['project']),
     ...mapState('User/Merchant', ['merchant']),
+    ...mapGetters('User', ['userPermissions']),
+
+    viewOnly() {
+      return !this.userPermissions.editProjects;
+    },
 
     isWebhooksEnabled: {
       get() {
@@ -128,6 +133,7 @@ export default {
       <UiTextField
         label="Webhook URL"
         :autocompleteUrlProtocol="true"
+        :disabled="viewOnly"
         v-model="projectLocal.url_process_payment"
         v-bind="$getValidatedFieldProps('projectLocal.url_process_payment')"
       />
@@ -147,12 +153,13 @@ export default {
 
       <KeyGenerateField
         label="Secret key"
+        :disabled="viewOnly"
         v-model="projectLocal.secret_key"
         v-bind="$getValidatedFieldProps('projectLocal.secret_key')"
       />
     </div>
 
-    <div class="controls">
+    <div class="controls" v-if="!viewOnly">
       <UiSwitchBox v-model="isWebhooksEnabled">
         Enable webhooks
       </UiSwitchBox>

@@ -10,6 +10,8 @@ import {
 import qs from 'qs';
 import getCountriesByRegion from '@/helpers/getCountriesByRegion';
 import getIconByPaymentMethod from '@/helpers/getIconByPaymentMethod';
+import formatNumber from '@/helpers/formatNumber';
+import i18n from '@/plugins/i18n';
 
 function preparePayerRegion(data) {
   let amounts = [];
@@ -25,7 +27,7 @@ function preparePayerRegion(data) {
       max: item.max_amount,
     })),
     (item) => {
-      const amount = `${item.min}-${item.max}`;
+      const amount = `${formatNumber(item.min, i18n.locale)} - ${formatNumber(item.max, i18n.locale)}`;
       amounts = union(amounts, [amount]);
       return amount;
     },
@@ -38,7 +40,7 @@ export default function createTariffStore() {
   return {
     namespaced: true,
     state: {
-      amount: '0-4.99',
+      amount: '0.00 - 4.99',
       amounts: [],
       currency: 'USD',
       payerRegion: 'europe',
@@ -138,8 +140,12 @@ export default function createTariffStore() {
         }
       },
       async submitTariffs({ dispatch, state }, merchantId) {
+        const path = merchantId
+          ? `/system/api/v1/merchants/${merchantId}/tariffs`
+          : '/admin/api/v1/merchants/tariffs';
+
         const response = await axios.post(
-          `{apiUrl}/admin/api/v1/merchants/${merchantId}/tariffs`,
+          `{apiUrl}${path}`,
           {
             home_region: state.region,
             merchant_operations_type: state.operationsType,
@@ -158,13 +164,8 @@ export default function createTariffStore() {
 
         return false;
       },
-      updatePayerRegion({ commit, dispatch, state }, region) {
+      updatePayerRegion({ commit, dispatch }, region) {
         commit('payerRegion', region);
-
-        if (get(state.regions, `${state.region}.payerRegions.${region}`, null)) {
-          return;
-        }
-
         dispatch('fetchTariffs');
       },
       updateRegion({ commit, dispatch, state }, region) {

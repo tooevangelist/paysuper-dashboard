@@ -1,6 +1,6 @@
 {
   "name": "paysuper-management-server",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Pay Super solution customer control panel",
   "author": "Dmitriy Sinichkin <dmitriy.sinichkin@gmail.com>",
   "scripts": {

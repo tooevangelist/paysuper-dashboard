@@ -260,7 +260,7 @@ export default {
     onCountrySearch(search) {
       const self = this;
 
-      let url = `${process.env.VUE_APP_P1PAYAPI_URL}/api/v1/country`;
+      let url = `${process.env.VUE_APP_P1PAYAPI_URL}/country`;
 
       if (search.length > 0) {
         url += `?name=${search}`;

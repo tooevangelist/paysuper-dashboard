@@ -35,7 +35,10 @@
   </span>
   <div class="box">
     <div class="options" v-if="focused">
-      <UiScrollbarBox class="scrollbox">
+      <UiScrollbarBox
+        class="scrollbox"
+        :style="{ maxHeight }"
+      >
         <label
           v-for="option in optionsView"
           :key="option.value"
@@ -99,6 +102,10 @@ export default {
     required: {
       default: false,
       type: Boolean,
+    },
+    maxHeight: {
+      default: '200px',
+      type: String,
     },
     value: {
       default: '',
@@ -316,7 +323,6 @@ $left-indent: 12px;
 .scrollbox {
   width: 100%;
   height: 100%;
-  max-height: 200px;
 }
 .option {
   cursor: pointer;

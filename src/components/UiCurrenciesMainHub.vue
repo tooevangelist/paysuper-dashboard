@@ -25,6 +25,10 @@ export default {
       type: Object,
       default: () => ({ currency: 'USD', region: 'USD' }),
     },
+    disabled: {
+      default: false,
+      type: Boolean,
+    },
   },
 
   data() {
@@ -125,6 +129,7 @@ export default {
     label="Currencies"
     :items="currenciesValues"
     :defaultOptionValue="defaultCurrencyValue"
+    :disabled="disabled"
     @add="openEntityManagementModal"
     @delete="requestDeleteCurrency"
   />

@@ -19,6 +19,10 @@ export default {
       type: Array,
       default: () => ['en', 'ru'],
     },
+    disabled: {
+      default: false,
+      type: Boolean,
+    },
   },
 
   data() {
@@ -126,6 +130,7 @@ export default {
     label="Localization"
     :items="langs"
     :defaultOptionValue="defaultOptionValue"
+    :disabled="disabled"
     @add="openEntityManagementModal"
     @delete="requestDeleteLang"
   />

@@ -23,6 +23,11 @@ export default {
   computed: {
     ...mapState('Project', ['project', 'langFields', 'defaultCurrency']),
     ...mapGetters('Project', ['defaultCurrencyValue']),
+    ...mapGetters('User', ['userPermissions']),
+
+    viewOnly() {
+      return !this.userPermissions.editProjects;
+    },
   },
 
   validations: {
@@ -112,6 +117,7 @@ export default {
     </UiText>
     <UiLangsMainHub
       :langs="projectLocal.localizations"
+      :disabled="viewOnly"
       @change="updateLangs"
     />
   </UiPanel>
@@ -120,6 +126,7 @@ export default {
     <UiSwitchBox
       class="localization-switch"
       v-model="projectLocal.cover.use_one_for_all"
+      :disabled="viewOnly"
     >
       Use single cover for all localizations
     </UiSwitchBox>
@@ -129,6 +136,7 @@ export default {
       :langs="projectLocal.localizations"
       :uploadImage="uploadImage"
       :isLocalizationEnabled="!projectLocal.cover.use_one_for_all"
+      :disabled="viewOnly"
       v-model="projectLocal.cover.images"
       v-bind="$getValidatedFieldProps('projectLocal.cover.images.en')"
     />
@@ -147,17 +155,20 @@ export default {
       <UiLangTextField
         :value="projectLocal.name"
         :langs="projectLocal.localizations"
+        :disabled="viewOnly"
         label="Project name"
         v-bind="$getValidatedFieldProps('projectLocal.name.en')"
       />
       <UiLangTextField
         :value="projectLocal.full_description"
         :langs="projectLocal.localizations"
+        :disabled="viewOnly"
         label="Full description"
       />
       <UiLangTextField
         :value="projectLocal.short_description"
         :langs="projectLocal.localizations"
+        :disabled="viewOnly"
         label="Short description"
       />
     </div>
@@ -177,10 +188,11 @@ export default {
       <UiCurrenciesMainHub
         v-model="projectLocal.currencies"
         :defaultCurrency="defaultCurrency"
+        :disabled="viewOnly"
       />
     </div>
 
-    <div class="controls">
+    <div class="controls" v-if="!viewOnly">
       <UiButton
         class="submit-button"
         @click="handleSave"

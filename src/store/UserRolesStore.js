@@ -87,8 +87,9 @@ export default function createUserRolesStore() {
       },
 
       async invite({ dispatch }, user) {
-        await axios.post('{apiUrl}/admin/api/v1/merchants/invite', user);
+        const response = await axios.post('{apiUrl}/admin/api/v1/merchants/invite', user);
         await dispatch('fetchUsers');
+        return response.data;
       },
 
       async delete({ dispatch }, user) {

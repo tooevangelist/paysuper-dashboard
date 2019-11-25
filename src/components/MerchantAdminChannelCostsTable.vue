@@ -100,7 +100,10 @@ export default {
           v-if="!data.parent"
           :isOpened="data.isExpanded"
         >
-          <component :is="data.icon" class="method-icon" />
+          <component
+            :is="$options.components[data.icon] ? data.icon : 'IconDirectBanking'"
+            class="method-icon"
+          />
           {{ data.method }}
         </ExpandableCellText>
       </UiComplexTableCell>

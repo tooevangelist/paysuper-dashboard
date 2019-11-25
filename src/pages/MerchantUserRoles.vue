@@ -49,6 +49,7 @@ export default {
   computed: {
     ...mapState('userRoles', ['users', 'filterValues', 'query', 'apiQuery']),
     ...mapGetters('userRoles', ['getFilterValues']),
+    ...mapGetters('User', ['userPermissions']),
 
     handleQuickSearchInput() {
       return debounce(() => {
@@ -120,10 +121,15 @@ export default {
 
     async handleAddUser(user) {
       this.setIsLoading(true);
-      try {
-        await this.invite(user).catch(this.$showErrorMessage);
-        this.inviteSuccessModal = true;
-      } catch (e) { console.warn(e); }
+      await this.invite(user)
+        .then((data) => {
+          if (data.status === 400) {
+            throw data.message;
+          } else {
+            this.inviteSuccessModal = true;
+          }
+        })
+        .catch(this.$showErrorMessage);
       this.setIsLoading(false);
       this.inviteModal = false;
     },
@@ -185,7 +191,7 @@ export default {
             @input="handleQuickSearchInput" />
         </div>
 
-        <div class="control-bar__right">
+        <div class="control-bar__right" v-if="userPermissions.inviteProjectUsers">
           <UiButton text="INVITE USER" @click="inviteModal = true"></UiButton>
         </div>
       </div>
@@ -195,7 +201,7 @@ export default {
           <UiTableCell align="left" width="4%"></UiTableCell>
           <UiTableCell align="left" width="73%">User</UiTableCell>
           <UiTableCell align="left">Role</UiTableCell>
-          <UiTableCell align="left" width="5%"></UiTableCell>
+          <UiTableCell align="left" width="5%" v-if="userPermissions.inviteProjectUsers"/>
         </UiTableRow>
         <UiTableRow
           v-for="user in filteredUsers"
@@ -209,14 +215,22 @@ export default {
             {{ user.email }}
           </UiTableCell>
           <UiTableCell align="left">
-            <UiLabelSwitch
-              v-if="user.role !== 'merchant_owner'"
-              :value="user.role"
-              :scheme="roleScheme"
-              @input="handleChangeRole($event, user)"/>
+            <template v-if="user.role !== 'merchant_owner'">
+              <template v-if="userPermissions.inviteProjectUsers">
+                <UiLabelSwitch
+                  :value="user.role"
+                  :scheme="roleScheme"
+                  @input="handleChangeRole($event, user)"/>
+              </template>
+              <template v-else>
+                <UiLabelTag :color="getLabelColor(user.role)" class="owner-label">
+                  {{ getRoleName(user.role) }}
+                </UiLabelTag>
+              </template>
+            </template>
             <UiLabelTag v-else color="red" class="owner-label">Owner</UiLabelTag>
           </UiTableCell>
-          <UiTableCell>
+          <UiTableCell v-if="userPermissions.inviteProjectUsers">
             <div
               class="delete-user"
               v-if="user.role !== 'merchant_owner'"
@@ -262,7 +276,7 @@ export default {
     </UiConfirm>
 
     <InviteUserModal
-      v-show="inviteModal"
+      v-if="inviteModal"
       @close="inviteModal = false"
       @input="handleAddUser" />
 
@@ -288,11 +302,11 @@ export default {
   top: 2px;
 
   svg {
-    fill: #C6CACC;
+    fill: #c6cacc;
   }
 
   &:hover svg {
-    fill: #EA3D2F;
+    fill: #ea3d2f;
   }
 }
 
@@ -303,7 +317,7 @@ export default {
 .change-role {
   font-size: 14px;
   letter-spacing: 0.25px;
-  color: #5E6366;
+  color: #5e6366;
 
   &__labels {
     display: flex;

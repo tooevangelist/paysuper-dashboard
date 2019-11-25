@@ -48,7 +48,7 @@ export default {
 
     items() {
       const navItems = [
-        'personalProfile',
+        // 'personalProfile',
         'companyInfo',
         'licenseAgreement',
         'paymentMethods',
