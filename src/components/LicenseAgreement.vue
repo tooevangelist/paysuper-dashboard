@@ -45,7 +45,6 @@ export default {
   },
   async mounted() {
     try {
-      console.error(this.isOnboardingStepsComplete);
       await this.initState(this.isOnboardingStepsComplete);
     } catch (error) {
       this.$_Notifications_showErrorMessage(error);
