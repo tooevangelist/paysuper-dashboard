@@ -4,8 +4,6 @@ import { delay, get } from 'lodash-es';
 import Centrifuge from 'centrifuge';
 import HelloSign from 'hellosign-embedded';
 
-const HELLOSIGN_CLIENT_ID = '2599245f066de53be8e5837360edf3ac';
-
 function getDefaultAgreementDocument() {
   return {
     metadata: {
@@ -61,7 +59,12 @@ export default function createLicenseAgreementStore() {
       },
     },
     actions: {
-      async initState({ commit, dispatch, getters }, isOnboardingStepsComplete) {
+      async initState({
+        commit,
+        dispatch,
+        getters,
+        rootState,
+      }, isOnboardingStepsComplete) {
         await dispatch('fetchAgreementSignature', isOnboardingStepsComplete);
         await dispatch('fetchAgreementMetadata', isOnboardingStepsComplete);
 
@@ -71,7 +74,7 @@ export default function createLicenseAgreementStore() {
 
         if (getters.isUsingHellosign) {
           const helloSign = new HelloSign({
-            clientId: HELLOSIGN_CLIENT_ID,
+            clientId: rootState.config.hellosignClientId,
             // TODO: remove 3 lines below for production
             testMode: true,
             debug: true,
