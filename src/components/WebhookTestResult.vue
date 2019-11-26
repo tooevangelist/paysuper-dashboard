@@ -1,15 +1,55 @@
 <script>
 export default {
   name: 'WebhookTestResult',
+  props: {
+    result: {
+      type: Object,
+      required: true,
+    },
+  },
 
   data() {
     return {
       tabs: [
-        { label: 'Request', value: 'request' },
-        { label: 'Response', value: 'response' },
+        { label: 'Request', value: 0 },
+        { label: 'Response', value: 1 },
       ],
       currentTab: 0,
+      text: {
+        non_existing_user: {
+          title: 'User verification: Testing response to non-existent user',
+          sub: `When PaySuper requests to check a non-existent user, the project must respond
+           with HTTP code 4xx and error code INVALID_USER. This tester requests to check
+           a user with a randomly generated ID.`,
+        },
+        existing_user: {
+          title: 'User verification: Testing response to correct user check',
+          sub: 'When PaySuper requests to check an existing user, the project must respond with HTTP code 200.',
+        },
+        valid_signature: {
+          title: 'Payment validation: Testing response to correct payment',
+          sub: 'When PaySuper requests a payment with correct parameters, the project must respond with HTTP code 200. This tester requests to make a payment to an existing user.',
+        },
+        invalid_signature: {
+          title: 'Payment validation: Testing response to invalid signature',
+          sub: 'When PaySuper requests to make a payment with an incorrect signature, the project must respond with an HTTP code 4xx and the error code INVALID_SIGNATURE.',
+        },
+      },
     };
+  },
+
+  computed: {
+    params() {
+      return JSON.parse(this.result.config.data);
+    },
+
+    testCase() {
+      return this.params.testing_case;
+    },
+
+    success() {
+      return this.result.status === 200;
+    },
   },
 };
 </script>
@@ -18,19 +58,64 @@ export default {
   <div class="result">
     <header class="result__header">
       <UiHeader level="3">
-        Test
+        {{ this.text[testCase].title }}
       </UiHeader>
-      <div class="result__status result__status--passed">
+      <div class="result__status"
+           :class="{'result__status--passed': success, 'result__status--fail': !success}">
         <IconPassed class="passed"></IconPassed>
         <IconFail class="fail"></IconFail>
-        <span>Status text</span>
+        <span>{{ result.status }}</span>
       </div>
 
-      <p>Some text</p>
+      <p>{{ this.text[testCase].sub }}</p>
     </header>
 
     <div class="result__content">
       <UiTabs :items="tabs" v-model="currentTab"></UiTabs>
+      <div class="result__tab" v-if="currentTab === 0">
+        <UiTable>
+          <UiTableRow v-for="(key, index) in Object.keys(result.config.headers)" :key="index">
+            <UiTableCell
+              align="right"
+              valign="top"
+              width="160px"
+              class="result__cell result__cell--header">
+              {{ key }}
+            </UiTableCell>
+            <UiTableCell align="left" valign="top" width="510px" class="result__cell">
+              <div class="wrap">
+                {{ result.config.headers[key] }}
+              </div>
+            </UiTableCell>
+          </UiTableRow>
+        </UiTable>
+
+        <div class="result__tab-data">
+          {{ result.config.data }}
+        </div>
+      </div>
+      <div class="result__tab" v-if="currentTab === 1">
+        <UiTable>
+          <UiTableRow v-for="(key, index) in Object.keys(result.headers)" :key="index">
+            <UiTableCell
+              align="right"
+              valign="top"
+              width="160px"
+              class="result__cell result__cell--header">
+              {{ key }}
+            </UiTableCell>
+            <UiTableCell align="left" valign="top" width="510px" class="result__cell">
+              <div class="wrap">
+                {{ result.headers[key] }}
+              </div>
+            </UiTableCell>
+          </UiTableRow>
+        </UiTable>
+
+        <div class="result__tab-data">
+          {{ result.data }}
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -38,6 +123,7 @@ export default {
 <style lang="scss" scoped>
 .result {
   border: 1px solid #F1F3F4;
+  margin-bottom: 24px;
 
   &__header {
     background: #F7F9FA;
@@ -79,5 +165,33 @@ export default {
       }
     }
   }
+
+  &__cell {
+    border-bottom: none;
+    font-size: 14px;
+
+    &--header {
+      color: #919699;
+      padding-right: 24px;
+    }
+  }
+
+  &__tab {
+    padding-top: 24px;
+  }
+
+  &__tab-data {
+    padding: 14px 16px 16px;
+    background: #F7F9FA;
+    color: #5E6366;
+    font-size: 14px;
+    line-height: 20px;
+  }
+}
+
+.wrap {
+  max-width: 510px;
+  word-wrap: break-word;
+  white-space: normal;
 }
 </style>

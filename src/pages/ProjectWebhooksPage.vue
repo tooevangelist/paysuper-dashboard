@@ -7,6 +7,7 @@ import {
 import PictureDotsAndSquaresScheme from '@/components/PictureDotsAndSquaresScheme.vue';
 import KeyGenerateField from '@/components/KeyGenerateField.vue';
 import WebhookTestMethods from '@/components/WebhookTestMethods.vue';
+import WebHookTestStore from '@/store/WebHookTestStore';
 
 export default {
   name: 'ProjectWebhooksPage',
@@ -15,6 +16,18 @@ export default {
     WebhookTestMethods,
     PictureDotsAndSquaresScheme,
     KeyGenerateField,
+  },
+
+  async asyncData({
+    store, registerStoreModule, route, resources,
+  }) {
+    try {
+      await registerStoreModule('WebHookTest', WebHookTestStore, {
+        projectId: route.params.id,
+      }).catch(resources.notifications.showErrorMessage);
+    } catch (error) {
+      store.dispatch('setPageError', error);
+    }
   },
 
   data() {

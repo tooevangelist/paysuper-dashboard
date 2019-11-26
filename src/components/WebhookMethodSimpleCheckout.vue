@@ -61,7 +61,7 @@ export default {
       <UiButton
         class="test-button"
         :disabled="$v.form.$invalid"
-        @click="$emit('input', { form,  type: 'simple'})"
+        @click="$emit('input', { ...form,  type: 'simple'})"
         text="TEST"
       />
     </div>

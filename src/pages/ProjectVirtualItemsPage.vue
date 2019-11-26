@@ -325,7 +325,7 @@ export default {
                 <UiTooltipMenuItem
                   iconComponent="IconDelete"
                   type="delete"
-                  @click="showConfirm(item)"
+                  @click.prevent.stop="showConfirm(item)"
                 >
                   Delete
                 </UiTooltipMenuItem>
