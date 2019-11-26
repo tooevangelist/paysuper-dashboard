@@ -101,7 +101,6 @@ export default function createLicenseAgreementStore() {
         if (isUsingHellosign && includes([7, 8], status)) {
           const response = await axios.put(
             '{apiUrl}/admin/api/v1/merchants/agreement/signature',
-            { signer_type: 0 },
           );
 
           commit('signature', response.data);

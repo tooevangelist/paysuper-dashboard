@@ -44,14 +44,17 @@ export default {
     ...mapState('User/Merchant', ['onboardingCompleteStepsCount', 'onboardingSteps']),
     ...mapGetters('Company/LicenseAgreement', ['status']),
 
+    statusValue() {
+      return merchantStatusScheme[this.status].value;
+    },
     isPending() {
-      return merchantStatusScheme[this.status].value === 'pending';
+      return this.statusValue === 'pending';
     },
     isSigning() {
-      return merchantStatusScheme[this.status].value === 'signing';
+      return this.statusValue === 'signing';
     },
     isSigned() {
-      return merchantStatusScheme[this.status].value === 'signed';
+      return this.statusValue === 'signed';
     },
     isCompanyInfoLocked() {
       return this.onboardingCompleteStepsCount > 2;
@@ -85,18 +88,30 @@ export default {
       return this.onboardingCompleteStepsCount < 4;
     },
     licenseNotice() {
-      return this.isLicenseLocked
-        ? 'After Previous Steps'
-        : this.isPending
-          ? 'Checking…'
-          : this.isSigning ? 'Checking agreement…' : 'Not Signed';
+      if (this.isLicenseLocked) {
+        return 'After Previous Steps';
+      }
+
+      if (this.isPending) {
+        return 'Checking…';
+      }
+
+      return this.isSigning ? 'Checking agreement…' : 'Not Signed';
     },
     licenseStatus() {
+      if (this.isSigned) {
+        return { status: 'complete', notice: '' };
+      }
+
+      const notice = this.licenseNotice;
+
+      if (this.isLicenseLocked) {
+        return { status: 'locked', notice };
+      }
+
       return {
-        status: this.isSigned
-          ? 'complete'
-          : this.isLicenseLocked ? 'locked' : this.isPending ? 'waiting' : 'default',
-        notice: this.isSigned ? '' : this.licenseNotice,
+        status: this.isPending ? 'waiting' : 'default',
+        notice,
       };
     },
     listItems() {
