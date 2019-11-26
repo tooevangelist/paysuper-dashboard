@@ -87,7 +87,6 @@ export default function createMerchantLicenseAgreementStore() {
         if (merchantId) {
           const response = await axios.put(
             `{apiUrl}/system/api/v1/merchants/${merchantId}/agreement/signature`,
-            { signer_type: 1 },
           );
 
           commit('signature', response.data);

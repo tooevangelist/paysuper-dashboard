@@ -9,6 +9,7 @@ import PaymentMethods from '@/components/PaymentMethods.vue';
 import PictureCompanyPage from '@/components/PictureCompanyPage.vue';
 import SmartListItem from '@/components/SmartListItem.vue';
 import CompanyStore from '@/store/CompanyStore';
+import merchantStatusScheme from '@/schemes/merchantStatusScheme';
 
 export default {
   name: 'Company',
@@ -40,11 +41,20 @@ export default {
     };
   },
   computed: {
-    ...mapState('User/Merchant', ['merchant', 'onboardingCompleteStepsCount', 'onboardingSteps']),
+    ...mapState('User/Merchant', ['onboardingCompleteStepsCount', 'onboardingSteps']),
     ...mapGetters('Company/LicenseAgreement', ['status']),
 
-    isNotOperatingCompany() {
-      return this.merchant.operating_company_id === undefined || this.merchant.operating_company_id === '';
+    statusValue() {
+      return merchantStatusScheme[this.status].value;
+    },
+    isPending() {
+      return this.statusValue === 'pending';
+    },
+    isSigning() {
+      return this.statusValue === 'signing';
+    },
+    isSigned() {
+      return this.statusValue === 'signed';
     },
     isCompanyInfoLocked() {
       return this.onboardingCompleteStepsCount > 2;
@@ -78,18 +88,30 @@ export default {
       return this.onboardingCompleteStepsCount < 4;
     },
     licenseNotice() {
-      return this.isLicenseLocked
-        ? 'After Previous Steps'
-        : this.status < 3 ? this.isNotOperatingCompany ? 'Checking…' : 'Not Signed' : 'Checking agreement…';
+      if (this.isLicenseLocked) {
+        return 'After Previous Steps';
+      }
+
+      if (this.isPending) {
+        return 'Checking…';
+      }
+
+      return this.isSigning ? 'Checking agreement…' : 'Not Signed';
     },
     licenseStatus() {
+      if (this.isSigned) {
+        return { status: 'complete', notice: '' };
+      }
+
+      const notice = this.licenseNotice;
+
+      if (this.isLicenseLocked) {
+        return { status: 'locked', notice };
+      }
+
       return {
-        status: this.status === 4
-          ? 'complete'
-          : this.isLicenseLocked ? 'locked' : this.isNotOperatingCompany ? 'waiting' : 'default',
-        notice: this.status === 4
-          ? ''
-          : this.licenseNotice,
+        status: this.isPending ? 'waiting' : 'default',
+        notice,
       };
     },
     listItems() {

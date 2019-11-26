@@ -10,7 +10,7 @@ import TransactionRefund from '@/components/TransactionRefund.vue';
 const STATUS_COLOR = {
   created: 'blue',
   processed: 'green',
-  pending: 'orange',
+  pending: 'yellow',
   refunded: 'red',
   chargeback: 'red',
   rejected: 'transparent',

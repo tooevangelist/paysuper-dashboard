@@ -90,7 +90,7 @@ export default {
           <UiTableCell align="left">
             {{ getCountryByCode(order.country_code) }}
           </UiTableCell>
-          <UiTableCell align="left" class="cian">
+          <UiTableCell align="left" class="cyan">
             {{ $formatPrice(order.total_payment_amount, currency) }}
           </UiTableCell>
           <UiTableCell align="left">
@@ -150,7 +150,7 @@ export default {
   padding-right: 20px;
   margin-bottom: 40px;
 }
-.cian {
+.cyan {
   color: #069697;
 }
 </style>

@@ -19,7 +19,7 @@ export default {
       validator(value) {
         return includes([
           'blue',
-          'orange',
+          'yellow',
           'purple',
           'green',
           'gray',

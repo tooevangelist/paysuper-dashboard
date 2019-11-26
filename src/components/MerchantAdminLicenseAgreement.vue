@@ -46,7 +46,7 @@ export default {
         { value: this.merchantStatus },
       ) || merchantStatusScheme[0];
 
-      if (includes(['new', 'signing'], currentStatus.value)) {
+      if (includes(['new', 'signing', 'accepted'], currentStatus.value)) {
         return [currentStatus, merchantStatusScheme[6]];
       }
 
@@ -156,7 +156,7 @@ export default {
   </section>
   <section class="section">
     <UiHeader level="3" :hasMargin="true">
-        Signing companies
+      Signing companies
     </UiHeader>
     <UiText>
       Maltese signing company is for merchants from Russia, Belarus,
@@ -172,8 +172,8 @@ export default {
         :key="item.value"
         :value="item.value"
         @change="updateOperatingCompany($event, item.label)"
-        >
-          {{ item.label }}
+      >
+        {{ item.label }}
       </UiRadio>
     </div>
   </section>
@@ -186,7 +186,7 @@ export default {
       Merchant will get different notifications depending on the LA request status.
     </UiText>
     <div
-      v-if="!hasSignature"
+      v-if="merchantStatus === 'new'"
       class="no-agreement"
     >
       No agreement

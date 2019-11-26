@@ -178,7 +178,7 @@ export default {
       background: #C6CACC;
     }
   }
-  &._orange {
+  &._yellow {
     &::before {
       background: #f3aa18;
     }

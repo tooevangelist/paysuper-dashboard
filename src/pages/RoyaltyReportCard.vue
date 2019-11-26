@@ -10,7 +10,7 @@ import ReportDispute from '@/components/ReportDispute.vue';
 import ExportModal from '@/components/ExportModal.vue';
 
 const STATUS_COLOR = {
-  pending: 'orange',
+  pending: 'yellow',
   accepted: 'green',
   waiting_payment: 'green',
   paid: 'aqua',

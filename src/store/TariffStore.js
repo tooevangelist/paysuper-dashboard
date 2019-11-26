@@ -139,13 +139,9 @@ export default function createTariffStore() {
           });
         }
       },
-      async submitTariffs({ dispatch, state }, merchantId) {
-        const path = merchantId
-          ? `/system/api/v1/merchants/${merchantId}/tariffs`
-          : '/admin/api/v1/merchants/tariffs';
-
+      async submitTariffs({ dispatch, state }) {
         const response = await axios.post(
-          `{apiUrl}${path}`,
+          '{apiUrl}/admin/api/v1/merchants/tariffs',
           {
             home_region: state.region,
             merchant_operations_type: state.operationsType,
@@ -154,6 +150,7 @@ export default function createTariffStore() {
 
         if (response.status === 200) {
           dispatch('User/Merchant/completeStep', 'tariff', { root: true });
+          dispatch('User/Merchant/updateStatus', 7, { root: true });
           await dispatch(
             'Company/LicenseAgreement/initWaitingForSignatureGenerated',
             true,

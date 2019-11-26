@@ -151,6 +151,7 @@ export default {
         :checked="item.value === operationsType"
         :key="item.value"
         :value="item.value"
+        :disabled="status !== 0 && item.value !== operationsType"
         @change="updateOperationsType($event)"
         >
           {{ item.label }}

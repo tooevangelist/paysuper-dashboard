@@ -10,7 +10,7 @@ export default {
   },
   2: {
     text: 'Pending',
-    color: 'orange',
+    color: 'yellow',
     value: 'pending',
   },
   3: {
