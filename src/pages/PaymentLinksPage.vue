@@ -170,16 +170,13 @@ export default {
 
     <UiPanel>
       <div class="control-bar">
-        <div class="control-bar _left-center">
-          <UiFilterDate
-            v-model="dateFilter"
-            @input="filterLinks"
-          />
-          <UiFilterReportsStatus
-            class="filter-status"
-            @input="handleFilterInput"
-            :value="filters.status[0]"
-            :scheme="scheme" />
+        <div class="control-bar__left"/>
+        <div class="control-bar__right">
+          <RouterLink to="/payment-links-create/">
+            <UiButton>
+              CREATE LINK
+            </UiButton>
+          </RouterLink>
         </div>
       </div>
 
@@ -217,15 +214,7 @@ export default {
 <style lang="scss" scoped>
 .control-bar {
   display: flex;
-  &._center {
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-  }
-  &._left-center {
-    justify-content: center;
-    align-items: center;
-  }
+  justify-content: space-between;
 }
 
 .status-filter {

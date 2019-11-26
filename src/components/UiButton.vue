@@ -37,6 +37,7 @@ export default {
           'red',
           'transparent-gray',
           'transparent-blue',
+          'transparent-blue-thin-border',
         ], value);
       },
     },
@@ -283,12 +284,27 @@ $primary-button-size: 14px;
       normal,
       $transparent-blue-transparent-font-color,
       transparent,
-      $transparent-blue-transparent-font-color,
+      $transparent-blue-transparent-hover-box-color,
       transparent
     );
     &:not(._disabled) .icon-before svg {
       fill: $transparent-blue-font-color;
     }
+  }
+  &._transparent-blue-thin-border {
+    @include base-button(
+      transparent,
+      $transparent-blue-font-color,
+      normal,
+      $transparent-blue-transparent-font-color,
+      transparent,
+      $transparent-blue-transparent-hover-box-color,
+      transparent
+    );
+    &:not(._disabled) .icon-before svg {
+      fill: $transparent-blue-font-color;
+    }
+    border-width: 1px;
   }
 }
 
