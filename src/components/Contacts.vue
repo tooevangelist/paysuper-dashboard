@@ -28,7 +28,7 @@ export default {
     ...mapGetters('User', ['userPermissions']),
 
     viewOnly() {
-      return !this.userPermissions.editCompany;
+      return !this.userPermissions.editCompany || this.status !== 0;
     },
 
     status() {

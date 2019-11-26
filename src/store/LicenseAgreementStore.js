@@ -26,16 +26,19 @@ export default function createLicenseAgreementStore() {
     },
     getters: {
       isSigendYou(state, getters) {
-        return getters.status >= 3;
+        return includes([3, 4], getters.status);
       },
       isSigendPS(state, getters) {
-        return getters.status >= 4;
+        return getters.status === 4;
       },
       isUsingHellosign(state, getters) {
-        return !getters.status;
+        return !includes([3, 4, 5, 6], getters.status);
       },
       status(state, getter, rootState) {
         return rootState.User.Merchant.merchant.status;
+      },
+      merchantId(state, getter, rootState) {
+        return rootState.User.Merchant.merchant.id;
       },
       centrifugoToken(state, getter, rootState) {
         return rootState.User.Merchant.merchant.centrifugo_token;
@@ -67,9 +70,9 @@ export default function createLicenseAgreementStore() {
         dispatch,
         getters,
         rootState,
-      }, isOnboardingStepsComplete) {
-        await dispatch('fetchAgreementSignature', isOnboardingStepsComplete);
-        await dispatch('fetchAgreementMetadata', isOnboardingStepsComplete);
+      }) {
+        await dispatch('fetchAgreementSignature');
+        await dispatch('fetchAgreementMetadata');
 
         if (includes([3, 7], getters.status)) {
           dispatch('initWaitingForChangeStatus');
@@ -92,10 +95,10 @@ export default function createLicenseAgreementStore() {
           commit('helloSign', helloSign);
         }
       },
-      async fetchAgreementSignature({ commit, getters }, isOnboardingStepsComplete) {
-        const { isUsingHellosign } = getters;
+      async fetchAgreementSignature({ commit, getters }) {
+        const { isUsingHellosign, status } = getters;
 
-        if (isOnboardingStepsComplete && isUsingHellosign) {
+        if (isUsingHellosign && includes([7, 8], status)) {
           const response = await axios.put(
             '{apiUrl}/admin/api/v1/merchants/agreement/signature',
             { signer_type: 0 },
@@ -104,10 +107,10 @@ export default function createLicenseAgreementStore() {
           commit('signature', response.data);
         }
       },
-      async fetchAgreementMetadata({ commit, getters }, isOnboardingStepsComplete) {
+      async fetchAgreementMetadata({ commit, getters }) {
         const { status } = getters;
 
-        if (isOnboardingStepsComplete && status) {
+        if (includes([3, 4, 7, 8], status)) {
           const response = await axios.get(
             '{apiUrl}/admin/api/v1/merchants/agreement',
           );
@@ -171,7 +174,7 @@ export default function createLicenseAgreementStore() {
               return;
             }
             if (state.hasGeneratedAgreement) {
-              await dispatch('fetchAgreementSignature', true);
+              await dispatch('fetchAgreementSignature');
             } else {
               dispatch('initWaitingForSignatureGenerated');
             }
@@ -182,7 +185,7 @@ export default function createLicenseAgreementStore() {
             dispatch('User/Merchant/updateStatus', status, { root: true });
             dispatch('User/Merchant/completeStep', 'license', { root: true });
             delay(async () => {
-              await dispatch('fetchAgreementMetadata', true);
+              await dispatch('fetchAgreementMetadata');
               await dispatch('fetchDocument');
             }, 5000);
           }
@@ -200,13 +203,12 @@ export default function createLicenseAgreementStore() {
 
         centrifuge.setToken(centrifugoToken);
         centrifuge.subscribe(`paysuper:merchant#${merchantId}`, async ({ data }) => {
-          if (get(data, 'generated') === false) {
-            return;
+          if (get(data, 'generated') === true) {
+            if (status === 8) {
+              await dispatch('fetchAgreementSignature', true);
+            }
+            commit('hasGeneratedAgreement', true);
           }
-          if (status === 8) {
-            await dispatch('fetchAgreementSignature', true);
-          }
-          commit('hasGeneratedAgreement', true);
         });
         centrifuge.connect();
       },

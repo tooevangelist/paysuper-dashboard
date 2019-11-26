@@ -16,7 +16,7 @@ export default {
       default: 'gray',
       validator(value) {
         return includes(
-          ['gray', 'red', 'blue', 'green', 'orange', 'purple', 'aqua', 'cyan', 'transparent'],
+          ['gray', 'red', 'blue', 'green', 'yellow', 'purple', 'aqua', 'cyan', 'transparent'],
           value,
         );
       },
@@ -51,7 +51,7 @@ export default {
   &._color-green {
     background-color: #2fa84f;
   }
-  &._color-orange {
+  &._color-yellow {
     background-color: #f3aa18;
   }
   &._color-purple {

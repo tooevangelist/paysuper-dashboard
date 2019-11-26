@@ -16,7 +16,7 @@ export default {
       {
         text: 'Pending',
         value: 'pending',
-        color: 'orange',
+        color: 'yellow',
       },
       {
         text: 'Processed',

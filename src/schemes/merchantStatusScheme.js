@@ -28,7 +28,7 @@ const merchantStatusScheme = {
   },
   8: {
     label: 'Accepted',
-    color: 'teal',
+    color: 'cyan',
     value: 'accepted',
   },
   5: {

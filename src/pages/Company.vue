@@ -45,13 +45,13 @@ export default {
     ...mapGetters('Company/LicenseAgreement', ['status']),
 
     isPending() {
-      return merchantStatusScheme(this.status).value === 'pending';
+      return merchantStatusScheme[this.status].value === 'pending';
     },
     isSigning() {
-      return merchantStatusScheme(this.status).value === 'signing';
+      return merchantStatusScheme[this.status].value === 'signing';
     },
     isSigned() {
-      return merchantStatusScheme(this.status).value === 'signed';
+      return merchantStatusScheme[this.status].value === 'signed';
     },
     isCompanyInfoLocked() {
       return this.onboardingCompleteStepsCount > 2;

@@ -283,6 +283,11 @@ $hover-background-color: rgba($hover-text-color, 0.08);
         background-color: #ea3d2f;
       }
     }
+    &._cyan {
+      &::before {
+        background-color: #069697;
+      }
+    }
   }
 
   &._selected {
