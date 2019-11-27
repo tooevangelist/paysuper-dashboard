@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { sortBy, flatten, get } from 'lodash-es';
+import { sortBy, flatten } from 'lodash-es';
 import i18n from '@/plugins/i18n';
 
 export default function createDictionariesStore() {
@@ -114,8 +114,7 @@ export default function createDictionariesStore() {
         commit('countries', response.countries);
       },
 
-      async fetchCities({ commit, rootState }, query) {
-        const country = get(rootState, 'Company.AccountInfo.accountInfo.country');
+      async fetchCities({ commit }, { query, country }) {
         const url = `https://cors-anywhere.herokuapp.com/secure.geobytes.com/AutoCompleteCity?filter=${country}&q=${query}`;
         const cities = await axios.get(url)
           .then(response => response.data)
