@@ -26,6 +26,8 @@ export default {
     return {
       isLoadingAutocomplete: true,
       isLoadingCities: false,
+      countryQuery: '',
+      countryCode: '',
     };
   },
 
@@ -42,6 +44,21 @@ export default {
     status() {
       return this.merchant.status;
     },
+
+    filteredCountries() {
+      return this.countries
+        .filter(c => c.label.toLowerCase().indexOf(this.countryQuery.toLowerCase()) > -1);
+    },
+
+    country: {
+      get() {
+        const country = this.countries.find(c => c.value === this.countryCode)
+        return country === undefined ? '' : country.label;
+      },
+      set(value) {
+        this.updateCountry(value);
+      },
+    },
   },
 
   async mounted() {
@@ -50,6 +67,7 @@ export default {
     } catch (error) {
       this.$showErrorMessage(error);
     }
+    this.countryCode = this.accountInfo.country;
   },
   methods: {
     ...mapActions('Company/AccountInfo', ['initState', 'updateAccountInfo', 'submitAccountInfo']),
@@ -68,6 +86,10 @@ export default {
       this.isLoadingCities = false;
     }, 500),
 
+    handleCountryInput(e) {
+      this.countryQuery = e.target && e.target.value ? e.target.value : '';
+    },
+
     async submit() {
       this.$v.accountInfo.$touch();
       if (!this.$v.accountInfo.$invalid) {
@@ -80,6 +102,17 @@ export default {
         } catch (error) {
           this.$showErrorMessage(get(error, 'response.data.details'));
         }
+      }
+    },
+
+    handleUpdateCountry(value) {
+      this.country = value;
+    },
+
+    updateCountry(value) {
+      if (this.countries.find(c => c.value === value) !== undefined) {
+        this.accountInfo.country = value;
+        this.countryCode = value;
       }
     },
   },
@@ -147,14 +180,17 @@ export default {
       it must be corresponded with your official registrational data.
     </div>
 
-    <UiSelect
+    <UiAutocomplete
       v-bind="$getValidatedFieldProps('accountInfo.country')"
       label="Country"
-      :options="countries"
-      :value="accountInfo.country"
-      :disabled="viewOnly"
-      @input="updateField('country', $event)"
+      v-model="country"
+      :required="true"
+      @keyup.native="handleCountryInput"
+      @input="handleUpdateCountry"
       @blur="$v.accountInfo.country.$touch()"
+      :resultsAutocomplete="filteredCountries"
+      :disabled="viewOnly"
+      :threshold="0"
     />
     <UiTextField
       v-bind="$getValidatedFieldProps('accountInfo.state')"

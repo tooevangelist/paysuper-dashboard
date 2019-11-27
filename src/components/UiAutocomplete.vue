@@ -58,6 +58,10 @@ export default {
       default: () => [],
       type: Array,
     },
+    threshold: {
+      default: 2,
+      type: Number,
+    },
   },
   data() {
     return {
@@ -103,7 +107,7 @@ export default {
       const prevValue = this.value || '';
       const value = this.inputValue || '';
       if (prevValue !== value) {
-        if (value && value.length > 2) {
+        if (value && value.length > this.threshold) {
           this.isOpenAutocomplete = true;
           this.$emit('keyup', value);
         } else {
