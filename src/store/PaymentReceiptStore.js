@@ -24,7 +24,7 @@ export default function createPaymentReceiptStore() {
       },
 
       async fetchProfile({ commit, rootState }, { receiptId, orderId }) {
-        const url = `${rootState.config.apiUrl}/orders/receipt/${receiptId}/${orderId}`;
+        const url = `${rootState.config.apiUrl}/api/v1/orders/receipt/${receiptId}/${orderId}`;
         const { data } = await axios.get(url);
         commit('receipt', data);
       },

@@ -88,7 +88,7 @@ export default function createDictionariesStore() {
       },
 
       async fetchRegionsCurrencies({ commit, rootState }) {
-        const url = `${rootState.config.apiUrl}/price_group/currencies`;
+        const url = `${rootState.config.apiUrl}/api/v1/price_group/currencies`;
 
         const result = await axios.get(url)
           .then(response => response.data)
@@ -100,7 +100,7 @@ export default function createDictionariesStore() {
       },
 
       getCountries({ rootState }) {
-        const url = `${rootState.config.apiUrl}/country`;
+        const url = `${rootState.config.apiUrl}/api/v1/country`;
 
         return axios.get(url)
           .then(response => response.data)
