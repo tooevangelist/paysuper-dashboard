@@ -189,7 +189,7 @@ export default {
     },
 
     getFormattedDate(item) {
-      return moment.unix(item).format('DD MMM YYYY');
+      return item > 0 ? moment.unix(item).format('DD MMM YYYY') : '—';
     },
 
     getValue(item, path) {
