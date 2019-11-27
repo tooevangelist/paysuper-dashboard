@@ -67,13 +67,8 @@
 
 <script>
 import { directive as clickaway } from 'vue-clickaway';
-import { find, includes } from 'lodash-es';
+import { find, includes, debounce } from 'lodash-es';
 import inView from 'in-view';
-
-inView.offset({
-  top: 0,
-  bottom: 250,
-});
 
 export default {
   directives: {
@@ -145,7 +140,7 @@ export default {
     return {
       selectValue: this.value,
       focused: false,
-      dropup: false,
+      isDropUp: false,
     };
   },
   computed: {
@@ -160,7 +155,7 @@ export default {
         this.focused ? '_focused' : '',
         this.selectValue === '' ? '_empty' : '',
         this.disabled ? '_disabled' : '',
-        this.dropup ? '_dropup' : '',
+        this.isDropUp ? '_dropup' : '',
       ];
     },
 
@@ -199,16 +194,11 @@ export default {
 
   mounted() {
     this.computeDropup();
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          this.computeDropup();
-          ticking = false;
-        });
-        ticking = true;
-      }
-    });
+    window.addEventListener('scroll', this.onScroll);
+  },
+
+  beforeDestroy() {
+    window.removeEventListener('scroll', this.onScroll);
   },
 
   methods: {
@@ -227,8 +217,15 @@ export default {
     },
 
     computeDropup() {
-      this.dropup = !inView.is(this.$el);
+      this.isDropUp = !inView.is(this.$el);
     },
+
+    // eslint-disable-next-line
+    onScroll: debounce(function () {
+      window.requestAnimationFrame(() => {
+        this.computeDropup();
+      });
+    }, 100),
   },
 };
 </script>
