@@ -10,9 +10,9 @@ export default function createUserStore() {
         return dispatch('confirmEmail', token);
       },
 
-      async confirmEmail({ rootState }, token) {
+      async confirmEmail(ctx, token) {
         await axios.put(
-          `${rootState.config.apiUrl}/api/v1/user/confirm_email`,
+          '{apiUrl}/api/v1/user/confirm_email',
           {
             token,
           },
