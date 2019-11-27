@@ -67,7 +67,8 @@
 
 <script>
 import { directive as clickaway } from 'vue-clickaway';
-import { find, includes } from 'lodash-es';
+import { find, includes, debounce } from 'lodash-es';
+import inView from 'in-view';
 
 export default {
   directives: {
@@ -139,6 +140,7 @@ export default {
     return {
       selectValue: this.value,
       focused: false,
+      isDropUp: false,
     };
   },
   computed: {
@@ -153,6 +155,7 @@ export default {
         this.focused ? '_focused' : '',
         this.selectValue === '' ? '_empty' : '',
         this.disabled ? '_disabled' : '',
+        this.isDropUp ? '_dropup' : '',
       ];
     },
 
@@ -188,6 +191,16 @@ export default {
       this.selectValue = val;
     },
   },
+
+  mounted() {
+    this.computeDropup();
+    window.addEventListener('scroll', this.onScroll);
+  },
+
+  beforeDestroy() {
+    window.removeEventListener('scroll', this.onScroll);
+  },
+
   methods: {
     emitChange({ target: { value } }) {
       this.$emit('input', value);
@@ -202,6 +215,17 @@ export default {
         this.focused = false;
       }
     },
+
+    computeDropup() {
+      this.isDropUp = !inView.is(this.$el);
+    },
+
+    // eslint-disable-next-line
+    onScroll: debounce(function () {
+      window.requestAnimationFrame(() => {
+        this.computeDropup();
+      });
+    }, 100),
   },
 };
 </script>
@@ -230,6 +254,14 @@ $left-indent: 12px;
   padding: 24px 0;
   position: relative;
   width: 100%;
+
+  &._dropup {
+    .box {
+      top: auto;
+      bottom: 100%;
+      margin-bottom: 2px;
+    }
+  }
 
   &._focused {
     pointer-events: auto;
