@@ -147,7 +147,7 @@ export default function createProjectKeyProductStore() {
 
       async getRecommendedPricesTable(ctx, currency) {
         const { data } = await axios.get(
-          `{apiUrl}/api/v1/pricing/recommended/table?currency=${currency}`,
+          `{apiUrl}/auth/api/v1/pricing/recommended/table?currency=${currency}`,
         );
         return data.ranges.map(item => item.to);
       },

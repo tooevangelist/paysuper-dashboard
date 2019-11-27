@@ -3,8 +3,6 @@ import { saveAs } from 'file-saver';
 import { delay, get } from 'lodash-es';
 import HelloSign from 'hellosign-embedded';
 
-const HELLOSIGN_CLIENT_ID = '2599245f066de53be8e5837360edf3ac';
-
 function getDefaultAgreementDocument() {
   return {
     metadata: {
@@ -58,6 +56,7 @@ export default function createMerchantLicenseAgreementStore() {
         dispatch,
         getters,
         state,
+        rootState,
       }) {
         dispatch('fetchAgreementMetadata');
 
@@ -65,7 +64,7 @@ export default function createMerchantLicenseAgreementStore() {
           dispatch('fetchAgreementSignature');
 
           const helloSign = new HelloSign({
-            clientId: HELLOSIGN_CLIENT_ID,
+            clientId: rootState.config.hellosignClientId,
             // TODO: remove 3 lines below for production
             testMode: true,
             debug: true,
@@ -88,7 +87,6 @@ export default function createMerchantLicenseAgreementStore() {
         if (merchantId) {
           const response = await axios.put(
             `{apiUrl}/system/api/v1/merchants/${merchantId}/agreement/signature`,
-            { signer_type: 1 },
           );
 
           commit('signature', response.data);

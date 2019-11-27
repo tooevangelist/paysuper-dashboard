@@ -10,7 +10,7 @@ import ReportDispute from '@/components/ReportDispute.vue';
 import ExportModal from '@/components/ExportModal.vue';
 
 const STATUS_COLOR = {
-  pending: 'orange',
+  pending: 'yellow',
   accepted: 'green',
   waiting_payment: 'green',
   paid: 'aqua',
@@ -284,19 +284,19 @@ export default {
               {{ report.summary.products_total.total_transactions }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ report.summary.products_total.gross_sales_amount }}
+              {{ report.summary.products_total.gross_sales_amount.toFixed(2) }}
             </UiTableCell>
             <UiTableCell align="left">
               {{ report.summary.products_total.returns_count }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ report.summary.products_total.gross_returns_amount }}
+              {{ report.summary.products_total.gross_returns_amount.toFixed(2) }}
             </UiTableCell>
             <UiTableCell align="left">
               {{ report.summary.products_total.sales_count }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ report.summary.products_total.gross_total_amount }}
+              {{ report.summary.products_total.gross_total_amount.toFixed(2) }}
             </UiTableCell>
             <UiTableCell align="left">
               {{ report.summary.products_total.total_vat }}
@@ -305,7 +305,7 @@ export default {
               {{ report.summary.products_total.total_fees }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ report.summary.products_total.payout_amount }}
+              {{ report.summary.products_total.payout_amount.toFixed(2) }}
             </UiTableCell>
           </UiTableRow>
           <UiTableRow
@@ -323,28 +323,28 @@ export default {
               {{ product.total_transactions }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ product.gross_sales_amount }}
+              {{ product.gross_sales_amount.toFixed(2) }}
             </UiTableCell>
             <UiTableCell align="left">
               {{ product.returns_count }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ product.gross_returns_amount }}
+              {{ product.gross_returns_amount.toFixed(2) }}
             </UiTableCell>
             <UiTableCell align="left">
               {{ product.sales_count }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ product.gross_total_amount }}
+              {{ product.gross_total_amount.toFixed(2) }}
             </UiTableCell>
             <UiTableCell align="left">
               {{ product.total_vat }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ product.total_fees }}
+              {{ product.total_fees.toFixed(2) }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ product.payout_amount }}
+              {{ product.payout_amount.toFixed(2) }}
             </UiTableCell>
           </UiTableRow>
         </UiTable>

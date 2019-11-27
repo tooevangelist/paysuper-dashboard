@@ -28,6 +28,7 @@ export default {
       validator(value) {
         return includes([
           'blue',
+          'cyan',
           'orange',
           'yellow',
           'purple',
@@ -111,6 +112,7 @@ export default {
 <style scoped lang="scss">
 /** @TODO - move to gui consts, fix color and typographics consts */
 $blue-button-color: #3d7bf5;
+$cyan-button-color: #069697;
 $yellow-button-color: #f3aa18;
 $orange-button-color: #ff6f6f;
 $purple-button-color: #8077e7;
@@ -236,6 +238,9 @@ $primary-button-size: 14px;
 .base-button {
   &._blue {
     @include base-button($blue-button-color);
+  }
+  &._cyan {
+    @include base-button($cyan-button-color);
   }
   &._orange {
     @include base-button($orange-button-color);

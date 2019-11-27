@@ -19,11 +19,11 @@ const isDev = process.env.NODE_ENV === 'local';
 const userIdentityCookieName = '_ps_ctkn';
 
 function getOrderParams({
-  project, token, products, amount, type, currency, sdk,
+  project, token, products, amount, type, currency, sdk, devPreset,
 }) {
   return {
     project,
-    ...(isDev ? {
+    ...(devPreset ? {
       project: '5cc7f1cf790c2900010849ee',
       products: ['5dbac6de120a810001a8fe7e'],
       // amount: 25,
@@ -40,7 +40,7 @@ function getOrderParams({
 
 async function getOrderId(apiUrl, orderParams) {
   const { data } = await axios.post(
-    `${apiUrl}/order`,
+    `${apiUrl}/api/v1/order`,
     orderParams,
   );
   return data.id;
@@ -50,7 +50,7 @@ async function getOrderData(apiUrl, orderId, {
   ip, userCookie, acceptLanguage, referer,
 }) {
   const { data } = await axios.get(
-    `${apiUrl}/order/${orderId}`,
+    `${apiUrl}/api/v1/order/${orderId}`,
     {
       headers: {
         'Accept-Language': acceptLanguage,

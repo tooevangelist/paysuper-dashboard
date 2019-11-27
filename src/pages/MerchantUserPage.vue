@@ -99,7 +99,7 @@ export default {
       </template>
       <span slot="description">
         <template v-if="user.status === 'invited'">
-          <UiLabelTag color="orange">Invited</UiLabelTag>
+          <UiLabelTag color="yellow">Invited</UiLabelTag>
         </template>
         <template v-else>
           <template v-if="userPermissions.inviteProjectUsers">

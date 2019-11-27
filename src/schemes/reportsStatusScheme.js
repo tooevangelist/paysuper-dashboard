@@ -8,7 +8,7 @@ export default {
   1: {
     text: 'Pending',
     value: 'pending',
-    color: 'orange',
+    color: 'yellow',
   },
   2: {
     text: 'Confirmed',

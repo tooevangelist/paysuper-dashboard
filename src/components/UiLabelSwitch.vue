@@ -174,7 +174,7 @@ export default {
       background: #3d7bf5;
     }
   }
-  &._orange {
+  &._yellow {
     &::before {
       background: #f3aa18;
     }
@@ -187,11 +187,6 @@ export default {
   &._green {
     &::before {
       background: #2fa84f;
-    }
-  }
-  &._cian {
-    &::before {
-      background: #069697;
     }
   }
   &._red {

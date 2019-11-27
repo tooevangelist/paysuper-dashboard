@@ -92,7 +92,7 @@ export default function createUserStore(resources) {
           return;
         }
         try {
-          await axios.post('{apiUrl}/api/v1/user/invite/check', {
+          await axios.post('{apiUrl}/auth/api/v1/user/invite/check', {
             token: state.inviteToken,
           });
           commit('primaryOnboardingStep', 'inviteProfile');
@@ -103,7 +103,7 @@ export default function createUserStore(resources) {
       },
 
       async approveInvitation({ state, commit }) {
-        await axios.post('{apiUrl}/api/v1/user/invite/approve', {
+        await axios.post('{apiUrl}/auth/api/v1/user/invite/approve', {
           token: state.inviteToken,
         });
         localStorage.removeItem('inviteToken');
@@ -119,7 +119,7 @@ export default function createUserStore(resources) {
           },
         };
         try {
-          const { data } = await axios.get('{apiUrl}/api/v1/user/profile/common');
+          const { data } = await axios.get('{apiUrl}/auth/api/v1/user/profile/common');
           return {
             ...defaults,
             ...data,

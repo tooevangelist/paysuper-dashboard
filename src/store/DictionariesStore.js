@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { sortBy, flatten, get } from 'lodash-es';
+import { sortBy, flatten } from 'lodash-es';
 import i18n from '@/plugins/i18n';
 
 export default function createDictionariesStore() {
@@ -87,8 +87,8 @@ export default function createDictionariesStore() {
         ]);
       },
 
-      async fetchRegionsCurrencies({ commit, rootState }) {
-        const url = `${rootState.config.apiUrl}/price_group/currencies`;
+      async fetchRegionsCurrencies({ commit }) {
+        const url = '{apiUrl}/api/v1/price_group/currencies';
 
         const result = await axios.get(url)
           .then(response => response.data)
@@ -99,8 +99,8 @@ export default function createDictionariesStore() {
         commit('regionsCurrencies', result.regions);
       },
 
-      getCountries({ rootState }) {
-        const url = `${rootState.config.apiUrl}/country`;
+      getCountries() {
+        const url = '{apiUrl}/api/v1/country';
 
         return axios.get(url)
           .then(response => response.data)
@@ -114,8 +114,7 @@ export default function createDictionariesStore() {
         commit('countries', response.countries);
       },
 
-      async fetchCities({ commit, rootState }, query) {
-        const country = get(rootState, 'Company.AccountInfo.accountInfo.country');
+      async fetchCities({ commit }, { query, country }) {
         const url = `https://cors-anywhere.herokuapp.com/secure.geobytes.com/AutoCompleteCity?filter=${country}&q=${query}`;
         const cities = await axios.get(url)
           .then(response => response.data)

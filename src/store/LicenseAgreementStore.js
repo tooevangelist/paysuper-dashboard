@@ -1,10 +1,8 @@
 import axios from 'axios';
 import { saveAs } from 'file-saver';
-import { delay, get } from 'lodash-es';
+import { delay, get, includes } from 'lodash-es';
 import Centrifuge from 'centrifuge';
 import HelloSign from 'hellosign-embedded';
-
-const HELLOSIGN_CLIENT_ID = '2599245f066de53be8e5837360edf3ac';
 
 function getDefaultAgreementDocument() {
   return {
@@ -24,20 +22,23 @@ export default function createLicenseAgreementStore() {
       helloSign: null,
       signature: null,
       agreement: getDefaultAgreementDocument(),
-      document: null,
+      hasGeneratedAgreement: false,
     },
     getters: {
       isSigendYou(state, getters) {
-        return getters.status >= 3;
+        return includes([3, 4], getters.status);
       },
       isSigendPS(state, getters) {
-        return getters.status >= 4;
+        return getters.status === 4;
       },
       isUsingHellosign(state, getters) {
-        return !getters.status;
+        return !includes([3, 4, 5, 6], getters.status);
       },
       status(state, getter, rootState) {
         return rootState.User.Merchant.merchant.status;
+      },
+      merchantId(state, getter, rootState) {
+        return rootState.User.Merchant.merchant.id;
       },
       centrifugoToken(state, getter, rootState) {
         return rootState.User.Merchant.merchant.centrifugo_token;
@@ -59,19 +60,27 @@ export default function createLicenseAgreementStore() {
       signature(state, data) {
         state.signature = data;
       },
+      hasGeneratedAgreement(state, data) {
+        state.hasGeneratedAgreement = data;
+      },
     },
     actions: {
-      async initState({ commit, dispatch, getters }, isOnboardingStepsComplete) {
-        await dispatch('fetchAgreementSignature', isOnboardingStepsComplete);
-        await dispatch('fetchAgreementMetadata', isOnboardingStepsComplete);
+      async initState({
+        commit,
+        dispatch,
+        getters,
+        rootState,
+      }) {
+        await dispatch('fetchAgreementSignature');
+        await dispatch('fetchAgreementMetadata');
 
-        if (getters.status === 3) {
-          dispatch('initWaitingForDocumentSigned');
+        if (includes([3, 7], getters.status)) {
+          dispatch('initWaitingForChangeStatus');
         }
 
         if (getters.isUsingHellosign) {
           const helloSign = new HelloSign({
-            clientId: HELLOSIGN_CLIENT_ID,
+            clientId: rootState.config.hellosignClientId,
             // TODO: remove 3 lines below for production
             testMode: true,
             debug: true,
@@ -80,28 +89,27 @@ export default function createLicenseAgreementStore() {
 
           helloSign.on('sign', () => {
             dispatch('User/Merchant/updateStatus', 3, { root: true });
-            dispatch('initWaitingForDocumentSigned');
+            dispatch('initWaitingForChangeStatus');
           });
 
           commit('helloSign', helloSign);
         }
       },
-      async fetchAgreementSignature({ commit, getters }, isOnboardingStepsComplete) {
-        const { isUsingHellosign } = getters;
+      async fetchAgreementSignature({ commit, getters }) {
+        const { isUsingHellosign, status } = getters;
 
-        if (isOnboardingStepsComplete && isUsingHellosign) {
+        if (isUsingHellosign && includes([7, 8], status)) {
           const response = await axios.put(
             '{apiUrl}/admin/api/v1/merchants/agreement/signature',
-            { signer_type: 0 },
           );
 
           commit('signature', response.data);
         }
       },
-      async fetchAgreementMetadata({ commit, getters }, isOnboardingStepsComplete) {
+      async fetchAgreementMetadata({ commit, getters }) {
         const { status } = getters;
 
-        if (isOnboardingStepsComplete && status) {
+        if (includes([3, 4, 7, 8], status)) {
           const response = await axios.get(
             '{apiUrl}/admin/api/v1/merchants/agreement',
           );
@@ -146,36 +154,59 @@ export default function createLicenseAgreementStore() {
           state.helloSign.open(state.signature.sign_url);
         }
       },
-      initWaitingForDocumentSigned({ dispatch, getters }) {
+      initWaitingForChangeStatus({ dispatch, getters, state }) {
         const { centrifugoToken, merchantId, websocketUrl } = getters;
         const centrifuge = new Centrifuge(websocketUrl);
 
         centrifuge.setToken(centrifugoToken);
         centrifuge.subscribe(`paysuper:merchant#${merchantId}`, async ({ data }) => {
-          if (get(data, 'statuses.to') === 6) {
-            dispatch('User/Merchant/updateStatus', 6, { root: true });
+          const status = get(data, 'statuses.to', null);
+
+          if (status === 6) {
+            dispatch('User/Merchant/updateStatus', status, { root: true });
             return;
           }
 
-          if (get(data, 'statuses.to') === 4) {
-            dispatch('User/Merchant/updateStatus', 4, { root: true });
+          if (status === 8) {
+            dispatch('User/Merchant/updateStatus', status, { root: true });
+            if (state.signature) {
+              return;
+            }
+            if (state.hasGeneratedAgreement) {
+              await dispatch('fetchAgreementSignature');
+            } else {
+              dispatch('initWaitingForSignatureGenerated');
+            }
+            return;
+          }
+
+          if (status === 4) {
+            dispatch('User/Merchant/updateStatus', status, { root: true });
             dispatch('User/Merchant/completeStep', 'license', { root: true });
             delay(async () => {
-              await dispatch('fetchAgreementMetadata', true);
+              await dispatch('fetchAgreementMetadata');
               await dispatch('fetchDocument');
             }, 5000);
           }
         });
         centrifuge.connect();
       },
-      initWaitingForSignatureGenerated({ dispatch, getters }) {
-        const { centrifugoToken, merchantId, websocketUrl } = getters;
+      initWaitingForSignatureGenerated({ commit, dispatch, getters }) {
+        const {
+          centrifugoToken,
+          merchantId,
+          status,
+          websocketUrl,
+        } = getters;
         const centrifuge = new Centrifuge(websocketUrl);
 
         centrifuge.setToken(centrifugoToken);
         centrifuge.subscribe(`paysuper:merchant#${merchantId}`, async ({ data }) => {
           if (get(data, 'generated') === true) {
-            await dispatch('fetchAgreementSignature', true);
+            if (status === 8) {
+              await dispatch('fetchAgreementSignature', true);
+            }
+            commit('hasGeneratedAgreement', true);
           }
         });
         centrifuge.connect();
