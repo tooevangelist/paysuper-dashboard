@@ -109,7 +109,7 @@ export default {
       if (prevValue !== value) {
         if (value && value.length > this.threshold) {
           this.isOpenAutocomplete = true;
-          this.$emit('keyup', value);
+          this.$emit('query', value);
         } else {
           this.isOpenAutocomplete = false;
         }

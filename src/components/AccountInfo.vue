@@ -52,7 +52,7 @@ export default {
 
     country: {
       get() {
-        const country = this.countries.find(c => c.value === this.countryCode)
+        const country = this.countries.find(c => c.value === this.countryCode);
         return country === undefined ? '' : country.label;
       },
       set(value) {
@@ -78,16 +78,14 @@ export default {
     },
 
     // eslint-disable-next-line
-    handleAutocompeteInput: debounce(async function (e) {
-      const search = e.target && e.target.value ? e.target.value : '';
-
+    handleAutocompeteInput: debounce(async function (value) {
       this.isLoadingCities = true;
-      await this.fetchCities(search);
+      await this.fetchCities({ query: value, country: this.countryCode });
       this.isLoadingCities = false;
     }, 500),
 
-    handleCountryInput(e) {
-      this.countryQuery = e.target && e.target.value ? e.target.value : '';
+    handleCountryInput(value) {
+      this.countryQuery = value;
     },
 
     async submit() {
@@ -185,7 +183,7 @@ export default {
       label="Country"
       v-model="country"
       :required="true"
-      @keyup.native="handleCountryInput"
+      @query="handleCountryInput"
       @input="handleUpdateCountry"
       @blur="$v.accountInfo.country.$touch()"
       :resultsAutocomplete="filteredCountries"
@@ -206,7 +204,7 @@ export default {
       label="City"
       v-model="accountInfo.city"
       :required="true"
-      @keyup.native="handleAutocompeteInput"
+      @query="handleAutocompeteInput"
       @input="updateField('city', $event)"
       @blur="$v.accountInfo.city.$touch()"
       :resultsAutocomplete="cities"
