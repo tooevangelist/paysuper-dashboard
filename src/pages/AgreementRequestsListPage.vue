@@ -242,9 +242,8 @@ export default {
           >
             {{get(merchant, 'user.first_name', '')}}
             {{get(merchant, 'user.last_name', '')}}
-            <template v-if="!get(merchant, 'user.first_name') && !get(merchant, 'user.last_name')">
-              &mdash;
-            </template>
+            <UiNoText
+              v-if="!get(merchant, 'user.first_name') && !get(merchant, 'user.last_name')" />
           </span>
         </UiTableCell>
         <UiTableCell align="left">
