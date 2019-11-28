@@ -407,7 +407,7 @@ export default {
           </UiTableRow>
         </UiTable>
 
-        <NoResults type="add-new" v-else>You don’t have any item yet</NoResults>
+        <NoResults type="add-new" v-else>You don’t have any reports yet</NoResults>
       </div>
     </UiPanel>
 

@@ -109,8 +109,12 @@ export default {
 
     updateCountry(value) {
       if (this.countries.find(c => c.value === value) !== undefined) {
-        this.accountInfo.country = value;
+        this.updateField('country', value);
         this.countryCode = value;
+
+        if (this.accountInfo.city !== '') {
+          this.updateField('city', '');
+        }
       }
     },
   },
