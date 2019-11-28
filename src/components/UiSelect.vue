@@ -70,6 +70,7 @@ import { directive as clickaway } from 'vue-clickaway';
 import { find, includes, debounce } from 'lodash-es';
 import inView from 'in-view';
 
+
 export default {
   directives: {
     clickaway,
@@ -207,6 +208,7 @@ export default {
       this.blur();
     },
     focus() {
+      this.computeDropup();
       this.focused = true;
     },
     blur() {
@@ -260,6 +262,7 @@ $left-indent: 12px;
       top: auto;
       bottom: 100%;
       margin-bottom: 2px;
+      transform-origin: bottom;
     }
   }
 
