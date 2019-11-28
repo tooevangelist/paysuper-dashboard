@@ -238,9 +238,13 @@ export default {
         <UiTableCell align="left">
           <span
             class="cell-text"
-            :class="{'_empty': !get(merchant, 'user.email')}"
+            :class="{'_empty': !get(merchant, 'user.first_name')}"
           >
-            {{get(merchant, 'user.email', '—')}}
+            {{get(merchant, 'user.first_name', '')}}
+            {{get(merchant, 'user.last_name', '')}}
+            <template v-if="!get(merchant, 'user.first_name') && !get(merchant, 'user.last_name')">
+              &mdash;
+            </template>
           </span>
         </UiTableCell>
         <UiTableCell align="left">
