@@ -5,7 +5,7 @@ import {
 import {
   isEqual, get,
 } from 'lodash-es';
-import moment from 'moment';
+import { format } from 'date-fns';
 
 import reportsStatusScheme from '@/schemes/reportsStatusScheme';
 import ReportsListStore from '@/store/ReportsListStore';
@@ -189,7 +189,7 @@ export default {
     },
 
     getFormattedDate(item) {
-      return item > 0 ? moment.unix(item).format('DD MMM YYYY') : '—';
+      return item > 0 ? format(item * 1000, 'dd MMM yyyy') : '—';
     },
 
     getValue(item, path) {

@@ -1,6 +1,6 @@
 <script>
 import { mapGetters, mapState } from 'vuex';
-import { reduce } from 'lodash-es';
+import { includes, reduce } from 'lodash-es';
 import PictureWelcomeSheets from '@/components/PictureWelcomeSheets.vue';
 import SmartListItem from '@/components/SmartListItem.vue';
 import merchantStatusScheme from '@/schemes/merchantStatusScheme';
@@ -178,6 +178,9 @@ export default {
         this.$appEvents.$emit('contentScrollToY', 200);
       }
     },
+    hasItemPerform(status) {
+      return includes(['default', 'waiting'], status);
+    },
   },
 };
 </script>
@@ -210,7 +213,7 @@ export default {
       :isExpanded="expandItems[item.id]"
       @toggle="toggle($event, item.id)"
     >
-      <div class="perform" v-if="item.status === 'default'">
+      <div class="perform" v-if="hasItemPerform(item.status)">
         <div class="perform__text">
           {{ item.performText }}
         </div>

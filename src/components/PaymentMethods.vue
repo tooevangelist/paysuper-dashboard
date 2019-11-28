@@ -46,7 +46,12 @@ export default {
     viewOnly() {
       return !this.userPermissions.editCompany;
     },
-
+    accountCurrency() {
+      return get(this.merchant, 'banking.currency', 'USD');
+    },
+    accountPayout() {
+      return get(this.payout, this.accountCurrency, {});
+    },
     status() {
       return this.merchant.status;
     },
@@ -314,13 +319,13 @@ export default {
         :key="index"
         >
         <UiTableCell class="cell _second" align="left">
-            {{ item.method_name }}
+          {{ item.method_name }}
         </UiTableCell>
         <UiTableCell class="cell _merch">
-            {{ $formatPrice(item.method_fixed_fee, item.method_fixed_fee_currency) }}
+          {{ $formatPrice(item.method_fixed_fee, item.method_fixed_fee_currency) }}
         </UiTableCell>
         <UiTableCell class="cell _merch">
-            {{ item.is_paid_by_merchant ? 'Merchant' : 'PaySuper' }}
+          {{ item.is_paid_by_merchant ? 'Merchant' : 'PaySuper' }}
         </UiTableCell>
       </UiTableRow>
     </UiTable>
@@ -339,24 +344,26 @@ export default {
         <UiTableCell class="cell _merch">Fee payout party</UiTableCell>
         <UiTableCell class="cell _merch">Minimal payout</UiTableCell>
       </UiTableRow>
-      <UiTableRow class="row-indent"
-        v-for="(item, key) in payout"
-        :key="key"
-        >
-        <UiTableCell class="cell _second" align="left">{{ key }}</UiTableCell>
+      <UiTableRow class="row-indent">
+        <UiTableCell class="cell _second" align="left">{{ accountCurrency }}</UiTableCell>
         <UiTableCell class="cell _merch">
-            {{ $formatPrice(item.method_fixed_fee, item.method_fixed_fee_currency) }}
+          {{
+            $formatPrice(
+              accountPayout.method_fixed_fee,
+              accountPayout.method_fixed_fee_currency,
+            )
+          }}
         </UiTableCell>
         <UiTableCell class="cell _merch">
-            {{ item.is_paid_by_merchant ? 'Merchant' : 'PaySuper' }}
+          {{ accountPayout.is_paid_by_merchant ? 'Merchant' : 'PaySuper' }}
         </UiTableCell>
         <UiTableCell class="cell _merch">
-            {{
-              $formatPrice(
-                minimalPayout[item.method_fixed_fee_currency],
-                item.method_fixed_fee_currency
-              )
-            }}
+          {{
+            $formatPrice(
+              minimalPayout[accountPayout.method_fixed_fee_currency],
+              accountPayout.method_fixed_fee_currency
+            )
+          }}
         </UiTableCell>
       </UiTableRow>
     </UiTable>
