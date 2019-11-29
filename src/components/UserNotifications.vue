@@ -39,7 +39,7 @@ export default {
       return item.statuses && item.statuses.to;
     },
     getStatusChangeText(item) {
-      const statusFrom = get(item, 'statuses.from');
+      const statusFrom = get(item, 'statuses.from', 0);
       const statusTo = get(item, 'statuses.to');
 
       const statusFromText = get(merchantStatusScheme, `[${statusFrom}].label`, 'Unknown');
@@ -50,7 +50,10 @@ export default {
     },
     openItem(item) {
       this.openedItem = item;
-      this.$emit('markAsReaded', item.id);
+
+      if (!item.is_read) {
+        this.$emit('markAsReaded', item.id);
+      }
     },
   },
 };
@@ -104,7 +107,7 @@ export default {
         <div class="notification">
           <div class="notification-header">
             <div class="subtitle">
-              {{ item.is_system ? 'Pay Super' : 'Administrator' }}
+              {{ item.is_system ? 'PaySuper' : 'Administrator' }}
             </div>
             <div class="date">{{ formatDate(item) }}</div>
           </div>
@@ -118,22 +121,29 @@ export default {
     >
       <div class="notification">
         <div
+          v-if="openedItem.message && !openedItem.is_system"
           class="text-block"
-          v-if="checkIfHasStatusText(openedItem)"
-        >
-          <div class="subtitle">License agreement</div>
-          <p class="text">{{ getStatusChangeText(openedItem) }}</p>
-        </div>
-        <div
-          class="text-block"
-          v-if="openedItem.message"
         >
           <div class="subtitle">Administrator's comment</div>
           <p class="text">{{ openedItem.message }}</p>
         </div>
+        <div
+          v-else-if="checkIfHasStatusText(openedItem)"
+          class="text-block"
+        >
+          <div class="subtitle">License agreement</div>
+          <p class="text">{{ openedItem.message }}</p>
+        </div>
+        <div
+          v-else-if="openedItem.message"
+          class="text-block"
+        >
+          <div class="subtitle">PaySuper</div>
+          <p class="text">{{ openedItem.message }}</p>
+        </div>
         <p
+          v-else
           class="text"
-          v-if="!checkIfHasStatusText(openedItem) && !openedItem.message"
         >Something gone wrong {{ noMessageText }}</p>
       </div>
     </UiScrollbarBox>
