@@ -46,7 +46,10 @@ export default function createMerchantLicenseAgreementStore() {
         );
 
         if (response.data) {
-          const companies = response.data.map(item => ({ label: item.name, value: item.id }));
+          const companies = response.data.map(item => ({
+            label: `${item.name} (${item.country})`,
+            value: item.id,
+          }));
           commit('operatingCompanies', companies);
         }
       },
@@ -72,10 +75,10 @@ export default function createMerchantLicenseAgreementStore() {
           });
 
           helloSign.on('sign', () => {
-            delay(async () => {
-              await dispatch('Merchant/fetchMerchantById', state.merchantId, { root: true });
-              await dispatch('fetchAgreementMetadata');
-            }, 4000);
+            dispatch('Merchant/fetchMerchantById', state.merchantId, { root: true });
+            delay(() => {
+              dispatch('fetchAgreementMetadata');
+            }, 6000);
           });
 
           commit('helloSign', helloSign);

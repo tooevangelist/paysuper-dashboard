@@ -1,7 +1,6 @@
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex';
 import { format } from 'date-fns';
-import moment from 'moment';
 import {
   get, find,
 } from 'lodash-es';
@@ -86,7 +85,7 @@ export default {
     },
 
     getFormattedDate(item) {
-      return moment.unix(item).format('DD MMM YYYY');
+      return format(item * 1000, 'dd MMM yyyy');
     },
 
     async confirmReport() {

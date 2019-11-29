@@ -1,24 +1,21 @@
 <script>
-import { mapState } from 'vuex';
-import { omitBy, map } from 'lodash-es';
+import { mapActions, mapState } from 'vuex';
+import { get, omitBy, map } from 'lodash-es';
 import PictureProfileAndPeople from '@/components/PictureProfileAndPeople.vue';
 import MerchantProfileStore from '@/store/MerchantProfileStore';
 
 export default {
   name: 'MerchantAdminPersonalProfilePage',
-
   components: {
     PictureProfileAndPeople,
   },
-
-  async asyncData({ store, registerStoreModule, route }) {
+  async asyncData({ store, registerStoreModule }) {
     try {
-      await registerStoreModule('MerchantProfile', MerchantProfileStore, route.params.id);
+      await registerStoreModule('MerchantProfile', MerchantProfileStore);
     } catch (error) {
       store.dispatch('setPageError', error);
     }
   },
-
   data() {
     return {
       helpOptions: {
@@ -43,9 +40,9 @@ export default {
       },
     };
   },
-
   computed: {
     ...mapState('MerchantProfile', ['profile']),
+    ...mapState('Merchant', ['merchant']),
 
     helpText() {
       const checkedItems = omitBy(this.profile.help, item => !item);
@@ -75,6 +72,12 @@ export default {
       const { from, to } = this.profile.company.number_of_employees;
       return this.employeesNumberOptions[`${from}-${to}`];
     },
+  },
+  async created() {
+    await this.fetchProfile(get(this.merchant, 'user.profile_id', ''));
+  },
+  methods: {
+    ...mapActions('MerchantProfile', ['fetchProfile']),
   },
 };
 </script>
