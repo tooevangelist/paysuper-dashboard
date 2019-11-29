@@ -12,7 +12,7 @@ export default {
   computed: {
     items() {
       return [
-        {
+        /* {
           title: 'Payout settings',
           url: '/settings/payout-settings/',
           routeNames: [''],
@@ -21,7 +21,7 @@ export default {
           title: 'Company info',
           url: '/settings/company-info/',
           routeNames: [''],
-        },
+        }, */
         {
           title: 'User roles',
           url: '/settings/user-roles/',
