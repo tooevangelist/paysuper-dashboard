@@ -5,7 +5,7 @@ import {
 import {
   isEqual, get,
 } from 'lodash-es';
-
+import moment from 'moment';
 import paymentLinksStatusScheme from '@/schemes/paymentLinksStatusScheme';
 import PaymentLinksListStore from '@/store/PaymentLinksListStore';
 import NoResults from '@/components/NoResults.vue';
@@ -151,6 +151,10 @@ export default {
 
       this.filterLinks();
     },
+
+    formatDate(date) {
+      return moment.unix(date).format('D MMM YYYY, HH:MM');
+    },
   },
 };
 </script>
@@ -199,8 +203,26 @@ export default {
             :link="`/payment-links/${link.id}`"
             >
             <UiTableCell align="left">
+              {{ link.name }}
+            </UiTableCell>
+            <UiTableCell align="left">
               {{ link.id }}
             </UiTableCell>
+            <UiTableCell align="left">
+              {{ link.visits }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ link.gross_total_amount }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ link.conversion }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ link.sales_count }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ formatDate(link.expires_at.seconds) }}
+             </UiTableCell>
           </UiTableRow>
         </UiTable>
 

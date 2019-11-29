@@ -19,7 +19,7 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency }) {
     },
     {
       additional: 'Payment links',
-      unavailableReason: 'Payment links',
+      unavailableReason: 'Links for quick products sale',
       icon: 'IconBlank',
       link: '/payment-links',
       title: 'Payment links',
