@@ -109,7 +109,6 @@ export default {
   },
   methods: {
     ...mapActions(['setIsLoading']),
-    ...mapActions('User', ['logout']),
     ...mapActions('User/Notifications', ['markNotificationAsReaded']),
     ...mapActions('LeaveFeedback', ['postFeedback']),
 
@@ -153,13 +152,6 @@ export default {
       } catch (error) {
         this.$_Notifications_showErrorMessage(error.message);
       }
-    },
-
-    async handleLogout() {
-      this.setIsLoading(true);
-      await this.logout();
-      this.setIsLoading(false);
-      this.$router.push({ path: '/' });
     },
 
     resetPopupFeedback() {

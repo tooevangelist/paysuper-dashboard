@@ -28,7 +28,7 @@ if (process.env.NODE_ENV === 'production') {
 Vue.use(VueRouter);
 Vue.use(Vuex);
 sync(store, router);
-extendAxios(store);
+extendAxios(store, router);
 
 new Vue(
   {
