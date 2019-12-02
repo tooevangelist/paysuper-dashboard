@@ -1,8 +1,6 @@
 <script>
 import { format, isValid } from 'date-fns';
-import { truncate, get } from 'lodash-es';
-import merchantStatusScheme from '@/schemes/merchantStatusScheme';
-import merchantStatusNotificationsScheme from '@/schemes/merchantStatusNotificationsScheme';
+import { truncate } from 'lodash-es';
 import PictureAThingBetweenTrees from '@/components/PictureAThingBetweenTrees.vue';
 
 export default {
