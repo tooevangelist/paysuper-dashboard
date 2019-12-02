@@ -1,5 +1,5 @@
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapGetters, mapActions } from 'vuex';
 import { cloneDeep, findKey, size } from 'lodash-es';
 import UserProfilePerson from '@/components/UserProfilePerson.vue';
 import UserProfileHelp from '@/components/UserProfileHelp.vue';
@@ -58,6 +58,7 @@ export default {
   },
 
   computed: {
+    ...mapGetters('User', ['userPermissions']),
     ...mapState('User/Profile', ['profile', 'currentStepCode']),
 
     isConfirmEmailStep() {
