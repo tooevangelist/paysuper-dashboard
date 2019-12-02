@@ -1,7 +1,7 @@
 <script>
 import { map } from 'lodash-es';
 import ClickOutside from 'vue-click-outside';
-import merchantStatusScheme from '@/schemes/merchantStatusScheme';
+import merchantStatusScheme, { notSignedStatusCodes } from '@/schemes/merchantStatusScheme';
 
 export default {
   name: 'UiFilterAgreementStatus',
@@ -22,10 +22,10 @@ export default {
   },
 
   data() {
-    const unsignedStatuses = map(merchantStatusScheme, (item, key) => ({
-      ...item,
-      code: key,
-    })).filter(item => item.value !== 'signed');
+    const unsignedStatuses = map(notSignedStatusCodes, code => ({
+      ...merchantStatusScheme[code],
+      code,
+    }));
 
     return {
       isDropdownOpened: false,
@@ -202,6 +202,11 @@ export default {
   &._red {
     &::before {
       background: #ea3d2f;
+    }
+  }
+  &._cyan {
+    &::before {
+      background: #069697;
     }
   }
   &._archived {

@@ -21,6 +21,7 @@ export default function createMerchantLicenseAgreementStore() {
       merchantId: null,
       helloSign: null,
       signature: null,
+      agreementNeedsToUpload: false,
       agreement: getDefaultAgreementDocument(),
       document: null,
       operatingCompanies: [],
@@ -75,8 +76,8 @@ export default function createMerchantLicenseAgreementStore() {
           });
 
           helloSign.on('sign', () => {
-            dispatch('Merchant/fetchMerchantById', state.merchantId, { root: true });
             delay(() => {
+              dispatch('Merchant/fetchMerchantById', state.merchantId, { root: true });
               dispatch('fetchAgreementMetadata');
             }, 6000);
           });
@@ -101,23 +102,28 @@ export default function createMerchantLicenseAgreementStore() {
         getters,
         state,
       }) {
-        const { merchantId } = state;
+        const { agreement, merchantId } = state;
         const { status } = getters;
 
         if (merchantId && status >= 3) {
           const response = await axios.get(
             `{apiUrl}/system/api/v1/merchants/${merchantId}/agreement`,
           );
-          const agreement = get(response, 'data', getDefaultAgreementDocument());
+          const agreementNew = get(response, 'data', getDefaultAgreementDocument());
 
-          commit('agreement', agreement);
-
-          if (agreement.metadata.size) {
-            dispatch('fetchDocument');
+          if (agreement.metadata.size !== agreementNew.metadata.size) {
+            commit('agreement', agreementNew);
+            commit('agreementNeedsToUpload', false);
+            await dispatch('fetchDocument');
+          } else {
+            commit('agreementNeedsToUpload', true);
           }
         }
       },
       async uploadDocument({ dispatch, state }) {
+        if (state.agreementNeedsToUpload) {
+          await dispatch('fetchAgreementMetadata');
+        }
         const hasDocument = !!state.document || await dispatch('fetchDocument');
         const { extension } = state.agreement.metadata;
 

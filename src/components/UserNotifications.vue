@@ -31,22 +31,10 @@ export default {
       return isValid(datetime) ? format(datetime, 'dd.MM.yyyy') : '';
     },
     getShortText(item) {
-      const hasStatusText = this.checkIfHasStatusText(item);
-      const text = hasStatusText ? this.getStatusChangeText(item) : item.message;
-      return truncate(text, { length: 100, separator: /,? +/ }) || this.noMessageText;
+      return truncate(item.message, { length: 86, separator: /,? +/ }) || this.noMessageText;
     },
     checkIfHasStatusText(item) {
       return item.statuses && item.statuses.to;
-    },
-    getStatusChangeText(item) {
-      const statusFrom = get(item, 'statuses.from', 0);
-      const statusTo = get(item, 'statuses.to');
-
-      const statusFromText = get(merchantStatusScheme, `[${statusFrom}].label`, 'Unknown');
-      const statusToText = get(merchantStatusScheme, `[${statusTo}].label`, 'Unknown');
-
-      const fallbackText = `Status change (${statusFromText} -> ${statusToText})`;
-      return merchantStatusNotificationsScheme[statusTo] || fallbackText;
     },
     openItem(item) {
       this.openedItem = item;
