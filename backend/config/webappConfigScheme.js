@@ -17,6 +17,6 @@ module.exports = {
   },
   paysuperJsSdkUrl: {
     name: 'PAYSUPER_JS_SDK_URL',
-    default: 'https://static.protocol.one/paysuper/sdk/dev/paysuper.js',
+    default: 'https://cdn.pay.super.com/paysdk/dev/paysuper.js',
   },
 };
