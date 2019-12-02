@@ -83,7 +83,7 @@ module.exports = async function orderPage(ctx) {
   const referer = ctx.get('referer');
 
   const [host] = ctx.request.host.split(':');
-  const formUrl = isDev ? `http://${host}:4040/paysuper-form.js` : config.paysuperSdkUrl;
+  const formUrl = isDev ? `http://${host}:4040/paysuper-form.js` : config.paysuperFormUrl;
 
   if (query.debug) {
     return {
