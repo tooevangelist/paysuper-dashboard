@@ -1,10 +1,20 @@
-import { findKey, omit } from 'lodash-es';
+import { findKey, difference, keys } from 'lodash-es';
 
 const merchantStatusScheme = {
   0: {
     label: 'New',
     color: 'blue',
     value: 'new',
+  },
+  7: {
+    label: 'Pending',
+    color: 'yellow',
+    value: 'pending',
+  },
+  8: {
+    label: 'Accepted',
+    color: 'cyan',
+    value: 'accepted',
   },
   3: {
     label: 'Signing',
@@ -21,16 +31,6 @@ const merchantStatusScheme = {
     color: 'red',
     value: 'rejected',
   },
-  7: {
-    label: 'Pending',
-    color: 'yellow',
-    value: 'pending',
-  },
-  8: {
-    label: 'Accepted',
-    color: 'cyan',
-    value: 'accepted',
-  },
   5: {
     label: 'Archived',
     color: 'red',
@@ -40,5 +40,5 @@ const merchantStatusScheme = {
 };
 
 export const signedStatusCode = findKey(merchantStatusScheme, { value: 'signed' });
-export const notSignedStatusCodes = Object.keys(omit(merchantStatusScheme, [signedStatusCode]));
+export const notSignedStatusCodes = difference(keys(merchantStatusScheme), [signedStatusCode]);
 export default merchantStatusScheme;

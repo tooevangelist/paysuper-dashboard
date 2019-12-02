@@ -1,7 +1,7 @@
 <script>
 import { mapState, mapActions, mapGetters } from 'vuex';
 import { required } from 'vuelidate/lib/validators';
-import { get, find } from 'lodash-es';
+import { get, find, truncate } from 'lodash-es';
 import Notifications from '@/mixins/Notifications';
 
 export default {
@@ -60,7 +60,9 @@ export default {
     },
     prepareCountries() {
       const region = this.regions[this.region];
-      return region ? region.countries.join(', ') : 'List countries for region';
+      return region
+        ? truncate(region.countries.join(', '), { length: 800, separator: /,? +/ })
+        : 'List countries for region';
     },
     prepareRegions() {
       return [
@@ -71,14 +73,8 @@ export default {
         { label: 'Worldwide', value: 'worldwide', abbr: 'WW' },
       ];
     },
-    homeRegionLabel() {
-      return get(find(this.prepareRegions, { value: this.region }), 'label', '');
-    },
     payerRegionAbbr() {
       return get(find(this.prepareRegions, { value: this.payerRegion }), 'abbr', '');
-    },
-    payerRegionLabel() {
-      return get(find(this.prepareRegions, { value: this.payerRegion }), 'label', '');
     },
     channelCosts() {
       return get(
@@ -136,9 +132,34 @@ export default {
       to change these parameters in future.
     </div>
 
-    <div class="title">Home Region</div>
-    <div class="info">
-      {{ homeRegionLabel }}
+    <div class="select">
+      <UiSelect
+        v-bind="$getValidatedFieldProps('region')"
+        label="Home Region"
+        :options="prepareRegions"
+        :value="region"
+        :disabled="status !== 0"
+        @input="updateRegion($event)"
+        @blur="$v.region.$touch()"
+      />
+      <div
+        class="icon-wrapper"
+        @mouseenter="hasCountriesOpened = true"
+        @mouseleave="hasCountriesOpened = false"
+      >
+        <IconQuestion class="question" />
+        <UiTip
+          :class="['tip', { '_nowrap': isOneLineCountries }]"
+          innerPosition="left"
+          position="top"
+          maxWidth="280px"
+          :width="isOneLineCountries ? 'auto' : 'calc(100vw - 320px)'"
+          :hasCaret="true"
+          :visible="hasCountriesOpened"
+        >
+          {{ prepareCountries }}
+        </UiTip>
+      </div>
     </div>
   </div>
 
