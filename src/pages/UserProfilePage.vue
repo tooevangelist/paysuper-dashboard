@@ -86,8 +86,7 @@ export default {
 
   async mounted() {
     if (this.currentStepCode === 'confirmEmail') {
-      await this.waitForEmailConfirm();
-      this.$router.push({ name: 'Dashboard' });
+      this.handleConfirmEmailStep();
     }
   },
 
@@ -112,13 +111,17 @@ export default {
         this.setCurrentStepCode(nextStepCode);
 
         if (nextStepCode === 'confirmEmail') {
-          await this.waitForEmailConfirm();
-          await this.initState();
-          redirectOnboardedUser(params => this.$navigate(params), this.userPermissions);
+          this.handleConfirmEmailStep();
         }
       } catch (error) {
         this.$showErrorMessage(error);
       }
+    },
+
+    async handleConfirmEmailStep() {
+      await this.waitForEmailConfirm();
+      await this.initState();
+      redirectOnboardedUser(params => this.$navigate(params), this.userPermissions);
     },
 
     goBack() {
