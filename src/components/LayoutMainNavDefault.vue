@@ -17,9 +17,12 @@ export default {
 <template>
 <div class="layout-main-nav-default">
   <RouterLink
-    v-for="(item, index) in items"
+    v-for="(item, index) in items.filter(i => !i.isHidden)"
     :key="index"
-    :class="['item', { '_not-available': !item.isAvailable, '_current': currentItem === index }]"
+    :class="['item', {
+     '_not-available': !item.isAvailable,
+     '_current': currentItem === index
+     }]"
     :to="item.link"
   >
     <div class="icon">
@@ -66,7 +69,6 @@ export default {
   &._not-available {
     pointer-events: none;
     opacity: 0.25;
-    display: none;
   }
 }
 .icon {
