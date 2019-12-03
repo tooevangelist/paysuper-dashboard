@@ -63,7 +63,11 @@ export default function createMerchantLicenseAgreementStore() {
         rootState,
       }) {
         const { hellosignClientId, hellosignTestMode } = rootState.config;
-        const isTestMode = hellosignTestMode === 'enabled';
+        const testModeData = hellosignTestMode === 'enabled' ? {
+          testMode: true,
+          debug: true,
+          skipDomainVerification: true,
+        } : {};
 
         dispatch('fetchAgreementMetadata');
 
@@ -72,9 +76,7 @@ export default function createMerchantLicenseAgreementStore() {
 
           const helloSign = new HelloSign({
             clientId: hellosignClientId,
-            testMode: isTestMode,
-            debug: isTestMode,
-            skipDomainVerification: isTestMode,
+            ...testModeData,
           });
 
           helloSign.on('sign', () => {
