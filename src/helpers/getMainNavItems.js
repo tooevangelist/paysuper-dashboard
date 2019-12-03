@@ -9,7 +9,7 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency, onboa
       title: 'Dashboard',
       routeNames: ['Dashboard'],
       isAvailable: permissions.viewDashboard,
-      hide: hideToAdmin,
+      isHidden: hideToAdmin,
     },
     {
       additional: 'Organise your products for sales',
@@ -19,7 +19,7 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency, onboa
       title: 'Projects',
       routeNames: ['ProjectsList'],
       isAvailable: permissions.viewProjects && hasDefaultCurrency,
-      hide: hideToAdmin,
+      isHidden: hideToAdmin,
     },
     {
       additional: 'Weekly royalty reports',
@@ -28,7 +28,7 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency, onboa
       title: 'Royalty reports',
       routeNames: ['RoyaltyReportsPage'],
       isAvailable: permissions.viewRoyaltyReports,
-      hide: hideToAdmin,
+      isHidden: hideToAdmin,
     },
     {
       additional: 'Cash reports',
@@ -37,7 +37,7 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency, onboa
       title: 'Payouts',
       routeNames: ['payouts', 'payoutCard'],
       isAvailable: permissions.viewPayouts && onboardingSteps.banking,
-      hide: hideToAdmin,
+      isHidden: hideToAdmin,
     },
     {
       additional: 'Full list of customer transactions',
@@ -46,7 +46,7 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency, onboa
       title: 'Transaction Search',
       routeNames: ['TransactionsPage'],
       isAvailable: permissions.viewTransactions,
-      hide: hideToAdmin,
+      isHidden: hideToAdmin,
     },
     {
       title: 'Merchants',
@@ -55,7 +55,7 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency, onboa
       link: '/merchants',
       routeNames: ['MerchantsList'],
       isAvailable: permissions.viewMerchantsList,
-      hide: !hideToAdmin,
+      isHidden: !hideToAdmin,
     },
     {
       title: 'Agreement requests',
@@ -64,7 +64,7 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency, onboa
       link: '/agreement-requests',
       routeNames: ['AgreementRequestsList'],
       isAvailable: permissions.viewMerchantsList,
-      hide: !hideToAdmin,
+      isHidden: !hideToAdmin,
     },
     {
       additional: 'Technical integrations',
@@ -72,7 +72,7 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency, onboa
       link: '/intagrations',
       title: 'Integrations',
       isAvailable: false,
-      hide: true,
+      isHidden: true,
     },
     {
       additional: 'Need license agreement',
@@ -80,7 +80,7 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency, onboa
       link: '/customers',
       title: 'Customers',
       isAvailable: false,
-      hide: true,
+      isHidden: true,
     },
   ];
 }
