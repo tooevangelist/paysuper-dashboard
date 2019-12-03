@@ -341,6 +341,7 @@ export default {
       <UiUploadControls
         v-if="!viewOnly"
         :disabled="keyProductId === null"
+        :isFilled="keyCounts[platform.id]"
         title="keys"
       />
     </div>

@@ -15,6 +15,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    canRemoved: {
+      type: Boolean,
+      default: false,
+    },
   },
 };
 </script>
@@ -33,7 +37,7 @@ export default {
     {{ isFilled ? 'Update' : 'Upload' }} {{ title }}
   </span>
   <span
-    v-if="isFilled"
+    v-if="isFilled && canRemoved"
     class="delete-button"
     @click="$emit('delete', $event)"
   >
