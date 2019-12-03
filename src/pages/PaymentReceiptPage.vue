@@ -150,10 +150,10 @@ export default {
             {{ receipt.platform_name }}
           </span>
         </div>
-        <div class="billing-row">
+        <div class="billing-row" v-if="receipt.payment_partner">
           <span class="billing-name">Payment partner</span>
           <span class="billing-value">
-            PaySuper
+            {{ receipt.payment_partner }}
           </span>
         </div>
       </SlideUpDown>
