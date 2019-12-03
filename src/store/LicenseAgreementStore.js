@@ -2,7 +2,7 @@ import axios from 'axios';
 import { saveAs } from 'file-saver';
 import { delay, get, includes } from 'lodash-es';
 import Centrifuge from 'centrifuge';
-import HelloSign from 'hellosign-embedded';
+import initHellosign from '@/helpers/initHellosign';
 
 function getDefaultAgreementDocument() {
   return {
@@ -72,11 +72,6 @@ export default function createLicenseAgreementStore() {
         rootState,
       }) {
         const { hellosignClientId, hellosignTestMode } = rootState.config;
-        const testModeData = hellosignTestMode === 'enabled' ? {
-          testMode: true,
-          debug: true,
-          skipDomainVerification: true,
-        } : {};
 
         await dispatch('fetchAgreementSignature');
         await dispatch('fetchAgreementMetadata');
@@ -86,10 +81,7 @@ export default function createLicenseAgreementStore() {
         }
 
         if (getters.isUsingHellosign) {
-          const helloSign = new HelloSign({
-            clientId: hellosignClientId,
-            ...testModeData,
-          });
+          const helloSign = initHellosign(hellosignClientId, hellosignTestMode);
 
           helloSign.on('sign', () => {
             dispatch('User/Merchant/updateStatus', 3, { root: true });

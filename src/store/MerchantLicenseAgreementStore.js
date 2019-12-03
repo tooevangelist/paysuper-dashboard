@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { saveAs } from 'file-saver';
 import { delay, get } from 'lodash-es';
-import HelloSign from 'hellosign-embedded';
+import initHellosign from '@/helpers/initHellosign';
 
 function getDefaultAgreementDocument() {
   return {
@@ -63,21 +63,13 @@ export default function createMerchantLicenseAgreementStore() {
         rootState,
       }) {
         const { hellosignClientId, hellosignTestMode } = rootState.config;
-        const testModeData = hellosignTestMode === 'enabled' ? {
-          testMode: true,
-          debug: true,
-          skipDomainVerification: true,
-        } : {};
 
         dispatch('fetchAgreementMetadata');
 
         if (getters.isUsingHellosign) {
           dispatch('fetchAgreementSignature');
 
-          const helloSign = new HelloSign({
-            clientId: hellosignClientId,
-            ...testModeData,
-          });
+          const helloSign = initHellosign(hellosignClientId, hellosignTestMode);
 
           helloSign.on('sign', () => {
             delay(() => {
