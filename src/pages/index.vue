@@ -64,7 +64,7 @@ export default {
 {
   "en": {
     "title": "Unsigned user can’t browse any projects",
-    "text": "Please create new account on sign in if you have one",
+    "text": "Please create new account or sign in if you already have one",
     "buttonText": "Sign in or Sign up"
   },
   "ru": {
