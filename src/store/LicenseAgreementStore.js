@@ -72,6 +72,7 @@ export default function createLicenseAgreementStore() {
         rootState,
       }) {
         const { hellosignClientId, hellosignTestMode } = rootState.config;
+        const isTestMode = hellosignTestMode === 'enabled';
 
         await dispatch('fetchAgreementSignature');
         await dispatch('fetchAgreementMetadata');
@@ -83,9 +84,9 @@ export default function createLicenseAgreementStore() {
         if (getters.isUsingHellosign) {
           const helloSign = new HelloSign({
             clientId: hellosignClientId,
-            testMode: hellosignTestMode,
-            debug: hellosignTestMode,
-            skipDomainVerification: hellosignTestMode,
+            testMode: isTestMode,
+            debug: isTestMode,
+            skipDomainVerification: isTestMode,
           });
 
           helloSign.on('sign', () => {
