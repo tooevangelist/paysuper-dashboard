@@ -13,7 +13,7 @@ module.exports = {
   },
   hellosignTestMode: {
     name: 'HELLO_SIGN_TEST_MODE',
-    default: true,
+    default: 'enabled',
   },
   websocketUrl: {
     name: 'VUE_APP_WEBSOCKET_URL',
