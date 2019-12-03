@@ -63,6 +63,7 @@ export default {
     getCountryByCode(code) {
       return get(find(this.countries, ({ value }) => value === code), 'label', code);
     },
+    get,
   },
 };
 </script>
@@ -86,36 +87,36 @@ export default {
       <div class="basic-item">
         <div class="basic-title">Revenue by country</div>
         <div class="value">
-          {{ $formatPrice(data.revenue_by_country.amount, currency) }}
+          {{ $formatPrice(get(data, 'revenue_by_country.amount'), currency) }}
           <IconArrowBold
-            v-if="data.revenue_by_country.hasIncreasedArrow"
+            v-if="get(data, 'revenue_by_country.hasIncreasedArrow')"
             :class="[
               'arrow',
-              { '_is-decreased': !data.revenue_by_country.isIncreased },
+              { '_is-decreased': !get(data, 'revenue_by_country.isIncreased') },
             ]"
           />
         </div>
         <div class="additional">
           {{
             $formatPrice(
-              data.revenue_by_country.amountPrevious,
+              get(data, 'revenue_by_country.amountPrevious'),
               currency
             )
           }} previously
         </div>
         <Barchart
-          v-if="data.revenue_by_country.hasChart"
+          v-if="get(data, 'revenue_by_country.hasChart')"
           class="chart"
-          :data="data.revenue_by_country.chart"
+          :data="get(data, 'revenue_by_country.chart')"
           :options="mainOptions"
         />
         <div
-          v-if="data.revenue_by_country.hasTop"
+          v-if="get(data, 'revenue_by_country.hasTop')"
           class="top"
         >
           <div class="top-title">Top countries</div>
           <div
-            v-for="(item, index) in data.revenue_by_country.top"
+            v-for="(item, index) in get(data, 'revenue_by_country.top')"
             :key="index"
             class="top-item"
           >
@@ -127,31 +128,31 @@ export default {
       <div class="basic-item">
         <div class="basic-title">Sources</div>
         <div class="value">
-          {{ data.sources.amount }}
+          {{ get(data, 'sources.amount') }}
           <IconArrowBold
-            v-if="data.sources.hasIncreasedArrow"
+            v-if="get(data, 'sources.hasIncreasedArrow')"
             :class="[
               'arrow',
-              { '_is-decreased': !data.sources.isIncreased },
+              { '_is-decreased': !get(data, 'sources.isIncreased') },
             ]"
           />
         </div>
         <div class="additional">
-          {{ data.sources.amountPrevious }} previously
+          {{ get(data, 'sources.amountPrevious') }} previously
         </div>
         <Barchart
-          v-if="data.sources.hasChart"
+          v-if="get(data, 'sources.hasChart')"
           class="chart"
-          :data="data.sources.chart"
+          :data="get(data, 'sources.chart')"
           :options="chartOptions"
         />
         <div
-          v-if="data.sources.hasTop"
+          v-if="get(data, 'sources.hasTop')"
           class="top"
         >
           <div class="top-title">Best referrers</div>
           <div
-            v-for="(item, index) in data.sources.top"
+            v-for="(item, index) in get(data, 'sources.top')"
             :key="index"
             class="top-item"
           >
@@ -163,31 +164,31 @@ export default {
       <div class="basic-item">
         <div class="basic-title">Sales</div>
         <div class="value">
-          {{ data.sales_today.amount }}
+          {{ get(data, 'sales_today.amount') }}
           <IconArrowBold
-            v-if="data.sales_today.hasIncreasedArrow"
+            v-if="get(data, 'sales_today.hasIncreasedArrow')"
             :class="[
               'arrow',
-              { '_is-decreased': !data.sales_today.isIncreased },
+              { '_is-decreased': !get(data, 'sales_today.isIncreased') },
             ]"
           />
         </div>
         <div class="additional">
-          {{ data.sales_today.amountPrevious }} previously
+          {{ get(data, 'sales_today.amountPrevious') }} previously
         </div>
         <Barchart
-          v-if="data.sales_today.hasChart"
+          v-if="get(data, 'sales_today.hasChart')"
           class="chart"
-          :data="data.sales_today.chart"
+          :data="get(data, 'sales_today.chart')"
           :options="chartOptions"
         />
         <div
-          v-if="data.sales_today.hasTop"
+          v-if="get(data, 'sales_today.hasTop')"
           class="top"
         >
           <div class="top-title">Top products</div>
           <div
-            v-for="(item, index) in data.sales_today.top"
+            v-for="(item, index) in get(data, 'sales_today.top')"
             :key="index"
             class="top-item"
           >
