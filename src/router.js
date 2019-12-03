@@ -6,6 +6,7 @@ import resources from './resources';
 import routes from './routes';
 import premissions from './schemes/permissionsScheme';
 import redirectOnboardedUser from '@/helpers/redirectOnboardedUser';
+import { showErrorMessage } from '@/helpers/notifications';
 
 const router = new VueRouter(
   {
@@ -119,6 +120,12 @@ router.beforeResolve(async (to, from, next) => {
 
 router.afterEach((to, from) => {
   updateDocumentClassModificators(to, from);
+});
+
+router.onError((error) => {
+  if (/loading chunk \d* failed./i.test(error.message)) {
+    showErrorMessage('Page navigation has failed. Please reload the page (F5).');
+  }
 });
 
 export default router;
