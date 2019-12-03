@@ -89,6 +89,7 @@ export default {
   },
   async mounted() {
     try {
+      this.updateOperationsType(get(this.merchant, 'merchant_operations_type', 'low-risk'));
       await this.initState();
     } catch (error) {
       this.$_Notifications_showErrorMessage(error);
@@ -166,9 +167,9 @@ export default {
   <section class="section">
     <div class="title">Risk level of company products</div>
     <p class="text">
-      Choose high risk variant if you plan to sell any age restricted content, —
-      high level of gore and violence. If you plan to sell products
-      without any distribution limitations choose low risk
+      Choose <span class="bolder">High risk</span> if you plan to sell any age restricted content,
+      like high level of gore and violence. If you plan to sell products without any distribution
+      restrictions choose <span class="bolder">Low risk</span>.
     </p>
     <div class="radio-group">
       <UiRadio
@@ -179,8 +180,8 @@ export default {
         :value="item.value"
         :disabled="status !== 0 && item.value !== operationsType"
         @change="updateOperationsType($event)"
-        >
-          {{ item.label }}
+      >
+        {{ item.label }}
       </UiRadio>
     </div>
   </section>

@@ -28,6 +28,14 @@ export default {
       default: null,
       type: String,
     },
+    riskLevel: {
+      default: null,
+      type: String,
+    },
+    mccCode: {
+      default: null,
+      type: String,
+    },
   },
   data() {
     return {
@@ -37,6 +45,16 @@ export default {
       checkedCompanyId: null,
       operatingCompanyLabel: '',
       showOperatingCompanyConfirm: false,
+      riskLevelList: [
+        {
+          label: 'Low risk',
+          value: 'low-risk',
+        },
+        {
+          label: 'High risk',
+          value: 'high-risk',
+        },
+      ],
     };
   },
   computed: {
@@ -152,6 +170,26 @@ export default {
         <IconPen class="icon" />
         E-SIGN
       </div>
+    </div>
+  </section>
+  <section
+    v-if="riskLevel"
+    class="section"
+  >
+    <UiHeader level="3" :hasMargin="true">
+      Risk level of company products
+    </UiHeader>
+    <div class="radio-group">
+      <UiRadio
+        class="radio"
+        v-for="item in riskLevelList"
+        :checked="item.value === riskLevel"
+        :key="item.value"
+        :value="item.value"
+        :disabled="item.value !== riskLevel"
+      >
+        {{ item.label }} {{ item.value === riskLevel ? `(MCC: ${mccCode})` : '' }}
+      </UiRadio>
     </div>
   </section>
   <section class="section">

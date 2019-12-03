@@ -38,6 +38,12 @@ export default {
     status() {
       return get(merchantStatusScheme, this.merchant.status, merchantStatusScheme[0]).value;
     },
+    riskLevel() {
+      return get(this.merchant, 'merchant_operations_type');
+    },
+    mccCode() {
+      return get(this.merchant, 'mcc_code');
+    },
     operatingCompanyId() {
       return get(this.merchant, 'operating_company_id', null);
     },
@@ -106,6 +112,8 @@ export default {
     :hasSignature="hasSignature"
     :operatingCompanies="operatingCompanies"
     :operatingCompanyId="operatingCompanyId"
+    :riskLevel="riskLevel"
+    :mccCode="mccCode"
     @sendMessage="sendMessage"
     @changeStatus="changeStatus"
     @openLicense="openLicense"
