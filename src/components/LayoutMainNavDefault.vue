@@ -19,7 +19,11 @@ export default {
   <RouterLink
     v-for="(item, index) in items"
     :key="index"
-    :class="['item', { '_not-available': !item.isAvailable, '_current': currentItem === index }]"
+    :class="['item', {
+     '_not-available': !item.isAvailable,
+     '_current': currentItem === index,
+     '_hide': item.hide,
+     }]"
     :to="item.link"
   >
     <div class="icon">
@@ -66,6 +70,8 @@ export default {
   &._not-available {
     pointer-events: none;
     opacity: 0.25;
+  }
+  &._hide {
     display: none;
   }
 }

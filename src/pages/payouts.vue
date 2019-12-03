@@ -222,9 +222,9 @@ export default {
             </div>
             <div class="autopayouts__info">
               <UiHeader level="4">Autopayouts enabled</UiHeader>
-              <p>If you want to change it pls go to
+              <!--<p>If you want to change it pls go to
                 <router-link to="/">payout settings</router-link>
-              </p>
+              </p>-->
             </div>
           </div>
         </template>
@@ -472,6 +472,7 @@ export default {
 .autopayouts {
   display: flex;
   margin: 15px 0;
+  align-items: center;
 
   &__ico {
     width: 40px;
