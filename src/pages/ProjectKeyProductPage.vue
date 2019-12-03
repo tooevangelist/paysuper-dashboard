@@ -133,6 +133,10 @@ export default {
     },
 
     handleUploadKey(platformId) {
+      if (this.keyProductId === null) {
+        return;
+      }
+
       OpenFileDialog('text/*', async (file) => {
         this.setIsLoading(true);
         await this.uploadKey({
@@ -321,6 +325,9 @@ export default {
         Upload a pack of game keys for each DRM platform you selected before.
         Use CSV or TXT file format and a line break ("Enter" key) as a separator for key strings.
       </UiText>
+      <UiText v-if="keyProductId === null">
+        First you need to <strong>save the package</strong> and then upload key files for platforms.
+      </UiText>
     </section>
 
     <div
@@ -333,6 +340,8 @@ export default {
       <span>{{ platform.name }} — {{ keyCounts[platform.id] || 'no' }} keys</span>
       <UiUploadControls
         v-if="!viewOnly"
+        :disabled="keyProductId === null"
+        :isFilled="keyCounts[platform.id]"
         title="keys"
       />
     </div>

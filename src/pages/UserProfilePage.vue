@@ -1,5 +1,5 @@
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapGetters, mapActions } from 'vuex';
 import { cloneDeep, findKey, size } from 'lodash-es';
 import UserProfilePerson from '@/components/UserProfilePerson.vue';
 import UserProfileHelp from '@/components/UserProfileHelp.vue';
@@ -58,6 +58,7 @@ export default {
   },
 
   computed: {
+    ...mapGetters('User', ['userPermissions']),
     ...mapState('User/Profile', ['profile', 'currentStepCode']),
 
     isConfirmEmailStep() {
@@ -85,8 +86,7 @@ export default {
 
   async mounted() {
     if (this.currentStepCode === 'confirmEmail') {
-      await this.waitForEmailConfirm();
-      this.$router.push({ name: 'Dashboard' });
+      this.handleConfirmEmailStep();
     }
   },
 
@@ -111,13 +111,17 @@ export default {
         this.setCurrentStepCode(nextStepCode);
 
         if (nextStepCode === 'confirmEmail') {
-          await this.waitForEmailConfirm();
-          await this.initState();
-          redirectOnboardedUser(params => this.$navigate(params), this.userPermissions);
+          this.handleConfirmEmailStep();
         }
       } catch (error) {
         this.$showErrorMessage(error);
       }
+    },
+
+    async handleConfirmEmailStep() {
+      await this.waitForEmailConfirm();
+      await this.initState();
+      redirectOnboardedUser(params => this.$navigate(params), this.userPermissions);
     },
 
     goBack() {

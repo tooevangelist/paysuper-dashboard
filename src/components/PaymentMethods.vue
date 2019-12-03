@@ -247,17 +247,17 @@ export default {
             Payment Method
           </UiTableCell>
           <UiTableCell class="cell _channel">
-            Method fee, %
+            Method fee
           </UiTableCell>
           <UiTableCell class="cell _channel">
-            Fixed fee, {{ currency }}
+            Fixed fee
           </UiTableCell>
           <UiTableCell class="cell _channel">
             <div
               class="icon-before-text"
               @mouseenter="hasOverallFeeOpened = true"
               @mouseleave="hasOverallFeeOpened = false"
-              >
+            >
               <IconQuestion class="question" />
               <UiTip
                 class="tip"
@@ -271,10 +271,10 @@ export default {
                 Overall fee is a sum of method and fixed fees.
               </UiTip>
             </div>
-            Overall fee, %
+            Overall fee
           </UiTableCell>
           <UiTableCell class="cell _channel">
-            PS general fixed fee, {{ currency }}
+            PS general fixed fee
           </UiTableCell>
         </UiTableRow>
         <UiTableRow
@@ -297,7 +297,7 @@ export default {
           </UiTableCell>
           <UiTableCell class="cell _channel">
             <span class="cell-blue-transparent">
-             {{ $formatPrice(data.fixedFee, currency) }}
+              {{ $formatPrice(data.fixedFee, currency) }}
             </span>
           </UiTableCell>
           <UiTableCell class="cell _channel">
@@ -338,7 +338,7 @@ export default {
       <UiTableRow class="row-indent"
         v-for="(item, index) in chargeback"
         :key="index"
-        >
+      >
         <UiTableCell class="cell _second" align="left">
           {{ item.method_name }}
         </UiTableCell>

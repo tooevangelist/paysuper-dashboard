@@ -1,5 +1,5 @@
 <script>
-import { merge } from 'lodash-es';
+import { get, merge } from 'lodash-es';
 import Barchart from '@/components/Barchart.vue';
 import getBarchartOptionsByType from '@/helpers/getBarchartOptionsByType';
 
@@ -31,6 +31,9 @@ export default {
       );
     },
   },
+  methods: {
+    get,
+  },
 };
 </script>
 
@@ -39,65 +42,65 @@ export default {
   <div class="section">
     <div class="box _main">
       <div class="value">
-        {{ $formatPrice(data.gross_revenue.amount, currency) }}
+        {{ $formatPrice(get(data, 'gross_revenue.amount'), currency) }}
         <IconArrowBold
-          v-if="data.gross_revenue.hasIncreasedArrow"
-          :class="['arrow', { '_is-decreased': !data.gross_revenue.isIncreased }]"
+          v-if="get(data, 'gross_revenue.hasIncreasedArrow')"
+          :class="['arrow', { '_is-decreased': !get(data, 'gross_revenue.isIncreased') }]"
         />
       </div>
       <div class="additional">Gross revenue</div>
       <Barchart
-        v-if="data.gross_revenue.hasChart"
+        v-if="get(data, 'gross_revenue.hasChart')"
         class="chart"
-        :data="data.gross_revenue.chart"
+        :data="get(data, 'gross_revenue.chart')"
         :options="chartOptions"
       />
     </div>
     <div class="box _main">
       <div class="value">
-        {{ $formatPrice(data.total_transactions.amount, currency) }}
+        {{ $formatPrice(get(data, 'total_transactions.amount'), currency) }}
         <IconArrowBold
-          v-if="data.total_transactions.hasIncreasedArrow"
-          :class="['arrow', { '_is-decreased': !data.total_transactions.isIncreased }]"
+          v-if="get(data, 'total_transactions.hasIncreasedArrow')"
+          :class="['arrow', { '_is-decreased': !get(data, 'total_transactions.isIncreased') }]"
         />
       </div>
       <div class="additional">Total transactions</div>
       <Barchart
-        v-if="data.total_transactions.hasChart"
+        v-if="get(data, 'total_transactions.hasChart')"
         class="chart"
-        :data="data.total_transactions.chart"
+        :data="get(data, 'total_transactions.chart')"
         :options="chartOptions"
       />
     </div>
     <div class="box _main">
       <div class="value">
-        {{ $formatPrice(data.arpu.amount, currency) }}
+        {{ $formatPrice(get(data, 'arpu.amount'), currency) }}
         <IconArrowBold
-          v-if="data.arpu.hasIncreasedArrow"
-          :class="['arrow', { '_is-decreased': !data.arpu.isIncreased }]"
+          v-if="get(data, 'arpu.hasIncreasedArrow')"
+          :class="['arrow', { '_is-decreased': !get(data, 'arpu.isIncreased') }]"
         />
       </div>
       <div class="additional">ARPU</div>
       <Barchart
-        v-if="data.arpu.hasChart"
+        v-if="get(data, 'arpu.hasChart')"
         class="chart"
-        :data="data.arpu.chart"
+        :data="get(data, 'arpu.chart')"
         :options="chartOptions"
       />
     </div>
     <div class="box _main">
       <div class="value">
-        {{ $formatPrice(data.vat.amount, currency) }}
+        {{ $formatPrice(get(data, 'vat.amount'), currency) }}
         <IconArrowBold
-          v-if="data.vat.hasIncreasedArrow"
-          :class="['arrow', { '_is-decreased': !data.vat.isIncreased }]"
+          v-if="get(data, 'vat.hasIncreasedArrow')"
+          :class="['arrow', { '_is-decreased': !get(data, 'vat.isIncreased') }]"
         />
       </div>
       <div class="additional">VAT</div>
       <Barchart
-        v-if="data.vat.hasChart"
+        v-if="get(data, 'vat.hasChart')"
         class="chart"
-        :data="data.vat.chart"
+        :data="get(data, 'vat.chart')"
         :options="chartOptions"
       />
     </div>
