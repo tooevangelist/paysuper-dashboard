@@ -4,6 +4,7 @@ import { directive as clickaway } from 'vue-clickaway';
 import UserNotifications from '@/components/UserNotifications.vue';
 import LeaveFeedbackPopup from '@/components/LeaveFeedbackPopup.vue';
 import NotificationsMixin from '@/mixins/Notifications';
+import redirectOnboardedUser from '@/helpers/redirectOnboardedUser';
 
 export default {
   name: 'LayoutHeader',
@@ -157,6 +158,10 @@ export default {
     resetPopupFeedback() {
       this.isLeaveFeedbackSuccess = false;
     },
+
+    async navigateToHomePage() {
+      redirectOnboardedUser(params => this.$navigate(params), this.userPermissions);
+    },
   },
 };
 </script>
@@ -164,7 +169,11 @@ export default {
 <template>
 <div class="layout-header">
   <div class="left">
-    <a href="/dashboard" class="logo">
+    <a
+      class="logo"
+      href="#"
+      @click.prevent="navigateToHomePage"
+    >
       PS
     </a>
 
