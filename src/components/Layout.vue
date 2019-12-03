@@ -45,7 +45,7 @@ export default {
     mainNavItems() {
       return getMainNavItems(this.userPermissions, {
         hasDefaultCurrency: !!get(this.merchant, 'banking.currency'),
-        onboardingSteps: this.onboardingSteps,
+        stepsCount: this.onboardingCompleteStepsCount,
       });
     },
     projectName() {

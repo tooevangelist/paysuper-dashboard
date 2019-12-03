@@ -1,4 +1,7 @@
-export default function getMainNavItems(permissions, { hasDefaultCurrency, onboardingSteps }) {
+export default function getMainNavItems(permissions, {
+  hasDefaultCurrency,
+  stepsCount,
+}) {
   const hideToAdmin = permissions.viewMerchantsList;
 
   return [
@@ -27,7 +30,7 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency, onboa
       link: '/reports',
       title: 'Royalty reports',
       routeNames: ['RoyaltyReportsPage'],
-      isAvailable: permissions.viewRoyaltyReports,
+      isAvailable: permissions.viewRoyaltyReports && stepsCount === 5,
       isHidden: hideToAdmin,
     },
     {
@@ -36,7 +39,7 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency, onboa
       link: '/payouts',
       title: 'Payouts',
       routeNames: ['payouts', 'payoutCard'],
-      isAvailable: permissions.viewPayouts && onboardingSteps.banking,
+      isAvailable: permissions.viewPayouts && stepsCount === 5,
       isHidden: hideToAdmin,
     },
     {
@@ -45,7 +48,7 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency, onboa
       link: '/transactions',
       title: 'Transaction Search',
       routeNames: ['TransactionsPage'],
-      isAvailable: permissions.viewTransactions,
+      isAvailable: permissions.viewTransactions && stepsCount === 5,
       isHidden: hideToAdmin,
     },
     {
