@@ -89,6 +89,7 @@ export default {
   },
   async mounted() {
     try {
+      this.updateOperationsType(get(this.merchant, 'merchant_operations_type', 'low-risk'));
       await this.initState();
     } catch (error) {
       this.$_Notifications_showErrorMessage(error);
