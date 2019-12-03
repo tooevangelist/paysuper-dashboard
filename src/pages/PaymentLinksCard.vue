@@ -1,4 +1,5 @@
 <script>
+import moment from 'moment';
 import { find } from 'lodash-es';
 import { mapState, mapActions } from 'vuex';
 import { maxLength, required } from 'vuelidate/lib/validators';
@@ -6,7 +7,7 @@ import PaymentLinkCardStore from '@/store/PaymentLinkCardStore';
 import SelectProductsModal from '@/components/SelectProductsModal.vue';
 
 export default {
-  name: 'PaymentLinksCreate',
+  name: 'PaymentLinksCard',
   validations: {
     createLink: {
       name: { maxLength: maxLength(256), required },
@@ -20,7 +21,7 @@ export default {
     return {
       createLink: {
         name: '',
-        dateInput: '',
+        dateInput: Number((new Date().getTime() / 1000).toFixed(0)),
         projectId: null,
         productsType: null,
       },
@@ -29,15 +30,31 @@ export default {
       isDeleteModalOpened: false,
       productsItems: [],
       productsItemsSelected: [],
-      selectProducts: [],
-      productsToDelete: '',
-      defaultProduct: '',
+      productsTypes: [
+        {
+          label: 'Virtual items',
+          value: 'product',
+        },
+        {
+          label: 'Game keys',
+          value: 'key',
+        },
+      ],
+      selectProductsType: 'product',
     };
   },
 
-  async asyncData({ store, registerStoreModule }) {
+  watch: {
+    selectProductsType() {
+      this.productsItemsSelected = [];
+    },
+  },
+
+  async asyncData({ store, registerStoreModule, route }) {
     try {
-      await registerStoreModule('PaymentLink', PaymentLinkCardStore, {});
+      await registerStoreModule('PaymentLink', PaymentLinkCardStore, {
+       linkId: route.params.linkId,
+      });
     } catch (error) {
       store.dispatch('setPageError', error);
     }
@@ -47,6 +64,7 @@ export default {
     ...mapState('PaymentLink', [
       'productsList',
       'projectsList',
+      'linkItem',
     ]),
 
     productsItemsOptions() {
@@ -74,15 +92,15 @@ export default {
           && date
           && this.productsItems.length > 0;
     },
+
+    isNewItem() {
+      return this.$route.params.linkId === 'new';
+    },
   },
 
   methods: {
     ...mapActions('PaymentLink', ['fetchProducts', 'createItem']),
     ...mapActions(['setIsLoading']),
-
-    updateField() {
-      console.log('update');
-    },
 
     handleSetDate(value) {
       this.createLink.dateInput = value;
@@ -99,12 +117,15 @@ export default {
     },
 
     updateSelectProducts(value) {
-      console.log(value);
       this.productsItemsSelected = value;
     },
 
     async openSelectProductsModal() {
-      await this.fetchProducts(this.createLink.projectId);
+      const type = this.selectProductsType === 'key' ? 'key-products' : 'products';
+      await this.fetchProducts({
+        projectId: this.createLink.projectId,
+        type,
+      });
       this.isSelectProductsModalOpened = true;
     },
 
@@ -128,11 +149,18 @@ export default {
       return this.$formatPrice(price.amount, price.currency);
     },
 
+    getPlatformPrice(platform) {
+      const price = find(platform.prices, this.defaultCurrency);
+      if (!price) {
+        return '';
+      }
+      return this.$formatPrice(price.amount, price.currency);
+    },
+
     async create() {
-      // this.$navigate(`/projects/${this.project.id}/virtual-items/`);
       this.$v.$touch();
       if (this.$v.$invalid) {
-        this.$showErrorMessage('The form is not filled right');
+        this.$showErrorMessage('The link is not created');
         return;
       }
       const products = this.productsItems.map(item => (item.id));
@@ -143,16 +171,30 @@ export default {
         project_id: this.createLink.projectId,
         name: this.createLink.name,
         no_expiry_date: this.noExpirationDate,
-        products_type: 'product',
+        products_type: this.selectProductsType,
       };
       try {
         await this.createItem(data);
-        this.$showSuccessMessage('Saved successfully');
+        this.$showSuccessMessage('The link is created successfully');
         this.$navigate('/payment-links/');
       } catch (e) {
         this.$showErrorMessage(e);
       }
       this.setIsLoading(false);
+    },
+
+    updateSelectProductsType(value) {
+      const type = value === 'key' ? 'key-products' : 'products';
+      this.selectProductsType = value;
+
+      this.fetchProducts({
+        projectId: this.createLink.projectId,
+        type,
+      });
+    },
+
+    formatDate(date) {
+      return moment.unix(date).format('D MMM YYYY, HH:MM');
     },
   },
 
@@ -166,7 +208,10 @@ export default {
   <div>
     <UiPageHeaderFrame>
       <template slot="title">
-        Link creating
+        {{ isNewItem ? 'Link creating' : `Link ID ${linkItem.id}` }}
+      </template>
+      <template slot="description">
+        {{ formatDate(linkItem.created_at.seconds) }}
       </template>
     </UiPageHeaderFrame>
     <UiPanel>
@@ -177,8 +222,8 @@ export default {
         <UiTextField
           v-bind="$getValidatedFieldProps('createLink.name')"
           label="Name"
+          :value="createLink.name"
           v-model="createLink.name"
-          @input="updateField('name', $event)"
           @blur="$v.createLink.name.$touch()"
         />
         <UiDate
@@ -230,7 +275,10 @@ export default {
             <UiTableRow :isHead="true">
               <UiTableCell width="40px" align="center"></UiTableCell>
               <UiTableCell width="350px" align="left">Name</UiTableCell>
-              <UiTableCell width="200px" align="left">Virtual item</UiTableCell>
+              <UiTableCell width="350px" align="left">SKU</UiTableCell>
+              <UiTableCell width="200px" align="left"
+                v-if="selectProductsType === 'key'"
+              ></UiTableCell>
               <UiTableCell width="200px" align="left">Price</UiTableCell>
               <UiTableCell width="3%" align="left"></UiTableCell>
             </UiTableRow>
@@ -241,12 +289,23 @@ export default {
                 :key="item.id"
                 :index="index"
               >
-                <UiTableCell width="40px" align="center" valign="middle">
+                <UiTableCell width="40px" align="center" valign="middle"
+                  v-if="item.object === 'product'"
+                >
                   <div
                     v-if="item.images !== null"
                     :style="{ backgroundImage: `url(${item.images[0]})` }"
                     class="item-image">
                   </div>
+                </UiTableCell>
+                <UiTableCell width="40px" align="center" valign="middle"
+                  v-if="item.object === 'key_product'"
+                >
+                  <span
+                    v-if="item.cover && item.cover.images.en"
+                    class="img"
+                    :style="{ backgroundImage: `url(${item.cover.images.en})` }"
+                  ></span>
                   <IconNoImage
                     v-else
                     class="item-image"
@@ -261,15 +320,43 @@ export default {
                   </span>
                 </UiTableCell>
                 <UiTableCell width="200px" align="left" valign="middle" :title="item.sku">
-                  <span class="cell-text vi-name">{{ item.sku }}</span>
+                  <span class="cell-text vi-name">
+                    {{ item.sku }}
+                  </span>
+                </UiTableCell>
+                <UiTableCell align="left"  valign="middle"
+                   v-if="item.object === 'key_product'"
+                 >
+                  <UiTableCellUnit
+                    v-for="platform in item.platforms"
+                    :key="platform.id"
+                  >
+                    {{ platform.name }}
+                  </UiTableCellUnit>
+                  <UiNoText v-if="!item.platforms" />
                 </UiTableCell>
                 <UiTableCell class="cell-price" width="110px" align="left" valign="middle"
+                  v-if="item.object === 'product'"
                   :title="getItemPrice(item)"
                   >
                   <UiNoText v-if="!getItemPrice(item)" />
-                  <span v-else class="cell-text">
+                  <span v-else class="cell-price">
                     {{ getItemPrice(item) }}
                   </span>
+                </UiTableCell>
+                <UiTableCell align="left" valign="middle"
+                  v-if="item.object === 'key_product'"
+                >
+                <UiTableCellUnit
+                   v-for="platform in item.platforms"
+                   :key="platform.id"
+                >
+                   <UiNoText v-if="!getPlatformPrice(platform)" />
+                   <span v-els class="cell-price">
+                     {{ getPlatformPrice(platform) }}
+                   </span>
+                  </UiTableCellUnit>
+                  <UiNoText v-if="!item.platforms" />
                 </UiTableCell>
                 <UiTableCell width="40px" align="center" valign="middle">
                   <span class="delete" @click="deleteProductInList(index)">
@@ -316,7 +403,20 @@ export default {
       @close="isSelectProductsModalOpened = false"
       @save="handleModalSave"
       @updated="updateSelectProducts"
-    />
+    >
+      <div class="radio-group">
+        <UiRadio
+          class="radio"
+          v-for="item in productsTypes"
+          :checked="item.value === selectProductsType"
+          :key="item.value"
+          :value="item.value"
+          @change="updateSelectProductsType($event)"
+        >
+          {{ item.label }}
+        </UiRadio>
+      </div>
+    </SelectProductsModal>
   </div>
 </template>
 
@@ -388,4 +488,13 @@ export default {
   .select-project {
     margin-top: 32px;
   }
+
+.radio-group {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  & .radio {
+    margin: 0 16px;
+  }
+}
 </style>

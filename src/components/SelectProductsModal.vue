@@ -34,6 +34,12 @@ export default {
     },
   },
 
+  watch: {
+    items() {
+      this.newList = [];
+    },
+  },
+
   methods: {
     includes,
 
@@ -59,6 +65,11 @@ export default {
 
       this.$emit('updated', this.newList);
     },
+
+    save() {
+      // console.log(this.value);
+      this.$emit('save', this.value);
+    },
   },
 };
 </script>
@@ -76,6 +87,9 @@ export default {
   >
     {{ title }}
   </UiHeader>
+
+  <slot/>
+
   <UiScrollbarBox class="content">
     <div
       v-for="(option, index) in options"
@@ -90,7 +104,9 @@ export default {
         <component :is="option.iconComponent" />
       </div>
 
-      <div class="label">
+      <div class="label"
+        @click="toggleItemSelected(option.value)"
+      >
         {{ option.label }}
       </div>
 
@@ -100,12 +116,19 @@ export default {
       >
         <IconCloseInCircle />
       </span>
+
+      <span
+        class="add-icon"
+        @click="toggleItemSelected(option.value)"
+      >
+        <IconPlusInCircle />
+      </span>
     </div>
   </UiScrollbarBox>
   <div class="controls">
     <UiButton
       class="submit-button"
-      @click="$emit('save', value)"
+      @click="save"
     >
       SAVE
     </UiButton>
@@ -135,6 +158,9 @@ export default {
   &:not(._selected):hover {
     background-color: rgba(#3d7bf5, 0.1);
     color: #3d7bf5;
+    .add-icon {
+      display: flex;
+    }
   }
 
   &._selected {
@@ -143,6 +169,10 @@ export default {
 
     .delete-icon {
       display: flex;
+    }
+
+    .add-icon {
+      display: none;
     }
 
     .icon {
@@ -170,7 +200,7 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
+.add-icon,
 .delete-icon {
   position: absolute;
   display: none;
@@ -181,7 +211,8 @@ export default {
   cursor: pointer;
   justify-content: center;
   align-items: center;
-
+}
+.delete-icon {
   & > svg {
     transition: fill 0.15s ease-out;
   }

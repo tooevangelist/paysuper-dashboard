@@ -167,12 +167,12 @@ const routes = [
     name: 'PaymentLinksPage',
   },
   {
-    path: '/payment-links-create/',
-    component: () => import('@/pages/PaymentLinksCreate.vue'),
+    path: '/payment-links/:linkId/',
+    component: () => import('@/pages/PaymentLinksCard.vue'),
     meta: {
       layout: 'Layout', isAuthRequired: true,
     },
-    name: 'PaymentLinksCreate',
+    name: 'PaymentLinksCard',
   },
   {
     path: '/taxes/',

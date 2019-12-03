@@ -12,21 +12,8 @@ import NoResults from '@/components/NoResults.vue';
 
 
 const STATUS_COLOR = {
-  pending: 'orange',
-  accepted: 'green',
-  waiting_payment: 'green',
-  paid: 'aqua',
-  dispute: 'red',
-  canceled: 'transparent',
-};
-
-const STATUS = {
-  pending: 'pending',
-  accepted: 'confirmed',
-  waiting_payment: 'paying',
-  paid: 'paid',
-  dispute: 'dispute',
-  canceled: 'canceled',
+  false: 'green',
+  true: 'transparent',
 };
 
 export default {
@@ -50,6 +37,7 @@ export default {
     return {
       filters: {},
       scheme: paymentLinksStatusScheme,
+      openedLinkId: null,
     };
   },
 
@@ -84,6 +72,7 @@ export default {
       'createItem',
       'submitFilters',
       'fetchLinks',
+      'deleteLink',
     ]),
 
     get,
@@ -155,6 +144,25 @@ export default {
     formatDate(date) {
       return moment.unix(date).format('D MMM YYYY, HH:MM');
     },
+
+    deletePaymentLink(id) {
+      this.deleteLink(id);
+    },
+
+    goToItemPage(link) {
+      this.setIsLoading(true);
+      this.$router.push({
+        name: 'PaymentLinksCard',
+        params: { linkId: link.id },
+      });
+    },
+
+    createNew() {
+      this.$router.push({
+        name: 'PaymentLinksCard',
+        params: { linkId: 'new' },
+      });
+    },
   },
 };
 </script>
@@ -176,11 +184,9 @@ export default {
       <div class="control-bar">
         <div class="control-bar__left"/>
         <div class="control-bar__right">
-          <RouterLink to="/payment-links-create/">
-            <UiButton>
-              CREATE LINK
-            </UiButton>
-          </RouterLink>
+          <UiButton @click="createNew">
+            CREATE LINK
+          </UiButton>
         </div>
       </div>
 
@@ -202,7 +208,10 @@ export default {
             :key="index"
             :link="`/payment-links/${link.id}`"
             >
-            <UiTableCell align="left">
+            <UiTableCell style="position: relative;" align="left">
+              <div class="status-dot"
+                :class="getColor(link.no_expiry_date)"
+                 title="link.status"></div>
               {{ link.name }}
             </UiTableCell>
             <UiTableCell align="left">
@@ -223,6 +232,46 @@ export default {
             <UiTableCell align="left">
               {{ formatDate(link.expires_at.seconds) }}
              </UiTableCell>
+            <UiTableCell
+              class="cell-with-menu"
+              align="left"
+              valign="middle"
+              @mouseenter.native="openedLinkId = link.id"
+              @mouseleave.native="() => openedLinkId = null"
+              :noPadding="true"
+            >
+              <div class="dots-menu">
+                <UiDotsMenuTrigger
+                  class="dots-menu-trigger"
+                  :isOpened="openedLinkId === link.id"
+                />
+                <UiTip
+                  innerPosition="right"
+                  position="bottom"
+                  width="180px"
+                  :margin="0"
+                  :visible="openedLinkId === link.id"
+                  :closeDelay="0"
+                  :stayOpenedOnHover="false"
+                >
+                  <UiTooltipMenuItem
+                    class="dots-menu__item"
+                    iconComponent="IconPen"
+                    @click.stop.prevent="goToItemPage(link)"
+                  >
+                   <IconDispute slot="iconBefore" />
+                    Edit
+                  </UiTooltipMenuItem>
+                  <UiTooltipMenuItem
+                    class="dots-menu__item"
+                    iconComponent="IconDelete"
+                    @click.stop.prevent="deletePaymentLink(link.id)"
+                  >
+                    Delete
+                  </UiTooltipMenuItem>
+                </UiTip>
+              </div>
+            </UiTableCell>
           </UiTableRow>
         </UiTable>
 
@@ -293,14 +342,6 @@ export default {
   }
 }
 
-.filter-status {
-  margin: 0 0 0 2px;
-}
-
-.status {
-  text-transform: capitalize;
-}
-
 .status-paid {
   color: #069697;
 }
@@ -311,12 +352,24 @@ export default {
 }
 .dots-menu {
   position: relative;
-  &__item {
-    /deep/ .menu-icon {
-      svg {
-        fill: #78909c !important;
-      }
-    }
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  box-sizing: border-box;
+  display: inline-block;
+  position: relative;
+  top: -2px;
+  margin-right: 5px;
+
+  &.green {
+    background: #2fa84f;
+  }
+
+  &.transparent {
+    border: 1px solid #919699;
   }
 }
 </style>

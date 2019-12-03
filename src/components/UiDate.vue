@@ -1,4 +1,6 @@
 ﻿<script>
+import getUnixTime from 'date-fns/getUnixTime';
+
 export default {
   name: 'UiDate',
 
