@@ -1,7 +1,6 @@
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex';
 import { format } from 'date-fns';
-import moment from 'moment';
 import {
   get, find,
 } from 'lodash-es';
@@ -86,7 +85,7 @@ export default {
     },
 
     getFormattedDate(item) {
-      return moment.unix(item).format('DD MMM YYYY');
+      return format(item * 1000, 'dd MMM yyyy');
     },
 
     async confirmReport() {
@@ -284,28 +283,28 @@ export default {
               {{ report.summary.products_total.total_transactions }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ report.summary.products_total.gross_sales_amount }}
+              {{ report.summary.products_total.gross_sales_amount.toFixed(2) }}
             </UiTableCell>
             <UiTableCell align="left">
               {{ report.summary.products_total.returns_count }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ report.summary.products_total.gross_returns_amount }}
+              {{ report.summary.products_total.gross_returns_amount.toFixed(2) }}
             </UiTableCell>
             <UiTableCell align="left">
               {{ report.summary.products_total.sales_count }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ report.summary.products_total.gross_total_amount }}
+              {{ report.summary.products_total.gross_total_amount.toFixed(2) }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ report.summary.products_total.total_vat }}
+              {{ report.summary.products_total.total_vat.toFixed(2) }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ report.summary.products_total.total_fees }}
+              {{ report.summary.products_total.total_fees.toFixed(2) }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ report.summary.products_total.payout_amount }}
+              {{ report.summary.products_total.payout_amount.toFixed(2) }}
             </UiTableCell>
           </UiTableRow>
           <UiTableRow
@@ -323,28 +322,28 @@ export default {
               {{ product.total_transactions }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ product.gross_sales_amount }}
+              {{ product.gross_sales_amount.toFixed(2) }}
             </UiTableCell>
             <UiTableCell align="left">
               {{ product.returns_count }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ product.gross_returns_amount }}
+              {{ product.gross_returns_amount.toFixed(2) }}
             </UiTableCell>
             <UiTableCell align="left">
               {{ product.sales_count }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ product.gross_total_amount }}
+              {{ product.gross_total_amount.toFixed(2) }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ product.total_vat }}
+              {{ product.total_vat.toFixed(2) }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ product.total_fees }}
+              {{ product.total_fees.toFixed(2) }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ product.payout_amount }}
+              {{ product.payout_amount.toFixed(2) }}
             </UiTableCell>
           </UiTableRow>
         </UiTable>

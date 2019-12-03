@@ -40,7 +40,7 @@ function getOrderParams({
 
 async function getOrderId(apiUrl, orderParams) {
   const { data } = await axios.post(
-    `${apiUrl}/order`,
+    `${apiUrl}/api/v1/order`,
     orderParams,
   );
   return data.id;
@@ -50,7 +50,7 @@ async function getOrderData(apiUrl, orderId, {
   ip, userCookie, acceptLanguage, referer,
 }) {
   const { data } = await axios.get(
-    `${apiUrl}/order/${orderId}`,
+    `${apiUrl}/api/v1/order/${orderId}`,
     {
       headers: {
         'Accept-Language': acceptLanguage,

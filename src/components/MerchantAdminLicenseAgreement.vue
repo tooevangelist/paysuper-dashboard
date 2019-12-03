@@ -159,9 +159,9 @@ export default {
       Signing companies
     </UiHeader>
     <UiText>
-      Maltese signing company is for merchants from Russia, Belarus,
-      Cyprus — high risk merchants, signing fompany of United Kingdom
-      is for the rest low risk merchants.
+      Choose Maltese signing company for any merchants from Russia, Belarus,
+      Cyprus and for all high risk merchants from any country.
+      Choose Cyprus signing company for low risk merchants and the rest of the countries.
     </UiText>
     <div class="radio-group">
       <UiRadio

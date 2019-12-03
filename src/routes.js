@@ -278,12 +278,6 @@ const routes = [
     name: 'company',
   },
   {
-    path: '/revenue/',
-    component: () => import('@/pages/revenue.vue'),
-    meta: { layout: 'Page', isAuthRequired: true },
-    name: 'revenue',
-  },
-  {
     path: '/payouts/',
     component: () => import('@/pages/payouts.vue'),
     meta: {

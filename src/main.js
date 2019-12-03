@@ -9,6 +9,7 @@ import './plugins/vue-select';
 import './plugins/vue-toasted';
 import './plugins/vuelidate';
 import './plugins/misc';
+import './plugins/inView';
 import extendAxios from './plugins/extendAxios';
 import i18n from './plugins/i18n';
 import router from './router';
@@ -27,7 +28,7 @@ if (process.env.NODE_ENV === 'production') {
 Vue.use(VueRouter);
 Vue.use(Vuex);
 sync(store, router);
-extendAxios(store);
+extendAxios(store, router);
 
 new Vue(
   {

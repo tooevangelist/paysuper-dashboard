@@ -1,4 +1,4 @@
-export default function getMainNavItems(permissions, { hasDefaultCurrency }) {
+export default function getMainNavItems(permissions, { hasDefaultCurrency, onboardingSteps }) {
   return [
     {
       additional: 'Homepage for main controls',
@@ -31,7 +31,7 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency }) {
       link: '/payouts',
       title: 'Payouts',
       routeNames: ['payouts', 'payoutCard'],
-      isAvailable: permissions.viewPayouts,
+      isAvailable: permissions.viewPayouts && onboardingSteps.banking,
     },
     {
       additional: 'Full list of customer transactions',

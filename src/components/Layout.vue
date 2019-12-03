@@ -35,6 +35,7 @@ export default {
     ...mapState(['isLoading']),
     ...mapState('User', ['role']),
     ...mapState('User/Merchant', ['merchant']),
+    ...mapState('User/Merchant', ['onboardingCompleteStepsCount', 'onboardingSteps']),
     ...mapGetters('User', ['userPermissions']),
 
     currentNavigationItem() {
@@ -44,6 +45,7 @@ export default {
     mainNavItems() {
       return getMainNavItems(this.userPermissions, {
         hasDefaultCurrency: !!get(this.merchant, 'banking.currency'),
+        onboardingSteps: this.onboardingSteps,
       });
     },
     projectName() {

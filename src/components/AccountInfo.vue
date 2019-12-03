@@ -26,6 +26,8 @@ export default {
     return {
       isLoadingAutocomplete: true,
       isLoadingCities: false,
+      countryQuery: '',
+      countryCode: '',
     };
   },
 
@@ -42,6 +44,21 @@ export default {
     status() {
       return this.merchant.status;
     },
+
+    filteredCountries() {
+      return this.countries
+        .filter(c => c.label.toLowerCase().indexOf(this.countryQuery.toLowerCase()) > -1);
+    },
+
+    country: {
+      get() {
+        const country = this.countries.find(c => c.value === this.countryCode);
+        return country === undefined ? '' : country.label;
+      },
+      set(value) {
+        this.updateCountry(value);
+      },
+    },
   },
 
   async mounted() {
@@ -50,6 +67,7 @@ export default {
     } catch (error) {
       this.$showErrorMessage(error);
     }
+    this.countryCode = this.accountInfo.country;
   },
   methods: {
     ...mapActions('Company/AccountInfo', ['initState', 'updateAccountInfo', 'submitAccountInfo']),
@@ -60,13 +78,15 @@ export default {
     },
 
     // eslint-disable-next-line
-    handleAutocompeteInput: debounce(async function (e) {
-      const search = e.target && e.target.value ? e.target.value : '';
-
+    handleAutocompeteInput: debounce(async function (value) {
       this.isLoadingCities = true;
-      await this.fetchCities(search);
+      await this.fetchCities({ query: value, country: this.countryCode });
       this.isLoadingCities = false;
     }, 500),
+
+    handleCountryInput(value) {
+      this.countryQuery = value;
+    },
 
     async submit() {
       this.$v.accountInfo.$touch();
@@ -79,6 +99,21 @@ export default {
           }
         } catch (error) {
           this.$showErrorMessage(get(error, 'response.data.details'));
+        }
+      }
+    },
+
+    handleUpdateCountry(value) {
+      this.country = value;
+    },
+
+    updateCountry(value) {
+      if (this.countries.find(c => c.value === value) !== undefined) {
+        this.updateField('country', value);
+        this.countryCode = value;
+
+        if (this.accountInfo.city !== '') {
+          this.updateField('city', '');
         }
       }
     },
@@ -147,14 +182,17 @@ export default {
       it must be corresponded with your official registrational data.
     </div>
 
-    <UiSelect
+    <UiAutocomplete
       v-bind="$getValidatedFieldProps('accountInfo.country')"
       label="Country"
-      :options="countries"
-      :value="accountInfo.country"
-      :disabled="viewOnly"
-      @input="updateField('country', $event)"
+      v-model="country"
+      :required="true"
+      @query="handleCountryInput"
+      @input="handleUpdateCountry"
       @blur="$v.accountInfo.country.$touch()"
+      :resultsAutocomplete="filteredCountries"
+      :disabled="viewOnly"
+      :threshold="0"
     />
     <UiTextField
       v-bind="$getValidatedFieldProps('accountInfo.state')"
@@ -170,7 +208,7 @@ export default {
       label="City"
       v-model="accountInfo.city"
       :required="true"
-      @keyup.native="handleAutocompeteInput"
+      @query="handleAutocompeteInput"
       @input="updateField('city', $event)"
       @blur="$v.accountInfo.city.$touch()"
       :resultsAutocomplete="cities"
