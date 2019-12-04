@@ -21,7 +21,7 @@ export default function createMerchantLicenseAgreementStore() {
       merchantId: null,
       helloSign: null,
       signature: null,
-      agreementNeedsToUpload: false,
+      isAgreementLoading: false,
       agreement: getDefaultAgreementDocument(),
       document: null,
       operatingCompanies: [],
@@ -64,18 +64,20 @@ export default function createMerchantLicenseAgreementStore() {
       }) {
         const { hellosignClientId, hellosignTestMode } = rootState.config;
 
-        dispatch('fetchAgreementMetadata');
+        await dispatch('fetchAgreementMetadata');
+        await dispatch('fetchDocument');
 
         if (getters.isUsingHellosign) {
-          dispatch('fetchAgreementSignature');
+          await dispatch('fetchAgreementSignature');
 
           const helloSign = initHellosign(hellosignClientId, hellosignTestMode);
 
           helloSign.on('sign', () => {
-            delay(() => {
-              dispatch('Merchant/fetchMerchantById', state.merchantId, { root: true });
-              dispatch('fetchAgreementMetadata');
-            }, 6000);
+            delay(async () => {
+              await dispatch('Merchant/fetchMerchantById', state.merchantId, { root: true });
+              await dispatch('fetchAgreementMetadata', 20);
+              await dispatch('fetchDocument');
+            }, 1000);
           });
 
           commit('helloSign', helloSign);
@@ -97,29 +99,32 @@ export default function createMerchantLicenseAgreementStore() {
         dispatch,
         getters,
         state,
-      }) {
-        const { agreement, merchantId } = state;
+      }, retryCount = 0) {
+        const { merchantId } = state;
         const { status } = getters;
 
         if (merchantId && status >= 3) {
-          const response = await axios.get(
-            `{apiUrl}/system/api/v1/merchants/${merchantId}/agreement`,
-          );
-          const agreementNew = get(response, 'data', getDefaultAgreementDocument());
+          commit('isAgreementLoading', true);
+          const response = await dispatch('updateMetadata', retryCount);
+          const agreement = get(response, 'data', getDefaultAgreementDocument());
 
-          if (agreement.metadata.size !== agreementNew.metadata.size) {
-            commit('agreement', agreementNew);
-            commit('agreementNeedsToUpload', false);
-            await dispatch('fetchDocument');
-          } else {
-            commit('agreementNeedsToUpload', true);
-          }
+          commit('agreement', agreement);
         }
       },
-      async uploadDocument({ dispatch, state }) {
-        if (state.agreementNeedsToUpload) {
-          await dispatch('fetchAgreementMetadata');
+      async updateMetadata({ dispatch, state }, retryCount) {
+        const { agreement, merchantId } = state;
+        const response = await axios.get(`{apiUrl}/system/api/v1/merchants/${merchantId}/agreement`);
+        const newSize = get(response, 'data.metadata.size', null);
+        if (newSize && newSize !== agreement.metadata.size) {
+          return response;
         }
+        if (retryCount) {
+          return new Promise(r => setTimeout(r, 3000))
+            .then(() => dispatch('updateMetadata', retryCount - 1));
+        }
+        return response;
+      },
+      async uploadDocument({ dispatch, state }) {
         const hasDocument = !!state.document || await dispatch('fetchDocument');
         const { extension } = state.agreement.metadata;
 
@@ -149,6 +154,7 @@ export default function createMerchantLicenseAgreementStore() {
 
         if (response.status === 200) {
           commit('document', response.data);
+          commit('isAgreementLoading', false);
           return true;
         }
 
@@ -189,6 +195,9 @@ export default function createMerchantLicenseAgreementStore() {
       },
       helloSign(state, data) {
         state.helloSign = data;
+      },
+      isAgreementLoading(state, data) {
+        state.isAgreementLoading = data;
       },
       signature(state, data) {
         state.signature = data;

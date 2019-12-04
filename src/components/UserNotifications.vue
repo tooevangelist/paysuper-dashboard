@@ -59,7 +59,7 @@ export default {
       class="title"
     >
       <span class="icon _inline"></span>
-      {{ openedItem.is_system ? 'Pay Super' : 'Administrator' }}
+      {{ openedItem.is_system ? 'PaySuper' : 'Administrator' }}
     </span>
     <span
       v-if="openedItem"

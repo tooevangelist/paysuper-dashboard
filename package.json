@@ -1,7 +1,7 @@
 {
   "name": "paysuper-management-server",
   "version": "0.1.0",
-  "description": "Pay Super solution customer control panel",
+  "description": "PaySuper solution customer control panel",
   "author": "Dmitriy Sinichkin <dmitriy.sinichkin@gmail.com>",
   "scripts": {
     "serve": "vue-cli-service serve",

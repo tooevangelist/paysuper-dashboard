@@ -171,7 +171,7 @@ export default {
     <span slot="title">Merchants</span>
     <span slot="description">
       Here is the list of our active merchants with license agreement signed by both sides.
-      These clients have full access to Pay Super platform functionality.
+      These clients have full access to PaySuper platform functionality.
     </span>
     <PictureDiagramPresentation slot="picture" />
   </UiPageHeaderFrame>

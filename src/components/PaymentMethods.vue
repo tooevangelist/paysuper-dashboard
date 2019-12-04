@@ -318,7 +318,7 @@ export default {
     <div class="title">Refund costs</div>
     <div class="info">
       Check the refund fees policy below.
-      Notice that all refund fees are being paid by Pay Super, so they are
+      Notice that all refund fees are being paid by PaySuper, so they are
       <span class="bolder">free of charge for you</span>.
     </div>
   </div>

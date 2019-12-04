@@ -51,7 +51,7 @@ export default {
       <div class="description">
         <p>
           Here is our typical agreement form.
-          You could e-sign agreement with Pay Super or use good old paper signing via mail delivery.
+          You could e-sign agreement with PaySuper or use good old paper signing via mail delivery.
         </p>
         <template v-if="!merchant.agreement_type">
           <p>
@@ -115,7 +115,7 @@ export default {
           v-if="merchant.has_psp_signature"
         >
           <StatusIcon status="complete" />
-          <span class="signed-row__text">Physically signed by Pay Super</span>
+          <span class="signed-row__text">Physically signed by PaySuper</span>
         </div>
 
         <template v-if="merchant.agreement_sent_via_mail">
@@ -147,7 +147,7 @@ export default {
           v-if="merchant.has_psp_signature"
         >
           <StatusIcon status="complete" />
-          <span class="signed-row__text">E-signed by Pay Super</span>
+          <span class="signed-row__text">E-signed by PaySuper</span>
         </div>
         <div
           class="signed-row"
@@ -172,7 +172,7 @@ export default {
 
     <!-- <div class="signed-row">
       <StatusIcon status="complete" />
-      <span class="signed-row__text">E-signed by Pay Super</span>
+      <span class="signed-row__text">E-signed by PaySuper</span>
     </div> -->
 
   </div>

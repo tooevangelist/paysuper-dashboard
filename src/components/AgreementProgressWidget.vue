@@ -192,7 +192,7 @@ export default {
       <PictureWelcomeSheets />
     </span>
     <div class="welcome-texts">
-      <UiHeader class="title" level="3">Welcome to Pay Super!</UiHeader>
+      <UiHeader class="title" level="3">Welcome to PaySuper!</UiHeader>
       <p>
         This short list of actions is all you need to start your successful sales.
         Our KYC procedure is short and we ask you to fill-in some organisational info,

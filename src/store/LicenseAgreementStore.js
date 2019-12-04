@@ -21,6 +21,7 @@ export default function createLicenseAgreementStore() {
     state: {
       helloSign: null,
       signature: null,
+      isAgreementLoading: false,
       agreement: getDefaultAgreementDocument(),
       hasGeneratedAgreement: false,
     },
@@ -56,6 +57,9 @@ export default function createLicenseAgreementStore() {
       },
       helloSign(state, data) {
         state.helloSign = data;
+      },
+      isAgreementLoading(state, data) {
+        state.isAgreementLoading = data;
       },
       signature(state, data) {
         state.signature = data;
@@ -102,17 +106,28 @@ export default function createLicenseAgreementStore() {
           commit('signature', response.data);
         }
       },
-      async fetchAgreementMetadata({ commit, getters }) {
+      async fetchAgreementMetadata({ commit, dispatch, getters }, retryCount = 0) {
         const { status } = getters;
 
         if (includes([3, 4, 7, 8], status)) {
-          const response = await axios.get(
-            '{apiUrl}/admin/api/v1/merchants/agreement',
-          );
+          commit('isAgreementLoading', true);
+          const response = await dispatch('updateMetadata', retryCount);
           const agreement = get(response, 'data', getDefaultAgreementDocument());
 
           commit('agreement', agreement);
         }
+      },
+      async updateMetadata({ dispatch, state }, retryCount) {
+        const response = await axios.get('{apiUrl}/admin/api/v1/merchants/agreement');
+        const newSize = get(response, 'data.metadata.size', null);
+        if (newSize && newSize !== state.agreement.metadata.size) {
+          return response;
+        }
+        if (retryCount) {
+          return new Promise(r => setTimeout(r, 3000))
+            .then(() => dispatch('updateMetadata', retryCount - 1));
+        }
+        return response;
       },
       async uploadDocument({ dispatch, state }) {
         const hasDocument = !!state.document || await dispatch('fetchDocument');
@@ -140,6 +155,7 @@ export default function createLicenseAgreementStore() {
 
         if (response.status === 200) {
           commit('document', response.data);
+          commit('isAgreementLoading', false);
           return true;
         }
 
@@ -180,9 +196,9 @@ export default function createLicenseAgreementStore() {
             dispatch('User/Merchant/updateStatus', status, { root: true });
             dispatch('User/Merchant/completeStep', 'license', { root: true });
             delay(async () => {
-              await dispatch('fetchAgreementMetadata');
+              await dispatch('fetchAgreementMetadata', 20);
               await dispatch('fetchDocument');
-            }, 5000);
+            }, 1000);
           }
         });
         centrifuge.connect();
