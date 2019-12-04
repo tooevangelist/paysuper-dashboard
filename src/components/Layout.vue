@@ -49,7 +49,7 @@ export default {
       });
     },
     projectName() {
-      return get(this.merchant, 'company.name') || 'Pay Super';
+      return get(this.merchant, 'company.name') || 'PaySuper';
     },
   },
   mounted() {

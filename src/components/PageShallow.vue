@@ -18,7 +18,7 @@ export default {
 <template>
 <div class="template-page-shallow">
   <div class="header">
-    <h1 class="title">Pay Super</h1>
+    <h1 class="title">PaySuper</h1>
     <div class="menu">
       <RouterLink
         v-if="isAuthorised"

@@ -62,7 +62,7 @@ export default {
 
       payoutPartyList: [
         {
-          label: 'Pay Super',
+          label: 'PaySuper',
           value: 'paysuper',
         },
         {

@@ -16,6 +16,10 @@ export default {
       default: false,
       type: Boolean,
     },
+    isAgreementLoading: {
+      default: false,
+      type: Boolean,
+    },
     merchantStatus: {
       default: 'new',
       type: String,
@@ -155,12 +159,16 @@ export default {
     <div class="links">
       <a
         v-if="agreement.metadata.size"
-        class="link"
+        :class="['link', { '_disabled': isAgreementLoading }]"
         :href="agreement.url"
         @click.prevent="uploadDocument"
       >
         <IconDownload class="icon" />
         DOWNLOAD
+        <UiSimplePreloader
+          v-if="isAgreementLoading"
+          class="agreement-preloader"
+        />
       </a>
       <div
         v-if="merchantStatus === 'signing'"
@@ -343,11 +351,20 @@ export default {
     }
   }
 
+  &._disabled {
+    pointer-events: none;
+    cursor: default;
+    color: #5e6366;
+  }
+
   & ~ & {
     margin-left: 20px;
     padding-left: 20px;
     border-left: 1px solid #e3e5e6;
   }
+}
+.agreement-preloader {
+  margin-left: 12px;
 }
 .agreement-text {
   font-family: Roboto;

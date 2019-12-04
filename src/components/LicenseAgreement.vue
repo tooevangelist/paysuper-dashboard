@@ -8,7 +8,12 @@ export default {
   computed: {
     ...mapGetters('User/Merchant', ['isOnboardingStepsComplete']),
     ...mapGetters('Company/LicenseAgreement', ['isSigendYou', 'isSigendPS']),
-    ...mapState('Company/LicenseAgreement', ['document', 'agreement', 'signature']),
+    ...mapState('Company/LicenseAgreement', [
+      'document',
+      'agreement',
+      'signature',
+      'isAgreementLoading',
+    ]),
     ...mapGetters('User', ['userPermissions']),
 
     viewOnly() {
@@ -22,7 +27,7 @@ export default {
       return this.isSigendYou ? 'Signed by you' : 'Not signed by you';
     },
     titleSignedPs() {
-      return this.isSigendPS ? 'Signed by Pay Super' : 'Not signed by Pay Super';
+      return this.isSigendPS ? 'Signed by PaySuper' : 'Not signed by PaySuper';
     },
     statusSignedYou() {
       if (!this.isSigendYou) {
@@ -75,10 +80,16 @@ export default {
           <div class="first-line">License Agreement.{{ agreement.metadata.extension }}</div>
           <a
             v-if="agreement.metadata.size"
-            class="second-line _link"
+            :class="['second-line', '_link', { '_disabled': isAgreementLoading }]"
             :href="agreement.url"
             @click.prevent="uploadDocument"
-          >DOWNLOAD</a>
+          >
+            DOWNLOAD
+            <UiSimplePreloader
+              v-if="isAgreementLoading"
+              class="agreement-preloader"
+            />
+          </a>
         </div>
       </div>
       <div class="item">
@@ -202,7 +213,17 @@ export default {
     color: #3d7bf5;
     letter-spacing: 0.75px;
     font-weight: 500;
+    display: flex;
+
+    &._disabled {
+      pointer-events: none;
+      cursor: default;
+      color: #5e6366;
+    }
   }
+}
+.agreement-preloader {
+  margin-left: 12px;
 }
 .submit {
   min-width: 180px;

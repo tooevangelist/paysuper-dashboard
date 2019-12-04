@@ -148,7 +148,7 @@ export default {
       </UiHeader>
       <UiText indentBottom="small">
         Generate a secret key to set up correct integration with
-        Pay Super platform.
+        PaySuper platform.
       </UiText>
 
       <KeyGenerateField

@@ -33,7 +33,7 @@ export default {
   },
   computed: {
     ...mapState('Merchant', ['merchant']),
-    ...mapState('MerchantLicenseAgreement', ['agreement', 'operatingCompanies']),
+    ...mapState('MerchantLicenseAgreement', ['agreement', 'operatingCompanies', 'isAgreementLoading']),
 
     status() {
       return get(merchantStatusScheme, this.merchant.status, merchantStatusScheme[0]).value;
@@ -114,6 +114,7 @@ export default {
     :operatingCompanyId="operatingCompanyId"
     :riskLevel="riskLevel"
     :mccCode="mccCode"
+    :isAgreementLoading="isAgreementLoading"
     @sendMessage="sendMessage"
     @changeStatus="changeStatus"
     @openLicense="openLicense"
