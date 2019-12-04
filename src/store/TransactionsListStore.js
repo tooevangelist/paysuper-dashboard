@@ -99,16 +99,13 @@ export default function createTransactionsListStore() {
         commit('query', query);
       },
 
-      async refund({ rootState, commit }, { transaction, reason }) {
+      refund({ rootState }, { transaction, reason }) {
         const data = {
           reason,
           creator_id: rootState.User.Merchant.merchant.id,
           amount: transaction.total_payment_amount,
         };
-        const response = await axios.post(`${rootState.config.apiUrl}/admin/api/v1/order/${transaction.uuid}/refunds`, data);
-        if (response.data) {
-          commit('refund', { items: response.data });
-        }
+        return axios.post(`${rootState.config.apiUrl}/admin/api/v1/order/${transaction.uuid}/refunds`, data);
       },
     },
 
