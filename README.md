@@ -135,7 +135,7 @@ Also, good idea will be close refresh and logout endpoints with CORS Policy.
 
 ### Branches
 
-The `master` branch of this repository contains the latest stable release of this component.
+We use the [GitFlow](https://nvie.com/posts/a-successful-git-branching-model) as a branching model for Git.
 
 ### Built With
 
