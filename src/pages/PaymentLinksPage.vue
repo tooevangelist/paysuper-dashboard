@@ -16,6 +16,11 @@ const STATUS_COLOR = {
   true: 'transparent',
 };
 
+const STATUS = {
+  false: 'Active',
+  true: 'Expired',
+};
+
 export default {
   name: 'PaymentLinksPage',
 
@@ -210,8 +215,10 @@ export default {
             >
             <UiTableCell style="position: relative;" align="left">
               <div class="status-dot"
-                :class="getColor(link.no_expiry_date)"
-                 title="link.status"></div>
+                :class="getColor(link.is_expired)"
+                :title="getStatus(link.is_expired)"
+              >
+              </div>
               {{ link.name }}
             </UiTableCell>
             <UiTableCell align="left">

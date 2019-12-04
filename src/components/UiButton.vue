@@ -309,6 +309,10 @@ $primary-button-size: 14px;
     &:not(._disabled) .icon-before svg {
       fill: $transparent-blue-font-color;
     }
+    &._transparent._disabled {
+      border-width: 1px;
+      border-color: $disabled-font-color;
+    }
     border-width: 1px;
   }
 }

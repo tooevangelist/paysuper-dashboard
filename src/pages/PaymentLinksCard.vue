@@ -1,10 +1,22 @@
 <script>
 import moment from 'moment';
-import { find } from 'lodash-es';
+import { find, get } from 'lodash-es';
 import { mapState, mapActions } from 'vuex';
 import { maxLength, required } from 'vuelidate/lib/validators';
 import PaymentLinkCardStore from '@/store/PaymentLinkCardStore';
 import SelectProductsModal from '@/components/SelectProductsModal.vue';
+import UiTextFieldReadonly from '@/components/UiTextFieldReadonly.vue';
+import copyTextToClipboard from '@/helpers/copyTextToClipboard';
+
+const STATUS_COLOR = {
+  false: 'green',
+  true: 'transparent',
+};
+
+const STATUS = {
+  false: 'Active',
+  true: 'Expired',
+};
 
 export default {
   name: 'PaymentLinksCard',
@@ -15,6 +27,7 @@ export default {
     },
   },
   components: {
+    UiTextFieldReadonly,
     SelectProductsModal,
   },
   data() {
@@ -41,6 +54,12 @@ export default {
         },
       ],
       selectProductsType: 'product',
+      colors: STATUS_COLOR,
+      tabs: [
+        { label: 'Dashboard', value: '0' },
+        { label: 'Settings', value: '1' },
+      ],
+      currentTab: 0,
     };
   },
 
@@ -53,7 +72,7 @@ export default {
   async asyncData({ store, registerStoreModule, route }) {
     try {
       await registerStoreModule('PaymentLink', PaymentLinkCardStore, {
-       linkId: route.params.linkId,
+        linkId: route.params.linkId,
       });
     } catch (error) {
       store.dispatch('setPageError', error);
@@ -61,10 +80,12 @@ export default {
   },
 
   computed: {
+    ...mapState('User/Merchant', ['merchant']),
     ...mapState('PaymentLink', [
       'productsList',
       'projectsList',
       'linkItem',
+      'linkItemUrl',
     ]),
 
     productsItemsOptions() {
@@ -96,10 +117,14 @@ export default {
     isNewItem() {
       return this.$route.params.linkId === 'new';
     },
+
+    contactsName() {
+      return get(this.merchant, 'contacts.authorized.name') || '';
+    },
   },
 
   methods: {
-    ...mapActions('PaymentLink', ['fetchProducts', 'createItem']),
+    ...mapActions('PaymentLink', ['fetchProducts', 'createItem', 'editItem']),
     ...mapActions(['setIsLoading']),
 
     handleSetDate(value) {
@@ -174,8 +199,13 @@ export default {
         products_type: this.selectProductsType,
       };
       try {
-        await this.createItem(data);
-        this.$showSuccessMessage('The link is created successfully');
+        if (this.isNewItem) {
+          await this.createItem(data);
+          this.$showSuccessMessage('The link is created successfully');
+        } else {
+          await this.editItem(data);
+          this.$showSuccessMessage('The link is edited successfully');
+        }
         this.$navigate('/payment-links/');
       } catch (e) {
         this.$showErrorMessage(e);
@@ -194,12 +224,28 @@ export default {
     },
 
     formatDate(date) {
-      return moment.unix(date).format('D MMM YYYY, HH:MM');
+      return moment.unix(date).format('D MMM YYYY,');
+    },
+
+    getStatus(status) {
+      return STATUS[status];
+    },
+
+    copyToClipboard(value) {
+      copyTextToClipboard(value);
     },
   },
 
   mounted() {
     console.log(this.productsList);
+
+    if (!this.isNewItem) {
+      this.productsItems = this.productsList;
+      this.createLink.name = this.linkItem.name;
+      this.noExpirationDate = this.linkItem.no_expiry_date;
+      this.createLink.projectId = this.linkItem.project_id;
+      this.selectProductsType = this.linkItem.products_type;
+    }
   },
 };
 </script>
@@ -210,176 +256,213 @@ export default {
       <template slot="title">
         {{ isNewItem ? 'Link creating' : `Link ID ${linkItem.id}` }}
       </template>
-      <template slot="description">
+      <template slot="description" v-if="!isNewItem">
         {{ formatDate(linkItem.created_at.seconds) }}
+        {{ contactsName }}
+        <div class="status-block">
+          <UiLabelTag class="status" :color="colors[linkItem.is_expired]">
+            {{ getStatus(linkItem.is_expired) }}
+          </UiLabelTag>
+        </div>
       </template>
     </UiPageHeaderFrame>
-    <UiPanel>
+    <UiPanel v-if="!isNewItem && linkItemUrl">
       <section class="section">
-        <UiHeader level="3" :hasMargin="true">
-          Initial details
-        </UiHeader>
-        <UiTextField
-          v-bind="$getValidatedFieldProps('createLink.name')"
-          label="Name"
-          :value="createLink.name"
-          v-model="createLink.name"
-          @blur="$v.createLink.name.$touch()"
-        />
-        <UiDate
-          v-bind="$getValidatedFieldProps('createLink.dateInput')"
-          class="expiration-date"
-          :value="createLink.dateInput"
-          label="Expiration date"
-          :required="true"
-          v-model="createLink.dateInput"
-          @input="handleSetDate"
-          :disabled="noExpirationDate"
-        />
-        <UiSwitchBox v-model="noExpirationDate">
-          No expiration date
-        </UiSwitchBox>
-        <UiSelect
-          v-bind="$getValidatedFieldProps('createLink.project_id')"
-          label="Project"
-          class="select-project"
-          :options="projectsOptions"
-          :value="createLink.projectId"
-          v-model="createLink.projectId"
-        />
-      </section>
-      <section class="section" v-if="createLink.projectId !== null">
-        <UiHeader class="section__header" level="3" :hasMargin="true">
-          Products
-        </UiHeader>
-        <div class="section__info">
-          Do aliquip labore dolor irure cillum deserunt nulla.
-          Anim do qui et qui esse qui ex eu. Adipisicing dolor
-          ea proident nostrud sint consequat consectetur up to 8 products.
-        </div>
-        <div class="controls">
-          <UiButton
-            class="create-products"
-            @click="openSelectProductsModal"
-            color="transparent-blue-thin-border"
-            :isTransparent="true"
+        <div class="link-url-block">
+          <UiTextFieldReadonly
+            v-model="linkItemUrl"
+            label="Payment link"
+            disabled
+          />
+          <button class="button-copy"
+            @click="copyToClipboard(linkItemUrl)"
           >
-            <IconPlus slot="iconBefore" />
-            SELECT PRODUCTS
+            <IconCopy />
+            <span class="button-copy__text">
+              COPY
+            </span>
+          </button>
+        </div>
+      </section>
+    </UiPanel>
+    <UiPanel>
+      <div class="panel-header" v-if="!isNewItem">
+        <div class="panel-header__col">
+          <UiTabs
+            class="tabs"
+            :items="tabs"
+            v-model="currentTab">
+          </UiTabs>
+        </div>
+      </div>
+      <template v-if="isNewItem || currentTab === 1">
+        <section class="section">
+          <UiHeader level="3" :hasMargin="true">
+            {{ isNewItem ? 'Initial details' : `Details` }}
+          </UiHeader>
+          <UiTextField
+            v-bind="$getValidatedFieldProps('createLink.name')"
+            label="Name"
+            :value="createLink.name"
+            v-model="createLink.name"
+            @blur="$v.createLink.name.$touch()"
+          />
+          <UiDate
+            v-bind="$getValidatedFieldProps('createLink.dateInput')"
+            class="expiration-date"
+            :value="createLink.dateInput"
+            label="Expiration date"
+            :required="true"
+            v-model="createLink.dateInput"
+            @input="handleSetDate"
+            :disabled="noExpirationDate"
+          />
+          <UiSwitchBox v-model="noExpirationDate">
+            No expiration date
+          </UiSwitchBox>
+          <UiSelect
+            v-bind="$getValidatedFieldProps('createLink.project_id')"
+            label="Project"
+            class="select-project"
+            :options="projectsOptions"
+            :value="createLink.projectId"
+            v-model="createLink.projectId"
+          />
+        </section>
+        <section class="section" v-if="createLink.projectId !== null">
+          <UiHeader class="section__header" level="3" :hasMargin="true">
+            Products
+          </UiHeader>
+          <div class="section__info">
+            Do aliquip labore dolor irure cillum deserunt nulla.
+            Anim do qui et qui esse qui ex eu. Adipisicing dolor
+            ea proident nostrud sint consequat consectetur up to 8 products.
+          </div>
+          <div class="controls">
+            <UiButton
+              :disabled="!(productsItems.length <= 8)"
+              class="create-products"
+              @click="openSelectProductsModal"
+              color="transparent-blue-thin-border"
+              :isTransparent="true"
+            >
+              <IconPlus slot="iconBefore" />
+              SELECT PRODUCTS
+            </UiButton>
+          </div>
+        </section>
+        <section v-if="createLink.projectId !== null">
+          <div class="items-list">
+            <UiTable>
+              <UiTableRow :isHead="true">
+                <UiTableCell width="40px" align="center"></UiTableCell>
+                <UiTableCell width="350px" align="left">Name</UiTableCell>
+                <UiTableCell width="350px" align="left">SKU</UiTableCell>
+                <UiTableCell width="200px" align="left"
+                  v-if="selectProductsType === 'key'"
+                ></UiTableCell>
+                <UiTableCell width="200px" align="left">Price</UiTableCell>
+                <UiTableCell width="3%" align="left"></UiTableCell>
+              </UiTableRow>
+              <template v-if="productsItems.length">
+                <UiTableRow
+                  class="content-row"
+                  v-for="(item, index) in productsItems"
+                  :key="item.id"
+                  :index="index"
+                >
+                  <UiTableCell width="40px" align="center" valign="middle"
+                    v-if="item.object === 'product'"
+                  >
+                    <div
+                      v-if="item.images !== null"
+                      :style="{ backgroundImage: `url(${item.images[0]})` }"
+                      class="item-image">
+                    </div>
+                  </UiTableCell>
+                  <UiTableCell width="40px" align="center" valign="middle"
+                    v-if="item.object === 'key_product'"
+                  >
+                    <span
+                      v-if="item.cover && item.cover.images.en"
+                      class="img"
+                      :style="{ backgroundImage: `url(${item.cover.images.en})` }"
+                    ></span>
+                    <IconNoImage
+                      v-else
+                      class="item-image"
+                      width="18"
+                      height="18"
+                      fill="#919699"
+                    />
+                  </UiTableCell>
+                  <UiTableCell width="200px" align="left" valign="middle" :title="item.name.en">
+                    <span class="cell-text vi-name">
+                      {{ item.name.en }}
+                    </span>
+                  </UiTableCell>
+                  <UiTableCell width="200px" align="left" valign="middle" :title="item.sku">
+                    <span class="cell-text vi-name">
+                      {{ item.sku }}
+                    </span>
+                  </UiTableCell>
+                  <UiTableCell align="left"  valign="middle"
+                     v-if="item.object === 'key_product'"
+                   >
+                    <UiTableCellUnit
+                      v-for="platform in item.platforms"
+                      :key="platform.id"
+                    >
+                      {{ platform.name }}
+                    </UiTableCellUnit>
+                    <UiNoText v-if="!item.platforms" />
+                  </UiTableCell>
+                  <UiTableCell class="cell-price" width="110px" align="left" valign="middle"
+                    v-if="item.object === 'product'"
+                    :title="getItemPrice(item)"
+                    >
+                    <UiNoText v-if="!getItemPrice(item)" />
+                    <span v-else class="cell-price">
+                      {{ getItemPrice(item) }}
+                    </span>
+                  </UiTableCell>
+                  <UiTableCell align="left" valign="middle"
+                    v-if="item.object === 'key_product'"
+                  >
+                  <UiTableCellUnit
+                     v-for="platform in item.platforms"
+                     :key="platform.id"
+                  >
+                     <UiNoText v-if="!getPlatformPrice(platform)" />
+                     <span v-els class="cell-price">
+                       {{ getPlatformPrice(platform) }}
+                     </span>
+                    </UiTableCellUnit>
+                    <UiNoText v-if="!item.platforms" />
+                  </UiTableCell>
+                  <UiTableCell width="40px" align="center" valign="middle">
+                    <span class="delete" @click="deleteProductInList(index)">
+                      <IconDelete/>
+                    </span>
+                  </UiTableCell>
+                </UiTableRow>
+              </template>
+            </UiTable>
+            <div class="no-products"  v-if="productsItems.length === 0">
+              You don’t have any item yet
+            </div>
+          </div>
+        </section>
+
+        <div class="create">
+          <UiButton
+            :disabled="!isCreate"
+            @click="create"
+          >
+            {{ isNewItem ? 'CREATE' : 'SAVE' }}
           </UiButton>
         </div>
-      </section>
-      <section v-if="createLink.projectId !== null">
-        <div class="items-list">
-          <UiTable>
-            <UiTableRow :isHead="true">
-              <UiTableCell width="40px" align="center"></UiTableCell>
-              <UiTableCell width="350px" align="left">Name</UiTableCell>
-              <UiTableCell width="350px" align="left">SKU</UiTableCell>
-              <UiTableCell width="200px" align="left"
-                v-if="selectProductsType === 'key'"
-              ></UiTableCell>
-              <UiTableCell width="200px" align="left">Price</UiTableCell>
-              <UiTableCell width="3%" align="left"></UiTableCell>
-            </UiTableRow>
-            <template v-if="productsItems.length">
-              <UiTableRow
-                class="content-row"
-                v-for="(item, index) in productsItems"
-                :key="item.id"
-                :index="index"
-              >
-                <UiTableCell width="40px" align="center" valign="middle"
-                  v-if="item.object === 'product'"
-                >
-                  <div
-                    v-if="item.images !== null"
-                    :style="{ backgroundImage: `url(${item.images[0]})` }"
-                    class="item-image">
-                  </div>
-                </UiTableCell>
-                <UiTableCell width="40px" align="center" valign="middle"
-                  v-if="item.object === 'key_product'"
-                >
-                  <span
-                    v-if="item.cover && item.cover.images.en"
-                    class="img"
-                    :style="{ backgroundImage: `url(${item.cover.images.en})` }"
-                  ></span>
-                  <IconNoImage
-                    v-else
-                    class="item-image"
-                    width="18"
-                    height="18"
-                    fill="#919699"
-                  />
-                </UiTableCell>
-                <UiTableCell width="200px" align="left" valign="middle" :title="item.name.en">
-                  <span class="cell-text vi-name">
-                    {{ item.name.en }}
-                  </span>
-                </UiTableCell>
-                <UiTableCell width="200px" align="left" valign="middle" :title="item.sku">
-                  <span class="cell-text vi-name">
-                    {{ item.sku }}
-                  </span>
-                </UiTableCell>
-                <UiTableCell align="left"  valign="middle"
-                   v-if="item.object === 'key_product'"
-                 >
-                  <UiTableCellUnit
-                    v-for="platform in item.platforms"
-                    :key="platform.id"
-                  >
-                    {{ platform.name }}
-                  </UiTableCellUnit>
-                  <UiNoText v-if="!item.platforms" />
-                </UiTableCell>
-                <UiTableCell class="cell-price" width="110px" align="left" valign="middle"
-                  v-if="item.object === 'product'"
-                  :title="getItemPrice(item)"
-                  >
-                  <UiNoText v-if="!getItemPrice(item)" />
-                  <span v-else class="cell-price">
-                    {{ getItemPrice(item) }}
-                  </span>
-                </UiTableCell>
-                <UiTableCell align="left" valign="middle"
-                  v-if="item.object === 'key_product'"
-                >
-                <UiTableCellUnit
-                   v-for="platform in item.platforms"
-                   :key="platform.id"
-                >
-                   <UiNoText v-if="!getPlatformPrice(platform)" />
-                   <span v-els class="cell-price">
-                     {{ getPlatformPrice(platform) }}
-                   </span>
-                  </UiTableCellUnit>
-                  <UiNoText v-if="!item.platforms" />
-                </UiTableCell>
-                <UiTableCell width="40px" align="center" valign="middle">
-                  <span class="delete" @click="deleteProductInList(index)">
-                    <IconDelete/>
-                  </span>
-                </UiTableCell>
-              </UiTableRow>
-            </template>
-          </UiTable>
-          <div class="no-products"  v-if="productsItems.length === 0">
-            You don’t have any item yet
-          </div>
-        </div>
-      </section>
-
-      <div class="create">
-        <UiButton
-          :disabled="!isCreate"
-          @click="create"
-        >
-          CREATE
-        </UiButton>
-      </div>
+      </template>
 
     </UiPanel>
 
@@ -396,7 +479,7 @@ export default {
     <SelectProductsModal
       v-if="isSelectProductsModalOpened"
       v-model="productsItemsSelected"
-      title="Select products"
+      :title="`Selected ${productsItemsSelected.length} of 8 products`"
       :value="productsItemsSelected"
       :items="productsListModal"
       :options="productsItemsOptions"
@@ -409,6 +492,7 @@ export default {
           class="radio"
           v-for="item in productsTypes"
           :checked="item.value === selectProductsType"
+          :disabled="linkItem.products_type && linkItem.products_type !== item.value"
           :key="item.value"
           :value="item.value"
           @change="updateSelectProductsType($event)"
@@ -494,7 +578,54 @@ export default {
   justify-content: center;
   width: 100%;
   & .radio {
-    margin: 0 16px;
+    margin: 0 16px 16px;
+  }
+}
+
+.status-block {
+  margin-top: 20px;
+}
+
+.link-url-block {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.button-copy {
+  background: transparent;
+  border: 0;
+  outline: 0;
+  padding: 0;
+  color: #3d7bf5;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0.75px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  &:active {
+    color: #000000;
+    & > svg {
+      fill: #000000;
+    }
+  }
+  &__text {
+    padding: 4px 0 0 8px;
+  }
+  & > svg {
+    fill: #3d7bf5;
+  }
+}
+.panel-header {
+  width: 100%;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  &__col {
+    width: 100%;
   }
 }
 </style>

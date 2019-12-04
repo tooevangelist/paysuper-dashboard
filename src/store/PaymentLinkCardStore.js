@@ -1,6 +1,7 @@
 ﻿import axios from 'axios';
 import qs from 'qs';
 import assert from 'simple-assert';
+import { get } from 'lodash-es';
 
 export default function createPaymentLinkPageStore() {
   return {
@@ -9,6 +10,7 @@ export default function createPaymentLinkPageStore() {
       productsList: [],
       projectsList: [],
       linkItem: null,
+      linkUrl: null,
       linkId: null,
     },
 
@@ -28,14 +30,21 @@ export default function createPaymentLinkPageStore() {
       linkItem(state, data) {
         state.linkItem = data;
       },
+      linkItemUrl(state, data) {
+        state.linkItemUrl = data;
+      },
     },
 
     actions: {
-      async initState({ commit, dispatch }, { linkId }) {
+      async initState({ commit, dispatch, state }, { linkId }) {
         assert(linkId, 'PaymentLinkPageStore requires linkId param');
         commit('linkId', linkId);
         if (linkId !== 'new') {
           await dispatch('fetchLinkData', linkId);
+
+          if (get(state.linkItem, 'is_expired') !== true) {
+            await dispatch('fetchLinkUrl');
+          }
         } else {
           commit('linkItem', {});
         }
@@ -43,9 +52,43 @@ export default function createPaymentLinkPageStore() {
         await dispatch('fetchProjects');
       },
 
-      async fetchLinkData({ commit, rootState }, id) {
+      async fetchLinkData({ commit, dispatch, rootState }, id) {
         const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/paylinks/${id}`);
+        const { products } = response.data;
         commit('linkItem', response.data);
+        await dispatch('fetchLinkProducts', products);
+      },
+
+      async fetchLinkProducts({ commit, dispatch }, products) {
+        commit('productsList', []);
+        await products.forEach((product) => {
+          dispatch('fetchProductById', product);
+        });
+      },
+
+      async fetchProductById({ rootState, state, commit }, id) {
+        const isKey = state.linkItem.products_type === 'key';
+        const type = isKey ? 'key-products' : 'products';
+        const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/${type}/${id}`);
+        let d = null;
+
+        if (isKey) {
+          d = response.data;
+        } else {
+          d = response.data.item;
+        }
+
+        const virtualItems = [
+          ...state.productsList,
+          d,
+        ];
+        commit('productsList', virtualItems);
+      },
+
+      async fetchLinkUrl({ commit, rootState, state }) {
+        const id = state.linkId;
+        const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/paylinks/${id}/url`);
+        commit('linkItemUrl', response.data);
       },
 
       async fetchProducts({ state, commit, rootState }, { projectId, type }) {
@@ -66,6 +109,13 @@ export default function createPaymentLinkPageStore() {
 
       async createItem({ rootState }, data) {
         await axios.post(`${rootState.config.apiUrl}/admin/api/v1/paylinks`, data);
+      },
+
+      async editItem({ rootState, state }, data) {
+        if (!state.linkId) {
+          return;
+        }
+        await axios.put(`${rootState.config.apiUrl}/admin/api/v1/paylinks/${state.linkId}`, data);
       },
 
       async fetchProjects({ state, commit, rootState }) {

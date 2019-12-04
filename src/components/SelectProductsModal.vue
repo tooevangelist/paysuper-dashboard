@@ -34,6 +34,12 @@ export default {
     },
   },
 
+  computed: {
+    isCanAdd() {
+      return this.value.length < 8;
+    },
+  },
+
   watch: {
     items() {
       this.newList = [];
@@ -56,7 +62,7 @@ export default {
       const item = this.items
         .filter(el => itemValue === el.id);
 
-      if (newItems.length === 0) {
+      if (newItems.length === 0 && this.isCanAdd) {
         this.newList.push(item[0]);
       } else {
         this.newList = this.value
@@ -67,7 +73,6 @@ export default {
     },
 
     save() {
-      // console.log(this.value);
       this.$emit('save', this.value);
     },
   },
@@ -118,6 +123,7 @@ export default {
       </span>
 
       <span
+        v-if="isCanAdd"
         class="add-icon"
         @click="toggleItemSelected(option.value)"
       >
