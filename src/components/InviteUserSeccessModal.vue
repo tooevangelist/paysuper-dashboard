@@ -24,7 +24,7 @@ export default {
         </UiHeader>
         <div class="descr">
           A letter was sent to invited user.
-          He or she must confirm your invitation to get access to your Pay Super account.
+          He or she must confirm your invitation to get access to your PaySuper account.
         </div>
       </div>
 

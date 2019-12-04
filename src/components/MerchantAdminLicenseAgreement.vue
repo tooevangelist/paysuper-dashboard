@@ -16,6 +16,10 @@ export default {
       default: false,
       type: Boolean,
     },
+    isAgreementLoading: {
+      default: false,
+      type: Boolean,
+    },
     merchantStatus: {
       default: 'new',
       type: String,
@@ -28,6 +32,14 @@ export default {
       default: null,
       type: String,
     },
+    riskLevel: {
+      default: null,
+      type: String,
+    },
+    mccCode: {
+      default: null,
+      type: String,
+    },
   },
   data() {
     return {
@@ -37,6 +49,16 @@ export default {
       checkedCompanyId: null,
       operatingCompanyLabel: '',
       showOperatingCompanyConfirm: false,
+      riskLevelList: [
+        {
+          label: 'Low risk',
+          value: 'low-risk',
+        },
+        {
+          label: 'High risk',
+          value: 'high-risk',
+        },
+      ],
     };
   },
   computed: {
@@ -137,12 +159,16 @@ export default {
     <div class="links">
       <a
         v-if="agreement.metadata.size"
-        class="link"
+        :class="['link', { '_disabled': isAgreementLoading }]"
         :href="agreement.url"
         @click.prevent="uploadDocument"
       >
         <IconDownload class="icon" />
         DOWNLOAD
+        <UiSimplePreloader
+          v-if="isAgreementLoading"
+          class="agreement-preloader"
+        />
       </a>
       <div
         v-if="merchantStatus === 'signing'"
@@ -154,14 +180,34 @@ export default {
       </div>
     </div>
   </section>
+  <section
+    v-if="riskLevel"
+    class="section"
+  >
+    <UiHeader level="3" :hasMargin="true">
+      Risk level of company products
+    </UiHeader>
+    <div class="radio-group">
+      <UiRadio
+        class="radio"
+        v-for="item in riskLevelList"
+        :checked="item.value === riskLevel"
+        :key="item.value"
+        :value="item.value"
+        :disabled="item.value !== riskLevel"
+      >
+        {{ item.label }} {{ item.value === riskLevel ? `(MCC: ${mccCode})` : '' }}
+      </UiRadio>
+    </div>
+  </section>
   <section class="section">
     <UiHeader level="3" :hasMargin="true">
       Signing companies
     </UiHeader>
     <UiText>
-      Maltese signing company is for merchants from Russia, Belarus,
-      Cyprus — high risk merchants, signing fompany of United Kingdom
-      is for the rest low risk merchants.
+      Choose Maltese signing company for any merchants from Russia, Belarus,
+      Cyprus and for all high risk merchants from any country.
+      Choose Cyprus signing company for low risk merchants and the rest of the countries.
     </UiText>
     <div class="radio-group">
       <UiRadio
@@ -305,11 +351,20 @@ export default {
     }
   }
 
+  &._disabled {
+    pointer-events: none;
+    cursor: default;
+    color: #5e6366;
+  }
+
   & ~ & {
     margin-left: 20px;
     padding-left: 20px;
     border-left: 1px solid #e3e5e6;
   }
+}
+.agreement-preloader {
+  margin-left: 12px;
 }
 .agreement-text {
   font-family: Roboto;

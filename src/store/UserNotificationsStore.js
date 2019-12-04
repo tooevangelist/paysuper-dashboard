@@ -1,5 +1,6 @@
 
 import axios from 'axios';
+import { get } from 'lodash-es';
 import Centrifuge from 'centrifuge';
 import getUnixTime from 'date-fns/getUnixTime';
 
@@ -79,6 +80,9 @@ export default function createUserNotificationsStore() {
 
         centrifuge.setToken(merchant.centrifugo_token);
         centrifuge.subscribe(`paysuper:merchant#${merchant.id}`, async ({ data }) => {
+          if (!get(data, 'id')) {
+            return;
+          }
           commit('notifications', [
             {
               ...data,

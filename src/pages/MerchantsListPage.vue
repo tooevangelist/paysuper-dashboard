@@ -171,7 +171,7 @@ export default {
     <span slot="title">Merchants</span>
     <span slot="description">
       Here is the list of our active merchants with license agreement signed by both sides.
-      These clients have full access to Pay Super platform functionality.
+      These clients have full access to PaySuper platform functionality.
     </span>
     <PictureDiagramPresentation slot="picture" />
   </UiPageHeaderFrame>
@@ -219,9 +219,12 @@ export default {
         <UiTableCell align="left">
           <span
             class="cell-text"
-            :class="{'_empty': !get(merchant, 'user.email')}"
+            :class="{'_empty': !get(merchant, 'user.first_name')}"
           >
-            {{get(merchant, 'user.email', '—')}}
+            {{get(merchant, 'user.first_name', '')}}
+            {{get(merchant, 'user.last_name', '')}}
+            <UiNoText
+              v-if="!get(merchant, 'user.first_name') && !get(merchant, 'user.last_name')" />
           </span>
         </UiTableCell>
         <UiTableCell align="left">

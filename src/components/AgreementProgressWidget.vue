@@ -1,6 +1,6 @@
 <script>
 import { mapGetters, mapState } from 'vuex';
-import { reduce } from 'lodash-es';
+import { includes, reduce } from 'lodash-es';
 import PictureWelcomeSheets from '@/components/PictureWelcomeSheets.vue';
 import SmartListItem from '@/components/SmartListItem.vue';
 import merchantStatusScheme from '@/schemes/merchantStatusScheme';
@@ -178,6 +178,9 @@ export default {
         this.$appEvents.$emit('contentScrollToY', 200);
       }
     },
+    hasItemPerform(status) {
+      return includes(['default', 'waiting'], status);
+    },
   },
 };
 </script>
@@ -189,7 +192,7 @@ export default {
       <PictureWelcomeSheets />
     </span>
     <div class="welcome-texts">
-      <UiHeader class="title" level="3">Welcome to Pay Super!</UiHeader>
+      <UiHeader class="title" level="3">Welcome to PaySuper!</UiHeader>
       <p>
         This short list of actions is all you need to start your successful sales.
         Our KYC procedure is short and we ask you to fill-in some organisational info,
@@ -210,7 +213,7 @@ export default {
       :isExpanded="expandItems[item.id]"
       @toggle="toggle($event, item.id)"
     >
-      <div class="perform" v-if="item.status === 'default'">
+      <div class="perform" v-if="hasItemPerform(item.status)">
         <div class="perform__text">
           {{ item.performText }}
         </div>

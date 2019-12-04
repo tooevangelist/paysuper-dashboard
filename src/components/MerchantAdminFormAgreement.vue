@@ -141,12 +141,12 @@ export default {
       <template v-if="merchant.agreement_type === 1">
         <div class="signed-row" v-if="merchant.has_psp_signature">
           <StatusIcon status="complete" />
-          <span class="signed-row__text">Physically signed by Pay Super</span>
+          <span class="signed-row__text">Physically signed by PaySuper</span>
         </div>
 
         <div class="signed-row" v-if="merchant.agreement_sent_via_mail">
           <StatusIcon status="complete" />
-          <span class="signed-row__text">Sent by mail by Pay Super</span>
+          <span class="signed-row__text">Sent by mail by PaySuper</span>
         </div>
 
         <div class="signed-row" v-if="merchant.has_merchant_signature">
@@ -166,7 +166,7 @@ export default {
                 value: $event
               })"
             />
-            <span class="checkbox__text">Phisicaly signed by Pay Super</span>
+            <span class="checkbox__text">Phisicaly signed by PaySuper</span>
           </label>
         </div>
 
@@ -218,7 +218,7 @@ export default {
       <template v-if="merchant.agreement_type === 2">
         <div class="signed-row" v-if="merchant.has_psp_signature">
           <StatusIcon status="complete" />
-          <span class="signed-row__text">E-signed by Pay Super</span>
+          <span class="signed-row__text">E-signed by PaySuper</span>
         </div>
 
         <div class="signed-row" v-if="merchant.has_merchant_signature">

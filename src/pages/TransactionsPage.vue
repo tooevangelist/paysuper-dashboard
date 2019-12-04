@@ -104,6 +104,7 @@ export default {
       'createItem',
       'submitFilters',
       'fetchTransactions',
+      'refund',
     ]),
 
     get,
@@ -226,9 +227,13 @@ export default {
     async handleRefund(reason) {
       this.setIsLoading(true);
       await this.refund({ transaction: this.currentTransaction, reason })
+        .then(() => {
+          this.$showSuccessMessage('Refund created');
+        })
         .catch(this.$showErrorMessage);
       this.filterTransactions();
       this.setIsLoading(false);
+      this.showRefundModal = false;
     },
 
     async exportFile(fileType) {

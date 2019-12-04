@@ -1,22 +1,5 @@
 <script>
-import { mapState, mapGetters } from 'vuex';
-
 export default {
-  computed: {
-    ...mapState('User', ['isAuthorised']),
-    ...mapGetters('User/Profile', ['userPermissions']),
-  },
-
-  created() {
-    if (this.isAuthorised) {
-      if (this.userPermissions && this.userPermissions.viewDashboard) {
-        this.$router.push({ name: 'Dashboard' });
-      } else {
-        this.$router.push({ name: 'ProjectsList' });
-      }
-    }
-  },
-
   methods: {
     goAuthoriseOrRegister() {
       this.$router.push({ name: 'Login', query: { redirect: this.$route.query.redirect } });
@@ -81,7 +64,7 @@ export default {
 {
   "en": {
     "title": "Unsigned user can’t browse any projects",
-    "text": "Please create new account on sign in if you have one",
+    "text": "Please create new account or sign in if you already have one",
     "buttonText": "Sign in or Sign up"
   },
   "ru": {

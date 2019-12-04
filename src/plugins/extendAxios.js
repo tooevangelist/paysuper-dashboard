@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { get } from 'lodash-es';
+import { showErrorMessage } from '@/helpers/notifications';
 
-export default function extendAxios(store) {
+export default function extendAxios(store, router) {
   const createSetAuthInterceptor = () => (config) => {
     config.url = config.url
       .replace(/^{apiUrl}/, store.state.config.apiUrl)
@@ -34,6 +35,13 @@ export default function extendAxios(store) {
       refreshTokenPromise = null;
       return http(error.config);
     } catch {
+      // Request may fail with 401 on route enter which will cause setPageError behaviour
+      // We need to make sure the redirect is executed AFTER the route with 401 is finised
+      // Otherwise new page will have PageError contents
+      setTimeout(() => {
+        showErrorMessage('Access token is expired. Please log in again.');
+        router.push({ path: '/' });
+      }, 1);
       refreshTokenPromise = null;
       return Promise.reject(error);
     }

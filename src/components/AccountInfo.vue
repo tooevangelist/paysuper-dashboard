@@ -2,7 +2,7 @@
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { get, debounce } from 'lodash-es';
 import { maxLength, required, url } from 'vuelidate/lib/validators';
-import { onlyRusAndLat, onlyRusAndLatAndNum } from '@/helpers/customValidators';
+import { specialEntityName } from '@/helpers/customValidators';
 
 export default {
   name: 'AccountInfo',
@@ -10,13 +10,13 @@ export default {
     accountInfo: {
       address: { maxLength: maxLength(100), required },
       addressAdditional: { maxLength: maxLength(100) },
-      alternativeName: { onlyRusAndLat, maxLength: maxLength(60), required },
+      alternativeName: { specialEntityName, maxLength: maxLength(60), required },
       city: { required },
       country: { required },
-      name: { onlyRusAndLat, maxLength: maxLength(60), required },
-      registrationNumber: { onlyRusAndLatAndNum, maxLength: maxLength(20), required },
-      state: { onlyRusAndLatAndNum },
-      taxId: { onlyRusAndLatAndNum, maxLength: maxLength(20) },
+      name: { specialEntityName, maxLength: maxLength(60), required },
+      registrationNumber: { specialEntityName, maxLength: maxLength(20), required },
+      state: { specialEntityName },
+      taxId: { specialEntityName, maxLength: maxLength(20) },
       website: { required, url },
       zip: { maxLength: maxLength(30), required },
     },
@@ -109,8 +109,12 @@ export default {
 
     updateCountry(value) {
       if (this.countries.find(c => c.value === value) !== undefined) {
-        this.accountInfo.country = value;
+        this.updateField('country', value);
         this.countryCode = value;
+
+        if (this.accountInfo.city !== '') {
+          this.updateField('city', '');
+        }
       }
     },
   },

@@ -1,4 +1,9 @@
-export default function getMainNavItems(permissions, { hasDefaultCurrency }) {
+export default function getMainNavItems(permissions, {
+  hasDefaultCurrency,
+  stepsCount,
+}) {
+  const hideToAdmin = permissions.viewMerchantsList;
+
   return [
     {
       additional: 'Homepage for main controls',
@@ -7,6 +12,7 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency }) {
       title: 'Dashboard',
       routeNames: ['Dashboard'],
       isAvailable: permissions.viewDashboard,
+      isHidden: hideToAdmin,
     },
     {
       additional: 'Organise your products for sales',
@@ -16,6 +22,7 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency }) {
       title: 'Projects',
       routeNames: ['ProjectsList'],
       isAvailable: permissions.viewProjects && hasDefaultCurrency,
+      isHidden: hideToAdmin,
     },
     {
       additional: 'Payment links',
@@ -32,7 +39,8 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency }) {
       link: '/reports',
       title: 'Royalty reports',
       routeNames: ['RoyaltyReportsPage'],
-      isAvailable: permissions.viewRoyaltyReports,
+      isAvailable: permissions.viewRoyaltyReports && stepsCount === 5,
+      isHidden: hideToAdmin,
     },
     {
       additional: 'Cash reports',
@@ -40,7 +48,8 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency }) {
       link: '/payouts',
       title: 'Payouts',
       routeNames: ['payouts', 'payoutCard'],
-      isAvailable: permissions.viewPayouts,
+      isAvailable: permissions.viewPayouts && stepsCount === 5,
+      isHidden: hideToAdmin,
     },
     {
       additional: 'Full list of customer transactions',
@@ -48,7 +57,8 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency }) {
       link: '/transactions',
       title: 'Transaction Search',
       routeNames: ['TransactionsPage'],
-      isAvailable: permissions.viewTransactions,
+      isAvailable: permissions.viewTransactions && stepsCount === 5,
+      isHidden: hideToAdmin,
     },
     {
       title: 'Merchants',
@@ -57,6 +67,7 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency }) {
       link: '/merchants',
       routeNames: ['MerchantsList'],
       isAvailable: permissions.viewMerchantsList,
+      isHidden: !hideToAdmin,
     },
     {
       title: 'Agreement requests',
@@ -65,6 +76,7 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency }) {
       link: '/agreement-requests',
       routeNames: ['AgreementRequestsList'],
       isAvailable: permissions.viewMerchantsList,
+      isHidden: !hideToAdmin,
     },
     {
       additional: 'Technical integrations',
@@ -72,6 +84,7 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency }) {
       link: '/intagrations',
       title: 'Integrations',
       isAvailable: false,
+      isHidden: true,
     },
     {
       additional: 'Need license agreement',
@@ -79,6 +92,7 @@ export default function getMainNavItems(permissions, { hasDefaultCurrency }) {
       link: '/customers',
       title: 'Customers',
       isAvailable: false,
+      isHidden: true,
     },
   ];
 }

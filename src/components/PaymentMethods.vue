@@ -1,7 +1,7 @@
 <script>
 import { mapState, mapActions, mapGetters } from 'vuex';
 import { required } from 'vuelidate/lib/validators';
-import { get, find } from 'lodash-es';
+import { get, find, truncate } from 'lodash-es';
 import Notifications from '@/mixins/Notifications';
 
 export default {
@@ -46,7 +46,12 @@ export default {
     viewOnly() {
       return !this.userPermissions.editCompany;
     },
-
+    accountCurrency() {
+      return get(this.merchant, 'banking.currency', 'USD');
+    },
+    accountPayout() {
+      return get(this.payout, this.accountCurrency, {});
+    },
     status() {
       return this.merchant.status;
     },
@@ -55,7 +60,9 @@ export default {
     },
     prepareCountries() {
       const region = this.regions[this.region];
-      return region ? region.countries.join(', ') : 'List countries for region';
+      return region
+        ? truncate(region.countries.join(', '), { length: 800, separator: /,? +/ })
+        : 'List countries for region';
     },
     prepareRegions() {
       return [
@@ -66,14 +73,8 @@ export default {
         { label: 'Worldwide', value: 'worldwide', abbr: 'WW' },
       ];
     },
-    homeRegionLabel() {
-      return get(find(this.prepareRegions, { value: this.region }), 'label', '');
-    },
     payerRegionAbbr() {
       return get(find(this.prepareRegions, { value: this.payerRegion }), 'abbr', '');
-    },
-    payerRegionLabel() {
-      return get(find(this.prepareRegions, { value: this.payerRegion }), 'label', '');
     },
     channelCosts() {
       return get(
@@ -88,6 +89,7 @@ export default {
   },
   async mounted() {
     try {
+      this.updateOperationsType(get(this.merchant, 'merchant_operations_type', 'low-risk'));
       await this.initState();
     } catch (error) {
       this.$_Notifications_showErrorMessage(error);
@@ -131,18 +133,43 @@ export default {
       to change these parameters in future.
     </div>
 
-    <div class="title">Home Region</div>
-    <div class="info">
-      {{ homeRegionLabel }}
+    <div class="select">
+      <UiSelect
+        v-bind="$getValidatedFieldProps('region')"
+        label="Home Region"
+        :options="prepareRegions"
+        :value="region"
+        :disabled="status !== 0"
+        @input="updateRegion($event)"
+        @blur="$v.region.$touch()"
+      />
+      <div
+        class="icon-wrapper"
+        @mouseenter="hasCountriesOpened = true"
+        @mouseleave="hasCountriesOpened = false"
+      >
+        <IconQuestion class="question" />
+        <UiTip
+          :class="['tip', { '_nowrap': isOneLineCountries }]"
+          innerPosition="left"
+          position="top"
+          maxWidth="280px"
+          :width="isOneLineCountries ? 'auto' : 'calc(100vw - 320px)'"
+          :hasCaret="true"
+          :visible="hasCountriesOpened"
+        >
+          {{ prepareCountries }}
+        </UiTip>
+      </div>
     </div>
   </div>
 
   <section class="section">
     <div class="title">Risk level of company products</div>
     <p class="text">
-      Choose high risk variant if you plan to sell any age restricted content, —
-      high level of gore and violence. If you plan to sell products
-      without any distribution limitations choose low risk
+      Choose <span class="bolder">High risk</span> if you plan to sell any age restricted content,
+      like high level of gore and violence. If you plan to sell products without any distribution
+      restrictions choose <span class="bolder">Low risk</span>.
     </p>
     <div class="radio-group">
       <UiRadio
@@ -153,8 +180,8 @@ export default {
         :value="item.value"
         :disabled="status !== 0 && item.value !== operationsType"
         @change="updateOperationsType($event)"
-        >
-          {{ item.label }}
+      >
+        {{ item.label }}
       </UiRadio>
     </div>
   </section>
@@ -221,17 +248,17 @@ export default {
             Payment Method
           </UiTableCell>
           <UiTableCell class="cell _channel">
-            Method fee, %
+            Method fee
           </UiTableCell>
           <UiTableCell class="cell _channel">
-            Fixed fee, {{ currency }}
+            Fixed fee
           </UiTableCell>
           <UiTableCell class="cell _channel">
             <div
               class="icon-before-text"
               @mouseenter="hasOverallFeeOpened = true"
               @mouseleave="hasOverallFeeOpened = false"
-              >
+            >
               <IconQuestion class="question" />
               <UiTip
                 class="tip"
@@ -245,10 +272,10 @@ export default {
                 Overall fee is a sum of method and fixed fees.
               </UiTip>
             </div>
-            Overall fee, %
+            Overall fee
           </UiTableCell>
           <UiTableCell class="cell _channel">
-            PS general fixed fee, {{ currency }}
+            PS general fixed fee
           </UiTableCell>
         </UiTableRow>
         <UiTableRow
@@ -271,7 +298,7 @@ export default {
           </UiTableCell>
           <UiTableCell class="cell _channel">
             <span class="cell-blue-transparent">
-             {{ $formatPrice(data.fixedFee, currency) }}
+              {{ $formatPrice(data.fixedFee, currency) }}
             </span>
           </UiTableCell>
           <UiTableCell class="cell _channel">
@@ -291,7 +318,7 @@ export default {
     <div class="title">Refund costs</div>
     <div class="info">
       Check the refund fees policy below.
-      Notice that all refund fees are being paid by Pay Super, so they are
+      Notice that all refund fees are being paid by PaySuper, so they are
       <span class="bolder">free of charge for you</span>.
     </div>
   </div>
@@ -312,15 +339,15 @@ export default {
       <UiTableRow class="row-indent"
         v-for="(item, index) in chargeback"
         :key="index"
-        >
+      >
         <UiTableCell class="cell _second" align="left">
-            {{ item.method_name }}
+          {{ item.method_name }}
         </UiTableCell>
         <UiTableCell class="cell _merch">
-            {{ $formatPrice(item.method_fixed_fee, item.method_fixed_fee_currency) }}
+          {{ $formatPrice(item.method_fixed_fee, item.method_fixed_fee_currency) }}
         </UiTableCell>
         <UiTableCell class="cell _merch">
-            {{ item.is_paid_by_merchant ? 'Merchant' : 'PaySuper' }}
+          {{ item.is_paid_by_merchant ? 'Merchant' : 'PaySuper' }}
         </UiTableCell>
       </UiTableRow>
     </UiTable>
@@ -339,24 +366,26 @@ export default {
         <UiTableCell class="cell _merch">Fee payout party</UiTableCell>
         <UiTableCell class="cell _merch">Minimal payout</UiTableCell>
       </UiTableRow>
-      <UiTableRow class="row-indent"
-        v-for="(item, key) in payout"
-        :key="key"
-        >
-        <UiTableCell class="cell _second" align="left">{{ key }}</UiTableCell>
+      <UiTableRow class="row-indent">
+        <UiTableCell class="cell _second" align="left">{{ accountCurrency }}</UiTableCell>
         <UiTableCell class="cell _merch">
-            {{ $formatPrice(item.method_fixed_fee, item.method_fixed_fee_currency) }}
+          {{
+            $formatPrice(
+              accountPayout.method_fixed_fee,
+              accountPayout.method_fixed_fee_currency,
+            )
+          }}
         </UiTableCell>
         <UiTableCell class="cell _merch">
-            {{ item.is_paid_by_merchant ? 'Merchant' : 'PaySuper' }}
+          {{ accountPayout.is_paid_by_merchant ? 'Merchant' : 'PaySuper' }}
         </UiTableCell>
         <UiTableCell class="cell _merch">
-            {{
-              $formatPrice(
-                minimalPayout[item.method_fixed_fee_currency],
-                item.method_fixed_fee_currency
-              )
-            }}
+          {{
+            $formatPrice(
+              minimalPayout[accountPayout.method_fixed_fee_currency],
+              accountPayout.method_fixed_fee_currency
+            )
+          }}
         </UiTableCell>
       </UiTableRow>
     </UiTable>

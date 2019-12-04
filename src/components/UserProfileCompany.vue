@@ -1,8 +1,7 @@
 <script>
 import { filter } from 'lodash-es';
 import { required, maxLength, url } from 'vuelidate/lib/validators';
-import { onlyRusAndLatAndNum } from '@/helpers/customValidators';
-
+import { specialEntityName } from '@/helpers/customValidators';
 
 export default {
   name: 'UserProfileCompany',
@@ -181,7 +180,7 @@ export default {
           company_name: {
             required,
             maxLength: maxLength(60),
-            onlyRusAndLatAndNum,
+            specialEntityName,
           },
           website: {
             required,
@@ -247,7 +246,7 @@ export default {
       :required="true"
       :hasError="$isFieldInvalid('profile.company.company_name')"
       :errorText="$getFieldErrorMessages(
-        'profile.company.company_name', ['maxLength', 'onlyRusAndLatAndNum']
+        'profile.company.company_name', ['maxLength', 'specialEntityName']
       )"
       @focus="$v.profile.company.company_name.$touch()"
     />

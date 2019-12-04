@@ -1,7 +1,7 @@
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex';
 import { email, maxLength, required } from 'vuelidate/lib/validators';
-import { onlyRusAndLat, phone } from '@/helpers/customValidators';
+import { entityName, phone } from '@/helpers/customValidators';
 import Notifications from '@/mixins/Notifications';
 
 export default {
@@ -10,13 +10,13 @@ export default {
   validations: {
     contacts: {
       authorized: {
-        name: { onlyRusAndLat, maxLength: maxLength(30), required },
+        name: { entityName, maxLength: maxLength(30), required },
         email: { maxLength: maxLength(100), email, required },
         phone: { maxLength: maxLength(20), phone, required },
-        position: { onlyRusAndLat, maxLength: maxLength(30), required },
+        position: { entityName, maxLength: maxLength(30), required },
       },
       technical: {
-        name: { onlyRusAndLat, maxLength: maxLength(30), required },
+        name: { entityName, maxLength: maxLength(30), required },
         email: { maxLength: maxLength(100), email, required },
         phone: { maxLength: maxLength(20), phone, required },
       },

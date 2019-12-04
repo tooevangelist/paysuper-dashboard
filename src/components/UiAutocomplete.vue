@@ -123,9 +123,11 @@ export default {
     },
 
     setResult(value) {
-      this.$emit('input', value);
-      this.inputValue = value;
       this.isOpenAutocomplete = false;
+      this.$emit('input', value);
+      this.$nextTick(() => {
+        this.inputValue = this.value;
+      });
     },
   },
 };

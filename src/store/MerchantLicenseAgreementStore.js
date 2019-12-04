@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { saveAs } from 'file-saver';
 import { delay, get } from 'lodash-es';
-import HelloSign from 'hellosign-embedded';
+import initHellosign from '@/helpers/initHellosign';
 
 function getDefaultAgreementDocument() {
   return {
@@ -21,6 +21,7 @@ export default function createMerchantLicenseAgreementStore() {
       merchantId: null,
       helloSign: null,
       signature: null,
+      isAgreementLoading: false,
       agreement: getDefaultAgreementDocument(),
       document: null,
       operatingCompanies: [],
@@ -46,7 +47,10 @@ export default function createMerchantLicenseAgreementStore() {
         );
 
         if (response.data) {
-          const companies = response.data.map(item => ({ label: item.name, value: item.id }));
+          const companies = response.data.map(item => ({
+            label: `${item.name} (${item.country})`,
+            value: item.id,
+          }));
           commit('operatingCompanies', companies);
         }
       },
@@ -58,24 +62,22 @@ export default function createMerchantLicenseAgreementStore() {
         state,
         rootState,
       }) {
-        dispatch('fetchAgreementMetadata');
+        const { hellosignClientId, hellosignTestMode } = rootState.config;
+
+        await dispatch('fetchAgreementMetadata');
+        await dispatch('fetchDocument');
 
         if (getters.isUsingHellosign) {
-          dispatch('fetchAgreementSignature');
+          await dispatch('fetchAgreementSignature');
 
-          const helloSign = new HelloSign({
-            clientId: rootState.config.hellosignClientId,
-            // TODO: remove 3 lines below for production
-            testMode: true,
-            debug: true,
-            skipDomainVerification: true,
-          });
+          const helloSign = initHellosign(hellosignClientId, hellosignTestMode);
 
           helloSign.on('sign', () => {
             delay(async () => {
               await dispatch('Merchant/fetchMerchantById', state.merchantId, { root: true });
-              await dispatch('fetchAgreementMetadata');
-            }, 4000);
+              await dispatch('fetchAgreementMetadata', 20);
+              await dispatch('fetchDocument');
+            }, 1000);
           });
 
           commit('helloSign', helloSign);
@@ -97,22 +99,30 @@ export default function createMerchantLicenseAgreementStore() {
         dispatch,
         getters,
         state,
-      }) {
+      }, retryCount = 0) {
         const { merchantId } = state;
         const { status } = getters;
 
         if (merchantId && status >= 3) {
-          const response = await axios.get(
-            `{apiUrl}/system/api/v1/merchants/${merchantId}/agreement`,
-          );
+          commit('isAgreementLoading', true);
+          const response = await dispatch('updateMetadata', retryCount);
           const agreement = get(response, 'data', getDefaultAgreementDocument());
 
           commit('agreement', agreement);
-
-          if (agreement.metadata.size) {
-            dispatch('fetchDocument');
-          }
         }
+      },
+      async updateMetadata({ dispatch, state }, retryCount) {
+        const { agreement, merchantId } = state;
+        const response = await axios.get(`{apiUrl}/system/api/v1/merchants/${merchantId}/agreement`);
+        const newSize = get(response, 'data.metadata.size', null);
+        if (newSize && newSize !== agreement.metadata.size) {
+          return response;
+        }
+        if (retryCount) {
+          return new Promise(r => setTimeout(r, 3000))
+            .then(() => dispatch('updateMetadata', retryCount - 1));
+        }
+        return response;
       },
       async uploadDocument({ dispatch, state }) {
         const hasDocument = !!state.document || await dispatch('fetchDocument');
@@ -144,6 +154,7 @@ export default function createMerchantLicenseAgreementStore() {
 
         if (response.status === 200) {
           commit('document', response.data);
+          commit('isAgreementLoading', false);
           return true;
         }
 
@@ -184,6 +195,9 @@ export default function createMerchantLicenseAgreementStore() {
       },
       helloSign(state, data) {
         state.helloSign = data;
+      },
+      isAgreementLoading(state, data) {
+        state.isAgreementLoading = data;
       },
       signature(state, data) {
         state.signature = data;

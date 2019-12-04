@@ -1,7 +1,6 @@
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex';
 import { format } from 'date-fns';
-import moment from 'moment';
 import {
   get, find,
 } from 'lodash-es';
@@ -86,7 +85,7 @@ export default {
     },
 
     getFormattedDate(item) {
-      return moment.unix(item).format('DD MMM YYYY');
+      return format(item * 1000, 'dd MMM yyyy');
     },
 
     async confirmReport() {
@@ -299,10 +298,10 @@ export default {
               {{ report.summary.products_total.gross_total_amount.toFixed(2) }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ report.summary.products_total.total_vat }}
+              {{ report.summary.products_total.total_vat.toFixed(2) }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ report.summary.products_total.total_fees }}
+              {{ report.summary.products_total.total_fees.toFixed(2) }}
             </UiTableCell>
             <UiTableCell align="left">
               {{ report.summary.products_total.payout_amount.toFixed(2) }}
@@ -338,7 +337,7 @@ export default {
               {{ product.gross_total_amount.toFixed(2) }}
             </UiTableCell>
             <UiTableCell align="left">
-              {{ product.total_vat }}
+              {{ product.total_vat.toFixed(2) }}
             </UiTableCell>
             <UiTableCell align="left">
               {{ product.total_fees.toFixed(2) }}

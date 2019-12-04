@@ -1,7 +1,7 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 import { format } from 'date-fns';
-import { forEach } from 'lodash-es';
+import { forEach, get } from 'lodash-es';
 import ExportModal from '@/components/ExportModal.vue';
 import PayoutCardStore from '@/store/PayoutCardStore';
 import payoutsStatusScheme from '@/schemes/payoutsStatusScheme';
@@ -36,7 +36,7 @@ export default {
   },
 
   computed: {
-    ...mapState('PayoutCard', ['payout']),
+    ...mapState('PayoutCard', ['payout', 'reports']),
   },
 
   created() {
@@ -52,6 +52,7 @@ export default {
     ...mapActions('ExportFile', ['createReportFile', 'initWaitingFile']),
 
     format,
+    get,
 
     formatPeriod(fromSec, toSec) {
       const dateFrom = new Date(fromSec * 1000);
@@ -70,6 +71,14 @@ export default {
       });
       this.setIsLoading(false);
       this.showModal = false;
+    },
+
+    getFormattedDate(item) {
+      return item > 0 ? format(item * 1000, 'dd MMM yyyy') : '—';
+    },
+
+    getValue(item, path) {
+      return get(item, path) || '—';
     },
   },
 };
@@ -227,6 +236,46 @@ export default {
           </div>
         </div>
       </div>
+
+      <div v-if="currentTab === 1" class="reports">
+        <UiTable>
+          <UiTableRow :isHead="true">
+            <UiTableCell align="left">Period</UiTableCell>
+            <UiTableCell align="left">Report date</UiTableCell>
+            <UiTableCell align="left">Payout ID</UiTableCell>
+            <UiTableCell align="left">Payment date</UiTableCell>
+            <UiTableCell align="left">Amount</UiTableCell>
+          </UiTableRow>
+
+          <UiTableRow
+            class="report"
+            v-for="(report, index) in reports"
+            :key="index"
+          >
+            <UiTableCell align="left">
+              {{ getFormattedDate(report.period_from.seconds) }}
+              —
+              {{ getFormattedDate(report.period_to.seconds) }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ getFormattedDate(report.created_at.seconds) }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ getValue(report, 'payout_document_id') }}
+            </UiTableCell>
+            <UiTableCell align="left">
+              {{ getFormattedDate(report.payout_date.seconds) }}
+            </UiTableCell>
+            <UiTableCell align="left" :class="`status-${report.status}`">
+              {{
+              get(report, 'totals.payout_amount')
+              ? $formatPrice(report.totals.payout_amount, report.currency)
+              : '—'
+              }}
+            </UiTableCell>
+          </UiTableRow>
+        </UiTable>
+      </div>
     </UiPanel>
 
     <ExportModal
@@ -367,5 +416,9 @@ export default {
   &:hover &__tip {
     display: flex;
   }
+}
+
+.reports {
+  margin-top: 24px;
 }
 </style>

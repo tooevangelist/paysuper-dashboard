@@ -18,7 +18,7 @@ export default {
 <template>
 <div class="template-page-shallow">
   <div class="header">
-    <h1 class="title">Pay Super</h1>
+    <h1 class="title">PaySuper</h1>
     <div class="menu">
       <RouterLink
         v-if="isAuthorised"
@@ -35,7 +35,7 @@ export default {
   </main>
   <div class="footer">
     <a class="footer__link" href="https://pay.super.com/policy/tou" target="_blank">Terms of Use</a>
-    <a class="footer__link" href="https://pay.super.com/policy/eula" target="_blank">Agreement</a>
+    <a class="footer__link" href="https://pay.super.com/policy/eula" target="_blank">User Agreement</a>
   </div>
 </div>
 </template>

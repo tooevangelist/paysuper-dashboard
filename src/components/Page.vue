@@ -119,7 +119,7 @@ export default {
       :opacity="0.2"
     ></Loading>
     <UiPageNavbar
-      title="Pay Super"
+      title="PaySuper"
       :navigationLinks="navigationLinks"
       :logoLink="logoLink"
       :isAuthorised="isAuthorised"

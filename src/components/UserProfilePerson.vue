@@ -1,6 +1,6 @@
 <script>
 import { required, maxLength } from 'vuelidate/lib/validators';
-import { onlyRusAndLat } from '@/helpers/customValidators';
+import { entityName } from '@/helpers/customValidators';
 
 export default {
   name: 'UserProfileBasic',
@@ -61,12 +61,12 @@ export default {
         first_name: {
           required,
           maxLength: maxLength(30),
-          onlyRusAndLat,
+          entityName,
         },
         last_name: {
           required,
           maxLength: maxLength(30),
-          onlyRusAndLat,
+          entityName,
         },
         position: {
           required,
@@ -106,7 +106,7 @@ export default {
     :required="true"
     :hasError="$isFieldInvalid('profile.personal.first_name')"
     :errorText="$getFieldErrorMessages(
-      'profile.personal.first_name', ['maxLength', 'onlyRusAndLat']
+      'profile.personal.first_name', ['maxLength', 'entityName']
     )"
   />
   <UiTextField
@@ -115,7 +115,7 @@ export default {
     :required="true"
     :hasError="$isFieldInvalid('profile.personal.last_name')"
     :errorText="$getFieldErrorMessages(
-      'profile.personal.last_name', ['maxLength', 'onlyRusAndLat']
+      'profile.personal.last_name', ['maxLength', 'entityName']
     )"
   />
   <UiSelect

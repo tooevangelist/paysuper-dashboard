@@ -176,7 +176,7 @@ export default {
         User roles
       </template>
       <span slot="description">
-        Invite users from your company to share your Pay Super account management.
+        Invite users from your company to share your PaySuper account management.
         You can assign them on different roles for different kind of duties.
       </span>
       <PictureTwoPeoples slot="picture" />

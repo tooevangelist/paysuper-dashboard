@@ -38,9 +38,9 @@ const config = {
   s3BucketName: getEnvVariable('S3_BUCKET_NAME'),
   s3Region: getEnvVariable('S3_REGION'),
 
-  paysuperSdkUrl: getEnvVariable(
+  paysuperFormUrl: getEnvVariable(
     'PAYSUPER_PAYMENT_FORM_URL',
-    'https://static.protocol.one/paysuper/form/dev/paysuper-form.js',
+    'https://cdn.pay.super.com/payform/dev/paysuper-form.js',
   ),
 };
 

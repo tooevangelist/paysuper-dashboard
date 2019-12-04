@@ -150,10 +150,10 @@ export default {
             {{ receipt.platform_name }}
           </span>
         </div>
-        <div class="billing-row">
+        <div class="billing-row" v-if="receipt.payment_partner">
           <span class="billing-name">Payment partner</span>
           <span class="billing-value">
-            PaySuper
+            {{ receipt.payment_partner }}
           </span>
         </div>
       </SlideUpDown>
@@ -171,7 +171,7 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-@import url("https://fonts.googleapis.com/css?family=Quicksand:400,500");
+@import url("https://fonts.googleapis.com/css?family=Quicksand:400,500,700");
 @mixin corner($color, $offsetX, $offsetY) {
   background: $color;
   background: radial-gradient(
@@ -288,7 +288,7 @@ export default {
   border-bottom: 1px dashed #ebedf0;
 
   &._total {
-    font-weight: bold;
+    font-weight: 700;
     border-bottom: 1px solid #1a1a1a;
   }
 }
