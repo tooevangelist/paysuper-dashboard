@@ -118,8 +118,6 @@ export default function createContactsStore() {
         commit('basePeriod', basePeriod);
         commit('mainPeriod', mainPeriod);
 
-        await dispatch('User/Merchant/fetchWrapper', {}, { root: true });
-
         await dispatch('fetchChart', 'main');
         await dispatch('fetchChart', 'revenue_dynamics');
         await dispatch('fetchChart', 'base');
