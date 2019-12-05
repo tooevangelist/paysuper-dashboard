@@ -6,12 +6,14 @@ PaySuper is a unique, simple payment toolkit designed to make developers self-re
 
 The PaySuper administrative dashboard is designed as a management tool for a merchant.
 
+Learn more about [Projects and Products](https://docs.pay.super.com/docs/payments/quick-start) created in PaySuper Dashboard.
+
 |   | PaySuper Service Architecture
 :---: | :---
 ✨ | **Checkout integration.** [PaySuper JS SDK](https://github.com/paysuper/paysuper-js-sdk) is designed to integrate a Checkout Form on a merchant's website or a game client.
 💵 | **Frontend for a payment form.** [PaySuper Checkout Form](https://github.com/paysuper/paysuper-payment-form) is a frontend for a sigle-page application with a payment form.
 📊 | **Frontend for a merchant.** [PaySuper Dashboard](https://github.com/paysuper/paysuper-dashboard) is the BFF server and frontend to interact with all PaySuper related features for merchants.
-🔧 | **API Backend.** [PaySuper Management API](https://github.com/paysuper/paysuper-management-api) is a REST API backend for the [PaySuper Dashboard](https://github.com/paysuper/paysuper-management-server) and the [PaySuper Checkout Form](https://github.com/paysuper/paysuper-payment-form). Public API methods are documented in the [API Reference](https://docs.stg.pay.super.com/api).
+🔧 | **API Backend.** [PaySuper Management API](https://github.com/paysuper/paysuper-management-api) is a REST API backend for the [PaySuper Dashboard](https://github.com/paysuper/paysuper-management-server) and the [PaySuper Checkout Form](https://github.com/paysuper/paysuper-payment-form). Public API methods are documented in the [API Reference](https://docs.pay.super.com/api).
 💳 | **Payment processing.** [Billing Server](https://github.com/paysuper/paysuper-billing-server) is a micro-service that provides with any payment processing business logic.
 
 ***
@@ -199,7 +201,7 @@ using the project.
 
 ## API Reference
 
-PaySuper Management API consists of public API methods which starts from the `/api/v1/` and are documented in the [API Reference](https://docs.stg.pay.super.com/api).
+PaySuper Management API consists of public API methods which starts from the `/api/v1/` and are documented in the [API Reference](https://docs.pay.super.com/api).
 
 This project also contains internal API methods which starts from `/system/` and `/admin/`.
 
