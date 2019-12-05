@@ -20,7 +20,6 @@ export default {
     status() {
       return this.merchant.status;
     },
-
     currentStepCount() {
       const currentStep = this.onboardingCompleteStepsCount + 1;
       return currentStep > this.stepsCount ? this.stepsCount : currentStep;
@@ -46,15 +45,17 @@ export default {
       const projectsStep = { prepend: 'Create your 1st', name: 'Project' };
       const licenseStep = { prepend: 'Review & Sign', name: 'License Agreement' };
 
-      if (this.hasProjects) {
-        switch (this.onboardingCompleteStepsCount) {
-          case 5: return licenseStep;
-          default: return defaultStep;
+      if (this.status === 4) {
+        if (!this.hasProjects) {
+          return projectsStep;
+        } else {
+          this.closeCompleteShown();
+          return {};
         }
       } else {
         switch (this.onboardingCompleteStepsCount) {
           case 4: return licenseStep;
-          case 5: return projectsStep;
+          case 5: return licenseStep;
           default: return defaultStep;
         }
       }
