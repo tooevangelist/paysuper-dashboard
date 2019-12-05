@@ -79,6 +79,7 @@ export default function createLicenseAgreementStore() {
 
         await dispatch('fetchAgreementSignature');
         await dispatch('fetchAgreementMetadata');
+        await dispatch('fetchDocument');
 
         if (includes([3, 7], getters.status)) {
           dispatch('initWaitingForChangeStatus');
