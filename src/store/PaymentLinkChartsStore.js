@@ -114,8 +114,7 @@ export default function createPaymentLinkChartsStore() {
         state,
         rootState,
       }, type) {
-        const { Link } = rootState.PaymentLink;
-        const Id = Link.linkId;
+        const Id = rootState.PaymentLink.linkId;
 
         if (!Id) {
           return;
@@ -126,7 +125,7 @@ export default function createPaymentLinkChartsStore() {
         const queryString = qs.stringify({ period });
 
         const response = await axios.get(
-          `${apiUrl}http://p1payapi.tst.protocol.one/admin/api/v1/paylinks/${Id}/dashboard/${type}?${queryString}`,
+          `${apiUrl}/admin/api/v1/paylinks/${Id}/dashboard/${type}?${queryString}`,
         );
 
         if (response.data) {

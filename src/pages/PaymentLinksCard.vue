@@ -4,6 +4,7 @@ import { find, get } from 'lodash-es';
 import { mapState, mapActions } from 'vuex';
 import { maxLength, required } from 'vuelidate/lib/validators';
 import PaymentLinkCardStore from '@/store/PaymentLinkCardStore';
+import PaymentLinkChartsStore from '@/store/PaymentLinkChartsStore';
 import SelectProductsModal from '@/components/SelectProductsModal.vue';
 import UiTextFieldReadonly from '@/components/UiTextFieldReadonly.vue';
 import copyTextToClipboard from '@/helpers/copyTextToClipboard';
@@ -74,6 +75,14 @@ export default {
   async asyncData({ store, registerStoreModule, route }) {
     try {
       await registerStoreModule('PaymentLink', PaymentLinkCardStore, {
+        linkId: route.params.linkId,
+      });
+    } catch (error) {
+      store.dispatch('setPageError', error);
+    }
+
+    try {
+      await registerStoreModule('PaymentLinkCharts', PaymentLinkChartsStore, {
         linkId: route.params.linkId,
       });
     } catch (error) {

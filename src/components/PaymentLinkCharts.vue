@@ -1,7 +1,6 @@
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { get, map, reduce } from 'lodash-es';
-import PaymentLinkChartsStore from '@/store/PaymentLinkChartsStore';
 import PaymentLinkChartsHeader from '@/components/PaymentLinkChartsHeader.vue';
 import ChartsRevenue from '@/components/ChartsRevenue.vue';
 import ChartsBasic from '@/components/ChartsBasic.vue';
@@ -16,14 +15,6 @@ export default {
     ChartsLastPayments,
   },
 
-  async asyncData({ store, registerStoreModule }) {
-    try {
-      await registerStoreModule('ChartsStore', PaymentLinkChartsStore);
-    } catch (error) {
-      store.dispatch('setPageError', error);
-    }
-  },
-
   props: {
     title: {
       default: 'Revenue dynamic',
@@ -31,7 +22,7 @@ export default {
     },
   },
   computed: {
-    ...mapState('ChartsStore', [
+    ...mapState('PaymentLinkCharts', [
       'base',
       'main',
       'revenue',
@@ -42,7 +33,7 @@ export default {
     ...mapState('PaymentLink', [
       'currency',
     ]),
-    ...mapGetters('ChartsStore', ['mainChartPeriod']),
+    ...mapGetters('PaymentLinkCharts', ['mainChartPeriod']),
     ...mapGetters('Dictionaries', ['countries']),
 
     mainLastBarColor() {
@@ -141,7 +132,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('ChartsStore', ['changePeriod', 'fetchLastPayments']),
+    ...mapActions('PaymentLinkCharts', ['changePeriod', 'fetchLastPayments']),
 
     get,
   },
