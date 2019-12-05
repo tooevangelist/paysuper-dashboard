@@ -51,9 +51,9 @@ export default function createPaymentLinksListStore() {
     },
 
     actions: {
-      async initState({ getters, dispatch }, { query }) {
-        const filters = getters.getFilterValues();
-        dispatch('submitFilters', filters);
+      async initState({ dispatch }, { query }) {
+        // const filters = getters.getFilterValues();
+        // dispatch('submitFilters', filters);
         dispatch('initQuery', query);
         await dispatch('fetchLinks');
       },

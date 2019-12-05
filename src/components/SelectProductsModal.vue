@@ -1,4 +1,4 @@
-﻿<script>
+<script>
 import { includes } from 'lodash-es';
 
 export default {

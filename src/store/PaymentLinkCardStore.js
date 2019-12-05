@@ -1,9 +1,9 @@
-﻿import axios from 'axios';
+import axios from 'axios';
 import qs from 'qs';
 import assert from 'simple-assert';
 import { get } from 'lodash-es';
 
-export default function createPaymentLinkPageStore() {
+export default function createPaymentLinkCard() {
   return {
     state: {
       apiQuery: {},
@@ -12,6 +12,7 @@ export default function createPaymentLinkPageStore() {
       linkItem: null,
       linkUrl: null,
       linkId: null,
+      currency: 'USD',
     },
 
     mutations: {
@@ -37,7 +38,7 @@ export default function createPaymentLinkPageStore() {
 
     actions: {
       async initState({ commit, dispatch, state }, { linkId }) {
-        assert(linkId, 'PaymentLinkPageStore requires linkId param');
+        assert(linkId, 'PaymentLinkCardStore requires linkId param');
         commit('linkId', linkId);
         if (linkId !== 'new') {
           await dispatch('fetchLinkData', linkId);
@@ -56,6 +57,10 @@ export default function createPaymentLinkPageStore() {
         const response = await axios.get(`${rootState.config.apiUrl}/admin/api/v1/paylinks/${id}`);
         const { products } = response.data;
         commit('linkItem', response.data);
+
+        if (response.data.default_currency) {
+          commit('currency', response.data.default_currency);
+        }
         await dispatch('fetchLinkProducts', products);
       },
 
@@ -128,7 +133,6 @@ export default function createPaymentLinkPageStore() {
         commit('projectsList', data);
       },
     },
-
 
     namespaced: true,
   };

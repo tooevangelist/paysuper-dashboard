@@ -7,6 +7,7 @@ import PaymentLinkCardStore from '@/store/PaymentLinkCardStore';
 import SelectProductsModal from '@/components/SelectProductsModal.vue';
 import UiTextFieldReadonly from '@/components/UiTextFieldReadonly.vue';
 import copyTextToClipboard from '@/helpers/copyTextToClipboard';
+import PaymentLinkCharts from '@/components/PaymentLinkCharts.vue';
 
 const STATUS_COLOR = {
   false: 'green',
@@ -29,6 +30,7 @@ export default {
   components: {
     UiTextFieldReadonly,
     SelectProductsModal,
+    PaymentLinkCharts,
   },
   data() {
     return {
@@ -86,6 +88,7 @@ export default {
       'projectsList',
       'linkItem',
       'linkItemUrl',
+      'currency',
     ]),
 
     productsItemsOptions() {
@@ -295,6 +298,55 @@ export default {
           </UiTabs>
         </div>
       </div>
+
+      <template v-if="!isNewItem && currentTab === 0">
+        <div class="total-summary">
+          <div class="total-summary__col">
+            <span>
+              {{
+                linkItem.gross_total_amount !== null
+                  ? $formatPrice(linkItem.gross_total_amount, currency)
+                  : $formatPrice(0, currency)
+               }}
+            </span>
+            <span>Gross revenue</span>
+          </div>
+          <div class="total-summary__col">
+            <span>
+              {{
+                 linkItem.conversion !== null
+                  ? linkItem.conversion
+                  : 0
+              }}
+            </span>
+            <span>Conversion</span>
+          </div>
+          <div class="total-summary__col">
+            <span>
+              {{
+                linkItem.total_transactions !== null
+                  ? linkItem.total_transactions
+                  : 0
+              }}
+            </span>
+            <span>Payments</span>
+          </div>
+          <div class="total-summary__col">
+            <span>
+              {{
+                linkItem.visits !== null
+                  ? linkItem.visits
+                  : 0
+              }}
+            </span>
+            <span>Total clicks</span>
+          </div>
+        </div>
+        <div>
+          <PaymentLinkCharts v-if="!isNewItem" />
+        </div>
+      </template>
+
       <template v-if="isNewItem || currentTab === 1">
         <section class="section">
           <UiHeader level="3" :hasMargin="true">
@@ -626,6 +678,27 @@ export default {
   justify-content: space-between;
   &__col {
     width: 100%;
+  }
+}
+.total-summary {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: #f7f9fa;
+  margin: 0 0 24px;
+  &__col {
+    text-align: center;
+    margin: 12px 24px;
+    & span {
+      font-size: 12px;
+      display: block;
+      &:first-child {
+        font-size: 16px;
+        font-weight: 500;
+        color: #000;
+      }
+    }
   }
 }
 </style>

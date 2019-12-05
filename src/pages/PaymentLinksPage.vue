@@ -75,7 +75,6 @@ export default {
     ...mapActions('Links', [
       'initQuery',
       'createItem',
-      'submitFilters',
       'fetchLinks',
       'deleteLink',
     ]),
@@ -94,7 +93,7 @@ export default {
     async searchItems() {
       this.isSearchRouting = true;
       this.setIsLoading(true);
-      this.submitFilters(this.filters);
+      // this.submitFilters(this.filters);
       this.navigate();
       await this.fetchReports().catch(this.$showErrorMessage);
       this.setIsLoading(false);
