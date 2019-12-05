@@ -1,10 +1,5 @@
 <script>
-import {
-  get,
-  find,
-  map,
-  tail,
-} from 'lodash-es';
+import { map, tail } from 'lodash-es';
 import ClickOutside from 'vue-click-outside';
 import PaymentMethodsTable from '@/mixins/PaymentMethodsTable';
 import ExpandableCellText from '@/components/ExpandableCellText.vue';
