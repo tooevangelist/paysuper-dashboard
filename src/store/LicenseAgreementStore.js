@@ -137,6 +137,11 @@ export default function createLicenseAgreementStore() {
             dispatch('User/Merchant/updateStatus', status, { root: true });
             return;
           }
+          if (status === 3) {
+            dispatch('User/Merchant/updateStatus', status, { root: true });
+            dispatch('fetchAgreementMetadata', 20);
+            return;
+          }
 
           if (status === 4) {
             dispatch('User/Merchant/updateStatus', status, { root: true });

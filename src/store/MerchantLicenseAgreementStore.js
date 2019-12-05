@@ -31,12 +31,13 @@ export default function createMerchantLicenseAgreementStore() {
     },
     actions: {
       async initState({ commit, dispatch, getters }, merchantId) {
-        const { status } = getters;
-
         commit('merchantId', merchantId);
 
+        await dispatch('Merchant/fetchMerchantById', merchantId, { root: true });
         await dispatch('fetchOperatingCompanies');
         await dispatch('fetchAgreementMetadata');
+
+        const { status } = getters;
 
         if (includes([3, 4, 7, 8], status)) {
           await dispatch('fetchDocument');
