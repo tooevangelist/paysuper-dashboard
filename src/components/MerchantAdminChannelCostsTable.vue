@@ -76,7 +76,7 @@ export default {
     <UiComplexTableCell class="cell _amount">Payment amount</UiComplexTableCell>
     <UiComplexTableCell class="cell _region">Region</UiComplexTableCell>
     <UiComplexTableCell class="cell _country">Country</UiComplexTableCell>
-    <UiComplexTableCell class="cell _fee">Fee, %</UiComplexTableCell>
+    <UiComplexTableCell class="cell _fee">Fee</UiComplexTableCell>
     <UiComplexTableCell class="cell _fee">Fixed fee</UiComplexTableCell>
     <UiComplexTableCell class="cell _fee">Overall fee</UiComplexTableCell>
     <UiComplexTableCell class="cell _fee">PS general fixed fee</UiComplexTableCell>

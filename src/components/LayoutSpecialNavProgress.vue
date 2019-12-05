@@ -9,7 +9,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('User/Merchant', ['isOnboardingComplete']),
+    ...mapGetters('User/Merchant', ['isOnboardingComplete', 'hasProjects']),
     ...mapState('User/Merchant', [
       'onboardingCompleteStepsCount',
       'onboardingSteps',
@@ -42,10 +42,21 @@ export default {
       return '';
     },
     currentStep() {
-      switch (this.onboardingCompleteStepsCount) {
-        case 4: return { prepend: 'Review & Sign', name: 'License Agreement' };
-        case 5: return { prepend: 'Create your 1st', name: 'Project' };
-        default: return { prepend: 'Complete', name: this.infoStepName };
+      const defaultStep = { prepend: 'Complete', name: this.infoStepName };
+      const projectsStep = { prepend: 'Create your 1st', name: 'Project' };
+      const licenseStep = { prepend: 'Review & Sign', name: 'License Agreement' };
+
+      if (this.hasProjects) {
+        switch (this.onboardingCompleteStepsCount) {
+          case 5: return licenseStep;
+          default: return defaultStep;
+        }
+      } else {
+        switch (this.onboardingCompleteStepsCount) {
+          case 4: return licenseStep;
+          case 5: return projectsStep;
+          default: return defaultStep;
+        }
       }
     },
   },

@@ -92,7 +92,7 @@ export default {
     <UiComplexTableCell class="cell _currency">Payout currency</UiComplexTableCell>
     <UiComplexTableCell class="cell _region">Region</UiComplexTableCell>
     <UiComplexTableCell class="cell _country">Country</UiComplexTableCell>
-    <UiComplexTableCell class="cell _fee">Fee, %</UiComplexTableCell>
+    <UiComplexTableCell class="cell _fee">Fee</UiComplexTableCell>
     <UiComplexTableCell class="cell _fee">Fixed fee</UiComplexTableCell>
     <UiComplexTableCell class="cell _fee">Refund fee payout party</UiComplexTableCell>
   </UiComplexTableRow>
