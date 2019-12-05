@@ -48,16 +48,14 @@ export default {
       if (this.status === 4) {
         if (!this.hasProjects) {
           return projectsStep;
-        } else {
-          this.closeCompleteShown();
-          return {};
         }
-      } else {
-        switch (this.onboardingCompleteStepsCount) {
-          case 4: return licenseStep;
-          case 5: return licenseStep;
-          default: return defaultStep;
-        }
+        this.closeCompleteShown();
+        return {};
+      }
+      switch (this.onboardingCompleteStepsCount) {
+        case 4: return licenseStep;
+        case 5: return licenseStep;
+        default: return defaultStep;
       }
     },
   },
