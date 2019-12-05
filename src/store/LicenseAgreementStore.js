@@ -68,7 +68,7 @@ export default function createLicenseAgreementStore() {
       async fetchAgreementMetadata({ commit, dispatch, getters }, retryCount = 0) {
         const { status } = getters;
 
-        if (includes([3, 4, 7, 8], status)) {
+        if (includes([3, 4, 8], status)) {
           commit('isAgreementLoading', true);
           const response = await dispatch('updateMetadata', retryCount);
           const agreement = get(response, 'data', getDefaultAgreementDocument());
