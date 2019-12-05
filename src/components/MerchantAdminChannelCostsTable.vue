@@ -23,10 +23,6 @@ export default {
       required: true,
       type: Object,
     },
-    countries: {
-      required: true,
-      type: Array,
-    },
   },
 
   data() {
@@ -61,9 +57,6 @@ export default {
         flattenedDataList: this.channelCostsFlattened,
       });
     },
-    getCountryByCode(code) {
-      return get(find(this.countries, ({ value }) => value === code), 'label', code);
-    },
   },
 };
 </script>
@@ -75,7 +68,6 @@ export default {
     <UiComplexTableCell class="cell _currency">Payout currency</UiComplexTableCell>
     <UiComplexTableCell class="cell _amount">Payment amount</UiComplexTableCell>
     <UiComplexTableCell class="cell _region">Region</UiComplexTableCell>
-    <UiComplexTableCell class="cell _country">Country</UiComplexTableCell>
     <UiComplexTableCell class="cell _fee">Fee</UiComplexTableCell>
     <UiComplexTableCell class="cell _fee">Fixed fee</UiComplexTableCell>
     <UiComplexTableCell class="cell _fee">Overall fee</UiComplexTableCell>
@@ -110,9 +102,6 @@ export default {
       <UiComplexTableCell class="cell _currency">{{ data.payoutCurrency }}</UiComplexTableCell>
       <UiComplexTableCell class="cell _amount">{{ data.amount }}</UiComplexTableCell>
       <UiComplexTableCell class="cell _region">{{ data.region }}</UiComplexTableCell>
-      <UiComplexTableCell class="cell _country">
-        {{ getCountryByCode(data.country) }}
-      </UiComplexTableCell>
       <UiComplexTableCell
         class="cell _fee"
         v-bind="$_PaymentMethodsTable_getEditableCellProps(data.methodFee)"
@@ -165,26 +154,23 @@ export default {
 <style lang="scss" scoped>
 .cell {
   &._method {
-    width: 22%;
+    width: 28%;
 
     &._leading {
       cursor: pointer;
     }
   }
   &._currency {
-    width: 7%;
+    width: 6%;
   }
   &._amount {
-    width: 10%;
+    width: 8%;
   }
   &._region {
-    width: 7%;
-  }
-  &._country {
-    width: 18%;
+    width: 10%;
   }
   &._fee {
-    width: 9%;
+    width: 12%;
   }
 }
 .method-icon {
