@@ -95,6 +95,8 @@ function getDefaultAgreementDocument() {
   };
 }
 
+let initialisationPromise = null;
+
 export default function createMerchantStore() {
   return {
     state: () => ({
@@ -167,7 +169,14 @@ export default function createMerchantStore() {
     actions: {
       async initState({ commit, dispatch }, merchant) {
         commit('merchant', mapDataApiToForm(merchant));
-        await dispatch('fetchMerchantStatus');
+        await dispatch('fetchWrapper');
+      },
+
+      fetchWrapper({ dispatch }) {
+        if (initialisationPromise == null) {
+          initialisationPromise = dispatch('fetchMerchantStatus');
+        }
+        return initialisationPromise;
       },
 
       async fetchMerchantStatus({
@@ -201,6 +210,8 @@ export default function createMerchantStore() {
             }),
           );
         }
+
+        return result;
       },
 
       closeCompleteShown({ commit }) {
