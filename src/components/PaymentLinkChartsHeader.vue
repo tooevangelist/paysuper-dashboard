@@ -1,10 +1,19 @@
 ﻿<script>
 export default {
   name: 'ChartsHeaderPaymentLink',
+  data() {
+    return {
+      dateFilters: [],
+    };
+  },
   props: {
     period: {
       default: 'current_month',
       type: String,
+    },
+    filters: {
+      default: () => [],
+      type: Array,
     },
     title: {
       default: 'Revenue dynamic',
@@ -23,6 +32,11 @@ export default {
       ];
     },
   },
+
+  mounted() {
+    console.log(this.filters);
+    this.dateFilters = this.filters;
+  },
 };
 </script>
 
@@ -33,12 +47,17 @@ export default {
   </div>
   <div class="controls">
     <UiSelectAsButton
+      style="display: none"
       color="transparent-gray"
       size="small"
       :options="periods"
       :value="period"
       :isTransparent="true"
       @input="$emit('changePeriod', { type: 'main', period: $event })"
+    />
+    <UiFilterDate
+      v-model="dateFilters"
+      @input="$emit('setFilters', dateFilters)"
     />
   </div>
 </div>

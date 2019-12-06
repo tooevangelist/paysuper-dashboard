@@ -1,6 +1,6 @@
 import axios from 'axios';
 import qs from 'qs';
-import { camelCase, get } from 'lodash-es';
+import { get } from 'lodash-es';
 import {
   getTime,
   getDaysInMonth,
@@ -16,6 +16,10 @@ import {
   startOfYear,
   endOfYear,
 } from 'date-fns';
+import SearchBuilder from '@/tools/SearchBuilder/SearchBuilder';
+import paymentLinkChartsFilterScheme from '@/schemes/paymentLinkChartsFilterScheme';
+
+const searchBuilder = new SearchBuilder(paymentLinkChartsFilterScheme);
 
 function getDefaultPeriod(type) {
   return {
@@ -79,11 +83,15 @@ export default function createPaymentLinkChartsStore() {
     state: {
       date: null,
       country: null,
+      summary: null,
       referrer: null,
       utm: null,
       currency: 'USD',
       mainPeriod: getDefaultPeriod('main'),
       lastPayments: [],
+      filterValues: {},
+      query: {},
+      apiQuery: {},
     },
     getters: {
       mainChartPeriod(state) {
@@ -95,19 +103,35 @@ export default function createPaymentLinkChartsStore() {
           max: period[1] + timeShift,
         };
       },
+
+      getFilterValues(state) {
+        return filterNames => searchBuilder.getFilterValues({
+          filterNames,
+          query: state.query,
+        });
+      },
+
+      getEmptyFilterValues() {
+        return filterNames => searchBuilder.getEmptyFilterValues({
+          filterNames,
+        });
+      },
     },
     actions: {
-      async initState({ commit, dispatch }) {
+      async initState({ commit, dispatch, getters }, { query }) {
         const mainStoragePeriod = localStorage ? localStorage.getItem('MAIN_PERIOD') : null;
         const mainPeriod = JSON.parse(mainStoragePeriod) || getDefaultPeriod('main');
+        const filters = getters.getFilterValues();
+        dispatch('submitFilters', filters);
+        dispatch('initQuery', query);
 
         commit('mainPeriod', mainPeriod);
 
-        await dispatch('fetchChart', 'date'); // revenue dynamics
-        await dispatch('fetchChart', 'country');
-        await dispatch('fetchChart', 'referrer');
-        await dispatch('fetchChart', 'utm');
-        // await dispatch('fetchLastPayments');
+        // await dispatch('fetchChart', 'summary');
+        // await dispatch('fetchChart', 'country');
+        // await dispatch('fetchChart', 'referrer');
+        // await dispatch('fetchChart', 'date');
+        // await dispatch('fetchChart', 'utm');
       },
       async fetchChart({
         commit,
@@ -121,23 +145,27 @@ export default function createPaymentLinkChartsStore() {
         }
 
         const { apiUrl } = rootState.config;
-        const period = state.mainPeriod;
-        const queryString = qs.stringify({ period });
+        // const period = state.mainPeriod;
+        // const queryString = qs.stringify({ period });
+        const query = qs.stringify({
+          ...state.apiQuery,
+        }, { arrayFormat: 'brackets' });
 
         const response = await axios.get(
-          `${apiUrl}/admin/api/v1/paylinks/${Id}/dashboard/${type}?${queryString}`,
+          `${apiUrl}/admin/api/v1/paylinks/${Id}/dashboard/${type}?${query}`,
         );
 
         if (response.data) {
-          commit(camelCase(type), response.data);
+          commit(type, response.data);
         }
       },
       async changePeriod({ commit, dispatch }, { period }) {
         commit('mainPeriod', period);
 
-        await dispatch('fetchChart', 'date'); // revenue dynamics
+        await dispatch('fetchChart', 'summary');
         await dispatch('fetchChart', 'country');
         await dispatch('fetchChart', 'referrer');
+        await dispatch('fetchChart', 'date');
         await dispatch('fetchChart', 'utm');
 
         localStorage.setItem('main_PERIOD', JSON.stringify(period));
@@ -164,6 +192,27 @@ export default function createPaymentLinkChartsStore() {
         if (response.data) {
           commit('lastPayments', response.data.items);
         }
+      },
+
+      initQuery({ commit }, query) {
+        commit('query', query);
+
+        const apiQuery = searchBuilder.getApiQueryFromQuery(query);
+        commit('apiQuery', apiQuery);
+      },
+
+      submitFilters({ state, commit }, filters) {
+        const newFilters = {
+          ...state.filterValues,
+          ...filters,
+        };
+        commit('filterValues', newFilters);
+
+        const apiQuery = searchBuilder.getApiQueryFromFilterValues(newFilters);
+        commit('apiQuery', apiQuery);
+
+        const query = searchBuilder.getQueryFromFilterValues(newFilters);
+        commit('query', query);
       },
     },
     mutations: {
@@ -193,6 +242,15 @@ export default function createPaymentLinkChartsStore() {
       },
       lastPayments(state, data) {
         state.lastPayments = data;
+      },
+      filterValues(store, value) {
+        store.filterValues = value;
+      },
+      query(store, value) {
+        store.query = value;
+      },
+      apiQuery(store, value) {
+        store.apiQuery = value;
       },
     },
     namespaced: true,

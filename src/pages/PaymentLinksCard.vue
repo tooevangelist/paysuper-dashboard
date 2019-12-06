@@ -83,7 +83,7 @@ export default {
 
     try {
       await registerStoreModule('PaymentLinkCharts', PaymentLinkChartsStore, {
-        linkId: route.params.linkId,
+        query: route.query,
       });
     } catch (error) {
       store.dispatch('setPageError', error);
@@ -313,9 +313,9 @@ export default {
           <div class="total-summary__col">
             <span>
               {{
-                linkItem.gross_total_amount !== null
+                linkItem.gross_total_amount !== null && linkItem.gross_total_amount !== 0
                   ? $formatPrice(linkItem.gross_total_amount, currency)
-                  : $formatPrice(0, currency)
+                  : $formatPrice('0', currency)
                }}
             </span>
             <span>Gross revenue</span>

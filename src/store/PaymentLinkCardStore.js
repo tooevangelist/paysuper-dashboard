@@ -34,6 +34,9 @@ export default function createPaymentLinkCard() {
       linkItemUrl(state, data) {
         state.linkItemUrl = data;
       },
+      currency(state, data) {
+        state.currency = data;
+      },
     },
 
     actions: {
@@ -58,8 +61,10 @@ export default function createPaymentLinkCard() {
         const { products } = response.data;
         commit('linkItem', response.data);
 
-        if (response.data.default_currency) {
+        if (response.data.default_currency && response.data.default_currency !== '') {
           commit('currency', response.data.default_currency);
+        } else {
+          commit('currency', 'USD');
         }
         await dispatch('fetchLinkProducts', products);
       },

@@ -14,7 +14,11 @@ export default {
     ChartsBasic,
     ChartsLastPayments,
   },
-
+  data() {
+    return {
+      filters: {},
+    };
+  },
   props: {
     title: {
       default: 'Revenue dynamic',
@@ -33,8 +37,19 @@ export default {
     ...mapState('PaymentLink', [
       'currency',
     ]),
-    ...mapGetters('PaymentLinkCharts', ['mainChartPeriod']),
+    ...mapGetters('PaymentLinkCharts', ['getFilterValues', 'mainChartPeriod']),
     ...mapGetters('Dictionaries', ['countries']),
+
+    dateFilter: {
+      get() {
+        return [this.filters.dateFrom || null, this.filters.dateTo || null];
+      },
+      set(value) {
+        const [dateFrom, dateTo] = value;
+        this.filters.dateFrom = dateFrom;
+        this.filters.dateTo = dateTo;
+      },
+    },
 
     mainLastBarColor() {
       return {
@@ -132,9 +147,31 @@ export default {
     },
   },
   methods: {
-    ...mapActions('PaymentLinkCharts', ['changePeriod', 'fetchLastPayments']),
+    ...mapActions(['setIsLoading']),
+    ...mapActions('PaymentLinkCharts', ['changePeriod', 'fetchLastPayments', 'submitFilters', 'fetchChart']),
 
     get,
+
+    updateFiltersFromQuery() {
+      this.filters = this.getFilterValues(['dateFrom', 'dateTo']);
+    },
+
+    async setFilters(filters) {
+      this.dateFilter = filters;
+
+      this.setIsLoading(true);
+      this.submitFilters(this.filters);
+      await this.fetchChart('summary').catch(this.$showErrorMessage);
+      await this.fetchChart('country').catch(this.$showErrorMessage);
+      await this.fetchChart('referrer').catch(this.$showErrorMessage);
+      await this.fetchChart('date').catch(this.$showErrorMessage);
+      await this.fetchChart('utm').catch(this.$showErrorMessage);
+      this.setIsLoading(false);
+    },
+  },
+
+  created() {
+    this.updateFiltersFromQuery();
   },
 };
 </script>
@@ -143,8 +180,10 @@ export default {
 <div id="dashboard-charts" class="charts">
   <PaymentLinkChartsHeader
     :period="mainPeriod"
+    :filters="dateFilter"
     :title="title"
     @changePeriod="changePeriod"
+    @setFilters="setFilters"
   />
 
   <ChartsRevenue
