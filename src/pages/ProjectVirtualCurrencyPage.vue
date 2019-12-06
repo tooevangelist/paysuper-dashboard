@@ -59,7 +59,7 @@ export default {
   validations() {
     const virtualCurrency = {
       name: {
-        en: {
+        $each: {
           required,
         },
       },
@@ -152,7 +152,9 @@ export default {
         :langs="project.localizations"
         :value="virtualCurrency.name"
         :disabled="viewOnly"
-        v-bind="$getValidatedFieldProps('virtualCurrency.name.en')"
+        v-bind="$getValidatedEachFieldProps(
+        'virtualCurrency.name',
+         Object.keys(virtualCurrency.name))"
       />
       <UiLangTextField
         label="Custom message on successful payment"
