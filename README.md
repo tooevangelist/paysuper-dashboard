@@ -22,25 +22,24 @@ Learn more about [Projects and Products](https://docs.pay.super.com/docs/payment
 
 - [Developing](#developing)
     - [Branches](#branches)
-    - [Built With](#built-with)
-    - [Prerequisites](#prerequisites)
-    - [Setting up Dev](#setting-up-dev)
-    - [Building](#building)
-    - [Deploying](#deploying)
-- [Versioning](#versioning)
-- [Configuration](#configuration)
-- [Tests](#tests)
-- [API Reference](#api-reference)
-- [Tests](#tests)
+    - [PaySuper web interface](#paysuper-web-interface)
+    - [Authentication backend for PaySuper](#authentication-backend-for-paysuper)
+    - [User Authentication](#user-authentication)
 - [Contributing](#contributing)
 - [License](#license)
 
-# PaySuper web interface
+## Developing
 
-## Usage
+### Branches
+
+We use the [GitFlow](https://nvie.com/posts/a-successful-git-branching-model) as a branching model for Git.
+
+### PaySuper web interface
+
 ### Development
 
 1. To use image uploading create a `.env.local` file with following variables.
+
 ```
 S3_ACCESS_KEY_ID
 S3_SECRET_ACCESS_KEY
@@ -49,32 +48,37 @@ S3_REGION
 ```
 
 2. Install dependecines:
-```
+
+```bash
 yarn
 ```
 
 2. Run these in different terminal windows:
-```
+
+```bash
 yarn serve
 ```
-```
+
+```bash
 yarn serve:be
 ```
 
-# Authentication backend for PaySuper
+### Authentication backend for PaySuper
 
-## Dependencies: 
+#### Dependencies:
+
 * Node.js v10+
 * NPM v6+
 * Redis v5+
 
-## Install and run
-* `npm install`
-* `npm prune --production`
-* `NODE_ENV={string=production} AUTH1_CLIENT_ID={string} AUTH1_CLIENT_SCOPE={string="openid,offline"} 
+#### Install and run
+
+* ```npm install```
+* ```npm prune --production```
+* ```NODE_ENV={string=production} AUTH1_CLIENT_ID={string} AUTH1_CLIENT_SCOPE={string="openid,offline"} 
 AUTH1_CLIENT_SECRET={string} AUTH1_ISSUER_URL={string} CORS_VALID_ORIGINS={string} POST_MESSAGE_TARGET_ORIGIN={string} 
 PUBLIC_HOST={string} REDIS_HOST={string} REDIS_PORT={string} ROUTES_PREFIX={string} SENTRY_DSN={string} SERVER_PORT=80 
-SESSION_COOKIE_NAME={string} SESSION_COOKIE_SIGN_KEY={string} SESSION_MAX_AGE={string=21600} node ./index.js`
+SESSION_COOKIE_NAME={string} SESSION_COOKIE_SIGN_KEY={string} SESSION_MAX_AGE={string=21600} node ./index.js```
 
 Where:
 
@@ -112,7 +116,7 @@ Where:
 
 {SESSION_MAX_AGE} - session lifetime in seconds
 
-## User Authentication
+### User Authentication
 
 For make a user login, you must create subscribtion for receiving postMessages in your SPA, and then and open an `/login` url in iframe.
 All process of authentication will go in that frame, and finally you will be redirected to `/callback` url.
@@ -132,78 +136,6 @@ Logout endpoint send `204 No content` status in case of success, and `500 Intern
 You do not need pass bearer authorization header to refresh and logout endpoints, because they are authorize your request by user session cookie. Be sure, that you enable send cookies with this requests in your's framework http client!
 
 Also, good idea will be close refresh and logout endpoints with CORS Policy.
-
-## Developing
-
-### Branches
-
-We use the [GitFlow](https://nvie.com/posts/a-successful-git-branching-model) as a branching model for Git.
-
-### Built With
-
-??? List main libraries, frameworks used including versions (React, Angular etc...)
-
-### Prerequisites
-
-??? What is needed to set up the dev environment. For instance, global dependencies or any other tools. include download links.
-
-### Setting up Dev
-
-??? Here's a brief intro about what a developer must do in order to start developing
-the project further
-
-```shell
-git clone https://github.com/your/your-project.git
-cd your-project/
-packagemanager install
-```
-
-And state what happens step-by-step. If there is any virtual environment, local server or database feeder needed, explain here.
-
-### Building
-
-??? If your project needs some additional steps for the developer to build the
-project after some code changes, state them here. for example:
-
-```shell
-./configure
-make
-make install
-```
-
-Here again you should state what actually happens when the code above gets
-executed.
-
-### Deploying
-
-??? Give instructions on how to build and release a new version
-In case there's some step you have to take that publishes this project to a
-server, this is the right time to state it.
-
-```shell
-packagemanager deploy your-project -s server.com -u username -p password
-```
-
-And again you'd need to tell what the previous code actually does.
-
-## Versioning
-
-???
-
-## Configuration
-
-??? Here you should write what are all of the configurations a user can enter when
-using the project.
-
-## Tests
-
-???
-
-## API Reference
-
-PaySuper Management API consists of public API methods which starts from the `/api/v1/` and are documented in the [API Reference](https://docs.pay.super.com/api).
-
-This project also contains internal API methods which starts from `/system/` and `/admin/`.
 
 ## Contributing
 
