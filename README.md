@@ -1,6 +1,8 @@
 # PaySuper Dashboard
 
-[![Build Status](https://travis-ci.org/paysuper/paysuper-dashboard.svg?branch=master)](https://travis-ci.org/paysuper/paysuper-dashboard) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-brightgreen.svg)](https://www.gnu.org/licenses/gpl-3.0) [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/paysuper/paysuper-dashboard/issues)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-brightgreen.svg)](https://www.gnu.org/licenses/gpl-3.0) [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/paysuper/paysuper-dashboard/issues)
+
+[![Build Status](https://travis-ci.org/paysuper/paysuper-dashboard.svg?branch=master)](https://travis-ci.org/paysuper/paysuper-dashboard)
 
 PaySuper is a unique, simple payment toolkit designed to make developers self-reliant. It’s an open-source payment service with a highly customizable payment form, an intuitive API, and comprehensible, eye-catching reports.
 
@@ -17,6 +19,14 @@ Learn more about [Projects and Products](https://docs.pay.super.com/docs/payment
 💳 | **Payment processing.** [Billing Server](https://github.com/paysuper/paysuper-billing-server) is a micro-service that provides with any payment processing business logic.
 
 ***
+
+## Features
+
+* A nice looking dashboard with graph and key metrics.
+* Detailed statistics for each transaction.
+* Transparent payout calculation.  
+* Reports like `Live Transaction`, `Country Distribution`, `Revenue By Client`, `Items Sales` and more to come.
+* Export all reports to PDF, XLSX or CSV format for a period.
 
 ## Table of Contents
 
@@ -67,22 +77,27 @@ yarn serve:be
 
 #### Dependencies:
 
-* Node.js v10+
-* NPM v6+
-* Redis v5+
+* [Node.js](https://nodejs.org/en/download/) v10+
+* [NPM](https://www.npmjs.com/get-npm) v6+
+* [Redis](https://redis.io/topics/quickstart) v5+
 
 #### Install and run
 
-* ```npm install```
-* ```npm prune --production```
-* ```NODE_ENV={string=production} AUTH1_CLIENT_ID={string} AUTH1_CLIENT_SCOPE={string="openid,offline"} 
+```
+npm install
+```
+
+```
+npm prune --production
+```
+
+```NODE_ENV={string=production} AUTH1_CLIENT_ID={string} AUTH1_CLIENT_SCOPE={string="openid,offline"} 
 AUTH1_CLIENT_SECRET={string} AUTH1_ISSUER_URL={string} CORS_VALID_ORIGINS={string} POST_MESSAGE_TARGET_ORIGIN={string} 
 PUBLIC_HOST={string} REDIS_HOST={string} REDIS_PORT={string} ROUTES_PREFIX={string} SENTRY_DSN={string} SERVER_PORT=80 
-SESSION_COOKIE_NAME={string} SESSION_COOKIE_SIGN_KEY={string} SESSION_MAX_AGE={string=21600} node ./index.js```
+SESSION_COOKIE_NAME={string} SESSION_COOKIE_SIGN_KEY={string} SESSION_MAX_AGE={string=21600} node ./index.js
+```
 
-Where:
-
-*Obligatory params*
+**Obligatory params:**
 
 {AUTH1_CLIENT_ID} - client id for OAuth2 authentication through Auth1 service
 
