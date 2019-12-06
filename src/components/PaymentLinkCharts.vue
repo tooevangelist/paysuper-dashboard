@@ -2,7 +2,7 @@
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { get, map, reduce } from 'lodash-es';
 import PaymentLinkChartsHeader from '@/components/PaymentLinkChartsHeader.vue';
-import ChartsRevenue from '@/components/ChartsRevenue.vue';
+import ChartsPaylinkSummary from '@/components/ChartsPaylinkSummary.vue';
 import ChartsBasic from '@/components/ChartsBasic.vue';
 import ChartsLastPayments from '@/components/ChartsLastPayments.vue';
 
@@ -10,7 +10,7 @@ export default {
   name: 'PaymentLinkCharts',
   components: {
     PaymentLinkChartsHeader,
-    ChartsRevenue,
+    ChartsPaylinkSummary,
     ChartsBasic,
     ChartsLastPayments,
   },
@@ -29,7 +29,7 @@ export default {
     ...mapState('PaymentLinkCharts', [
       'base',
       'main',
-      'revenue',
+      'summary',
       'basePeriod',
       'mainPeriod',
       'lastPayments',
@@ -67,9 +67,9 @@ export default {
       };
     },
     revenueData() {
-      const revenue = reduce(this.revenue, (res, item) => {
-        res.labels.push(item.label);
-        res.data.push(item.amount);
+      const revenue = reduce(this.summary, (res, item) => {
+        res.labels.push(item.date);
+        res.data.push(item.gross_total_amount);
 
         return res;
       }, { labels: [], data: [] });
@@ -186,8 +186,8 @@ export default {
     @setFilters="setFilters"
   />
 
-  <ChartsRevenue
-    :chartPeriod="mainChartPeriod"
+  <ChartsPaylinkSummary
+    :chartPeriod="dateFilter"
     :currency="currency"
     :data="revenueData"
   />

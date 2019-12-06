@@ -18,6 +18,7 @@ import {
 } from 'date-fns';
 import SearchBuilder from '@/tools/SearchBuilder/SearchBuilder';
 import paymentLinkChartsFilterScheme from '@/schemes/paymentLinkChartsFilterScheme';
+import json from '../paylink-data.json'
 
 const searchBuilder = new SearchBuilder(paymentLinkChartsFilterScheme);
 
@@ -151,12 +152,16 @@ export default function createPaymentLinkChartsStore() {
           ...state.apiQuery,
         }, { arrayFormat: 'brackets' });
 
-        const response = await axios.get(
+        let response = await axios.get(
           `${apiUrl}/admin/api/v1/paylinks/${Id}/dashboard/${type}?${query}`,
         );
 
+        response = json;
+
         if (response.data) {
           commit(type, response.data);
+        } else {
+          commit(type, response);
         }
       },
       async changePeriod({ commit, dispatch }, { period }) {
@@ -227,6 +232,9 @@ export default function createPaymentLinkChartsStore() {
       },
       utm(state, data) {
         state.utm = data;
+      },
+      summary(state, data) {
+        state.summary = data;
       },
       revenueDynamics(state, data) {
         const currency = get(data, 'transactions_currency');

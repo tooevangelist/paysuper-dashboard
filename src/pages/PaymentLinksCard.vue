@@ -1,7 +1,7 @@
 <script>
 import moment from 'moment';
 import { find, get } from 'lodash-es';
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions, mapGetters } from 'vuex';
 import { maxLength, required } from 'vuelidate/lib/validators';
 import PaymentLinkCardStore from '@/store/PaymentLinkCardStore';
 import PaymentLinkChartsStore from '@/store/PaymentLinkChartsStore';
@@ -91,6 +91,7 @@ export default {
   },
 
   computed: {
+    ...mapGetters('Dictionaries', ['countries']),
     ...mapState('User/Merchant', ['merchant']),
     ...mapState('PaymentLink', [
       'productsList',
@@ -245,6 +246,10 @@ export default {
 
     copyToClipboard(value) {
       copyTextToClipboard(value);
+    },
+
+    getCountryByCode(code) {
+      return get(find(this.countries, ({ value }) => value === code), 'label', code);
     },
   },
 
