@@ -3,6 +3,17 @@ import Centrifuge from 'centrifuge';
 import { saveAs } from 'file-saver';
 import { once } from 'lodash-es';
 
+function getUrl(params) {
+  const urls = {
+    payout: `{apiUrl}/admin/api/v1/payout_documents/${params.params.id}/download`,
+    royalty: `{apiUrl}/admin/api/v1/royalty_reports/${params.params.id}/download`,
+    royalty_transactions: `{apiUrl}/admin/api/v1/royalty_reports/${params.params.id}/transactions/download`,
+    vat: `{apiUrl}/system/api/v1/vat_reports/details/${params.params.id}/download`,
+  };
+
+  return urls[params.report_type];
+}
+
 export default function exportFile() {
   return {
     state: {
@@ -18,7 +29,8 @@ export default function exportFile() {
     actions: {
       /**
       * Create report file
-      * @param state
+      * @param commit
+      * @param dispatch
       * @param params {Object} - {
       *   file_type, // (csv, pdf, xlsx)
       *   report_type, // vat, vat_transactions, royalty,
@@ -29,11 +41,10 @@ export default function exportFile() {
       * }
       * @returns {Promise<void>}
       */
-      async createReportFile({ rootState, commit, dispatch }, params) {
+      async createReportFile({ commit, dispatch }, params) {
         commit('extension', params.file_type);
-        await axios.post('{apiUrl}/admin/api/v1/report_file', {
+        await axios.post(getUrl(params), {
           ...params,
-          merchant_id: rootState.User.Merchant.merchant.id,
         });
 
         dispatch('initWaitingFile');
