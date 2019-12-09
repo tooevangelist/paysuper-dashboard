@@ -1,10 +1,6 @@
 # PaySuper Dashboard
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-brightgreen.svg)](https://www.gnu.org/licenses/gpl-3.0) [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/paysuper/paysuper-dashboard/issues)
-
-[![Build Status](https://travis-ci.org/paysuper/paysuper-dashboard.svg?branch=master)](https://travis-ci.org/paysuper/paysuper-dashboard)
-
-PaySuper is a unique, simple payment toolkit designed to make developers self-reliant. It’s an open-source payment service with a highly customizable payment form, an intuitive API, and comprehensible, eye-catching reports.
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-brightgreen.svg)](https://www.gnu.org/licenses/gpl-3.0) [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/paysuper/paysuper-dashboard/issues) [![Build Status](https://travis-ci.org/paysuper/paysuper-dashboard.svg?branch=master)](https://travis-ci.org/paysuper/paysuper-dashboard)
 
 The PaySuper administrative dashboard is designed as a management tool for a merchant.
 
@@ -24,8 +20,8 @@ Learn more about [Projects and Products](https://docs.pay.super.com/docs/payment
 
 * A nice looking dashboard with graph and key metrics.
 * Detailed statistics for each transaction.
-* Transparent payout calculation.  
-* Reports like `Live Transaction`, `Country Distribution`, `Revenue By Client`, `Items Sales` and more to come.
+* Transparent payout calculation using Royalty reports.
+* Reports by a period like **Revenue Reports**: Revenue dynamic, Top countries, Best referrers, Top products, **Dashboard**: Last and next payout, Gross revenue, Total transactions, ARPU, VAT and more to come.
 * Export all reports to PDF, XLSX or CSV format for a period.
 
 ## Table of Contents
