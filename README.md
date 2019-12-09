@@ -24,8 +24,8 @@ Learn more about [Projects and Products](https://docs.pay.super.com/docs/payment
 
 * A nice looking dashboard with graph and key metrics.
 * Detailed statistics for each transaction.
-* Transparent payout calculation.  
-* Reports like `Live Transaction`, `Country Distribution`, `Revenue By Client`, `Items Sales` and more to come.
+* Transparent payout calculation using Royalty reports.
+* Reports by a period like **Revenue Reports**: Revenue dynamic, Top countries, Best referrers, Top products, **Dashboard**: Last and next payout, Gross revenue, Total transactions, ARPU, VAT and more to come.
 * Export all reports to PDF, XLSX or CSV format for a period.
 
 ## Table of Contents
