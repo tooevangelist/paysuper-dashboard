@@ -84,6 +84,7 @@ export default {
     try {
       await registerStoreModule('PaymentLinkCharts', PaymentLinkChartsStore, {
         query: route.query,
+        linkId: route.params.linkId,
       });
     } catch (error) {
       store.dispatch('setPageError', error);

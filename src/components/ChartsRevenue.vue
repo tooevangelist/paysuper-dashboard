@@ -8,8 +8,8 @@ export default {
   components: { Barchart },
   props: {
     chartPeriod: {
-      default: () => ([]),
-      type: Array,
+      default: () => ({}),
+      type: Object,
     },
     currency: {
       default: 'USD',
@@ -25,7 +25,7 @@ export default {
       return merge(
         getBarchartOptionsByType('revenue'),
         {
-          scales: { xAxes: [{ time: { min: this.chartPeriod[0], max: this.chartPeriod[1] } }] },
+          scales: { xAxes: [{ time: { ...this.chartPeriod } }] },
           tooltips: { callbacks: { label: ({ yLabel }) => `${yLabel} ${this.currency}` } },
         },
       );

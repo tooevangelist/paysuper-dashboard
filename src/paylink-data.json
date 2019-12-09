@@ -1,104 +1,101 @@
 ﻿{
+  "currency": "EUR",
   "top": [
     {
-      "paylink_id": "213213c123v12v3213v21v3",
-      "visits": 1500,
-      "total_transactions": 100,
-      "sales_count": 123,
-      "returns_count": 12,
-      "gross_sales_amount": 159988,
-      "gross_returns_amount": 213123,
-      "gross_total_amount": 123123,
-      "transactions_currency": "USD",
-      "conversion": 150,
-      "country_code": "US",
-      "date": "1575642129",
-      "referrer_host": "robinrain.ru",
-      "utm": {
-        "utm_source": "Source",
-        "utm_medium": "NJNASD",
-        "utm_campaign": "asdasdsad"
-      }
+      "label": 1575293174669,
+      "amount": 90.59,
+      "count": 1
     },
     {
-      "paylink_id": "213213c123v12v3213v21v3",
-      "visits": 500,
-      "total_transactions": 100,
-      "sales_count": 23,
-      "returns_count": 2,
-      "gross_sales_amount": 15988,
-      "gross_returns_amount": 2123,
-      "gross_total_amount": 123,
-      "transactions_currency": "USD",
-      "conversion": 10,
-      "country_code": "US",
-      "date": "1575642129",
-      "referrer_host": "robinrain.ru",
-      "utm": {
-        "utm_source": "Source",
-        "utm_medium": "NJNASD",
-        "utm_campaign": "asdasdsad"
-      }
+      "label": 1575393344732,
+      "amount": 1766.68,
+      "count": 2
     },
     {
-      "paylink_id": "213213c123v12v3213v21v3",
-      "visits": 1500,
-      "total_transactions": 100,
-      "sales_count": 123,
-      "returns_count": 12,
-      "gross_sales_amount": 159988,
-      "gross_returns_amount": 213123,
-      "gross_total_amount": 123123,
-      "transactions_currency": "USD",
-      "conversion": 150,
-      "country_code": "US",
-      "date": "1575642129",
-      "referrer_host": "robinrain.ru",
-      "utm": {
-        "utm_source": "Source",
-        "utm_medium": "NJNASD",
-        "utm_campaign": "asdasdsad"
-      }
+      "label": 1575449050535,
+      "amount": 529.95,
+      "count": 2
     },
     {
-      "paylink_id": "213213c123v12v3213v21v3",
-      "visits": 500,
-      "total_transactions": 100,
-      "sales_count": 23,
-      "returns_count": 2,
-      "gross_sales_amount": 15988,
-      "gross_returns_amount": 2123,
-      "gross_total_amount": 123,
-      "transactions_currency": "USD",
-      "conversion": 10,
-      "country_code": "US",
-      "date": "1575642129",
-      "referrer_host": "robinrain.ru",
-      "utm": {
-        "utm_source": "Source",
-        "utm_medium": "NJNASD",
-        "utm_campaign": "asdasdsad"
-      }
+      "label": 1575544638047,
+      "amount": 97.89,
+      "count": 1
+    },
+    {
+      "label": 1575839434226,
+      "amount": 112.65,
+      "count": 2
+    },
+    {
+      "label": 1572621774924,
+      "amount": 353.52,
+      "count": 3
+    },
+    {
+      "label": 1572974211444,
+      "amount": 257.76,
+      "count": 3
+    },
+    {
+      "label": 1573144839483,
+      "amount": 387.3,
+      "count": 9
+    },
+    {
+      "label": 1573232216988,
+      "amount": 589.59,
+      "count": 9
+    },
+    {
+      "label": 1573471848899,
+      "amount": 239.09,
+      "count": 9
+    },
+    {
+      "label": 1573552455281,
+      "amount": 212.32,
+      "count": 8
+    },
+    {
+      "label": 1573757438624,
+      "amount": 92.62,
+      "count": 1
+    },
+    {
+      "label": 1573805644617,
+      "amount": 120.06,
+      "count": 2
+    },
+    {
+      "label": 1573903716824,
+      "amount": 802.2,
+      "count": 9
+    },
+    {
+      "label": 1574269809226,
+      "amount": 196.69,
+      "count": 2
+    },
+    {
+      "label": 1574334468537,
+      "amount": 90.15,
+      "count": 1
+    },
+    {
+      "label": 1574786496072,
+      "amount": 1147.87,
+      "count": 12
+    },
+    {
+      "label": 1574960620106,
+      "amount": 666.54,
+      "count": 14
+    },
+    {
+      "label": 1575028655813,
+      "amount": 229.28,
+      "count": 4
     }
-  ],
-  "total": {
-    "paylink_id": "string",
-    "visits": 0,
-    "total_transactions": 0,
-    "sales_count": 0,
-    "returns_count": 0,
-    "gross_sales_amount": 0,
-    "gross_returns_amount": 0,
-    "gross_total_amount": 0,
-    "transactions_currency": "string",
-    "conversion": 0,
-    "country_code": "string",
-    "date": "string",
-    "referrer_host": "string",
-    "utm": {
-      "utm_source": "string",
-      "utm_medium": "string",
-      "utm_campaign": "string"
-    }
-  }
+  ]
 }
+

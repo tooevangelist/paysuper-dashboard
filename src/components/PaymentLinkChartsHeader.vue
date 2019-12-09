@@ -47,7 +47,6 @@ export default {
   </div>
   <div class="controls">
     <UiSelectAsButton
-      style="display: none"
       color="transparent-gray"
       size="small"
       :options="periods"
@@ -56,6 +55,7 @@ export default {
       @input="$emit('changePeriod', { type: 'main', period: $event })"
     />
     <UiFilterDate
+      style="display: none;"
       v-model="dateFilters"
       @input="$emit('setFilters', dateFilters)"
     />

@@ -125,7 +125,13 @@ export default function createPaymentLinkCard() {
         if (!state.linkId) {
           return;
         }
-        await axios.put(`${rootState.config.apiUrl}/admin/api/v1/paylinks/${state.linkId}`, data);
+        console.log(JSON.stringify(data));
+        /*
+        await axios.put(`${rootState.config.apiUrl}/admin/api/v1/paylinks/${state.linkId}`, {
+          ...data,
+          id: state.linkId,
+        });
+         */
       },
 
       async fetchProjects({ state, commit, rootState }) {
