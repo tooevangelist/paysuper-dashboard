@@ -1,8 +1,6 @@
 # PaySuper Dashboard
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-brightgreen.svg)](https://www.gnu.org/licenses/gpl-3.0) [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/paysuper/paysuper-dashboard/issues)
-
-[![Build Status](https://travis-ci.org/paysuper/paysuper-dashboard.svg?branch=master)](https://travis-ci.org/paysuper/paysuper-dashboard)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-brightgreen.svg)](https://www.gnu.org/licenses/gpl-3.0) [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/paysuper/paysuper-dashboard/issues) [![Build Status](https://travis-ci.org/paysuper/paysuper-dashboard.svg?branch=master)](https://travis-ci.org/paysuper/paysuper-dashboard)
 
 PaySuper is a unique, simple payment toolkit designed to make developers self-reliant. It’s an open-source payment service with a highly customizable payment form, an intuitive API, and comprehensible, eye-catching reports.
 
