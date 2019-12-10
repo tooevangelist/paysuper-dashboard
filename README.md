@@ -151,7 +151,7 @@ Also, good idea will be close refresh and logout endpoints with CORS Policy.
 ## Contributing, Support, Feature Requests
 If you like this project then you can put a ⭐️ on it. It means a lot to us.
 
-If you like this project then you can put a ⭐️ on it.	If you have an idea of how to improve PaySuper (or any of the product parts) or have general feedback, you're welcome to submit a [feature request](../../issues/new?assignees=&labels=&template=feature_request.md&title=).
+If you have an idea of how to improve PaySuper (or any of the product parts) or have general feedback, you're welcome to submit a [feature request](../../issues/new?assignees=&labels=&template=feature_request.md&title=).
 
 We welcome contributions to PaySuper of any kind including documentation, suggestions, bug reports, pull requests etc. We would love to hear from you. In general, we follow the "fork-and-pull" Git workflow.	Chances are, you like what we have already but you may require a custom integration, a special license or something else big and specific to your needs. We're generally open to such conversations.
 
