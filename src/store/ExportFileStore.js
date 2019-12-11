@@ -43,7 +43,6 @@ export default function exportFile() {
       * @returns {Promise<void>}
       */
       async createReportFile({ commit, dispatch }, params) {
-        console.log(params);
         commit('extension', params.file_type);
         await axios.post(getUrl(params), {
           file_type: params.file_type,
