@@ -9,6 +9,7 @@ function getUrl(params) {
     royalty: `{apiUrl}/admin/api/v1/royalty_reports/${params.params.id}/download`,
     royalty_transactions: `{apiUrl}/admin/api/v1/royalty_reports/${params.params.id}/transactions/download`,
     vat: `{apiUrl}/system/api/v1/vat_reports/details/${params.params.id}/download`,
+    transactions: '{apiUrl}/admin/api/v1/order/download',
   };
 
   return urls[params.report_type];
@@ -42,9 +43,11 @@ export default function exportFile() {
       * @returns {Promise<void>}
       */
       async createReportFile({ commit, dispatch }, params) {
+        console.log(params);
         commit('extension', params.file_type);
         await axios.post(getUrl(params), {
-          ...params,
+          file_type: params.file_type,
+          ...params.params,
         });
 
         dispatch('initWaitingFile');
